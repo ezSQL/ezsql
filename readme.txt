@@ -5,10 +5,10 @@ Desc: Class to make it very easy to deal with database connections.
 License: FREE / Donation (LGPL - You may do what you like with ezSQL - no exceptions.)
 =======================================================================
 
-Please follow me on twitter for ezSQL updates :)
+Follow me on twitter:
 http://twitter.com/justinvincent
 
-Please check out my podcast TechZing where we talk about tech and tech startups
+Check out my podcast TechZing where we talk about tech and tech startups:
 http://techzinglive.com
 
 =======================================================================
