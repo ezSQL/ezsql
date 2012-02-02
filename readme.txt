@@ -9,7 +9,7 @@ Please follow me on twitter for ezSQL updates :)
 http://twitter.com/justinvincent
 
 Please check out my podcast TechZing where we talk about tech and tech startups
-http://techzinglive.com/ -- (you can listen instantly)
+http://techzinglive.com
 
 =======================================================================
 
