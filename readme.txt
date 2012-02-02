@@ -1,16 +1,14 @@
 =======================================================================
-Author:  Justin Vincent (jv@jvmultimedia.com)
-Name: 	 ezSQL
-Desc: 	 Class to make it very easy to deal with database connections.
+Author: Justin Vincent - http://justinvincent.com/ezsql
+Name: ezSQL
+Desc: Class to make it very easy to deal with database connections.
 License: FREE / Donation (LGPL - You may do what you like with ezSQL - no exceptions.)
 =======================================================================
-
-!! IMPORTANT !!
 
 Please follow me on twitter for ezSQL updates :)
 http://twitter.com/justinvincent
 
-Please check out my podcast techZING! where we talk about tech and tech startups
+Please check out my podcast TechZing where we talk about tech and tech startups
 http://techzinglive.com/ -- (you can listen instantly)
 
 =======================================================================
