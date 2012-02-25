@@ -15,6 +15,8 @@ http://techzinglive.com
 
 Change Log:
 
+2.15 - Fixed long standing bug with $db->rows_affected (thx Pere Pasqual)
+
 2.14 - Added sybase connector by Muhammad Iyas
 
 2.13 - Support for transations. See: http://stackoverflow.com/questions/8754215/ezsql-with-multiple-queries/8781798
