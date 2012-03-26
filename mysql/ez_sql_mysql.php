@@ -70,6 +70,9 @@
 		function connect($dbuser='', $dbpassword='', $dbhost='localhost')
 		{
 			global $ezsql_mysql_str; $return_val = false;
+			
+			// Keep track of how long the DB takes to connect
+			$this->timer_start('db_connect_time');
 
 			// Must have a user and a password
 			if ( ! $dbuser )
@@ -169,6 +172,13 @@
 		function query($query)
 		{
 
+			// This keeps the connection alive for very long running scripts
+			if ( $this->num_queries >= 500 )
+			{
+				$this->close();
+				$this->quick_connect($this->dbuser,$this->dbpassword,$this->dbname,$this->dbhost)
+			}
+
 			// Initialise return
 			$return_val = 0;
 
@@ -186,10 +196,22 @@
 
 			// Count how many queries there have been
 			$this->num_queries++;
+			
+			// Start timer
+			$this->timer_start($this->num_queries);
 
 			// Use core file cache function
 			if ( $cache = $this->get_cache($query) )
 			{
+				// Keep tack of how long all queries have taken
+				$this->timer_update_global($this->num_queries);
+
+				// Trace all queries
+				if ( $this->use_trace_log )
+				{
+					$this->trace_log[] = $this->debug(false);
+				}
+				
 				return $cache;
 			}
 
@@ -214,7 +236,7 @@
 
 			// Query was an insert, delete, update, replace
 			$is_insert = false;
-			if ( preg_match("/^(insert|delete|update|replace)\s+/i",$query) )
+			if ( preg_match("/^(insert|delete|update|replace|truncate|drop|create|alter)\s+/i",$query) )
 			{
 				$this->rows_affected = @mysql_affected_rows($this->dbh);
 
@@ -263,10 +285,26 @@
 			// If debug ALL queries
 			$this->trace || $this->debug_all ? $this->debug() : null ;
 
+			// Keep tack of how long all queries have taken
+			$this->timer_update_global($this->num_queries);
+
+			// Trace all queries
+			if ( $this->use_trace_log )
+			{
+				$this->trace_log[] = $this->debug(false);
+			}
+
 			return $return_val;
 
 		}
+		
+		/**********************************************************************
+		*  Close the active mySQL connection
+		*/
+
+		function close()
+		{
+			@mysql_close($this->dbh)	
+		}
 
 	}
-
-?>
