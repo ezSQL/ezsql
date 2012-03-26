@@ -2,6 +2,7 @@
 
 	/**********************************************************************
 	*  Author: Justin Vincent (jv@jvmultimedia.com)
+        *          Stefanie Janine Stoelting (mail@stefanie-stoelting.de)
 	*  Web...: http://twitter.com/justinvincent
 	*  Name..: ezSQL_mysql
 	*  Desc..: mySQL component (part of ezSQL databse abstraction library)
@@ -35,18 +36,23 @@
 		var $dbpassword = false;
 		var $dbname = false;
 		var $dbhost = false;
+                var $charset = 'utf8';
 
 		/**********************************************************************
 		*  Constructor - allow the user to perform a qucik connect at the
 		*  same time as initialising the ezSQL_mysql class
 		*/
 
-		function ezSQL_mysql($dbuser='', $dbpassword='', $dbname='', $dbhost='localhost')
+		function ezSQL_mysql($dbuser='', $dbpassword='', $dbname='', $dbhost='localhost', $charset='')
 		{
 			$this->dbuser = $dbuser;
 			$this->dbpassword = $dbpassword;
 			$this->dbname = $dbname;
 			$this->dbhost = $dbhost;
+                        if ( ! empty($charset) )
+                        {
+                            $this->charset = $charset;
+                        }
 		}
 
 		/**********************************************************************
@@ -67,7 +73,7 @@
 		*  Try to connect to mySQL database server
 		*/
 
-		function connect($dbuser='', $dbpassword='', $dbhost='localhost')
+		function connect($dbuser='', $dbpassword='', $dbhost='localhost', $charset='')
 		{
 			global $ezsql_mysql_str; $return_val = false;
 
@@ -88,6 +94,12 @@
 				$this->dbuser = $dbuser;
 				$this->dbpassword = $dbpassword;
 				$this->dbhost = $dbhost;
+                                if ( ! empty($charset) )
+                                {
+                                    $this->charset = $charset;
+                                }
+                                
+                                mysql_set_charset($this->charset, $this->dbh);
 				$return_val = true;
 			}
 
