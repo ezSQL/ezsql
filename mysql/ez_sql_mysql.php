@@ -278,6 +278,17 @@
 			return $return_val;
 
 		}
+                
+                /**
+                 * Close the database connection
+                 */
+                function disconnect()
+                {
+                    if ( $this->dbh )
+                    {
+                        mysql_close($this->dbh);
+                    }
+                }
 
 	}
 
