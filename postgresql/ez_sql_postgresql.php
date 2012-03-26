@@ -3,8 +3,9 @@
 	/**********************************************************************
 	*  Author: Justin Vincent (jv@jvmultimedia.com)
 	*  Web...: http://twitter.com/justinvincent
+	*          Stefanie Janine Stoelting (mail@stefanie-stoelting.de)
 	*  Name..: ezSQL_postgresql
-	*  Desc..: mySQL component (part of ezSQL databse abstraction library)
+	*  Desc..: PostgreSQL component (part of ezSQL databse abstraction library)
 	*
 	*/
 
@@ -22,7 +23,7 @@
 	);
 
 	/**********************************************************************
-	*  ezSQL Database specific class - mySQL
+	*  ezSQL Database specific class - PostgreSQL
 	*/
 
 	if ( ! function_exists ('pg_connect') ) die('<b>Fatal Error:</b> ezSQL_postgresql requires PostgreSQL Lib to be compiled and or linked in to the PHP engine');
@@ -41,12 +42,13 @@
 		*  same time as initialising the ezSQL_postgresql class
 		*/
 
-		function ezSQL_postgresql($dbuser='', $dbpassword='', $dbname='', $dbhost='localhost')
+		function ezSQL_postgresql($dbuser='', $dbpassword='', $dbname='', $dbhost='localhost', $port='5432')
 		{
 			$this->dbuser = $dbuser;
 			$this->dbpassword = $dbpassword;
 			$this->dbname = $dbname;
 			$this->dbhost = $dbhost;
+			$this->port = $port;
 		}
 
 		/**********************************************************************
@@ -55,10 +57,10 @@
 		*  but for the sake of consistency it has been included
 		*/
 
-		function quick_connect($dbuser='', $dbpassword='', $dbname='', $dbhost='localhost')
+		function quick_connect($dbuser='', $dbpassword='', $dbname='', $dbhost='localhost', $port='5432')
 		{
 			$return_val = false;
-			if ( ! $this->connect($dbuser, $dbpassword, $dbname, $dbhost,true) ) ;
+			if ( ! $this->connect($dbuser, $dbpassword, $dbname, $dbhost, $port) ) ;
 			else if ( ! $this->select($dbname) ) ;
 			else $return_val = true;
 			return $return_val;
@@ -68,7 +70,7 @@
 		*  Try to connect to mySQL database server
 		*/
 
-		function connect($dbuser='', $dbpassword='', $dbname='', $dbhost='localhost')
+		function connect($dbuser='', $dbpassword='', $dbname='', $dbhost='localhost', $port='5432')
 		{
 			global $ezsql_postgresql_str; $return_val = false;
 
@@ -79,7 +81,7 @@
 				$this->show_errors ? trigger_error($ezsql_postgresql_str[1],E_USER_WARNING) : null;
 			}
 			// Try to establish the server database handle
-			else if ( ! $this->dbh = @pg_connect("host=$dbhost user=$dbuser password=$dbpassword dbname=$dbname",true) )	//should be modified for port
+			else if ( ! $this->dbh = @pg_connect("host=$dbhost port=$port dbname=$dbname user=$dbuser password=$dbpassword", true) )
 			{       
 				$this->register_error($ezsql_postgresql_str[2].' in '.__FILE__.' on line '.__LINE__);
 				$this->show_errors ? trigger_error($ezsql_postgresql_str[2],E_USER_WARNING) : null;
@@ -89,7 +91,8 @@
 				$this->dbuser = $dbuser;
 				$this->dbpassword = $dbpassword;
 				$this->dbhost = $dbhost;
-                		$this->dbname = $dbname;
+				$this->dbname = $dbname;
+				$this->port = $port;
 				$return_val = true;
 			}
 
@@ -101,7 +104,7 @@
 		*  once again, function included for the sake of consistency
 		*/
 
-		function select($dbuser='', $dbpassword='', $dbname='', $dbhost='localhost')
+		function select($dbuser='', $dbpassword='', $dbname='', $dbhost='localhost', $port='5432')
 		{  
 			$return_val = false;
 			if ( ! $this->connect($dbuser, $dbpassword, $dbname, $dbhost,true) ) ;
@@ -136,12 +139,12 @@
 
 		function showTables()
 		{
-			return "table_name FROM information_schema.tables WHERE table_schema = 'public' and table_type='BASE TABLE'";
+			return "table_name FROM information_schema.tables WHERE table_schema = '$this->dbname' and table_type='BASE TABLE'";
 		}
 
 		function descTable($tbl_name)
 		{
-			return "ordinal_position, column_name, data_type, column_default, is_nullable, character_maximum_length, numeric_precision FROM information_schema.columns WHERE table_name = '$tbl_name' ORDER BY ordinal_position";
+			return return "ordinal_position, column_name, data_type, column_default, is_nullable, character_maximum_length, numeric_precision FROM information_schema.columns WHERE table_name = '$tbl_name' AND table_schema='$this->dbname' ORDER BY ordinal_position";
 		}
 
 		function showDatabases()
@@ -183,7 +186,7 @@
 			// If there is no existing database connection then try to connect
 			if ( ! isset($this->dbh) || ! $this->dbh )
 			{   
-				$this->connect($this->dbuser, $this->dbpassword, $this->dbname);
+				$this->connect($this->dbuser, $this->dbpassword, $this->dbname, $this->dbhost, $this->port);
 			}
 
 			// Perform the query via std postgresql_query function..
@@ -268,7 +271,17 @@
 			return $return_val;
 
 		}
+		
+		/**
+		* Close the database connection
+		*/
+		
+		function disconnect()
+		{
+			if ( $this->dbh )
+			{
+			    @pg_close($this->dbh);
+			}
+		}
 
 	}
-
-?>
