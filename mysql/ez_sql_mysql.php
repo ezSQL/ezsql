@@ -175,7 +175,7 @@
 			// This keeps the connection alive for very long running scripts
 			if ( $this->num_queries >= 500 )
 			{
-				$this->close();
+				$this->disconnect();
 				$this->quick_connect($this->dbuser,$this->dbpassword,$this->dbname,$this->dbhost)
 			}
 
@@ -302,7 +302,7 @@
 		*  Close the active mySQL connection
 		*/
 
-		function close()
+		function disconnect()
 		{
 			@mysql_close($this->dbh)	
 		}
