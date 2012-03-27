@@ -176,7 +176,7 @@
 			if ( $this->num_queries >= 500 )
 			{
 				$this->disconnect();
-				$this->quick_connect($this->dbuser,$this->dbpassword,$this->dbname,$this->dbhost)
+				$this->quick_connect($this->dbuser,$this->dbpassword,$this->dbname,$this->dbhost);
 			}
 
 			// Initialise return
@@ -304,7 +304,7 @@
 
 		function disconnect()
 		{
-			@mysql_close($this->dbh)	
+			@mysql_close($this->dbh);	
 		}
 
 	}
