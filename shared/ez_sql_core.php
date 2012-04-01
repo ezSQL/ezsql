@@ -11,7 +11,8 @@
  * @package ezSQL
  * @license FREE / Donation (LGPL - You may do what you like with ezSQL - no exceptions.)
  */
-class ezSQLcore {
+class ezSQLcore
+{
     /**
      * Constant string ezSQL version information
      */

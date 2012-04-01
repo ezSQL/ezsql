@@ -11,7 +11,8 @@
  * @license FREE / Donation (LGPL - You may do what you like with ezSQL - no exceptions.)
  *
  */
-class ezSQL_postgresql extends ezSQLcore {
+class ezSQL_postgresql extends ezSQLcore
+{
     /*
      * ezSQL error strings - mySQL
      * @var array

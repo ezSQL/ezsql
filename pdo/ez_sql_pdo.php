@@ -11,7 +11,8 @@
  * @license FREE / Donation (LGPL - You may do what you like with ezSQL - no exceptions.)
  *
  */
-class ezSQL_pdo extends ezSQLcore {
+class ezSQL_pdo extends ezSQLcore
+{
     /**
      * ezSQL error strings - PDO
      * @var array
