@@ -1,4 +1,7 @@
 <?php
+/**
+ * @ignore 
+ */
 // =================================================================
 // == TJH ==  To provide optional return value as opposed to simple echo 
 // == TJH ==  of the $db->vardump  and   $db->debug  functions
