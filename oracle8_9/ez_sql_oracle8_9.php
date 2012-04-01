@@ -2,14 +2,14 @@
 /**
  * ezSQL Database specific class - Oracle 8 and 9
  * Desc..: Oracle 8i/9i component (part of ezSQL databse abstraction library)
- * 
+ *
  * @author  Justin Vincent (jv@jvmultimedia.com)
  * @author  Stefanie Janine Stoelting (mail@stefanie-stoelting.de)
  * @link    http://twitter.com/justinvincent
  * @name    ezSQL_oracle8_9
  * @package ezSQL
  * @license FREE / Donation (LGPL - You may do what you like with ezSQL - no exceptions.)
- * 
+ *
  */
 class ezSQL_oracle8_9 extends ezSQLcore
 {
@@ -42,7 +42,7 @@ class ezSQL_oracle8_9 extends ezSQLcore
     private $dbname;
 
     /**
-     * Constructor - allow the user to perform a qucik connect at the same time 
+     * Constructor - allow the user to perform a qucik connect at the same time
      * as initialising the ezSQL_oracle8_9 class
      *
      * @param string $dbuser The database user name
@@ -60,7 +60,7 @@ class ezSQL_oracle8_9 extends ezSQLcore
         if ( ! class_exists ('ezSQLcore') ) {
             throw new Exception('<b>Fatal Error:</b> ezSQL_oracle8_9 requires ezSQLcore (ez_sql_core.php) to be included/loaded before it can be used');
         }
-        
+
         parent::__construct();
 
         // Turn on track errors
@@ -81,7 +81,7 @@ class ezSQL_oracle8_9 extends ezSQLcore
      *                           Default is empty string
      * @param string $dbname The name of the database
      *                       Default is empty string
-     * @return boolean 
+     * @return boolean
      */
     public function connect($dbuser='', $dbpassword='', $dbname='') {
         $return_val = false;
@@ -109,8 +109,8 @@ class ezSQL_oracle8_9 extends ezSQLcore
     }
 
     /**
-     * In the case of Oracle quick_connect is not really needed because std. 
-     * connect already does what quick connect does - but for the sake of 
+     * In the case of Oracle quick_connect is not really needed because std.
+     * connect already does what quick connect does - but for the sake of
      * consistency it has been included
      *
      * @param string $dbuser The database user name
@@ -126,7 +126,7 @@ class ezSQL_oracle8_9 extends ezSQLcore
     } // quick_connect
 
     /**
-     * No real equivalent of mySQL select in Oracle, once again, function 
+     * No real equivalent of mySQL select in Oracle, once again, function
      * included for the sake of consistency
      *
      * @param string $dbuser The database user name
@@ -178,7 +178,7 @@ class ezSQL_oracle8_9 extends ezSQLcore
      * Return Oracle specific system date syntax
      * i.e. Oracle: SYSDATE Mysql: NOW()
      *
-     * @return string 
+     * @return string
      */
     public function sysdate() {
         return 'SYSDATE';
@@ -195,7 +195,7 @@ class ezSQL_oracle8_9 extends ezSQLcore
 
     /**
      * Returns an escaped equal string
-     * 
+     *
      * @param string $str
      * @return string
      */
@@ -205,7 +205,7 @@ class ezSQL_oracle8_9 extends ezSQLcore
 
     /**
      * Returns an equal string for integer values
-     * 
+     *
      * @param string $int
      * @return string
      */
@@ -214,11 +214,11 @@ class ezSQL_oracle8_9 extends ezSQLcore
     } // is_equal_int
 
     /**
-     * Another oracle specific function - if you have set up a sequence this 
+     * Another oracle specific function - if you have set up a sequence this
      * function returns the next ID from that sequence
      * If the sequence is not defined, the sequence is created by this method.
      * Though be shure, that you use the correct sequence name not to end in
-     * more than one sequence for a primary key of a table. 
+     * more than one sequence for a primary key of a table.
      *
      * @param string $seq_name Name of the sequenze
      * @return string
@@ -236,7 +236,7 @@ class ezSQL_oracle8_9 extends ezSQLcore
 
         return $return_val;
     } // insert_id
-    
+
     /**
      * An alias for insert_id using the original Oracle function name.
      *
@@ -338,7 +338,7 @@ class ezSQL_oracle8_9 extends ezSQLcore
     } // query
 
     /**
-     * Close the database connection 
+     * Close the database connection
      */
     public function disconnect() {
         if ( $this->dbh ) {
