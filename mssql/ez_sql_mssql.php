@@ -11,7 +11,8 @@
  * @package ezSQL
  * @license FREE / Donation (LGPL - You may do what you like with ezSQL - no exceptions.)
  */
-class ezSQL_mssql extends ezSQLcore {
+class ezSQL_mssql extends ezSQLcore
+{
     /**
      * ezSQL error strings - mssql
      * @var array Default 5 error messages
@@ -376,7 +377,7 @@ class ezSQL_mssql extends ezSQLcore {
         // replace LIMIT keyword. Works only on MySql not on MS-Sql
         // replace it with TOP keyword
         $pattern = "LIMIT[^\w]{1,}([0-9]{1,})([\,]{0,})([0-9]{0,})";
-        $replacement = "";
+        $replacement = '';
         eregi($pattern, $query, $regs);
         $query = eregi_replace($pattern, $replacement, $query);
 
@@ -393,6 +394,15 @@ class ezSQL_mssql extends ezSQLcore {
 
         return $query;
     } // ConvertMySqlToMSSql
+
+    /**
+     * Close the database connection 
+     */
+    public function disconnect() {
+        if ( $this->dbh ) {
+            $this->dbh = null;
+        }
+    } // disconnect
 
     /**
      * Returns the current database server host
