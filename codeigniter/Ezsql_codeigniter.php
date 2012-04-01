@@ -19,7 +19,6 @@ class ezSQL_codeigniter extends ezSQLcore
 
     /**
      *
-     * @global object $db Self
      * @throws Exception Requires ez_sql_core.php
      */
     function __construct() {
