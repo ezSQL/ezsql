@@ -62,8 +62,11 @@ class ezSQL_mssql extends ezSQLcore
      * as initialising the ezSQL_mssql class
      *
      * @param string $dbuser The database user name
+     *                       Default is empty string
      * @param string $dbpassword The database users password
+     *                           Default is empty string
      * @param string $dbname The name of the database
+     *                       Default is empty string
      * @param string $dbhost The host name or IP address of the database server.
      *                       Default is localhost
      * @param boolean $convertMySqlToMSSqlQuery Default is true
