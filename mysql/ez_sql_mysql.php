@@ -106,10 +106,6 @@ class ezSQL_mysql extends ezSQLcore {
         return $return_val;
     } // quick_connect
 
-    /**********************************************************************
-    *  
-    */
-
     /**
      * Try to connect to mySQL database server
      *
@@ -208,10 +204,6 @@ class ezSQL_mysql extends ezSQLcore {
     public function sysdate() {
         return 'NOW()';
     } // sysdate
-
-    /**********************************************************************
-    *  
-    */
 
     /**
      * Perform mySQL query and try to detirmin result value
