@@ -34,13 +34,13 @@ class ezSQLcore {
 
     /**
     * same as $debug_all
-    * @public boolean Default is false 
+    * @var boolean Default is false 
     */
     public $trace            = false;
 
     /**
     * same as $trace
-    * @public boolean Default is false
+    * @var boolean Default is false
     */
     public $debug_all        = false;
 
@@ -52,7 +52,7 @@ class ezSQLcore {
 
     /**
     * Vardump called
-    * @public boolean Default is false
+    * @var boolean Default is false
     */
     public $vardump_called   = false;
 
@@ -64,19 +64,19 @@ class ezSQLcore {
 
     /**
     * Number of queries
-    * @public int Default is 0
+    * @var int Default is 0
     */
     public $num_queries      = 0;
 
     /**
     * The last query object
-    * @public object Default is null
+    * @var object Default is null
     */
     public $last_query       = null;
 
     /**
     * The last error object
-    * @public object Default is null
+    * @var object Default is null
     */
     public $last_error       = null;
 
