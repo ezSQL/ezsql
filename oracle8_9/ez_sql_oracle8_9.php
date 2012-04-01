@@ -337,4 +337,22 @@ class ezSQL_oracle8_9 extends ezSQLcore
         return $return_value;
     } // query
 
+    /**
+     * Close the database connection 
+     */
+    public function disconnect() {
+        if ( $this->dbh ) {
+            $this->dbh = null;
+        }
+    } // disconnect
+
+    /**
+     * Returns the current database name
+     *
+     * @return string
+     */
+    public function getDBName() {
+        return $this->dbname;
+    } // getDBName
+
 } // ezSQL_oracle8_9
