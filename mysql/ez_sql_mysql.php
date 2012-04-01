@@ -65,8 +65,8 @@ class ezSQL_mysql extends ezSQLcore {
      * @param string $dbname The name of the database
      * @param string $dbhost The host name or IP address of the database server.
      *                       Default is localhost
-     * @param type $charset The database charset
-     *                      Default is empty string
+     * @param string $charset The database charset
+     *                        Default is empty string
      */
     public function __construct($dbuser='', $dbpassword='', $dbname='', $dbhost='localhost', $charset='') {
         parent::__construct();
