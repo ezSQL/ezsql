@@ -15,7 +15,7 @@ class ezSQLcore {
     /**
 	* Constant string ezSQL version information
 	*/
-    const EZSQL_VERSION = '2.15';
+    const EZSQL_VERSION = '3.0';
 
     /**
 	* Constant boolean Object 
