@@ -180,7 +180,7 @@ class ezSQL_mysql extends ezSQLcore {
 
     /**
      * Format a mySQL string correctly for safe mySQL insert
-     * (no mater if magic quotes are on or not)
+     * (no matter if magic quotes are on or not)
      *
      * @param string $str
      * @return string 
