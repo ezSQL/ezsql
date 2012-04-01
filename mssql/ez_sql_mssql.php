@@ -96,7 +96,7 @@ class ezSQL_mssql extends ezSQLcore {
      *                       Default is localhost
      * @return boolean
      */
-    function quick_connect($dbuser='', $dbpassword='', $dbname='', $dbhost='localhost') {
+    public function quick_connect($dbuser='', $dbpassword='', $dbname='', $dbhost='localhost') {
         $return_val = false;
         if ( ! $this->connect($dbuser, $dbpassword, $dbhost,true) ) ;
         else if ( ! $this->select($dbname) ) ;
@@ -113,7 +113,7 @@ class ezSQL_mssql extends ezSQLcore {
      *                       Default is localhost
      * @return boolean
      */
-    function connect($dbuser='', $dbpassword='', $dbhost='localhost') {
+    public function connect($dbuser='', $dbpassword='', $dbhost='localhost') {
         $return_val = false;
 
         // Must have a user and a password
@@ -141,7 +141,7 @@ class ezSQL_mssql extends ezSQLcore {
      * @param string $dbname The name of the database
      * @return boolean
      */
-    function select($dbname='') {
+    public function select($dbname='') {
         $return_val = false;
 
         if ( ! $dbname ) {
@@ -172,7 +172,7 @@ class ezSQL_mssql extends ezSQLcore {
      * @param string $str
      * @return string
      */
-    function escape($str) {
+    public function escape($str) {
         $return_val = '';
 
         if ( !isset($str) or empty($str) ) {
@@ -205,7 +205,7 @@ class ezSQL_mssql extends ezSQLcore {
      *
      * @return string
      */
-    function sysdate() {
+    public function sysdate() {
         return 'getDate()';
     } // sysdate
 
@@ -216,10 +216,10 @@ class ezSQL_mssql extends ezSQLcore {
      * @param string $query
      * @return boolean
      */
-    function query($query) {
+   public function query($query) {
 
-        //if flag to convert query from MySql syntax to MS-Sql syntax is true
-        //convert the query
+        // If flag to convert query from MySql syntax to MS-Sql syntax is true
+        // convert the query
         if($this->convertMySqlToMSSqlQuery == true) {
             $query = $this->ConvertMySqlToMSSql($query);
         }
@@ -358,7 +358,7 @@ class ezSQL_mssql extends ezSQLcore {
      * @param string $query
      * @return string
      */
-    function ConvertMySqlToMSSql($query) {
+    public function ConvertMySqlToMSSql($query) {
         // replace the '`' character used for MySql queries, but not
         // supported in MS-Sql
 
