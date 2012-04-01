@@ -206,7 +206,7 @@ class ezSQL_mysql extends ezSQLcore {
     } // sysdate
 
     /**
-     * Perform mySQL query and try to detirmin result value
+     * Perform mySQL query and try to determine result value
      *
      * @param type $query
      * @return boolean 
