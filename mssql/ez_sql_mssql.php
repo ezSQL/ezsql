@@ -394,4 +394,13 @@ class ezSQL_mssql extends ezSQLcore {
         return $query;
     } // ConvertMySqlToMSSql
 
+    /**
+     * Returns the current database server host
+     *
+     * @return string
+     */
+    public function getDBHost() {
+        return $this->dbhost;
+    } // getDBHost
+
 } // ezSQL_mssql
