@@ -15,6 +15,10 @@ http://techzinglive.com
 
 Change Log:
 
+2.17 - Updates to ezSQL_postgresql (thx Stefanie Janine Stoelting)
+
+2.16 - Added profiling functions to mySQL version & added fix to stop mySQL hanging on very long runnign scripts
+
 2.15 - Fixed long standing bug with $db->rows_affected (thx Pere Pasqual)
 
 2.14 - Added sybase connector by Muhammad Iyas
