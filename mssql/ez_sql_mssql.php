@@ -9,6 +9,7 @@
  * @link    http://twitter.com/justinvincent
  * @name    ezSQL_mssql
  * @package ezSQL
+ * @license FREE / Donation (LGPL - You may do what you like with ezSQL - no exceptions.)
  */
 class ezSQL_mssql extends ezSQLcore {
     /**
