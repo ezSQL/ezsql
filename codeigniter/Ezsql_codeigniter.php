@@ -1,4 +1,5 @@
 <?php
+if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 /**
  * ezSQL Database specific class - codeigniter
  * Desc..: codeigniter component (part of ezSQL databse abstraction library)
