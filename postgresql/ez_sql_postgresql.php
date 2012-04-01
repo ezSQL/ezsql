@@ -68,14 +68,14 @@ class ezSQL_postgresql extends ezSQLcore {
      *                     Default is PostgreSQL default port 5432
      */
     public function __construct($dbuser='', $dbpassword='', $dbname='', $dbhost='localhost', $port='5432') {
-        parent::__construct();
-
         if ( ! function_exists ('pg_connect') ) {
             throw new Exception('<b>Fatal Error:</b> ezSQL_postgresql requires PostgreSQL Lib to be compiled and or linked in to the PHP engine');
         }
         if ( ! class_exists ('ezSQLcore') ) {
             throw new Exception('<b>Fatal Error:</b> ezSQL_postgresql requires ezSQLcore (ez_sql_core.php) to be included/loaded before it can be used');
         }
+
+        parent::__construct();
 
         $this->dbuser = $dbuser;
         $this->dbpassword = $dbpassword;

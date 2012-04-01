@@ -69,14 +69,14 @@ class ezSQL_mysql extends ezSQLcore {
      *                        Default is empty string
      */
     public function __construct($dbuser='', $dbpassword='', $dbname='', $dbhost='localhost', $charset='') {
-        parent::__construct();
-       
         if ( ! function_exists ('mysql_connect') ) {
             throw new Exception('<b>Fatal Error:</b> ezSQL_mysql requires mySQL Lib to be compiled and or linked in to the PHP engine');
         }
         if ( ! class_exists ('ezSQLcore') ) {
             throw new Exception('<b>Fatal Error:</b> ezSQL_mysql requires ezSQLcore (ez_sql_core.php) to be included/loaded before it can be used');
         }
+       
+        parent::__construct();
        
         $this->dbuser = $dbuser;
         $this->dbpassword = $dbpassword;

@@ -69,14 +69,14 @@ class ezSQL_mssql extends ezSQLcore {
      * @throws Exception Requires ntwdblib.dll and ez_sql_core.php
      */
     public function __construct($dbuser='', $dbpassword='', $dbname='', $dbhost='localhost', $convertMySqlToMSSqlQuery=true) {
-       parent::__construct();
-
         if ( ! function_exists ('mssql_connect') ) {
             throw new Exception('<b>Fatal Error:</b> ezSQL_mssql requires ntwdblib.dll to be present in your winowds\system32 folder. Also enable MS-SQL extenstion in PHP.ini file ');
         }
         if ( ! class_exists ('ezSQLcore') ) {
             throw new Exception('<b>Fatal Error:</b> ezSQL_mssql requires ezSQLcore (ez_sql_core.php) to be included/loaded before it can be used');
         }
+
+        parent::__construct();
 
         $this->dbuser = $dbuser;
         $this->dbpassword = $dbpassword;
