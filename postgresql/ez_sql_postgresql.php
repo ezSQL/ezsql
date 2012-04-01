@@ -2,14 +2,14 @@
 /**
  * ezSQL Database specific class - PostgreSQL
  * Desc..: PostgreSQL component (part of ezSQL databse abstraction library)
- * 
+ *
  * @author  Justin Vincent (jv@jvmultimedia.com)
  * @author  Stefanie Janine Stoelting (mail@stefanie-stoelting.de)
  * @link    http://twitter.com/justinvincent
  * @name    ezSQL_postgresql
  * @package ezSQL
  * @license FREE / Donation (LGPL - You may do what you like with ezSQL - no exceptions.)
- * 
+ *
  */
 class ezSQL_postgresql extends ezSQLcore {
     /*
@@ -24,7 +24,7 @@ class ezSQL_postgresql extends ezSQLcore {
             4 => 'mySQL database connection is not active',
             5 => 'Unexpected error while trying to select database'
         );
-    
+
     /**
      * Database user name
      * @var string
@@ -48,7 +48,7 @@ class ezSQL_postgresql extends ezSQLcore {
      * @var string
      */
     private $dbhost;
-    
+
     /**
      * TCP/IP port of PostgreSQL
      * @var string Default is PostgreSQL default port 5432
@@ -56,7 +56,7 @@ class ezSQL_postgresql extends ezSQLcore {
     private $port = '5432';
 
     /**
-     * Constructor - allow the user to perform a qucik connect at the same time 
+     * Constructor - allow the user to perform a qucik connect at the same time
      * as initialising the ezSQL_postgresql class
      *
      * @param string $dbuser The database user name
@@ -69,14 +69,14 @@ class ezSQL_postgresql extends ezSQLcore {
      */
     public function __construct($dbuser='', $dbpassword='', $dbname='', $dbhost='localhost', $port='5432') {
         parent::__construct();
-        
+
         if ( ! function_exists ('pg_connect') ) {
             throw new Exception('<b>Fatal Error:</b> ezSQL_postgresql requires PostgreSQL Lib to be compiled and or linked in to the PHP engine');
         }
         if ( ! class_exists ('ezSQLcore') ) {
             throw new Exception('<b>Fatal Error:</b> ezSQL_postgresql requires ezSQLcore (ez_sql_core.php) to be included/loaded before it can be used');
         }
-        
+
         $this->dbuser = $dbuser;
         $this->dbpassword = $dbpassword;
         $this->dbname = $dbname;
@@ -85,8 +85,8 @@ class ezSQL_postgresql extends ezSQLcore {
     } // __construct
 
     /**
-     * In the case of PostgreSQL quick_connect is not really needed because std. 
-     * connect already does what quick connect does - but for the sake of 
+     * In the case of PostgreSQL quick_connect is not really needed because std.
+     * connect already does what quick connect does - but for the sake of
      * consistency it has been included
      *
      * @param string $dbuser The database user name
@@ -96,7 +96,7 @@ class ezSQL_postgresql extends ezSQLcore {
      *                       Default is localhost
      * @param string $port The database TCP/IP port
      *                     Default is PostgreSQL default port 5432
-     * @return boolean 
+     * @return boolean
      */
     function quick_connect($dbuser='', $dbpassword='', $dbname='', $dbhost='localhost', $port='5432') {
         $return_val = false;
@@ -120,7 +120,7 @@ class ezSQL_postgresql extends ezSQLcore {
      *                       Default is localhost
      * @param string $port The database TCP/IP port
      *                      Default is PostgreSQL default port 5432
-     * @return boolean 
+     * @return boolean
      */
     public function connect($dbuser='', $dbpassword='', $dbname='', $dbhost='localhost', $port='5432') {
         $return_val = false;
@@ -129,7 +129,7 @@ class ezSQL_postgresql extends ezSQLcore {
             // Must have a user and a password
             $this->register_error($this->ezsql_postgresql_str[1] . ' in ' . __FILE__ . ' on line ' . __LINE__);
             $this->show_errors ? trigger_error($this->ezsql_postgresql_str[1], E_USER_WARNING) : null;
-        } else if ( ! $this->dbh = pg_connect("host=$dbhost port=$port dbname=$dbname user=$dbuser password=$dbpassword", true) ) {       
+        } else if ( ! $this->dbh = pg_connect("host=$dbhost port=$port dbname=$dbname user=$dbuser password=$dbpassword", true) ) {
             // Try to establish the server database handle
             $this->register_error($this->ezsql_postgresql_str[2] . ' in ' . __FILE__ . ' on line ' . __LINE__);
             $this->show_errors ? trigger_error($this->ezsql_postgresql_str[2], E_USER_WARNING) : null;
@@ -139,7 +139,7 @@ class ezSQL_postgresql extends ezSQLcore {
             $this->dbhost = $dbhost;
             $this->dbname = $dbname;
             $this->port = $port;
-            
+
             $return_val = true;
         }
 
@@ -147,7 +147,7 @@ class ezSQL_postgresql extends ezSQLcore {
     } // connect
 
     /**
-     * No real equivalent of mySQL select in PostgreSQL once again, function 
+     * No real equivalent of mySQL select in PostgreSQL once again, function
      * included for the sake of consistency
      *
      * @param string $dbuser The database user name
@@ -157,9 +157,9 @@ class ezSQL_postgresql extends ezSQLcore {
      *                       Default is localhost
      * @param string $port The database TCP/IP port
      *                      Default is PostgreSQL default port 5432
-     * @return boolean 
+     * @return boolean
      */
-    public function select($dbuser='', $dbpassword='', $dbname='', $dbhost='localhost', $port='5432') {  
+    public function select($dbuser='', $dbpassword='', $dbname='', $dbhost='localhost', $port='5432') {
         $return_val = false;
         if ( ! $this->connect($dbuser, $dbpassword, $dbname, $dbhost, $port, true) ) ;
         else if ( ! $this->select($dbname) ) ;
@@ -172,7 +172,7 @@ class ezSQL_postgresql extends ezSQLcore {
      * (no matter if magic quotes are on or not)
      *
      * @param string $str
-     * @return string 
+     * @return string
      */
     public function escape($str) {
         return pg_escape_string(stripslashes($str));
@@ -181,15 +181,15 @@ class ezSQL_postgresql extends ezSQLcore {
     /**
      * Return PostgreSQL specific system date syntax
      * i.e. Oracle: SYSDATE Mysql: NOW()
-     * 
-     * @return string 
+     *
+     * @return string
      */
     public function sysdate() {
         return 'NOW()';
     } // sysdate
 
     /**
-     * Return PostgreSQL specific values: Return all tables of the current 
+     * Return PostgreSQL specific values: Return all tables of the current
      * schema
      *
      * @return string
@@ -211,7 +211,7 @@ class ezSQL_postgresql extends ezSQLcore {
     /**
      * Return all databases of the current server
      *
-     * @return string 
+     * @return string
      */
     public function showDatabases() {
         return "datname from pg_database WHERE datname NOT IN ('template0', 'template1') ORDER BY 1";
@@ -219,9 +219,9 @@ class ezSQL_postgresql extends ezSQLcore {
 
     /**
      * Perform PostgreSQL query and try to detirmin result value
-     * 
+     *
      * @param string $query
-     * @return boolean 
+     * @return boolean
      */
     public function query($query) {
         // Initialise return
@@ -248,7 +248,7 @@ class ezSQL_postgresql extends ezSQLcore {
         }
 
         // If there is no existing database connection then try to connect
-        if ( ! isset($this->dbh) || ! $this->dbh ) {   
+        if ( ! isset($this->dbh) || ! $this->dbh ) {
             $this->connect($this->dbuser, $this->dbpassword, $this->dbname, $this->dbhost, $this->port);
         }
 
@@ -263,7 +263,7 @@ class ezSQL_postgresql extends ezSQLcore {
             $this->show_errors ? trigger_error($str,E_USER_WARNING) : null;
             return false;
         }
-        
+
         // Query was an insert, delete, update, replace
         $is_insert = false;
         if ( preg_match("/^(insert|delete|update|replace)\s+/i", $query) ) {
@@ -286,7 +286,7 @@ class ezSQL_postgresql extends ezSQLcore {
             // Query was a select
             $num_rows=0;
             //if ( $this->result )  //may be needed but my tests did not
-            //{	
+            //{
 
             // =======================================================
             // Take note of column info
@@ -337,5 +337,23 @@ class ezSQL_postgresql extends ezSQLcore {
             pg_close($this->dbh);
         }
     } // disconnect
-    
+
+    /**
+     * Returns the current database server host
+     *
+     * @return string
+     */
+    public function getDBHost() {
+        return $this->dbhost;
+    } // getDBHost
+
+         /**
+     * Returns the current TCP/IP port
+     *
+     * @return string
+     */
+    public function getPort() {
+        return $this->port;
+    } // getPort
+
 } // ezSQL_postgresql
