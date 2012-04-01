@@ -87,11 +87,6 @@ class ezSQL_mysql extends ezSQLcore {
         }
     } // __construct
 
-    /**********************************************************************
-    *  Short hand way to connect to mySQL database server
-    *  and select a mySQL database at the same time
-    */
-
     /**
      * Short hand way to connect to mssql database server and select a mssql
      * database at the same time
