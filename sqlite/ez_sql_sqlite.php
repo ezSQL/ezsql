@@ -1,207 +1,211 @@
 <?php
+/**
+ * ezSQL class - SQLite 
+ * Desc..: SQLite component (part of ezSQL databse abstraction library)
+ *
+ * @author  Justin Vincent (jv@jvmultimedia.com)
+ * @author  Stefanie Janine Stoelting (mail@stefanie-stoelting.de)
+ * @link    http://twitter.com/justinvincent
+ * @name    ezSQL_sqlite
+ * @package ezSQL
+ * @license FREE / Donation (LGPL - You may do what you like with ezSQL - no exceptions.)
+ *
+ */
+class ezSQL_sqlite extends ezSQLcore {
+    /**
+     * ezSQL error strings - SQLite
+     * @var array
+     */
+    private $ezsql_sqlite_str = array
+        (
+            1 => 'Require $dbpath and $dbname to open an SQLite database'
+        );
+    
+    /**
+     * Constructor - allow the user to perform a qucik connect at the same time 
+     * as initialising the ezSQL_sqlite class
+     *
+     * @param string $dbpath Path to the SQLite file
+     *                       Default is empty string
+     * @param string $dbname Name of the database
+     *                       Default is empty string
+     */
+    public function __construct($dbpath='', $dbname='') {
+        if ( ! function_exists ('sqlite_open') ) {
+            throw new Exception('<b>Fatal Error:</b> ezSQL_sqlite requires SQLite Lib to be compiled and or linked in to the PHP engine');
+        }
+        if ( ! class_exists ('ezSQLcore') ) {
+            throw new Exception('<b>Fatal Error:</b> ezSQL_sqlite requires ezSQLcore (ez_sql_core.php) to be included/loaded before it can be used');
+        }
 
-	/**********************************************************************
-	*  Author: Justin Vincent (jv@jvmultimedia.com)
-	*  Web...: http://twitter.com/justinvincent
-	*  Name..: ezSQL_sqlite
-	*  Desc..: SQLite component (part of ezSQL databse abstraction library)
-	*
-	*/
+        parent::__construct();
 
-	/**********************************************************************
-	*  ezSQL error strings - SQLite
-	*/
+        // Turn on track errors 
+        ini_set('track_errors',1);
 
-	$ezsql_sqlite_str = array
-	(
-		1 => 'Require $dbpath and $dbname to open an SQLite database'
-	);
+        if ( $dbpath && $dbname ) {
+            $this->connect($dbpath, $dbname);
+        }
+    } // __construct
 
-	/**********************************************************************
-	*  ezSQL Database specific class - SQLite
-	*/
+    /**
+     * Try to connect to SQLite database server
+     *
+     * @param string $dbpath Path to the SQLite file
+     *                       Default is empty string
+     * @param string $dbname Name of the database
+     *                       Default is empty string
+     * @return boolean 
+     */
+    public function connect($dbpath='', $dbname='') {
+        $return_val = false;
 
-	if ( ! function_exists ('sqlite_open') ) die('<b>Fatal Error:</b> ezSQL_sqlite requires SQLite Lib to be compiled and or linked in to the PHP engine');
-	if ( ! class_exists ('ezSQLcore') ) die('<b>Fatal Error:</b> ezSQL_sqlite requires ezSQLcore (ez_sql_core.php) to be included/loaded before it can be used');
+        // Must have a user and a password
+        if ( ! $dbpath || ! $dbname ) {
+            $this->register_error($this->ezsql_sqlite_str[1] . ' in ' . __FILE__ . ' on line ' . __LINE__);
+            $this->show_errors ? trigger_error($this->ezsql_sqlite_str[1], E_USER_WARNING) : null;
+        }  else if ( ! $this->dbh = @sqlite_open($dbpath . $dbname) ) {
+            // Try to establish the server database handle
+            $this->register_error($php_errormsg);
+            $this->show_errors ? trigger_error($php_errormsg, E_USER_WARNING) : null;
+        }
+        else
+            $return_val = true;
 
-	class ezSQL_sqlite extends ezSQLcore
-	{
+        return $return_val;			
+    } // connect
 
-		/**********************************************************************
-		*  Constructor - allow the user to perform a qucik connect at the 
-		*  same time as initialising the ezSQL_sqlite class
-		*/
+    /**
+     * In the case of SQLite quick_connect is not really needed because std. 
+     * connect already does what quick connect does - but for the sake of 
+     * consistency it has been included
+     *
+     * @param string $dbpath Path to the SQLite file
+     *                       Default is empty string
+     * @param string $dbname Name of the database
+     *                       Default is empty string
+     * @return boolean
+     */
+    public function quick_connect($dbpath='', $dbname='') {
+        return $this->connect($dbpath, $dbname);
+    } // quick_connect
 
-		function ezSQL_sqlite($dbpath='', $dbname='')
-		{
-			// Turn on track errors 
-			ini_set('track_errors',1);
-			
-			if ( $dbpath && $dbname )
-			{
-				$this->connect($dbpath, $dbname);
-			}
-		}
+    /**
+     * No real equivalent of mySQL select in SQLite once again, function 
+     * included for the sake of consistency
+     *
+     * @param string $dbpath Path to the SQLite file
+     *                       Default is empty string
+     * @param string $dbname Name of the database
+     *                       Default is empty string
+     * @return boolean
+     */
+    public function select($dbpath='', $dbname='') {
+        return $this->connect($dbpath, $dbname);
+    } // select
 
-		/**********************************************************************
-		*  Try to connect to SQLite database server
-		*/
+    /**
+     * Format a SQLite string correctly for safe SQLite insert
+     * (no matter if magic quotes are on or not)
+     *
+     * @param string $str
+     * @return string
+     */
+    public function escape($str) {
+        return sqlite_escape_string(stripslashes(preg_replace("/[\r\n]/",'',$str)));				
+    } // escape
 
-		function connect($dbpath='', $dbname='')
-		{
-			global $ezsql_sqlite_str; $return_val = false;
-			
-			// Must have a user and a password
-			if ( ! $dbpath || ! $dbname )
-			{
-				$this->register_error($ezsql_sqlite_str[1].' in '.__FILE__.' on line '.__LINE__);
-				$this->show_errors ? trigger_error($ezsql_sqlite_str[1],E_USER_WARNING) : null;
-			}
-			// Try to establish the server database handle
-			else if ( ! $this->dbh = @sqlite_open($dbpath.$dbname) )
-			{
-				$this->register_error($php_errormsg);
-				$this->show_errors ? trigger_error($php_errormsg,E_USER_WARNING) : null;
-			}
-			else
-				$return_val = true;
+    /**
+     * Return SQLite specific system date syntax 
+     * i.e. Oracle: SYSDATE Mysql: NOW()
+     *
+     * @return string 
+     */
+    public function sysdate() {
+        return 'now';			
+    } // sysdate
 
-			return $return_val;			
-		}
+    /**
+     * Perform SQLite query and try to detirmin result value
+     * Basic Query	- see docs for more detail
+     *
+     * @param string $query
+     * @return object
+     */
+    public function query($query) {
 
-		/**********************************************************************
-		*  In the case of SQLite quick_connect is not really needed
-		*  because std. connect already does what quick connect does - 
-		*  but for the sake of consistency it has been included
-		*/
+        // For reg expressions
+        $query = str_replace("/[\n\r]/", '', trim($query)); 
 
-		function quick_connect($dbpath='', $dbname='')
-		{
-			return $this->connect($dbpath, $dbname);
-		}
+        // Initialise return
+        $return_val = 0;
 
-		/**********************************************************************
-		*  No real equivalent of mySQL select in SQLite 
-		*  once again, function included for the sake of consistency
-		*/
+        // Flush cached values..
+        $this->flush();
 
-		function select($dbpath='', $dbname='')
-		{
-			return $this->connect($dbpath, $dbname);
-		}
+        // Log how the function was called
+        $this->func_call = "\$db->query(\"$query\")";
 
-		/**********************************************************************
-		*  Format a SQLite string correctly for safe SQLite insert
-		*  (no mater if magic quotes are on or not)
-		*/
+        // Keep track of the last query for debug..
+        $this->last_query = $query;
 
-		function escape($str)
-		{
-			return sqlite_escape_string(stripslashes(preg_replace("/[\r\n]/",'',$str)));				
-		}
+        // Perform the query via std mysql_query function..
+        $this->result = @sqlite_query($this->dbh, $query);
+        $this->num_queries++;
 
-		/**********************************************************************
-		*  Return SQLite specific system date syntax 
-		*  i.e. Oracle: SYSDATE Mysql: NOW()
-		*/
+        // If there is an error then take note of it..
+        if (@sqlite_last_error($this->dbh)){
+            $err_str = sqlite_error_string (sqlite_last_error($this->dbh));
+            $this->register_error($err_str);
+            $this->show_errors ? trigger_error($err_str, E_USER_WARNING) : null;
+            return false;
+        }
 
-		function sysdate()
-		{
-			return 'now';			
-		}
+        // Query was an insert, delete, update, replace
+        if ( preg_match("/^(insert|delete|update|replace)\s+/i", $query) ) {
+            $this->rows_affected = @sqlite_changes($this->dbh);
 
-		/**********************************************************************
-		*  Perform SQLite query and try to detirmin result value
-		*/
+            // Take note of the insert_id
+            if ( preg_match("/^(insert|replace)\s+/i", $query) ) {
+                $this->insert_id = @sqlite_last_insert_rowid($this->dbh);	
+            }
 
-		// ==================================================================
-		//	Basic Query	- see docs for more detail
-	
-		function query($query)
-		{
+            // Return number fo rows affected
+            $return_val = $this->rows_affected;
 
-			// For reg expressions
-			$query = str_replace("/[\n\r]/",'',trim($query)); 
+        }  else {
+            // Query was an select 
 
-			// initialise return
-			$return_val = 0;
+            // Take note of column info	
+            $i=0;
+            while ($i < @sqlite_num_fields($this->result)) {
+                $this->col_info[$i]->name       = sqlite_field_name ($this->result, $i);
+                $this->col_info[$i]->type       = null;
+                $this->col_info[$i]->max_length = null;
+                $i++;
+            }
 
-			// Flush cached values..
-			$this->flush();
+            // Store Query Results
+            $num_rows=0;
+            while ($row =  @sqlite_fetch_array($this->result, SQLITE_ASSOC)) {
+                // Store relults as an objects within main array
+                $obj= (object) $row; //convert to object
+                $this->last_result[$num_rows] = $obj;
+                $num_rows++;
+            }
 
-			// Log how the function was called
-			$this->func_call = "\$db->query(\"$query\")";
+            // Log number of rows the query returned
+            $this->num_rows = $num_rows;
 
-			// Keep track of the last query for debug..
-			$this->last_query = $query;
+            // Return number of rows selected
+            $return_val = $this->num_rows;
+        }
 
-			// Perform the query via std mysql_query function..
-			$this->result = @sqlite_query($this->dbh,$query);
-			$this->num_queries++;
+        // If debug ALL queries
+        $this->trace||$this->debug_all ? $this->debug() : null ;
 
-			// If there is an error then take note of it..
-			if (@sqlite_last_error($this->dbh))
-			{
-				$err_str = sqlite_error_string (sqlite_last_error($this->dbh));
-				$this->register_error($err_str);
-				$this->show_errors ? trigger_error($err_str,E_USER_WARNING) : null;
-				return false;
-			}
-			
-			// Query was an insert, delete, update, replace
-			if ( preg_match("/^(insert|delete|update|replace)\s+/i",$query) )
-			{
-				$this->rows_affected = @sqlite_changes($this->dbh);
-				
-				// Take note of the insert_id
-				if ( preg_match("/^(insert|replace)\s+/i",$query) )
-				{
-					$this->insert_id = @sqlite_last_insert_rowid($this->dbh);	
-				}
-				
-				// Return number fo rows affected
-				$return_val = $this->rows_affected;
-	
-			}
-			// Query was an select
-			else
-			{
-				
-				// Take note of column info	
-				$i=0;
-				while ($i < @sqlite_num_fields($this->result))
-				{
-					$this->col_info[$i]->name       = sqlite_field_name ( $this->result, $i);
-					$this->col_info[$i]->type       = null;
-					$this->col_info[$i]->max_length = null;
-					$i++;
-				}
-				
-				// Store Query Results
-				$num_rows=0;
-				while ($row =  @sqlite_fetch_array($this->result,SQLITE_ASSOC) )
-				{
-					// Store relults as an objects within main array
-					$obj= (object) $row; //convert to object
-					$this->last_result[$num_rows] = $obj;
-					$num_rows++;
-				}
+        return $return_val;
 
-				// Log number of rows the query returned
-				$this->num_rows = $num_rows;
-				
-				// Return number of rows selected
-				$return_val = $this->num_rows;
-			
-			}
+    } // query
 
-			// If debug ALL queries
-			$this->trace||$this->debug_all ? $this->debug() : null ;
-
-			return $return_val;
-		
-		}
-
-	}
-
-?>
+} // ezSQL_sqlite
