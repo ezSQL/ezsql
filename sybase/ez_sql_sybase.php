@@ -410,4 +410,22 @@ class ezSQL_sybase extends ezSQLcore
         return $query;
     }
 
+    /**
+     * Close the database connection 
+     */
+    public function disconnect() {
+        if ( $this->dbh ) {
+            $this->dbh = null;
+        }
+    } // disconnect
+
+    /**
+     * Returns the current database server host
+     *
+     * @return string
+     */
+    public function getDBHost() {
+        return $this->dbhost;
+    } // getDBHost
+
 } // ezSQL_sybase
