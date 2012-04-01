@@ -98,7 +98,7 @@
                                 {
                                     $this->charset = $charset;
                                 }
-                                
+
                                 mysql_set_charset($this->charset, $this->dbh);
 				$return_val = true;
 			}
@@ -278,7 +278,7 @@
 			return $return_val;
 
 		}
-                
+
                 /**
                  * Close the database connection
                  */
