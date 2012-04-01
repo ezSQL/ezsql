@@ -309,5 +309,23 @@ class ezSQL_mysql extends ezSQLcore {
             mysql_close($this->dbh);
         }
     } // function
+    
+    /**
+     * Returns the current database server host
+     *
+     * @return string
+     */
+    public function getDBHost() {
+        return $this->dbhost;
+    } // getDBHost
+
+    /**
+     * Returns the current connection charset
+     *
+     * @return string
+     */
+    public function getCharset() {
+        return $this->charset;
+    } // getCharset
 
 } // ezSQL_mysql
