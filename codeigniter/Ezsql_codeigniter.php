@@ -1,4 +1,4 @@
-php 
+<?php
 /**
  * ezSQL Database specific class - codeigniter
  * Desc..: codeigniter component (part of ezSQL databse abstraction library)
