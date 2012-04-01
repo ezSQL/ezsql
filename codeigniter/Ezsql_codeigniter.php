@@ -1,4 +1,7 @@
 <?php 
+/**
+ * @ignore 
+ */
 
 	/**********************************************************************
 	*  Author: Justin Vincent (jv@jvmultimedia.com)
