@@ -1,4 +1,7 @@
 <?php
+/**
+ * @ignore 
+ */
 
 	// Standard ezSQL Libs
 	include_once "../shared/ez_sql_core.php";
