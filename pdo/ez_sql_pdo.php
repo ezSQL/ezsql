@@ -326,4 +326,11 @@ class ezSQL_pdo extends ezSQLcore {
 
     } // query
 
+    /**
+     * Close the database connection
+     */
+    public function disconnect(){
+         $dbh = null;
+     } // disconnect
+
 } // ezSQL_pdo
