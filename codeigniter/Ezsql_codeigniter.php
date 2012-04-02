@@ -14,8 +14,17 @@ if ( ! defined('BASEPATH')) exit('No direct script access allowed');
  */
 class ezSQL_codeigniter extends ezSQLcore
 {
-
+    /**
+     * Run in debug mode
+     * @var boolean Default is true
+     */
     public $debug = true;
+
+    /**
+     * Show errors
+     * @var boolean Default is true
+     */
+    public $show_errors = true;
 
     /**
      *
