@@ -23,6 +23,12 @@ class ezSQL_sqlite extends ezSQLcore
         );
     
     /**
+     * Show errors
+     * @var boolean Default is true
+     */
+    public $show_errors = true;
+
+    /**
      * Constructor - allow the user to perform a qucik connect at the same time 
      * as initialising the ezSQL_sqlite class
      *
