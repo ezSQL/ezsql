@@ -52,6 +52,12 @@ class ezSQL_sybase extends ezSQLcore
     private $dbhost;
 
     /**
+     * Show errors
+     * @var boolean Default is true
+     */
+    public $show_errors = true;
+
+    /**
      * if we want to convert Queries in MySql syntax to Sybase syntax. Yes,
      * there are some differences in query syntax.
      * @var boolean Default is true
