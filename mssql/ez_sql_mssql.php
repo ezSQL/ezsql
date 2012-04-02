@@ -51,6 +51,12 @@ class ezSQL_mssql extends ezSQLcore
     private $dbhost;
 
     /**
+     * Show errors
+     * @var boolean Default is true
+     */
+    public $show_errors = true;
+
+    /**
      * If we want to convert Queries in MySql syntax to MS-SQL syntax. Yes,
      * there are some differences in query syntax.
      * @var boolean Default is true
