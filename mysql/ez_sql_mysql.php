@@ -126,24 +126,21 @@ class ezSQL_mysql extends ezSQLcore
      */
     public function connect($dbuser='', $dbpassword='', $dbhost='localhost', $charset='') {
         $return_val = false;
-
+        
+        $this->dbuser = empty($dbuser) ? $this->dbuser : $dbuser;
+        $this->dbpassword = empty($dbpassword) ? $this->dbpassword : $dbpassword;
+        $this->dbhost = empty($dbhost) ? $this->dbhost : $dbhost;
+        $this->charset = empty($charset) ? $this->charset : $charset;
+       
         // Must have a user and a password
-        if ( ! $dbuser ) {
+        if ( empty($this->dbuser) ) {
             $this->register_error($this->ezsql_mysql_str[1] . ' in ' . __FILE__ . ' on line ' . __LINE__);
             $this->show_errors ? trigger_error($this->ezsql_mysql_str[1], E_USER_WARNING) : null;
-        } else if ( ! $this->dbh = @mysql_connect($dbhost, $dbuser, $dbpassword, true, 131074) ) {
+        } else if ( ! $this->dbh = @mysql_connect($this->dbhost, $$this->dbuser, $this->dbpassword, true, 131074) ) {
             // Try to establish the server database handle
             $this->register_error($this->ezsql_mysql_str[2] . ' in ' . __FILE__ . ' on line ' . __LINE__);
             $this->show_errors ? trigger_error($this->ezsql_mysql_str[2], E_USER_WARNING) : null;
         } else {
-            $this->dbuser = $dbuser;
-            $this->dbpassword = $dbpassword;
-            $this->dbhost = $dbhost;
-            
-            if ( ! empty($charset) ) {
-                $this->charset = $charset;
-            }
-
             mysql_set_charset($this->charset, $this->dbh);
             $return_val = true;
         }
