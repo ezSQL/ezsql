@@ -193,12 +193,6 @@ class ezSQL_mysql extends ezSQLcore
      * @return string 
      */
     public function escape($str) {
-        // If there is no existing database connection then try to connect
-        if ( ! isset($this->dbh) || ! $this->dbh ) {
-            $this->connect($this->dbuser, $this->dbpassword, $this->dbhost);
-            $this->select($this->dbname);
-        }
-
         return mysql_real_escape_string(stripslashes($str));
     } // escape
 
