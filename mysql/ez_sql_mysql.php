@@ -136,7 +136,7 @@ class ezSQL_mysql extends ezSQLcore
         if ( empty($this->dbuser) ) {
             $this->register_error($this->ezsql_mysql_str[1] . ' in ' . __FILE__ . ' on line ' . __LINE__);
             $this->show_errors ? trigger_error($this->ezsql_mysql_str[1], E_USER_WARNING) : null;
-        } else if ( ! $this->dbh = @mysql_connect($this->dbhost, $$this->dbuser, $this->dbpassword, true, 131074) ) {
+        } else if ( ! $this->dbh = @mysql_connect($this->dbhost, $this->dbuser, $this->dbpassword, true, 131074) ) {
             // Try to establish the server database handle
             $this->register_error($this->ezsql_mysql_str[2] . ' in ' . __FILE__ . ' on line ' . __LINE__);
             $this->show_errors ? trigger_error($this->ezsql_mysql_str[2], E_USER_WARNING) : null;
