@@ -106,11 +106,10 @@ class ezSQL_mysql extends ezSQLcore
      * @return boolean 
      */
     public function quick_connect($dbuser='', $dbpassword='', $dbname='', $dbhost='localhost') {
-        $return_val = false;
-        if ( ! $this->connect($dbuser, $dbpassword, $dbhost,true) ) ;
+        if ( ! $this->connect($dbuser, $dbpassword, $dbhost, true) ) ;
         else if ( ! $this->select($dbname) ) ;
-        else $return_val = true;
-        return $return_val;
+        
+        return $this->connected;
     } // quick_connect
 
     /**
@@ -125,7 +124,7 @@ class ezSQL_mysql extends ezSQLcore
      * @return boolean 
      */
     public function connect($dbuser='', $dbpassword='', $dbhost='localhost', $charset='') {
-        $return_val = false;
+        $this->connected = false;
         
         $this->dbuser = empty($dbuser) ? $this->dbuser : $dbuser;
         $this->dbpassword = empty($dbpassword) ? $this->dbpassword : $dbpassword;
@@ -142,10 +141,10 @@ class ezSQL_mysql extends ezSQLcore
             $this->show_errors ? trigger_error($this->ezsql_mysql_str[2], E_USER_WARNING) : null;
         } else {
             mysql_set_charset($this->charset, $this->dbh);
-            $return_val = true;
+            $this->connected = true;
         }
 
-        return $return_val;
+        return $this->connected;
     } // connect
 
     /**
@@ -155,7 +154,7 @@ class ezSQL_mysql extends ezSQLcore
      * @return boolean 
      */
     public function select($dbname='') {
-        $return_val = false;
+        $this->connected = false;
 
         if ( ! $dbname ) {
             // Must have a database name
@@ -176,10 +175,10 @@ class ezSQL_mysql extends ezSQLcore
             $this->show_errors ? trigger_error($str, E_USER_WARNING) : null;
         } else {
             $this->dbname = $dbname;
-            $return_val = true;
+            $this->connected = true;
         }
 
-        return $return_val;
+        return $this->connected;
     } // select
 
     /**
@@ -306,6 +305,8 @@ class ezSQL_mysql extends ezSQLcore
         if ( $this->dbh ) {
             mysql_close($this->dbh);
         }
+        
+        $this->connected = false;
     } // function
     
     /**
