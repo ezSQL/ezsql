@@ -62,42 +62,6 @@
 					<th class="class-table-header">Description</th>
 				</tr>
 								<tr>
-					<td style="padding-right: 2em"><a href="../ezSQL/ezSQL_sqlite.html">ezSQL_sqlite</a></td>
-					<td>
-											ezSQL class - SQLite  Desc..: SQLite component (part of ezSQL databse abstraction library)
-										</td>
-				</tr>
-								<tr>
-					<td style="padding-right: 2em"><a href="../ezSQL/ezSQL_sybase.html">ezSQL_sybase</a></td>
-					<td>
-											ezSQL class - Sybase ASE  Desc..: Sybase ASE component (part of ezSQL database abstraction library) -  based on ezSql_mssql library class.
-										</td>
-				</tr>
-								<tr>
-					<td style="padding-right: 2em"><a href="../ezSQL/ezSQL_mssql.html">ezSQL_mssql</a></td>
-					<td>
-											ezSQL Database specific class - mssql  Microsoft Sql Server component (part of ezSQL databse abstraction library) -  based on ezSql_mySql library class.
-										</td>
-				</tr>
-								<tr>
-					<td style="padding-right: 2em"><a href="../ezSQL/ezSQL_mysql.html">ezSQL_mysql</a></td>
-					<td>
-											ezSQL Database specific class - mySQL  Desc..: mySQL component (part of ezSQL databse abstraction library)
-										</td>
-				</tr>
-								<tr>
-					<td style="padding-right: 2em"><a href="../ezSQL/ezSQL_oracle8_9.html">ezSQL_oracle8_9</a></td>
-					<td>
-											ezSQL Database specific class - Oracle 8 and 9  Desc..: Oracle 8i/9i component (part of ezSQL databse abstraction library)
-										</td>
-				</tr>
-								<tr>
-					<td style="padding-right: 2em"><a href="../ezSQL/ezSQL_pdo.html">ezSQL_pdo</a></td>
-					<td>
-											ezSQL class - PDO  Desc..: PDO component (part of ezSQL databse abstraction library)
-										</td>
-				</tr>
-								<tr>
 					<td style="padding-right: 2em"><a href="../ezSQL/ezSQL_postgresql.html">ezSQL_postgresql</a></td>
 					<td>
 											ezSQL Database specific class - PostgreSQL  Desc..: PostgreSQL component (part of ezSQL databse abstraction library)
@@ -107,6 +71,42 @@
 					<td style="padding-right: 2em"><a href="../ezSQL/ezSQL_codeigniter.html">ezSQL_codeigniter</a></td>
 					<td>
 											ezSQL Database specific class - codeigniter  Desc..: codeigniter component (part of ezSQL databse abstraction library)
+										</td>
+				</tr>
+								<tr>
+					<td style="padding-right: 2em"><a href="../ezSQL/ezSQL_mssql.html">ezSQL_mssql</a></td>
+					<td>
+											ezSQL Database specific class - mssql  Microsoft Sql Server component (part of ezSQL databse abstraction library) -  based on ezSql_mySql library class.
+										</td>
+				</tr>
+								<tr>
+					<td style="padding-right: 2em"><a href="../ezSQL/ezSQL_pdo.html">ezSQL_pdo</a></td>
+					<td>
+											ezSQL class - PDO  Desc..: PDO component (part of ezSQL databse abstraction library)
+										</td>
+				</tr>
+								<tr>
+					<td style="padding-right: 2em"><a href="../ezSQL/ezSQL_sybase.html">ezSQL_sybase</a></td>
+					<td>
+											ezSQL class - Sybase ASE  Desc..: Sybase ASE component (part of ezSQL database abstraction library) -  based on ezSql_mssql library class.
+										</td>
+				</tr>
+								<tr>
+					<td style="padding-right: 2em"><a href="../ezSQL/ezSQL_oracle8_9.html">ezSQL_oracle8_9</a></td>
+					<td>
+											ezSQL Database specific class - Oracle 8 and 9  Desc..: Oracle 8i/9i component (part of ezSQL databse abstraction library)
+										</td>
+				</tr>
+								<tr>
+					<td style="padding-right: 2em"><a href="../ezSQL/ezSQL_sqlite.html">ezSQL_sqlite</a></td>
+					<td>
+											ezSQL class - SQLite  Desc..: SQLite component (part of ezSQL databse abstraction library)
+										</td>
+				</tr>
+								<tr>
+					<td style="padding-right: 2em"><a href="../ezSQL/ezSQL_mysql.html">ezSQL_mysql</a></td>
+					<td>
+											ezSQL Database specific class - mySQL  Desc..: mySQL component (part of ezSQL databse abstraction library)
 										</td>
 				</tr>
 							</table>
@@ -164,7 +164,7 @@
 					</div>
 		<div class="info-box-body">
 			<div class="var-summary">
-																																																																																																																																																																																																								<div class="var-title">
+																																																																																																																																																																																																																								<div class="var-title">
 					<span class="var-type">boolean</span>
 					<a href="#$cache_dir" title="details" class="var-name">$cache_dir</a>
 				</div>
@@ -187,6 +187,14 @@
 																<div class="var-title">
 					<span class="var-type">object Default</span>
 					<a href="#$col_info" title="details" class="var-name">$col_info</a>
+				</div>
+																<div class="var-title">
+					<span class="var-type">boolean</span>
+					<a href="#$connected" title="details" class="var-name">$connected</a>
+				</div>
+																<div class="var-title">
+					<span class="var-type">object Default</span>
+					<a href="#$dbh" title="details" class="var-name">$dbh</a>
 				</div>
 																<div class="var-title">
 					<span class="var-type">int</span>
@@ -275,7 +283,7 @@
 		</div>
 		<div class="info-box-body">			
 			<div class="method-summary">
-																																																																																																																																																																												
+																																																																																																																																																																																				
 												<div class="method-definition">
 											<span class="method-result">ezSQLcore</span>
 										<a href="#__construct" title="details" class="method-name">__construct</a>
@@ -339,6 +347,11 @@
 																<div class="method-definition">
 											<span class="method-result">void</span>
 										<a href="#hide_errors" title="details" class="method-name">hide_errors</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">boolean</span>
+										<a href="#isConnected" title="details" class="method-name">isConnected</a>
 										()
 									</div>
 																<div class="method-definition">
@@ -539,6 +552,52 @@
 		
 
 </div>
+<a name="var$connected" id="$connected"><!-- --></A>
+<div class="evenrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">boolean</span>
+			<span class="var-name">$connected</span>
+			 = <span class="var-default"> false</span>			(line <span class="line-number">184</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Whether the database connection is established, or not</p>
+	<ul class="tags">
+				<li><span class="field">var:</span> Default is false</li>
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$dbh" id="$dbh"><!-- --></A>
+<div class="oddrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">object Default</span>
+			<span class="var-name">$dbh</span>
+			 = <span class="var-default"> null</span>			(line <span class="line-number">178</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">The database connection object</p>
+	<ul class="tags">
+				<li><span class="field">var:</span> is null</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
 <a name="var$db_connect_time" id="$db_connect_time"><!-- --></A>
 <div class="evenrow">
 
@@ -615,7 +674,7 @@
 		<span class="var-title">
 			<span class="var-type">boolean</span>
 			<span class="var-name">$debug_echo_is_on</span>
-			 = <span class="var-default"> true</span>			(line <span class="line-number">180</span>)
+			 = <span class="var-default"> true</span>			(line <span class="line-number">192</span>)
 		</span>
 	</div>
 
@@ -954,7 +1013,7 @@
 <div class="oddrow">
 	
 	<div class="method-header">
-		<span class="method-title">Constructor __construct</span> (line <span class="line-number">185</span>)
+		<span class="method-title">Constructor __construct</span> (line <span class="line-number">197</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -977,34 +1036,34 @@
 		<div class="notes">Redefined in descendants as:</div>
 		<ul class="redefinitions">
 					<li>
-				<a href="../ezSQL/ezSQL_sqlite.html#method__construct">ezSQL_sqlite::__construct()</a>
-								: Constructor - allow the user to perform a qucik connect at the same time  as initialising the ezSQL_sqlite class
+				<a href="../ezSQL/ezSQL_postgresql.html#method__construct">ezSQL_postgresql::__construct()</a>
+								: Constructor - allow the user to perform a qucik connect at the same time  as initialising the ezSQL_postgresql class
 							</li>
 					<li>
-				<a href="../ezSQL/ezSQL_sybase.html#method__construct">ezSQL_sybase::__construct()</a>
+				<a href="../ezSQL/ezSQL_codeigniter.html#method__construct">ezSQL_codeigniter::__construct()</a>
 							</li>
 					<li>
 				<a href="../ezSQL/ezSQL_mssql.html#method__construct">ezSQL_mssql::__construct()</a>
 								: Constructor - allow the user to perform a qucik connect at the same time  as initialising the ezSQL_mssql class
 							</li>
 					<li>
-				<a href="../ezSQL/ezSQL_mysql.html#method__construct">ezSQL_mysql::__construct()</a>
-								: Constructor - allow the user to perform a qucik connect at the same time  as initialising the ezSQL_mysql class
+				<a href="../ezSQL/ezSQL_pdo.html#method__construct">ezSQL_pdo::__construct()</a>
+								: Constructor - allow the user to perform a qucik connect at the same time  as initialising the ezSQL_sqlite class
+							</li>
+					<li>
+				<a href="../ezSQL/ezSQL_sybase.html#method__construct">ezSQL_sybase::__construct()</a>
 							</li>
 					<li>
 				<a href="../ezSQL/ezSQL_oracle8_9.html#method__construct">ezSQL_oracle8_9::__construct()</a>
 								: Constructor - allow the user to perform a qucik connect at the same time  as initialising the ezSQL_oracle8_9 class
 							</li>
 					<li>
-				<a href="../ezSQL/ezSQL_pdo.html#method__construct">ezSQL_pdo::__construct()</a>
+				<a href="../ezSQL/ezSQL_sqlite.html#method__construct">ezSQL_sqlite::__construct()</a>
 								: Constructor - allow the user to perform a qucik connect at the same time  as initialising the ezSQL_sqlite class
 							</li>
 					<li>
-				<a href="../ezSQL/ezSQL_postgresql.html#method__construct">ezSQL_postgresql::__construct()</a>
-								: Constructor - allow the user to perform a qucik connect at the same time  as initialising the ezSQL_postgresql class
-							</li>
-					<li>
-				<a href="../ezSQL/ezSQL_codeigniter.html#method__construct">ezSQL_codeigniter::__construct()</a>
+				<a href="../ezSQL/ezSQL_mysql.html#method__construct">ezSQL_mysql::__construct()</a>
+								: Constructor - allow the user to perform a qucik connect at the same time  as initialising the ezSQL_mysql class
 							</li>
 				</ul>
 	</div>
@@ -1012,7 +1071,7 @@
 <div class="evenrow">
 	
 	<div class="method-header">
-		<span class="method-title">debug</span> (line <span class="line-number">508</span>)
+		<span class="method-title">debug</span> (line <span class="line-number">520</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -1043,7 +1102,7 @@
 <div class="oddrow">
 	
 	<div class="method-header">
-		<span class="method-title">donation</span> (line <span class="line-number">598</span>)
+		<span class="method-title">donation</span> (line <span class="line-number">610</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -1068,7 +1127,7 @@
 <div class="evenrow">
 	
 	<div class="method-header">
-		<span class="method-title">dumpvar</span> (line <span class="line-number">496</span>)
+		<span class="method-title">dumpvar</span> (line <span class="line-number">508</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -1098,7 +1157,7 @@
 <div class="oddrow">
 	
 	<div class="method-header">
-		<span class="method-title">flush</span> (line <span class="line-number">223</span>)
+		<span class="method-title">flush</span> (line <span class="line-number">235</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -1122,7 +1181,7 @@
 <div class="evenrow">
 	
 	<div class="method-header">
-		<span class="method-title">get_cache</span> (line <span class="line-number">423</span>)
+		<span class="method-title">get_cache</span> (line <span class="line-number">435</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -1151,7 +1210,7 @@
 <div class="oddrow">
 	
 	<div class="method-header">
-		<span class="method-title">get_col</span> (line <span class="line-number">300</span>)
+		<span class="method-title">get_col</span> (line <span class="line-number">312</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -1183,7 +1242,7 @@
 <div class="evenrow">
 	
 	<div class="method-header">
-		<span class="method-title">get_col_info</span> (line <span class="line-number">370</span>)
+		<span class="method-title">get_col_info</span> (line <span class="line-number">382</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -1215,7 +1274,7 @@
 <div class="oddrow">
 	
 	<div class="method-header">
-		<span class="method-title">get_results</span> (line <span class="line-number">326</span>)
+		<span class="method-title">get_results</span> (line <span class="line-number">338</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -1247,7 +1306,7 @@
 <div class="evenrow">
 	
 	<div class="method-header">
-		<span class="method-title">get_row</span> (line <span class="line-number">265</span>)
+		<span class="method-title">get_row</span> (line <span class="line-number">277</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -1282,7 +1341,7 @@
 <div class="oddrow">
 	
 	<div class="method-header">
-		<span class="method-title">get_set</span> (line <span class="line-number">675</span>)
+		<span class="method-title">get_set</span> (line <span class="line-number">687</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -1312,7 +1371,7 @@
 <div class="evenrow">
 	
 	<div class="method-header">
-		<span class="method-title">get_var</span> (line <span class="line-number">239</span>)
+		<span class="method-title">get_var</span> (line <span class="line-number">251</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -1348,7 +1407,7 @@
 <div class="oddrow">
 	
 	<div class="method-header">
-		<span class="method-title">hide_errors</span> (line <span class="line-number">216</span>)
+		<span class="method-title">hide_errors</span> (line <span class="line-number">228</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -1368,11 +1427,35 @@
 		
 			
 	</div>
-<a name="methodregister_error" id="register_error"><!-- --></a>
+<a name="methodisConnected" id="isConnected"><!-- --></a>
 <div class="evenrow">
 	
 	<div class="method-header">
-		<span class="method-title">register_error</span> (line <span class="line-number">194</span>)
+		<span class="method-title">isConnected</span> (line <span class="line-number">713</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns, whether a database connection is established, or not</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">boolean</span>
+		<span class="method-name">
+			isConnected
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodregister_error" id="register_error"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">register_error</span> (line <span class="line-number">206</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -1398,10 +1481,10 @@
 			
 	</div>
 <a name="methodshow_errors" id="show_errors"><!-- --></a>
-<div class="oddrow">
+<div class="evenrow">
 	
 	<div class="method-header">
-		<span class="method-title">show_errors</span> (line <span class="line-number">209</span>)
+		<span class="method-title">show_errors</span> (line <span class="line-number">221</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -1422,10 +1505,10 @@
 			
 	</div>
 <a name="methodstore_cache" id="store_cache"><!-- --></a>
-<div class="evenrow">
+<div class="oddrow">
 	
 	<div class="method-header">
-		<span class="method-title">store_cache</span> (line <span class="line-number">393</span>)
+		<span class="method-title">store_cache</span> (line <span class="line-number">405</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -1454,10 +1537,10 @@
 			
 	</div>
 <a name="methodtimer_elapsed" id="timer_elapsed"><!-- --></a>
-<div class="oddrow">
+<div class="evenrow">
 	
 	<div class="method-header">
-		<span class="method-title">timer_elapsed</span> (line <span class="line-number">636</span>)
+		<span class="method-title">timer_elapsed</span> (line <span class="line-number">648</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -1483,10 +1566,10 @@
 			
 	</div>
 <a name="methodtimer_get_cur" id="timer_get_cur"><!-- --></a>
-<div class="evenrow">
+<div class="oddrow">
 	
 	<div class="method-header">
-		<span class="method-title">timer_get_cur</span> (line <span class="line-number">616</span>)
+		<span class="method-title">timer_get_cur</span> (line <span class="line-number">628</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -1507,10 +1590,10 @@
 			
 	</div>
 <a name="methodtimer_start" id="timer_start"><!-- --></a>
-<div class="oddrow">
+<div class="evenrow">
 	
 	<div class="method-header">
-		<span class="method-title">timer_start</span> (line <span class="line-number">626</span>)
+		<span class="method-title">timer_start</span> (line <span class="line-number">638</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -1536,10 +1619,10 @@
 			
 	</div>
 <a name="methodtimer_update_global" id="timer_update_global"><!-- --></a>
-<div class="evenrow">
+<div class="oddrow">
 	
 	<div class="method-header">
-		<span class="method-title">timer_update_global</span> (line <span class="line-number">645</span>)
+		<span class="method-title">timer_update_global</span> (line <span class="line-number">657</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -1565,10 +1648,10 @@
 			
 	</div>
 <a name="methodvardump" id="vardump"><!-- --></a>
-<div class="oddrow">
+<div class="evenrow">
 	
 	<div class="method-header">
-		<span class="method-title">vardump</span> (line <span class="line-number">456</span>)
+		<span class="method-title">vardump</span> (line <span class="line-number">468</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -1614,7 +1697,7 @@
 					</div>
 		<div class="info-box-body">
 			<a name="constARRAY_A" id="ARRAY_A"><!-- --></A>
-<div class="evenrow">
+<div class="oddrow">
 
 	<div class="const-header">
 		<span class="const-title">
@@ -1630,7 +1713,7 @@
 	
 </div>
 <a name="constARRAY_N" id="ARRAY_N"><!-- --></A>
-<div class="oddrow">
+<div class="evenrow">
 
 	<div class="const-header">
 		<span class="const-title">
@@ -1646,7 +1729,7 @@
 	
 </div>
 <a name="constEZSQL_VERSION" id="EZSQL_VERSION"><!-- --></A>
-<div class="evenrow">
+<div class="oddrow">
 
 	<div class="const-header">
 		<span class="const-title">
@@ -1662,7 +1745,7 @@
 	
 </div>
 <a name="constOBJECT" id="OBJECT"><!-- --></A>
-<div class="oddrow">
+<div class="evenrow">
 
 	<div class="const-header">
 		<span class="const-title">
@@ -1682,7 +1765,7 @@
 	</div>
 
 	<p class="notes" id="credit">
-		Documentation generated on Sun, 01 Apr 2012 23:51:54 +0200 by <a href="http://www.phpdoc.org" target="_blank">phpDocumentor 1.4.4</a>
+		Documentation generated on Fri, 06 Apr 2012 01:26:18 +0200 by <a href="http://www.phpdoc.org" target="_blank">phpDocumentor 1.4.4</a>
 	</p>
 	</div></body>
 </html>

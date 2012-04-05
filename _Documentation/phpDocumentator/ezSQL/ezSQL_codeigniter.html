@@ -33,7 +33,7 @@
 				<li><span class="field">license:</span> FREE</li>
 			</ul>
 		<p class="notes">
-			Located in <a class="field" href="_codeigniter---Ezsql_codeigniter.php.html">/codeigniter/Ezsql_codeigniter.php</a> (line <span class="field">14</span>)
+			Located in <a class="field" href="_codeigniter---Ezsql_codeigniter.php.html">/codeigniter/Ezsql_codeigniter.php</a> (line <span class="field">15</span>)
 		</p>
 		
 				
@@ -60,9 +60,13 @@
 					</div>
 		<div class="info-box-body">
 			<div class="var-summary">
-																								<div class="var-title">
-					<span class="var-type">mixed</span>
+																																<div class="var-title">
+					<span class="var-type">boolean</span>
 					<a href="#$debug" title="details" class="var-name">$debug</a>
+				</div>
+																<div class="var-title">
+					<span class="var-type">boolean</span>
+					<a href="#$show_errors" title="details" class="var-name">$show_errors</a>
 				</div>
 											</div>
 		</div>
@@ -118,18 +122,43 @@
 					</div>
 		<div class="info-box-body">
 			<a name="var$debug" id="$debug"><!-- --></A>
-<div class="evenrow">
+<div class="oddrow">
 
 	<div class="var-header">
 		<span class="var-title">
-			<span class="var-type">mixed</span>
+			<span class="var-type">boolean</span>
 			<span class="var-name">$debug</span>
-			 = <span class="var-default"> true</span>			(line <span class="line-number">17</span>)
+			 = <span class="var-default"> true</span>			(line <span class="line-number">21</span>)
 		</span>
 	</div>
 
 	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Run in debug mode</p>
 	<ul class="tags">
+				<li><span class="field">var:</span> Default is true</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$show_errors" id="$show_errors"><!-- --></A>
+<div class="evenrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">boolean</span>
+			<span class="var-name">$show_errors</span>
+			 = <span class="var-default"> true</span>			(line <span class="line-number">27</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Show errors</p>
+	<ul class="tags">
+				<li><span class="field">var:</span> Default is true</li>
 				<li><span class="field">access:</span> public</li>
 			</ul>
 	
@@ -159,6 +188,12 @@
 							</span>
 													<span class="var-title">
 								<span class="var-name"><a href="../ezSQL/ezSQLcore.html#var$col_info">ezSQLcore::$col_info</a></span><br>
+							</span>
+													<span class="var-title">
+								<span class="var-name"><a href="../ezSQL/ezSQLcore.html#var$connected">ezSQLcore::$connected</a></span><br>
+							</span>
+													<span class="var-title">
+								<span class="var-name"><a href="../ezSQL/ezSQLcore.html#var$dbh">ezSQLcore::$dbh</a></span><br>
 							</span>
 													<span class="var-title">
 								<span class="var-name"><a href="../ezSQL/ezSQLcore.html#var$db_connect_time">ezSQLcore::$db_connect_time</a></span><br>
@@ -234,7 +269,7 @@
 <div class="oddrow">
 	
 	<div class="method-header">
-		<span class="method-title">Constructor __construct</span> (line <span class="line-number">23</span>)
+		<span class="method-title">Constructor __construct</span> (line <span class="line-number">33</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -263,7 +298,7 @@
 <div class="evenrow">
 	
 	<div class="method-header">
-		<span class="method-title">escape</span> (line <span class="line-number">154</span>)
+		<span class="method-title">escape</span> (line <span class="line-number">164</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -295,7 +330,7 @@
 <div class="oddrow">
 	
 	<div class="method-header">
-		<span class="method-title">query</span> (line <span class="line-number">39</span>)
+		<span class="method-title">query</span> (line <span class="line-number">49</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -338,6 +373,7 @@
 													<span class="method-name"><a href="../ezSQL/ezSQLcore.html#methodget_set">ezSQLcore::get_set()</a></span><br>
 													<span class="method-name"><a href="../ezSQL/ezSQLcore.html#methodget_var">ezSQLcore::get_var()</a></span><br>
 													<span class="method-name"><a href="../ezSQL/ezSQLcore.html#methodhide_errors">ezSQLcore::hide_errors()</a></span><br>
+													<span class="method-name"><a href="../ezSQL/ezSQLcore.html#methodisConnected">ezSQLcore::isConnected()</a></span><br>
 													<span class="method-name"><a href="../ezSQL/ezSQLcore.html#methodregister_error">ezSQLcore::register_error()</a></span><br>
 													<span class="method-name"><a href="../ezSQL/ezSQLcore.html#methodshow_errors">ezSQLcore::show_errors()</a></span><br>
 													<span class="method-name"><a href="../ezSQL/ezSQLcore.html#methodstore_cache">ezSQLcore::store_cache()</a></span><br>
@@ -387,7 +423,7 @@
 	</div>
 
 	<p class="notes" id="credit">
-		Documentation generated on Sun, 01 Apr 2012 23:51:54 +0200 by <a href="http://www.phpdoc.org" target="_blank">phpDocumentor 1.4.4</a>
+		Documentation generated on Fri, 06 Apr 2012 01:26:19 +0200 by <a href="http://www.phpdoc.org" target="_blank">phpDocumentor 1.4.4</a>
 	</p>
 	</div></body>
 </html>
