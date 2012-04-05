@@ -54,7 +54,7 @@ class ezSQL_postgresql extends ezSQLcore
      * TCP/IP port of PostgreSQL
      * @var string Default is PostgreSQL default port 5432
      */
-    private $port = '5432';
+    private $dbport = '5432';
 
     /**
      * Show errors
@@ -71,10 +71,10 @@ class ezSQL_postgresql extends ezSQLcore
      * @param string $dbname The name of the database
      * @param string $dbhost The host name or IP address of the database server.
      *                       Default is localhost
-     * @param string $port The database TCP/IP port
-     *                     Default is PostgreSQL default port 5432
+     * @param string $dbport The database TCP/IP port
+     *                       Default is PostgreSQL default port 5432
      */
-    public function __construct($dbuser='', $dbpassword='', $dbname='', $dbhost='localhost', $port='5432') {
+    public function __construct($dbuser='', $dbpassword='', $dbname='', $dbhost='localhost', $dbport='5432') {
         if ( ! function_exists ('pg_connect') ) {
             throw new Exception('<b>Fatal Error:</b> ezSQL_postgresql requires PostgreSQL Lib to be compiled and or linked in to the PHP engine');
         }
@@ -88,7 +88,7 @@ class ezSQL_postgresql extends ezSQLcore
         $this->dbpassword = $dbpassword;
         $this->dbname = $dbname;
         $this->dbhost = $dbhost;
-        $this->port = $port;
+        $this->dbport = $dbport;
     } // __construct
 
     /**
@@ -101,12 +101,12 @@ class ezSQL_postgresql extends ezSQLcore
      * @param string $dbname The name of the database
      * @param string $dbhost The host name or IP address of the database server.
      *                       Default is localhost
-     * @param string $port The database TCP/IP port
+     * @param string $dbport The database TCP/IP port
      *                     Default is PostgreSQL default port 5432
      * @return boolean
      */
-    function quick_connect($dbuser='', $dbpassword='', $dbname='', $dbhost='localhost', $port='5432') {
-        if ( ! $this->connect($dbuser, $dbpassword, $dbname, $dbhost, $port, true) ) ;
+    function quick_connect($dbuser='', $dbpassword='', $dbname='', $dbhost='localhost', $dbport='5432') {
+        if ( ! $this->connect($dbuser, $dbpassword, $dbname, $dbhost, $dbport, true) ) ;
         else if ( ! $this->select($dbname) );
         
         return $this->connected;
@@ -124,28 +124,28 @@ class ezSQL_postgresql extends ezSQLcore
      * @param string $dbname The name of the database
      * @param string $dbhost The host name or IP address of the database server.
      *                       Default is localhost
-     * @param string $port The database TCP/IP port
+     * @param string $dbport The database TCP/IP port
      *                      Default is PostgreSQL default port 5432
      * @return boolean
      */
-    public function connect($dbuser='', $dbpassword='', $dbname='', $dbhost='localhost', $port='5432') {
+    public function connect($dbuser='', $dbpassword='', $dbname='', $dbhost='localhost', $dbport='5432') {
         $this->connected = false;
+        
+        $this->dbuser = empty($dbuser) ? $this->dbuser : $dbuser;
+        $this->dbpassword = empty($dbpassword) ? $this->dbpassword : $dbpassword;
+        $this->dbname = empty($dbname) ? $this->dbname : $dbname;
+        $this->dbhost = $dbhost!='localhost' ? $this->dbhost : $dbhost;
+        $this->dbport = $dbport!='5432' ? $dbport : $this->dbport;
 
-        if ( ! $dbuser ) {
+        if ( !$this->dbuser ) {
             // Must have a user and a password
             $this->register_error($this->ezsql_postgresql_str[1] . ' in ' . __FILE__ . ' on line ' . __LINE__);
             $this->show_errors ? trigger_error($this->ezsql_postgresql_str[1], E_USER_WARNING) : null;
-        } else if ( ! $this->dbh = pg_connect("host=$dbhost port=$port dbname=$dbname user=$dbuser password=$dbpassword", true) ) {
+        } else if ( ! $this->dbh = pg_connect("host=$this->dbhost port=$this->dbport dbname=$this->dbname user=$this->dbuser password=$this->dbpassword", true) ) {
             // Try to establish the server database handle
             $this->register_error($this->ezsql_postgresql_str[2] . ' in ' . __FILE__ . ' on line ' . __LINE__);
             $this->show_errors ? trigger_error($this->ezsql_postgresql_str[2], E_USER_WARNING) : null;
         } else {
-            $this->dbuser = $dbuser;
-            $this->dbpassword = $dbpassword;
-            $this->dbhost = $dbhost;
-            $this->dbname = $dbname;
-            $this->port = $port;
-
             $this->connected = true;
         }
 
@@ -161,13 +161,14 @@ class ezSQL_postgresql extends ezSQLcore
      * @param string $dbname The name of the database
      * @param string $dbhost The host name or IP address of the database server.
      *                       Default is localhost
-     * @param string $port The database TCP/IP port
+     * @param string $dbport The database TCP/IP port
      *                      Default is PostgreSQL default port 5432
      * @return boolean
      */
-    public function select($dbuser='', $dbpassword='', $dbname='', $dbhost='localhost', $port='5432') {
-        if ( ! $this->connect($dbuser, $dbpassword, $dbname, $dbhost, $port, true) ) ;
-        else if ( ! $this->select($dbname) );
+    public function select($dbuser='', $dbpassword='', $dbname='', $dbhost='localhost', $dbport='5432') {
+        $this->disconnect();
+        
+        $this->connect($dbuser, $dbpassword, $dbname, $dbhost, $dbport);
 
         return $this->connected;
     } // select
@@ -200,7 +201,7 @@ class ezSQL_postgresql extends ezSQLcore
      * @return string
      */
     public function showTables() {
-        return "table_name FROM information_schema.tables WHERE table_schema = '$this->dbname' and table_type='BASE TABLE'";
+        return "SELECT table_name FROM information_schema.tables WHERE table_schema = '$this->dbname' AND table_type='BASE TABLE'";
     } // showTables
 
     /**
@@ -210,7 +211,7 @@ class ezSQL_postgresql extends ezSQLcore
      * @return string
      */
     public function descTable($tbl_name) {
-        return "ordinal_position, column_name, data_type, column_default, is_nullable, character_maximum_length, numeric_precision FROM information_schema.columns WHERE table_name = '$tbl_name' AND table_schema='$this->dbname' ORDER BY ordinal_position";
+        return "SELECT ordinal_position, column_name, data_type, column_default, is_nullable, character_maximum_length, numeric_precision FROM information_schema.columns WHERE table_name = '$tbl_name' AND table_schema='$this->dbname' ORDER BY ordinal_position";
     } // descTable
 
     /**
@@ -219,7 +220,7 @@ class ezSQL_postgresql extends ezSQLcore
      * @return string
      */
     public function showDatabases() {
-        return "datname from pg_database WHERE datname NOT IN ('template0', 'template1') ORDER BY 1";
+        return "SELECT datname FROM pg_database WHERE datname NOT IN ('template0', 'template1') ORDER BY 1";
     } // showDatabases
 
     /**
@@ -253,8 +254,8 @@ class ezSQL_postgresql extends ezSQLcore
         }
 
         // If there is no existing database connection then try to connect
-        if ( ! isset($this->dbh) || ! $this->dbh ) {
-            $this->connect($this->dbuser, $this->dbpassword, $this->dbname, $this->dbhost, $this->port);
+            if ( ! isset($this->dbh) || ! $this->dbh ) {
+            $this->connect($this->dbuser, $this->dbpassword, $this->dbname, $this->dbhost, $this->dbport);
         }
 
         // Perform the query via std postgresql_query function..
@@ -359,7 +360,7 @@ class ezSQL_postgresql extends ezSQLcore
      * @return string
      */
     public function getPort() {
-        return $this->port;
+        return $this->dbport;
     } // getPort
 
 } // ezSQL_postgresql
