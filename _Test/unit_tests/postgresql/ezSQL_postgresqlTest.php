@@ -44,7 +44,7 @@ class ezSQL_postgresqlTest extends PHPUnit_Framework_TestCase {
     /**
      * constant database port 
      */
-    const TEST_DB_PORT = '5434';
+    const TEST_DB_PORT = '5432';
     
     /**
      * @var ezSQL_postgresql
