@@ -128,7 +128,7 @@ class ezSQL_mysql extends ezSQLcore
         
         $this->dbuser = empty($dbuser) ? $this->dbuser : $dbuser;
         $this->dbpassword = empty($dbpassword) ? $this->dbpassword : $dbpassword;
-        $this->dbhost = empty($dbhost) ? $this->dbhost : $dbhost;
+        $this->dbhost = $dbhost!='localhost' ? $this->dbhost : $dbhost;
         $this->charset = empty($charset) ? $this->charset : $charset;
        
         // Must have a user and a password
