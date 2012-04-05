@@ -172,6 +172,18 @@ class ezSQLcore
     public $profile_times    = array();
 
     /**
+     * The database connection object
+     * @var object Default is null
+     */
+    public $dbh = null;
+    
+    /**
+     * Whether the database connection is established, or not
+     * @var boolean Default is false
+     */
+    protected $connected = false;
+
+    /**
      * == TJH == default now needed for echo of debug function
      * The default for returning errors, turn it of, if you are not
      * interested in seeing your database errors
@@ -693,4 +705,12 @@ class ezSQLcore
         return substr($sql, 0, -2);
     } // get_set
 
+    /**
+     * Returns, whether a database connection is established, or not
+     * 
+     * @return boolean
+     */
+    public function isConnected() {
+        return $this->connected;
+    } // isConnected
 } // ezSQLcore
