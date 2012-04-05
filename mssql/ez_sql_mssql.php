@@ -107,11 +107,10 @@ class ezSQL_mssql extends ezSQLcore
      * @return boolean
      */
     public function quick_connect($dbuser='', $dbpassword='', $dbname='', $dbhost='localhost') {
-        $return_val = false;
         if ( ! $this->connect($dbuser, $dbpassword, $dbhost,true) ) ;
-        else if ( ! $this->select($dbname) ) ;
-        else $return_val = true;
-        return $return_val;
+        else if ( ! $this->select($dbname) );
+
+        return $this->connected;
     } // quick_connect
 
     /**
@@ -124,7 +123,7 @@ class ezSQL_mssql extends ezSQLcore
      * @return boolean
      */
     public function connect($dbuser='', $dbpassword='', $dbhost='localhost') {
-        $return_val = false;
+        $this->connected = false;
 
         // Must have a user and a password
         if ( ! $dbuser )
@@ -139,7 +138,7 @@ class ezSQL_mssql extends ezSQLcore
             $this->dbuser = $dbuser;
             $this->dbpassword = $dbpassword;
             $this->dbhost = $dbhost;
-            $return_val = true;
+            $this->connected = true;
         }
 
         return $return_val;
@@ -170,10 +169,10 @@ class ezSQL_mssql extends ezSQLcore
             $this->show_errors ? trigger_error($str, E_USER_WARNING) : null;
         } else {
             $this->dbname = $dbname;
-            $return_val = true;
+            $this->connected = true;
         }
 
-        return $return_val;
+        return $this->connected;
     } // select
 
     /**
