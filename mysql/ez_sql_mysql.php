@@ -304,6 +304,7 @@ class ezSQL_mysql extends ezSQLcore
     public function disconnect() {
         if ( $this->dbh ) {
             mysql_close($this->dbh);
+            $this->connected = false;
         }
         
         $this->connected = false;

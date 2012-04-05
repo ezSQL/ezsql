@@ -340,6 +340,7 @@ class ezSQL_postgresql extends ezSQLcore
     public function disconnect() {
         if ( $this->dbh ) {
             pg_close($this->dbh);
+            $this->connected = false;
         }
     } // disconnect
 

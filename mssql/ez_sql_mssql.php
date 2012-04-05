@@ -409,6 +409,7 @@ class ezSQL_mssql extends ezSQLcore
     public function disconnect() {
         if ( $this->dbh ) {
             $this->dbh = null;
+            $this->connected = false;
         }
     } // disconnect
 
