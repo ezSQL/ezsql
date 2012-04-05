@@ -32,13 +32,13 @@ class ezSQL_pdo extends ezSQLcore
      * The database user name
      * @var string
      */
-    private $user;
+    private $dbuser;
 
     /**
      * The database password
      * @var string
      */
-    private $password;
+    private $dbpassword;
 
     /**
      * Show errors
@@ -70,7 +70,8 @@ class ezSQL_pdo extends ezSQLcore
         // Turn on track errors
         ini_set('track_errors', 1);
 
-        if ( $dsn && $user && $password ) {
+        if ( !empty($dsn) && !empty($user) && !empty($password) ) {
+            print "<p>constructor: $dsn</p>";
             $this->connect($dsn, $user, $password);
         }
     } // __construct
@@ -80,24 +81,28 @@ class ezSQL_pdo extends ezSQLcore
      *
      * @param string $dsn The connection parameter string
      *                    Default is empty string
-     * @param string $user The database user name
-     *                     Default is empty string
-     * @param string $password The database password
-     *                         Default is empty string
+     * @param string $dbuser The database user name
+     *                       Default is empty string
+     * @param string $dbpassword The database password
+     *                           Default is empty string
      * @return boolean
      */
-    public function connect($dsn='', $user='', $password='') {
+    public function connect($dsn='', $dbuser='', $dbpassword='') {
         $this->connected = false;
 
+        $this->dbuser = empty($dbuser) ? $this->dbuser : $dbuser;
+        $this->dbpassword = empty($dbpassword) ? $this->dbpassword : $dbpassword;
+        $this->dsn = empty($dsn) ? $this->dsn : $dsn;
+
         // Must have a user and a password
-        if ( ! $dsn || ! $user || ! $password ) {
+        if ( empty($this->dsn) || empty($this->dbuser) || empty($this->dbpassword) ) {
             $this->register_error($this->ezsql_pdo_str[1] . ' in ' . __FILE__ . ' on line ' . __LINE__);
             $this->show_errors ? trigger_error($this->ezsql_pdo_str[1], E_USER_WARNING) : null;
         }
 
         // Establish PDO connection
         try  {
-            $this->dbh = new PDO($dsn, $user, $password);
+            $this->dbh = new PDO($this->dsn, $this->dbuser, $this->dbpassword);
             $this->connected = true;
         }
         catch (PDOException $e) {
@@ -158,12 +163,12 @@ class ezSQL_pdo extends ezSQLcore
      */
     public function escape($str) {
         // If there is no existing database connection then try to connect
-        if ( ! isset($this->dbh) || ! $this->dbh )
-        {
+        if ( ! isset($this->dbh) || ! $this->dbh ) {
             $this->connect($this->dsn, $this->user, $this->password);
         }
 
-        $return_val = $this->dbh->quote($str);
+        // pdo quote adds ' at the beginning and at the end, remove them for standard behavior
+        $return_val = substr($this->dbh->quote($str), 1, -1);
 
         return $return_val;
     } // escape
