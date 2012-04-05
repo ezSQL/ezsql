@@ -154,8 +154,6 @@ class ezSQL_mysql extends ezSQLcore
      * @return boolean 
      */
     public function select($dbname='') {
-        $this->connected = false;
-
         if ( ! $dbname ) {
             // Must have a database name
             $this->register_error($this->ezsql_mysql_str[3] . ' in ' . __FILE__ . ' on line ' . __LINE__);
@@ -164,7 +162,7 @@ class ezSQL_mysql extends ezSQLcore
             // Must have an active database connection
             $this->register_error($this->ezsql_mysql_str[4] . ' in ' . __FILE__ . ' on line ' . __LINE__);
             $this->show_errors ? trigger_error($this->ezsql_mysql_str[4], E_USER_WARNING) : null;
-        } else if ( !@mysql_select_db($dbname,$this->dbh) ) {
+        } else if ( !@mysql_select_db($dbname, $this->dbh) ) {
             // Try to connect to the database
             // Try to get error supplied by mysql if not use our own
             if ( !$str = @mysql_error($this->dbh)) {
