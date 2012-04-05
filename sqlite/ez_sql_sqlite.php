@@ -65,7 +65,7 @@ class ezSQL_sqlite extends ezSQLcore
      * @return boolean 
      */
     public function connect($dbpath='', $dbname='') {
-        $return_val = false;
+        $this->connected = false;
 
         // Must have a user and a password
         if ( ! $dbpath || ! $dbname ) {
@@ -75,11 +75,11 @@ class ezSQL_sqlite extends ezSQLcore
             // Try to establish the server database handle
             $this->register_error($php_errormsg);
             $this->show_errors ? trigger_error($php_errormsg, E_USER_WARNING) : null;
+        } else {
+            $this->connected = true;
         }
-        else
-            $return_val = true;
 
-        return $return_val;			
+        return $this->connected;			
     } // connect
 
     /**
@@ -219,7 +219,10 @@ class ezSQL_sqlite extends ezSQLcore
      * Close the database connection
      */
     public function disconnect(){
-         $this->dbh = null;
+        if ($this->dbh) {
+            $this->dbh = null;
+            $this->connected = false;
+        }
      } // disconnect
 
 } // ezSQL_sqlite
