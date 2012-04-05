@@ -87,7 +87,7 @@ class ezSQL_pdo extends ezSQLcore
      * @return boolean
      */
     public function connect($dsn='', $user='', $password='') {
-        $return_val = false;
+        $this->connected = false;
 
         // Must have a user and a password
         if ( ! $dsn || ! $user || ! $password ) {
@@ -98,18 +98,16 @@ class ezSQL_pdo extends ezSQLcore
         // Establish PDO connection
         try  {
             $this->dbh = new PDO($dsn, $user, $password);
-            $return_val = true;
+            $this->connected = true;
         }
         catch (PDOException $e) {
             $this->register_error($e->getMessage());
             $this->show_errors ? trigger_error($e->getMessage(), E_USER_WARNING) : null;
         }
 
-        if ( $return_val ) {
-            // Set information about an established database connection
-            $this->isConnected = true;
-        }
-        return $return_val;
+        $this->isConnected = $this->connected;
+
+        return $this->connected;
     } // connect
 
     /**
@@ -337,7 +335,10 @@ class ezSQL_pdo extends ezSQLcore
      * Close the database connection
      */
     public function disconnect(){
-         $this->dbh = null;
+        if ($this->dbh) {
+            $this->dbh = null;
+            $this->connected = false;
+        }
      } // disconnect
 
 } // ezSQL_pdo
