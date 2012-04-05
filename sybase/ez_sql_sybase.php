@@ -115,11 +115,10 @@ class ezSQL_sybase extends ezSQLcore
      * @return boolean
      */
     public function quick_connect($dbuser='', $dbpassword='', $dbname='', $dbhost='localhost') {
-        $return_val = false;
         if ( ! $this->connect($dbuser, $dbpassword, $dbhost,true) ) ;
         else if ( ! $this->select($dbname) ) ;
-        else $return_val = true;
-        return $return_val;
+
+        return $this->connected;
     } // quick_connect
 
     /**
@@ -134,7 +133,7 @@ class ezSQL_sybase extends ezSQLcore
      * @return boolean
      */
     public function connect($dbuser='', $dbpassword='', $dbhost='localhost') {
-        $return_val = false;
+        $this->connected = false;
 
         // Must have a user and a password
         if ( ! $dbuser ) {
@@ -148,10 +147,10 @@ class ezSQL_sybase extends ezSQLcore
             $this->dbuser = $dbuser;
             $this->dbpassword = $dbpassword;
             $this->dbhost = $dbhost;
-            $return_val = true;
+            $this->connected = true;
         }
 
-        return $return_val;
+        return $this->connected;
     } // connect
 
     /**********************************************************************
@@ -165,7 +164,7 @@ class ezSQL_sybase extends ezSQLcore
      * @return boolean
      */
     public function select($dbname='') {
-        $return_val = false;
+        $this->connected = false;
 
         // Must have a database name
         if ( ! $dbname ) {
@@ -183,10 +182,10 @@ class ezSQL_sybase extends ezSQLcore
             $this->show_errors ? trigger_error($str, E_USER_WARNING) : null;
         } else {
             $this->dbname = $dbname;
-            $return_val = true;
+            $this->connected = true;
         }
 
-        return $return_val;
+        return $this->connected;
     } // select
 
     /**
@@ -422,6 +421,7 @@ class ezSQL_sybase extends ezSQLcore
     public function disconnect() {
         if ( $this->dbh ) {
             $this->dbh = null;
+            $this->connected = false;
         }
     } // disconnect
 
