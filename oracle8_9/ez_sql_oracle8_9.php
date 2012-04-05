@@ -90,7 +90,7 @@ class ezSQL_oracle8_9 extends ezSQLcore
      * @return boolean
      */
     public function connect($dbuser='', $dbpassword='', $dbname='') {
-        $return_val = false;
+        $this->connected = false;
 
         // Must have a user and a password
         if ( ! $dbuser || ! $dbpassword || ! $dbname ) {
@@ -102,16 +102,14 @@ class ezSQL_oracle8_9 extends ezSQLcore
         {
             $this->register_error($php_errormsg);
             $this->show_errors ? trigger_error($php_errormsg,E_USER_WARNING) : null;
-        }
-        else
-        {
+        } else {
             $this->dbuser = $dbuser;
             $this->dbpassword = $dbpassword;
             $this->dbname = $dbname;
-            $return_val = true;
+            $this->connected = true;
         }
 
-        return $return_val;
+        return $this->connected;
     }
 
     /**
@@ -349,6 +347,7 @@ class ezSQL_oracle8_9 extends ezSQLcore
     public function disconnect() {
         if ( $this->dbh ) {
             $this->dbh = null;
+            $this->connected = false;
         }
     } // disconnect
 
