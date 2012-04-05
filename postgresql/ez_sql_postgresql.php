@@ -106,11 +106,10 @@ class ezSQL_postgresql extends ezSQLcore
      * @return boolean
      */
     function quick_connect($dbuser='', $dbpassword='', $dbname='', $dbhost='localhost', $port='5432') {
-        $return_val = false;
         if ( ! $this->connect($dbuser, $dbpassword, $dbname, $dbhost, $port, true) ) ;
-        else if ( ! $this->select($dbname) ) ;
-        else $return_val = true;
-        return $return_val;
+        else if ( ! $this->select($dbname) );
+        
+        return $this->connected;
     } // quick_connect
 
     /**********************************************************************
@@ -130,7 +129,7 @@ class ezSQL_postgresql extends ezSQLcore
      * @return boolean
      */
     public function connect($dbuser='', $dbpassword='', $dbname='', $dbhost='localhost', $port='5432') {
-        $return_val = false;
+        $this->connected = false;
 
         if ( ! $dbuser ) {
             // Must have a user and a password
@@ -147,10 +146,10 @@ class ezSQL_postgresql extends ezSQLcore
             $this->dbname = $dbname;
             $this->port = $port;
 
-            $return_val = true;
+            $this->connected = true;
         }
 
-        return $return_val;
+        return $this->connected;
     } // connect
 
     /**
@@ -167,11 +166,10 @@ class ezSQL_postgresql extends ezSQLcore
      * @return boolean
      */
     public function select($dbuser='', $dbpassword='', $dbname='', $dbhost='localhost', $port='5432') {
-        $return_val = false;
         if ( ! $this->connect($dbuser, $dbpassword, $dbname, $dbhost, $port, true) ) ;
-        else if ( ! $this->select($dbname) ) ;
-        else $return_val = true;
-        return $return_val;
+        else if ( ! $this->select($dbname) );
+
+        return $this->connected;
     } // select
 
     /**
