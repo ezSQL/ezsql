@@ -58,7 +58,7 @@ class ezSQL_pdoTest extends PHPUnit_Framework_TestCase {
     /**
      * constant string database port
      */
-    const TEST_DB_PORT = '5434';
+    const TEST_DB_PORT = '5432';
     
     /**
      * constant string path and file name of the SQLite test database
