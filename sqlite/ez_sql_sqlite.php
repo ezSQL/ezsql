@@ -73,8 +73,8 @@ class ezSQL_sqlite extends ezSQLcore
             $this->show_errors ? trigger_error($this->ezsql_sqlite_str[1], E_USER_WARNING) : null;
         }  else if ( ! $this->dbh = @sqlite_open($dbpath . $dbname) ) {
             // Try to establish the server database handle
-            $this->register_error($php_errormsg);
-            $this->show_errors ? trigger_error($php_errormsg, E_USER_WARNING) : null;
+            $this->register_error($e->getMessage());
+            $this->show_errors ? trigger_error($e->getMessage(), E_USER_WARNING) : null;
         } else {
             $this->connected = true;
         }
