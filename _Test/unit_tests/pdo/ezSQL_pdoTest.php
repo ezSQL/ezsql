@@ -128,7 +128,6 @@ class ezSQL_pdoTest extends PHPUnit_Framework_TestCase {
 
     /**
      * @covers ezSQL_pdo::query
-     * @todo Implement testQuery().
      */
     public function testQuery() {
         $this->assertTrue($this->object->connect('pgsql:host=' . self::TEST_DB_HOST . ';dbname=' . self::TEST_DB_NAME . ';port=' . self::TEST_DB_PORT, self::TEST_DB_USER, self::TEST_DB_PASSWORD));

@@ -115,7 +115,6 @@ class ezSQL_mysqlTest extends PHPUnit_Framework_TestCase {
 
     /**
      * @covers ezSQL_mysql::query
-     * @todo Implement testQuery().
      */
     public function testQuery() {
         $this->object->connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD);
