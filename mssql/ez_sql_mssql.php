@@ -107,7 +107,7 @@ class ezSQL_mssql extends ezSQLcore
      * @return boolean
      */
     public function quick_connect($dbuser='', $dbpassword='', $dbname='', $dbhost='localhost') {
-        if ( ! $this->connect($dbuser, $dbpassword, $dbhost,true) ) ;
+        if ( ! $this->connect($dbuser, $dbpassword, $dbhost) ) ;
         else if ( ! $this->select($dbname) );
 
         return $this->connected;
@@ -141,7 +141,7 @@ class ezSQL_mssql extends ezSQLcore
             $this->connected = true;
         }
 
-        return $return_val;
+        return $this->connected;
     } // connect
 
     /**
@@ -151,8 +151,6 @@ class ezSQL_mssql extends ezSQLcore
      * @return boolean
      */
     public function select($dbname='') {
-        $return_val = false;
-
         if ( ! $dbname ) {
             // Must have a database name
             $this->register_error($this->ezsql_mssql_str[3] . ' in ' . __FILE__ . ' on line ' . __LINE__);
@@ -272,22 +270,22 @@ class ezSQL_mssql extends ezSQLcore
 
             $get_errorcodeSql = "SELECT @@ERROR as errorcode";
             $error_res = @mssql_query($get_errorcodeSql, $this->dbh);
-            $errorCode = @mssql_result($error_res, 0, "errorcode");
+            $errorCode = @mssql_result($error_res, 0, 'errorcode');
 
             $get_errorMessageSql = "SELECT severity as errorSeverity, text as errorText FROM sys.messages  WHERE message_id = ".$errorCode  ;
             $errormessage_res =  @mssql_query($get_errorMessageSql, $this->dbh);
-            if($errormessage_res)
-            {
+            
+            if($errormessage_res) {
                 $errorMessage_Row = @mssql_fetch_row($errormessage_res);
                 $errorSeverity = $errorMessage_Row[0];
                 $errorMessage = $errorMessage_Row[1];
             }
 
-            $sqlError = "ErrorCode: ".$errorCode." ### Error Severity: ".$errorSeverity." ### Error Message: ".$errorMessage." ### Query: ".$query;
+            $sqlError = "ErrorCode: " . $errorCode . " ### Error Severity: " . $errorSeverity . " ### Error Message: ".$errorMessage." ### Query: " . $query;
 
             $is_insert = true;
             $this->register_error($sqlError);
-            $this->show_errors ? trigger_error($sqlError ,E_USER_WARNING) : null;
+            $this->show_errors ? trigger_error($sqlError, E_USER_WARNING) : null;
             return false;
         }
 
@@ -301,7 +299,7 @@ class ezSQL_mssql extends ezSQLcore
 
                 $identityresultset = @mssql_query("select SCOPE_IDENTITY()");
 
-                if ($identityresultset != false ) {
+                if ($identityresultset != false) {
                     $identityrow = @mssql_fetch_row($identityresultset);
                     $this->insert_id = $identityrow[0];
                 }
@@ -393,7 +391,7 @@ class ezSQL_mssql extends ezSQLcore
             $query = str_ireplace('SELECT ', 'SELECT TOP ' . $regs[3] . ' ', $query);
         } else if ( $regs[1] ) {
             $query  = str_ireplace('SELECT ', 'SELECT TOP ' . $regs[1] . ' ', $query);
-         }
+        }
 
         //replace unix_timestamp function. Doesn't work in MS-Sql
         $pattern = "unix_timestamp\(([^/]{0,})\)";
