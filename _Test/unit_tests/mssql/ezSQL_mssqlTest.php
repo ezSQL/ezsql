@@ -6,7 +6,7 @@ require_once dirname(__FILE__) . '/../../../mssql/ez_sql_mssql.php';
 /**
  * Test class for ezSQL_mssql.
  * Desc..: MS SQL Server component (part of ezSQL databse abstraction library)
- *
+ * 
  * @author  Justin Vincent (jv@jvmultimedia.com)
  * @author  Stefanie Janine Stoelting (mail@stefanie-stoelting.de)
  * @link    http://twitter.com/justinvincent
@@ -14,6 +14,8 @@ require_once dirname(__FILE__) . '/../../../mssql/ez_sql_mssql.php';
  * @package ezSQL
  * @subpackage unitTests
  * @license FREE / Donation (LGPL - You may do what you like with ezSQL - no exceptions.)
+ * @todo The connection to MS SQL Server is not tested by now. There might also
+ *       be tests done for different versions of SQL Server
  *
  */
 class ezSQL_mssqlTest extends PHPUnit_Framework_TestCase {
