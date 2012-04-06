@@ -151,7 +151,7 @@ class ezSQL_pdoTest extends PHPUnit_Framework_TestCase {
     } // testPosgreSQLDisconnect
 
     /**
-     * Here starts the PostgreSQL PDO unit test
+     * Here starts the MySQL PDO unit test
      */
 
     /**
