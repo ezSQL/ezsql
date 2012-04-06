@@ -21,6 +21,8 @@ require_once dirname(__FILE__) . '/../../../pdo/ez_sql_pdo.php';
  * @name    ezSQL_pdoTest
  * @uses    postgresql_test_db_tear_up.sql
  * @uses    postgresql_test_db_tear_down.sql
+ * @uses    mysql_test_db_tear_up.sql
+ * @uses    mysql_test_db_tear_down.sql
  * @package ezSQL
  * @subpackage unitTests
  * @license FREE / Donation (LGPL - You may do what you like with ezSQL - no exceptions.)
