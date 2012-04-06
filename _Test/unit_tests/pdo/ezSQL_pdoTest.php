@@ -157,6 +157,23 @@ class ezSQL_pdoTest extends PHPUnit_Framework_TestCase {
     } // testPosgreSQLDisconnect
 
     /**
+     * @covers ezSQL_pdo::get_set
+     */
+    public function testPostgreSQLGet_set() {
+        $expected = "test_var1 = '1', test_var2 = 'ezSQL test', test_var3 = 'This is''nt escaped.'";
+        
+        $params = array(
+            'test_var1' => 1,
+            'test_var2' => 'ezSQL test',
+            'test_var3' => "This is'nt escaped."
+        );
+        
+        $this->assertTrue($this->object->connect('pgsql:host=' . self::TEST_DB_HOST . ';dbname=' . self::TEST_DB_NAME . ';port=' . self::TEST_DB_PORT, self::TEST_DB_USER, self::TEST_DB_PASSWORD));
+
+        $this->assertequals($expected, $this->object->get_set($params));
+    } // testPostgreSQLGet_set
+     
+    /**
      * Here starts the MySQL PDO unit test
      */
 
@@ -242,6 +259,23 @@ class ezSQL_pdoTest extends PHPUnit_Framework_TestCase {
     } // testMySQLConnectWithOptions
 
     /**
+     * @covers ezSQL_pdo::get_set
+     */
+    public function testMySQLGet_set() {
+        $expected = "test_var1 = '1', test_var2 = 'ezSQL test', test_var3 = 'This is\'nt escaped.'";
+        
+        $params = array(
+            'test_var1' => 1,
+            'test_var2' => 'ezSQL test',
+            'test_var3' => "This is'nt escaped."
+        );
+        
+        $this->assertTrue($this->object->connect('mysql:host=' . self::TEST_DB_HOST . ';dbname=' . self::TEST_DB_NAME . ';port=' . self::TEST_DB_PORT, self::TEST_DB_USER, self::TEST_DB_PASSWORD));
+
+        $this->assertequals($expected, $this->object->get_set($params));
+    } // testMySQLGet_set
+     
+    /**
      * Here starts the SQLite PDO unit test
      */
 
@@ -315,4 +349,21 @@ class ezSQL_pdoTest extends PHPUnit_Framework_TestCase {
         $this->assertTrue(true);
     } // testSQLiteDisconnect
 
+    /**
+     * @covers ezSQL_pdo::get_set
+     */
+    public function testSQLiteGet_set() {
+        $expected = "test_var1 = '1', test_var2 = 'ezSQL test', test_var3 = 'This is''nt escaped.'";
+        
+        $params = array(
+            'test_var1' => 1,
+            'test_var2' => 'ezSQL test',
+            'test_var3' => "This is'nt escaped."
+        );
+        
+        $this->assertTrue($this->object->connect('sqlite:' . self::TEST_SQLITE_DB, '', '', array(), true));
+
+        $this->assertequals($expected, $this->object->get_set($params));
+    } // testSQLiteGet_set
+     
 } // ezSQL_pdoTest
