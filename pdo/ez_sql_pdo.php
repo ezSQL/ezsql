@@ -41,6 +41,12 @@ class ezSQL_pdo extends ezSQLcore
     private $dbpassword;
 
     /**
+     * The array for connection options, MySQL connection charset, for example
+     * @var array
+     */
+    private $options;
+
+    /**
      * Show errors
      * @var boolean Default is true
      */
@@ -56,8 +62,11 @@ class ezSQL_pdo extends ezSQLcore
      *                     Default is empty string
      * @param string $password The database password
      *                         Default is empty string
+     * @param array $options Array for setting connection options as MySQL
+     *                       charset for example
+     *                       Default is an empty array
      */
-    public function __construct($dsn='', $user='', $password='') {
+    public function __construct($dsn='', $user='', $password='', $options=array()) {
         if ( ! class_exists ('PDO') ) {
             throw new Exception('<b>Fatal Error:</b> ezSQL_sqlite requires PDO Lib to be compiled and or linked in to the PHP engine');
         }
@@ -72,7 +81,7 @@ class ezSQL_pdo extends ezSQLcore
 
         if ( !empty($dsn) && !empty($user) && !empty($password) ) {
             print "<p>constructor: $dsn</p>";
-            $this->connect($dsn, $user, $password);
+            $this->connect($dsn, $user, $password, $options);
         }
     } // __construct
 
@@ -85,14 +94,18 @@ class ezSQL_pdo extends ezSQLcore
      *                       Default is empty string
      * @param string $dbpassword The database password
      *                           Default is empty string
+     * @param array $options Array for setting connection options as MySQL
+     *                       charset for example
+     *                       Default is an empty array
      * @return boolean
      */
-    public function connect($dsn='', $dbuser='', $dbpassword='') {
+    public function connect($dsn='', $dbuser='', $dbpassword='', $options=array()) {
         $this->connected = false;
 
         $this->dbuser = empty($dbuser) ? $this->dbuser : $dbuser;
         $this->dbpassword = empty($dbpassword) ? $this->dbpassword : $dbpassword;
         $this->dsn = empty($dsn) ? $this->dsn : $dsn;
+        $this->options = $options;        
 
         // Must have a user and a password
         if ( empty($this->dsn) || empty($this->dbuser) || empty($this->dbpassword) ) {
@@ -102,7 +115,7 @@ class ezSQL_pdo extends ezSQLcore
 
         // Establish PDO connection
         try  {
-            $this->dbh = new PDO($this->dsn, $this->dbuser, $this->dbpassword);
+            $this->dbh = new PDO($this->dsn, $this->dbuser, $this->dbpassword, $this->options);
             $this->connected = true;
         }
         catch (PDOException $e) {
@@ -124,10 +137,13 @@ class ezSQL_pdo extends ezSQLcore
      *                     Default is empty string
      * @param string $password The database password
      *                         Default is empty string
+     * @param array $options Array for setting connection options as MySQL
+     *                       charset for example
+     *                       Default is an empty array
      * @return boolean
      */
-    public function quick_connect($dsn='', $user='', $password='') {
-        return $this->connect($dsn, $user, $password);
+    public function quick_connect($dsn='', $user='', $password='', $options=array()) {
+        return $this->connect($dsn, $user, $password, $options);
     } // quick_connect
 
     /**********************************************************************
@@ -144,10 +160,13 @@ class ezSQL_pdo extends ezSQLcore
      *                     Default is empty string
      * @param string $password The database password
      *                         Default is empty string
+     * @param array $options Array for setting connection options as MySQL
+     *                       charset for example
+     *                       Default is an empty array
      * @return boolean
      */
-    public function select($dsn='', $user='', $password='') {
-        return $this->connect($dsn, $user, $password);
+    public function select($dsn='', $user='', $password='', $options=array()) {
+        return $this->connect($dsn, $user, $password, $options);
     } // select
 
     /**********************************************************************
@@ -253,7 +272,7 @@ class ezSQL_pdo extends ezSQLcore
 
         // If there is no existing database connection then try to connect
         if ( ! isset($this->dbh) || ! $this->dbh ) {
-            $this->connect($this->dsn, $this->user, $this->password);
+            $this->connect($this->dsn, $this->user, $this->password, $this->options);
         }
 
         // Query was an insert, delete, update, replace
