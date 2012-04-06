@@ -31,12 +31,13 @@
 				<li><span class="field">name:</span> ezSQL_pdoTest</li>
 				<li><span class="field">uses:</span> postgresql_test_db_tear_up.sql</li>
 				<li><span class="field">license:</span> FREE</li>
-				<li><span class="field">uses:</span> mysql_test_db_tear_up.sql</li>
-				<li><span class="field">uses:</span> mysql_test_db_tear_down.sql</li>
 				<li><span class="field">uses:</span> postgresql_test_db_tear_down.sql</li>
+				<li><span class="field">uses:</span> mysql_test_db_tear_down.sql</li>
+				<li><span class="field">uses:</span> ez_test.sqlite</li>
+				<li><span class="field">uses:</span> mysql_test_db_tear_up.sql</li>
 			</ul>
 		<p class="notes">
-			Located in <a class="field" href="__Test---unit_tests---pdo---ezSQL_pdoTest.php.html">/_Test/unit_tests/pdo/ezSQL_pdoTest.php</a> (line <span class="field">30</span>)
+			Located in <a class="field" href="__Test---unit_tests---pdo---ezSQL_pdoTest.php.html">/_Test/unit_tests/pdo/ezSQL_pdoTest.php</a> (line <span class="field">31</span>)
 		</p>
 		
 				
@@ -80,11 +81,15 @@
 
 				</div>
 								<div class="const-title">
-					<a href="#TEST_DB_PORT" title="details" class="const-name">TEST_DB_PORT</a> = 					<span class="var-type"> '5432'</span>
+					<a href="#TEST_DB_PORT" title="details" class="const-name">TEST_DB_PORT</a> = 					<span class="var-type"> '5434'</span>
 
 				</div>
 								<div class="const-title">
 					<a href="#TEST_DB_USER" title="details" class="const-name">TEST_DB_USER</a> = 					<span class="var-type"> 'ez_test'</span>
+
+				</div>
+								<div class="const-title">
+					<a href="#TEST_SQLITE_DB" title="details" class="const-name">TEST_SQLITE_DB</a> = 					<span class="var-type"> '_Test/unit_tests/pdo/ez_test.sqlite'</span>
 
 				</div>
 							</div>
@@ -127,7 +132,7 @@
 		</div>
 		<div class="info-box-body">			
 			<div class="method-summary">
-																																																																																																																																																												
+																																																																																																																																																																																																																												
 												<div class="method-definition">
 											<span class="method-result">void</span>
 										<a href="#setUp" title="details" class="method-name">setUp</a>
@@ -223,6 +228,46 @@
 										<a href="#testPosgreSQLSysdate" title="details" class="method-name">testPosgreSQLSysdate</a>
 										()
 									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#testSQLiteCatch_error" title="details" class="method-name">testSQLiteCatch_error</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#testSQLiteConnect" title="details" class="method-name">testSQLiteConnect</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#testSQLiteDisconnect" title="details" class="method-name">testSQLiteDisconnect</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#testSQLiteEscape" title="details" class="method-name">testSQLiteEscape</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#testSQLiteQuery" title="details" class="method-name">testSQLiteQuery</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#testSQLiteQuick_connect" title="details" class="method-name">testSQLiteQuick_connect</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#testSQLiteSelect" title="details" class="method-name">testSQLiteSelect</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#testSQLiteSysdate" title="details" class="method-name">testSQLiteSysdate</a>
+										()
+									</div>
 								</div>
 		</div>
 	</div>		
@@ -249,7 +294,7 @@
 		<span class="var-title">
 			<span class="var-type"><a href="../../ezSQL/ezSQL_pdo.html">ezSQL_pdo</a></span>
 			<span class="var-name">$object</span>
-						(line <span class="line-number">65</span>)
+						(line <span class="line-number">71</span>)
 		</span>
 	</div>
 
@@ -285,7 +330,7 @@
 <div class="evenrow">
 	
 	<div class="method-header">
-		<span class="method-title">setUp</span> (line <span class="line-number">71</span>)
+		<span class="method-title">setUp</span> (line <span class="line-number">77</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -310,7 +355,7 @@
 <div class="oddrow">
 	
 	<div class="method-header">
-		<span class="method-title">tearDown</span> (line <span class="line-number">79</span>)
+		<span class="method-title">tearDown</span> (line <span class="line-number">85</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -335,7 +380,7 @@
 <div class="evenrow">
 	
 	<div class="method-header">
-		<span class="method-title">testMySQLCatch_error</span> (line <span class="line-number">199</span>)
+		<span class="method-title">testMySQLCatch_error</span> (line <span class="line-number">205</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -358,7 +403,7 @@
 <div class="oddrow">
 	
 	<div class="method-header">
-		<span class="method-title">testMySQLConnect</span> (line <span class="line-number">160</span>)
+		<span class="method-title">testMySQLConnect</span> (line <span class="line-number">166</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -381,7 +426,7 @@
 <div class="evenrow">
 	
 	<div class="method-header">
-		<span class="method-title">testMySQLConnectWithOptions</span> (line <span class="line-number">230</span>)
+		<span class="method-title">testMySQLConnectWithOptions</span> (line <span class="line-number">236</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -404,7 +449,7 @@
 <div class="oddrow">
 	
 	<div class="method-header">
-		<span class="method-title">testMySQLDisconnect</span> (line <span class="line-number">219</span>)
+		<span class="method-title">testMySQLDisconnect</span> (line <span class="line-number">225</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -427,7 +472,7 @@
 <div class="evenrow">
 	
 	<div class="method-header">
-		<span class="method-title">testMySQLEscape</span> (line <span class="line-number">181</span>)
+		<span class="method-title">testMySQLEscape</span> (line <span class="line-number">187</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -450,7 +495,7 @@
 <div class="oddrow">
 	
 	<div class="method-header">
-		<span class="method-title">testMySQLQuery</span> (line <span class="line-number">208</span>)
+		<span class="method-title">testMySQLQuery</span> (line <span class="line-number">214</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -473,7 +518,7 @@
 <div class="evenrow">
 	
 	<div class="method-header">
-		<span class="method-title">testMySQLQuick_connect</span> (line <span class="line-number">167</span>)
+		<span class="method-title">testMySQLQuick_connect</span> (line <span class="line-number">173</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -496,7 +541,7 @@
 <div class="oddrow">
 	
 	<div class="method-header">
-		<span class="method-title">testMySQLSelect</span> (line <span class="line-number">174</span>)
+		<span class="method-title">testMySQLSelect</span> (line <span class="line-number">180</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -519,7 +564,7 @@
 <div class="evenrow">
 	
 	<div class="method-header">
-		<span class="method-title">testMySQLSysdate</span> (line <span class="line-number">192</span>)
+		<span class="method-title">testMySQLSysdate</span> (line <span class="line-number">198</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -542,7 +587,7 @@
 <div class="oddrow">
 	
 	<div class="method-header">
-		<span class="method-title">testPosgreSQLCatch_error</span> (line <span class="line-number">125</span>)
+		<span class="method-title">testPosgreSQLCatch_error</span> (line <span class="line-number">131</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -565,7 +610,7 @@
 <div class="evenrow">
 	
 	<div class="method-header">
-		<span class="method-title">testPosgreSQLConnect</span> (line <span class="line-number">86</span>)
+		<span class="method-title">testPosgreSQLConnect</span> (line <span class="line-number">92</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -588,7 +633,7 @@
 <div class="oddrow">
 	
 	<div class="method-header">
-		<span class="method-title">testPosgreSQLDisconnect</span> (line <span class="line-number">145</span>)
+		<span class="method-title">testPosgreSQLDisconnect</span> (line <span class="line-number">151</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -611,7 +656,7 @@
 <div class="evenrow">
 	
 	<div class="method-header">
-		<span class="method-title">testPosgreSQLEscape</span> (line <span class="line-number">107</span>)
+		<span class="method-title">testPosgreSQLEscape</span> (line <span class="line-number">113</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -634,7 +679,7 @@
 <div class="oddrow">
 	
 	<div class="method-header">
-		<span class="method-title">testPosgreSQLQuery</span> (line <span class="line-number">134</span>)
+		<span class="method-title">testPosgreSQLQuery</span> (line <span class="line-number">140</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -657,7 +702,7 @@
 <div class="evenrow">
 	
 	<div class="method-header">
-		<span class="method-title">testPosgreSQLQuick_connect</span> (line <span class="line-number">93</span>)
+		<span class="method-title">testPosgreSQLQuick_connect</span> (line <span class="line-number">99</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -680,7 +725,7 @@
 <div class="oddrow">
 	
 	<div class="method-header">
-		<span class="method-title">testPosgreSQLSelect</span> (line <span class="line-number">100</span>)
+		<span class="method-title">testPosgreSQLSelect</span> (line <span class="line-number">106</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -703,7 +748,7 @@
 <div class="evenrow">
 	
 	<div class="method-header">
-		<span class="method-title">testPosgreSQLSysdate</span> (line <span class="line-number">118</span>)
+		<span class="method-title">testPosgreSQLSysdate</span> (line <span class="line-number">124</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -715,6 +760,190 @@
 		<span class="method-result">void</span>
 		<span class="method-name">
 			testPosgreSQLSysdate
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodtestSQLiteCatch_error" id="testSQLiteCatch_error"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">testSQLiteCatch_error</span> (line <span class="line-number">290</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			testSQLiteCatch_error
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodtestSQLiteConnect" id="testSQLiteConnect"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">testSQLiteConnect</span> (line <span class="line-number">251</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			testSQLiteConnect
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodtestSQLiteDisconnect" id="testSQLiteDisconnect"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">testSQLiteDisconnect</span> (line <span class="line-number">310</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			testSQLiteDisconnect
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodtestSQLiteEscape" id="testSQLiteEscape"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">testSQLiteEscape</span> (line <span class="line-number">272</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			testSQLiteEscape
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodtestSQLiteQuery" id="testSQLiteQuery"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">testSQLiteQuery</span> (line <span class="line-number">299</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			testSQLiteQuery
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodtestSQLiteQuick_connect" id="testSQLiteQuick_connect"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">testSQLiteQuick_connect</span> (line <span class="line-number">258</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			testSQLiteQuick_connect
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodtestSQLiteSelect" id="testSQLiteSelect"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">testSQLiteSelect</span> (line <span class="line-number">265</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			testSQLiteSelect
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodtestSQLiteSysdate" id="testSQLiteSysdate"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">testSQLiteSysdate</span> (line <span class="line-number">283</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			testSQLiteSysdate
 		</span>
 				()
 			</div>
@@ -747,12 +976,12 @@
 		<span class="const-title">
 			<span class="const-name">TEST_DB_CHARSET</span>
 			 = <span class="const-default"> 'utf8'</span>
-			(line <span class="line-number">55</span>)
+			(line <span class="line-number">56</span>)
 		</span>
 	</div>
 
 	<!-- ========== Info from phpDoc block ========= -->
-<p class="short-description">constant database connection charset</p>
+<p class="short-description">constant string database connection charset</p>
 	
 	
 </div>
@@ -763,12 +992,12 @@
 		<span class="const-title">
 			<span class="const-name">TEST_DB_HOST</span>
 			 = <span class="const-default"> 'localhost'</span>
-			(line <span class="line-number">50</span>)
+			(line <span class="line-number">51</span>)
 		</span>
 	</div>
 
 	<!-- ========== Info from phpDoc block ========= -->
-<p class="short-description">constant database host</p>
+<p class="short-description">constant string database host</p>
 	
 	
 </div>
@@ -779,12 +1008,12 @@
 		<span class="const-title">
 			<span class="const-name">TEST_DB_NAME</span>
 			 = <span class="const-default"> 'ez_test'</span>
-			(line <span class="line-number">45</span>)
+			(line <span class="line-number">46</span>)
 		</span>
 	</div>
 
 	<!-- ========== Info from phpDoc block ========= -->
-<p class="short-description">constant database name</p>
+<p class="short-description">constant string database name</p>
 	
 	
 </div>
@@ -795,7 +1024,7 @@
 		<span class="const-title">
 			<span class="const-name">TEST_DB_PASSWORD</span>
 			 = <span class="const-default"> 'ezTest'</span>
-			(line <span class="line-number">40</span>)
+			(line <span class="line-number">41</span>)
 		</span>
 	</div>
 
@@ -810,13 +1039,13 @@
 	<div class="const-header">
 		<span class="const-title">
 			<span class="const-name">TEST_DB_PORT</span>
-			 = <span class="const-default"> '5432'</span>
-			(line <span class="line-number">60</span>)
+			 = <span class="const-default"> '5434'</span>
+			(line <span class="line-number">61</span>)
 		</span>
 	</div>
 
 	<!-- ========== Info from phpDoc block ========= -->
-<p class="short-description">constant database port</p>
+<p class="short-description">constant string database port</p>
 	
 	
 </div>
@@ -827,7 +1056,7 @@
 		<span class="const-title">
 			<span class="const-name">TEST_DB_USER</span>
 			 = <span class="const-default"> 'ez_test'</span>
-			(line <span class="line-number">35</span>)
+			(line <span class="line-number">36</span>)
 		</span>
 	</div>
 
@@ -836,12 +1065,28 @@
 	
 	
 </div>
+<a name="constTEST_SQLITE_DB" id="TEST_SQLITE_DB"><!-- --></A>
+<div class="oddrow">
+
+	<div class="const-header">
+		<span class="const-title">
+			<span class="const-name">TEST_SQLITE_DB</span>
+			 = <span class="const-default"> '_Test/unit_tests/pdo/ez_test.sqlite'</span>
+			(line <span class="line-number">66</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">constant string path and file name of the SQLite test database</p>
+	
+	
+</div>
 						
 		</div>
 	</div>
 
 	<p class="notes" id="credit">
-		Documentation generated on Fri, 06 Apr 2012 10:51:40 +0200 by <a href="http://www.phpdoc.org" target="_blank">phpDocumentor 1.4.4</a>
+		Documentation generated on Fri, 06 Apr 2012 12:39:08 +0200 by <a href="http://www.phpdoc.org" target="_blank">phpDocumentor 1.4.4</a>
 	</p>
 	</div></body>
 </html>
