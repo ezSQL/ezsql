@@ -24,7 +24,7 @@ class ezSQL_mysqlTest extends PHPUnit_Framework_TestCase {
     /**
      * constant string user name
      */
-    const TEST_DB_USER = 'ezTest';
+    const TEST_DB_USER = 'ez_test';
 
     /**
      * constant string password

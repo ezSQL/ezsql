@@ -9,7 +9,7 @@
  */
 
 -- Drop the user
-DROP USER ezTest@localhost;
+DROP USER ez_test@localhost;
 
 -- Drop the database
 DROP DATABASE ez_test;

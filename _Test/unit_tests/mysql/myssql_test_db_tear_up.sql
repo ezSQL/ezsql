@@ -12,4 +12,4 @@
 CREATE DATABASE ez_test charset='utf8';
 
 -- Create the user
-GRANT ALL PRIVILEGES ON ez_test.* TO ezTest@localhost IDENTIFIED BY 'ezTest';
+GRANT ALL PRIVILEGES ON ez_test.* TO ez_test@localhost IDENTIFIED BY 'ezTest';
