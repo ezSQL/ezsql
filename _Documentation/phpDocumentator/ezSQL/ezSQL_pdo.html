@@ -82,7 +82,7 @@
 		</div>
 		<div class="info-box-body">			
 			<div class="method-summary">
-																																																																												
+																																																																																				
 												<div class="method-definition">
 											<span class="method-result">ezSQL_pdo</span>
 										<a href="#__construct" title="details" class="method-name">__construct</a>
@@ -107,6 +107,11 @@
 											<span class="method-result">string</span>
 										<a href="#escape" title="details" class="method-name">escape</a>
 											(<span class="var-type">string</span>&nbsp;<span class="var-name">$str</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">string</span>
+										<a href="#get_set" title="details" class="method-name">get_set</a>
+											(<span class="var-type">array</span>&nbsp;<span class="var-name">$params</span>)
 									</div>
 																<div class="method-definition">
 											<span class="method-result">object</span>
@@ -148,7 +153,7 @@
 					</div>
 		<div class="info-box-body">
 			<a name="var$show_errors" id="$show_errors"><!-- --></A>
-<div class="oddrow">
+<div class="evenrow">
 
 	<div class="var-header">
 		<span class="var-title">
@@ -214,10 +219,16 @@
 								<span class="var-name"><a href="../ezSQL/ezSQLcore.html#var$do_profile">ezSQLcore::$do_profile</a></span><br>
 							</span>
 													<span class="var-title">
+								<span class="var-name"><a href="../ezSQL/ezSQLcore.html#var$from_disk_cache">ezSQLcore::$from_disk_cache</a></span><br>
+							</span>
+													<span class="var-title">
 								<span class="var-name"><a href="../ezSQL/ezSQLcore.html#var$last_error">ezSQLcore::$last_error</a></span><br>
 							</span>
 													<span class="var-title">
 								<span class="var-name"><a href="../ezSQL/ezSQLcore.html#var$last_query">ezSQLcore::$last_query</a></span><br>
+							</span>
+													<span class="var-title">
+								<span class="var-name"><a href="../ezSQL/ezSQLcore.html#var$last_result">ezSQLcore::$last_result</a></span><br>
 							</span>
 													<span class="var-title">
 								<span class="var-name"><a href="../ezSQL/ezSQLcore.html#var$num_queries">ezSQLcore::$num_queries</a></span><br>
@@ -269,7 +280,7 @@
 			<A NAME='method_detail'></A>
 
 <a name="method__construct" id="__construct"><!-- --></a>
-<div class="evenrow">
+<div class="oddrow">
 	
 	<div class="method-header">
 		<span class="method-title">Constructor __construct</span> (line <span class="line-number">81</span>)
@@ -316,7 +327,7 @@
 			
 	</div>
 <a name="methodcatch_error" id="catch_error"><!-- --></a>
-<div class="oddrow">
+<div class="evenrow">
 	
 	<div class="method-header">
 		<span class="method-title">catch_error</span> (line <span class="line-number">249</span>)
@@ -340,7 +351,7 @@
 			
 	</div>
 <a name="methodconnect" id="connect"><!-- --></a>
-<div class="evenrow">
+<div class="oddrow">
 	
 	<div class="method-header">
 		<span class="method-title">connect</span> (line <span class="line-number">118</span>)
@@ -381,7 +392,7 @@
 			
 	</div>
 <a name="methoddisconnect" id="disconnect"><!-- --></a>
-<div class="oddrow">
+<div class="evenrow">
 	
 	<div class="method-header">
 		<span class="method-title">disconnect</span> (line <span class="line-number">400</span>)
@@ -405,7 +416,7 @@
 			
 	</div>
 <a name="methodescape" id="escape"><!-- --></a>
-<div class="evenrow">
+<div class="oddrow">
 	
 	<div class="method-header">
 		<span class="method-title">escape</span> (line <span class="line-number">222</span>)
@@ -429,6 +440,36 @@
 					<li>
 				<span class="var-type">string</span>
 				<span class="var-name">$str</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodget_set" id="get_set"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">get_set</span> (line <span class="line-number">425</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Creates a SET nvp sql string from an associative array (and escapes all values)</p>
+<p class="description"><p>$db_data = array('login'=&gt;'jv','email'=&gt;'jv@vip.ie', 'user_id' =&gt; 1, 'created' =&gt; 'NOW()');</p><p>$db-&gt;query(&quot;INSERT INTO users SET &quot;.$db-&gt;get_set($db_data));</p><p>...OR...</p><p>$db-&gt;query(&quot;UPDATE users SET &quot;.$db-&gt;get_set($db_data).&quot; WHERE user_id = 1&quot;);</p><p>Output:</p><p>login = 'jv', email = 'jv@vip.ie', user_id = 1, created = NOW()</p></p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">string</span>
+		<span class="method-name">
+			get_set
+		</span>
+					(<span class="var-type">array</span>&nbsp;<span class="var-name">$params</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">array</span>
+				<span class="var-name">$params</span>			</li>
 				</ul>
 		
 			
@@ -578,12 +619,12 @@
 													<span class="method-name"><a href="../ezSQL/ezSQLcore.html#methoddonation">ezSQLcore::donation()</a></span><br>
 													<span class="method-name"><a href="../ezSQL/ezSQLcore.html#methoddumpvar">ezSQLcore::dumpvar()</a></span><br>
 													<span class="method-name"><a href="../ezSQL/ezSQLcore.html#methodflush">ezSQLcore::flush()</a></span><br>
+													<span class="method-name"><a href="../ezSQL/ezSQLcore.html#methodgetShowErrors">ezSQLcore::getShowErrors()</a></span><br>
 													<span class="method-name"><a href="../ezSQL/ezSQLcore.html#methodget_cache">ezSQLcore::get_cache()</a></span><br>
 													<span class="method-name"><a href="../ezSQL/ezSQLcore.html#methodget_col">ezSQLcore::get_col()</a></span><br>
 													<span class="method-name"><a href="../ezSQL/ezSQLcore.html#methodget_col_info">ezSQLcore::get_col_info()</a></span><br>
 													<span class="method-name"><a href="../ezSQL/ezSQLcore.html#methodget_results">ezSQLcore::get_results()</a></span><br>
 													<span class="method-name"><a href="../ezSQL/ezSQLcore.html#methodget_row">ezSQLcore::get_row()</a></span><br>
-													<span class="method-name"><a href="../ezSQL/ezSQLcore.html#methodget_set">ezSQLcore::get_set()</a></span><br>
 													<span class="method-name"><a href="../ezSQL/ezSQLcore.html#methodget_var">ezSQLcore::get_var()</a></span><br>
 													<span class="method-name"><a href="../ezSQL/ezSQLcore.html#methodhide_errors">ezSQLcore::hide_errors()</a></span><br>
 													<span class="method-name"><a href="../ezSQL/ezSQLcore.html#methodisConnected">ezSQLcore::isConnected()</a></span><br>
@@ -636,7 +677,7 @@
 	</div>
 
 	<p class="notes" id="credit">
-		Documentation generated on Fri, 06 Apr 2012 12:39:08 +0200 by <a href="http://www.phpdoc.org" target="_blank">phpDocumentor 1.4.4</a>
+		Documentation generated on Fri, 06 Apr 2012 14:16:58 +0200 by <a href="http://www.phpdoc.org" target="_blank">phpDocumentor 1.4.4</a>
 	</p>
 	</div></body>
 </html>
