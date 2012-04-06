@@ -55,7 +55,7 @@ class ezSQL_pdoTest extends PHPUnit_Framework_TestCase {
     /**
      * constant database port
      */
-    const TEST_DB_PORT = '5432';
+    const TEST_DB_PORT = '5434';
 
     /**
      * @var ezSQL_pdo
@@ -77,32 +77,32 @@ class ezSQL_pdoTest extends PHPUnit_Framework_TestCase {
     protected function tearDown() {
         $this->object = null;
     } // tearDown
-
+    
     /**
      * @covers ezSQL_pdo::connect
      */
-    public function testConnect() {
+    public function testPosgreSQLConnect() {
         $this->assertTrue($this->object->connect('pgsql:host=' . self::TEST_DB_HOST . ';dbname=' . self::TEST_DB_NAME . ';port=' . self::TEST_DB_PORT, self::TEST_DB_USER, self::TEST_DB_PASSWORD));
     } // testConnect
 
     /**
      * @covers ezSQL_pdo::quick_connect
      */
-    public function testQuick_connect() {
+    public function testPosgreSQLQuick_connect() {
         $this->assertTrue($this->object->quick_connect('pgsql:host=' . self::TEST_DB_HOST . ';dbname=' . self::TEST_DB_NAME . ';port=' . self::TEST_DB_PORT, self::TEST_DB_USER, self::TEST_DB_PASSWORD));
     } // testQuick_connect
 
     /**
      * @covers ezSQL_pdo::select
      */
-    public function testSelect() {
+    public function testPosgreSQLSelect() {
         $this->assertTrue($this->object->select('pgsql:host=' . self::TEST_DB_HOST . ';dbname=' . self::TEST_DB_NAME . ';port=' . self::TEST_DB_PORT, self::TEST_DB_USER, self::TEST_DB_PASSWORD));
     } // testSelect
 
     /**
      * @covers ezSQL_pdo::escape
      */
-    public function testEscape() {
+    public function testPosgreSQLEscape() {
         $this->assertTrue($this->object->connect('pgsql:host=' . self::TEST_DB_HOST . ';dbname=' . self::TEST_DB_NAME . ';port=' . self::TEST_DB_PORT, self::TEST_DB_USER, self::TEST_DB_PASSWORD));
 
         $result = $this->object->escape("This is'nt escaped.");
@@ -113,14 +113,14 @@ class ezSQL_pdoTest extends PHPUnit_Framework_TestCase {
     /**
      * @covers ezSQL_pdo::sysdate
      */
-    public function testSysdate() {
+    public function testPosgreSQLSysdate() {
         $this->assertEquals("datetime('now')", $this->object->sysdate());
     } // testSysdate
 
     /**
      * @covers ezSQL_pdo::catch_error
      */
-    public function testCatch_error() {
+    public function testPosgreSQLCatch_error() {
         $this->assertTrue($this->object->connect('pgsql:host=' . self::TEST_DB_HOST . ';dbname=' . self::TEST_DB_NAME . ';port=' . self::TEST_DB_PORT, self::TEST_DB_USER, self::TEST_DB_PASSWORD));
 
         $this->assertNull($this->object->catch_error());
@@ -129,7 +129,7 @@ class ezSQL_pdoTest extends PHPUnit_Framework_TestCase {
     /**
      * @covers ezSQL_pdo::query
      */
-    public function testQuery() {
+    public function testPosgreSQLQuery() {
         $this->assertTrue($this->object->connect('pgsql:host=' . self::TEST_DB_HOST . ';dbname=' . self::TEST_DB_NAME . ';port=' . self::TEST_DB_PORT, self::TEST_DB_USER, self::TEST_DB_PASSWORD));
 
         $this->assertEquals(0, $this->object->query('CREATE TABLE unit_test(id integer, test_key varchar(50), PRIMARY KEY (ID))'));
@@ -140,8 +140,82 @@ class ezSQL_pdoTest extends PHPUnit_Framework_TestCase {
     /**
      * @covers ezSQL_pdo::disconnect
      */
-    public function testDisconnect() {
+    public function testPosgreSQLDisconnect() {
         $this->assertTrue($this->object->connect('pgsql:host=' . self::TEST_DB_HOST . ';dbname=' . self::TEST_DB_NAME . ';port=' . self::TEST_DB_PORT, self::TEST_DB_USER, self::TEST_DB_PASSWORD));
+
+        $this->object->disconnect();
+
+        $this->assertTrue(true);
+    } // testDisconnect
+
+    /**
+     * Here starts the PostgreSQL PDO unit test
+     */
+
+    /**
+     * @covers ezSQL_pdo::connect
+     */
+    public function testMySQLConnect() {
+        $this->assertTrue($this->object->connect('mysql:host=' . self::TEST_DB_HOST . ';dbname=' . self::TEST_DB_NAME . ';port=' . self::TEST_DB_PORT, self::TEST_DB_USER, self::TEST_DB_PASSWORD));
+    } // testConnect
+
+    /**
+     * @covers ezSQL_pdo::quick_connect
+     */
+    public function testMySQLQuick_connect() {
+        $this->assertTrue($this->object->quick_connect('mysql:host=' . self::TEST_DB_HOST . ';dbname=' . self::TEST_DB_NAME . ';port=' . self::TEST_DB_PORT, self::TEST_DB_USER, self::TEST_DB_PASSWORD));
+    } // testQuick_connect
+
+    /**
+     * @covers ezSQL_pdo::select
+     */
+    public function testMySQLSelect() {
+        $this->assertTrue($this->object->select('mysql:host=' . self::TEST_DB_HOST . ';dbname=' . self::TEST_DB_NAME . ';port=' . self::TEST_DB_PORT, self::TEST_DB_USER, self::TEST_DB_PASSWORD));
+    } // testSelect
+
+    /**
+     * @covers ezSQL_pdo::escape
+     */
+    public function testMySQLEscape() {
+        $this->assertTrue($this->object->connect('mysql:host=' . self::TEST_DB_HOST . ';dbname=' . self::TEST_DB_NAME . ';port=' . self::TEST_DB_PORT, self::TEST_DB_USER, self::TEST_DB_PASSWORD));
+
+        $result = $this->object->escape("This is'nt escaped.");
+
+        $this->assertEquals("This is\'nt escaped.", $result);
+    } // testEscape
+
+    /**
+     * @covers ezSQL_pdo::sysdate
+     */
+    public function testMySQLSysdate() {
+        $this->assertEquals("datetime('now')", $this->object->sysdate());
+    } // testSysdate
+
+    /**
+     * @covers ezSQL_pdo::catch_error
+     */
+    public function testMySQLCatch_error() {
+        $this->assertTrue($this->object->connect('mysql:host=' . self::TEST_DB_HOST . ';dbname=' . self::TEST_DB_NAME . ';port=' . self::TEST_DB_PORT, self::TEST_DB_USER, self::TEST_DB_PASSWORD));
+
+        $this->assertNull($this->object->catch_error());
+    } // testCatch_error
+
+    /**
+     * @covers ezSQL_pdo::query
+     */
+    public function testMySQLQuery() {
+        $this->assertTrue($this->object->connect('mysql:host=' . self::TEST_DB_HOST . ';dbname=' . self::TEST_DB_NAME . ';port=' . self::TEST_DB_PORT, self::TEST_DB_USER, self::TEST_DB_PASSWORD));
+
+        $this->assertEquals(0, $this->object->query('CREATE TABLE unit_test(id integer, test_key varchar(50), PRIMARY KEY (ID))'));
+
+        $this->assertEquals(0, $this->object->query('DROP TABLE unit_test'));
+    } // testQuery
+
+    /**
+     * @covers ezSQL_pdo::disconnect
+     */
+    public function testMySQLDisconnect() {
+        $this->assertTrue($this->object->connect('mysql:host=' . self::TEST_DB_HOST . ';dbname=' . self::TEST_DB_NAME . ';port=' . self::TEST_DB_PORT, self::TEST_DB_USER, self::TEST_DB_PASSWORD));
 
         $this->object->disconnect();
 
