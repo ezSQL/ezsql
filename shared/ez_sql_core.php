@@ -176,7 +176,7 @@ class ezSQLcore
      * @var object Default is null
      */
     public $dbh = null;
-    
+
     /**
      * Whether the database connection is established, or not
      * @var boolean Default is false
@@ -190,6 +190,24 @@ class ezSQLcore
      * @var boolean Default is true
     */
     public $debug_echo_is_on = true;
+
+    /**
+     * The last query result
+     * @var object Default is null
+     */
+    public $last_result = null;
+
+    /**
+     * Get data from disk cache
+     * @var boolean Default is false
+     */
+    public $from_disk_cache = false;
+
+    /**
+     * Function called
+     * @var string
+     */
+    private $func_call;
 
     /**
      * Constructor of ezSQL
@@ -380,6 +398,7 @@ class ezSQLcore
      * @return type
      */
     public function get_col_info($info_type='name', $col_offset=-1) {
+        $new_array = array();
 
         if ( $this->col_info ) {
             if ( $col_offset == -1 ) {
@@ -473,14 +492,14 @@ class ezSQLcore
         echo "<pre><font face=arial>";
 
         if ( ! $this->vardump_called ) {
-            echo "<font color=800080><b>ezSQL</b> (v".EZSQL_VERSION.") <b>Variable Dump..</b></font>\n\n";
+            echo "<font color=800080><b>ezSQL</b> (v" . self::EZSQL_VERSION . ") <b>Variable Dump..</b></font>\n\n";
         }
 
         $var_type = gettype ($mixed);
         print_r(($mixed?$mixed:"<font color=red>No Value / False</font>"));
         echo "\n\n<b>Type:</b> " . ucfirst($var_type) . "\n";
         echo "<b>Last Query</b> [$this->num_queries]<b>:</b> ".($this->last_query?$this->last_query:"NULL")."\n";
-        echo "<b>Last Function Call:</b> " . ($this->func_call?$this->func_call:"None")."\n";
+        echo "<b>Last Function Call:</b> " . ($this->func_call ? $this->func_call : "None")."\n";
         echo "<b>Last Rows Returned:</b> ".count($this->last_result)."\n";
         echo "</font></pre></font></blockquote></td></tr></table>".$this->donation();
         echo "\n<hr size=1 noshade color=dddddd>";
@@ -525,7 +544,7 @@ class ezSQLcore
 
         // Only show ezSQL credits once..
         if ( ! $this->debug_called ) {
-            echo "<font color=800080 face=arial size=2><b>ezSQL</b> (v".EZSQL_VERSION.") <b>Debug..</b></font><p>\n";
+            echo "<font color=800080 face=arial size=2><b>ezSQL</b> (v". self::EZSQL_VERSION .") <b>Debug..</b></font><p>\n";
         }
 
         if ( $this->last_error ) {
@@ -667,50 +686,21 @@ class ezSQLcore
     } // timer_update_global
 
     /**
-     * Creates a SET nvp sql string from an associative array (and escapes all values)
-     *
-     *     $db_data = array('login'=>'jv','email'=>'jv@vip.ie', 'user_id' => 1, 'created' => 'NOW()');
-     *
-     *     $db->query("INSERT INTO users SET ".$db->get_set($db_data));
-     *
-     *     ...OR...
-     *
-     *     $db->query("UPDATE users SET ".$db->get_set($db_data)." WHERE user_id = 1");
-     *
-     * Output:
-     *
-     *     login = 'jv', email = 'jv@vip.ie', user_id = 1, created = NOW()
-     *
-     * @param array $parms
-     * @return string
-     */
-    public function get_set($parms) {
-        $sql = '';
-
-        foreach ( $parms as $field => $val ) {
-            if ( $val === 'true' ) {
-                $val = 1;
-            }
-            if ( $val === 'false' ) {
-                $val = 0;
-            }
-
-            if ( $val == 'NOW()' ) {
-                $sql .= "$field = " . $this->escape($val) . ', ';
-            } else {
-                $sql .= "$field = '".$this->escape($val).'\', ';
-            }
-        }
-
-        return substr($sql, 0, -2);
-    } // get_set
-
-    /**
      * Returns, whether a database connection is established, or not
-     * 
+     *
      * @return boolean
      */
     public function isConnected() {
         return $this->connected;
     } // isConnected
+
+    /**
+     * Returns the current show error state
+     *
+     * @return boolean
+     */
+    public function getShowErrors() {
+        return $this->show_errors;
+    } // getShowErrors
+
 } // ezSQLcore
