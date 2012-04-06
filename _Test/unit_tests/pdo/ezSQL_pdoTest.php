@@ -23,6 +23,7 @@ require_once dirname(__FILE__) . '/../../../pdo/ez_sql_pdo.php';
  * @uses    postgresql_test_db_tear_down.sql
  * @uses    mysql_test_db_tear_up.sql
  * @uses    mysql_test_db_tear_down.sql
+ * @uses    ez_test.sqlite
  * @package ezSQL
  * @subpackage unitTests
  * @license FREE / Donation (LGPL - You may do what you like with ezSQL - no exceptions.)
@@ -40,24 +41,29 @@ class ezSQL_pdoTest extends PHPUnit_Framework_TestCase {
     const TEST_DB_PASSWORD = 'ezTest';
 
     /**
-     * constant database name
+     * constant string database name
      */
     const TEST_DB_NAME = 'ez_test';
 
     /**
-     * constant database host
+     * constant string database host
      */
     const TEST_DB_HOST = 'localhost';
 
     /**
-     * constant database connection charset
+     * constant string database connection charset
      */
     const TEST_DB_CHARSET = 'utf8';
 
     /**
-     * constant database port
+     * constant string database port
      */
-    const TEST_DB_PORT = '5432';
+    const TEST_DB_PORT = '5434';
+    
+    /**
+     * constant string path and file name of the SQLite test database
+     */
+    const TEST_SQLITE_DB = '_Test/unit_tests/pdo/ez_test.sqlite';
 
     /**
      * @var ezSQL_pdo
@@ -234,5 +240,79 @@ class ezSQL_pdoTest extends PHPUnit_Framework_TestCase {
         
         $this->assertTrue($this->object->connect('mysql:host=' . self::TEST_DB_HOST . ';dbname=' . self::TEST_DB_NAME . ';port=' . self::TEST_DB_PORT, self::TEST_DB_USER, self::TEST_DB_PASSWORD, $options));
     } // testMySQLConnectWithOptions
+
+    /**
+     * Here starts the SQLite PDO unit test
+     */
+
+    /**
+     * @covers ezSQL_pdo::connect
+     */
+    public function testSQLiteConnect() {
+        $this->assertTrue($this->object->connect('sqlite:' . self::TEST_SQLITE_DB, '', '', array(), true));
+    } // testSQLiteConnect
+
+    /**
+     * @covers ezSQL_pdo::quick_connect
+     */
+    public function testSQLiteQuick_connect() {
+        $this->assertTrue($this->object->quick_connect('sqlite:' . self::TEST_SQLITE_DB, '', '', array(), true));
+    } // testSQLiteQuick_connect
+
+    /**
+     * @covers ezSQL_pdo::select
+     */
+    public function testSQLiteSelect() {
+        $this->assertTrue($this->object->select('sqlite:' . self::TEST_SQLITE_DB, '', '', array(), true));
+    } // testSQLiteSelect
+
+    /**
+     * @covers ezSQL_pdo::escape
+     */
+    public function testSQLiteEscape() {
+        $this->assertTrue($this->object->connect('sqlite:' . self::TEST_SQLITE_DB, '', '', array(), true));
+
+        $result = $this->object->escape("This is'nt escaped.");
+
+        $this->assertEquals("This is''nt escaped.", $result);
+    } // testSQLiteEscape
+
+    /**
+     * @covers ezSQL_pdo::sysdate
+     */
+    public function testSQLiteSysdate() {
+        $this->assertEquals("datetime('now')", $this->object->sysdate());
+    } // testSQLiteSysdate
+
+    /**
+     * @covers ezSQL_pdo::catch_error
+     */
+    public function testSQLiteCatch_error() {
+        $this->assertTrue($this->object->connect('sqlite:' . self::TEST_SQLITE_DB, '', '', array(), true));
+
+        $this->assertNull($this->object->catch_error());
+    } // testSQLiteCatch_error
+
+    /**
+     * @covers ezSQL_pdo::query
+     */
+    public function testSQLiteQuery() {
+        $this->assertTrue($this->object->connect('sqlite:' . self::TEST_SQLITE_DB, '', '', array(), true));
+
+        $this->assertEquals(0, $this->object->query('CREATE TABLE unit_test(id integer, test_key varchar(50), PRIMARY KEY (ID))'));
+
+        $this->assertEquals(0, $this->object->query('DROP TABLE unit_test'));
+    } // testSQLiteQuery
+
+    /**
+     * @covers ezSQL_pdo::disconnect
+     */
+    public function testSQLiteDisconnect() {
+        $this->assertTrue($this->object->connect('sqlite:' . self::TEST_SQLITE_DB, '', '', array(), true));
+
+        $this->object->disconnect();
+
+        $this->assertTrue(true);
+    } // testSQLiteDisconnect
 
 } // ezSQL_pdoTest

@@ -19,7 +19,8 @@ class ezSQL_pdo extends ezSQLcore
      */
     private $ezsql_pdo_str = array
         (
-            1 => 'Require $dsn and $user and $password to create a connection'
+            1 => 'Require $dsn and $user and $password to create a connection',
+            2 => 'File based databases require $dsn to create a connection'
         );
 
     /**
@@ -45,6 +46,13 @@ class ezSQL_pdo extends ezSQLcore
      * @var array
      */
     private $options;
+    
+    /**
+     * Whether it is a file based datbase connection, for example to a SQLite
+     * database file, or not
+     * @var boolean Default is false
+     */
+    private $isFileBased=false;
 
     /**
      * Show errors
@@ -65,8 +73,12 @@ class ezSQL_pdo extends ezSQLcore
      * @param array $options Array for setting connection options as MySQL
      *                       charset for example
      *                       Default is an empty array
+     * @param boolean $isFileBased File based databases like SQLite don't need
+     *                             user and password, they work with path in the
+     *                             dsn parameter
+     *                             Default is false
      */
-    public function __construct($dsn='', $user='', $password='', $options=array()) {
+    public function __construct($dsn='', $user='', $password='', $options=array(), $isFileBased=false) {
         if ( ! class_exists ('PDO') ) {
             throw new Exception('<b>Fatal Error:</b> ezSQL_sqlite requires PDO Lib to be compiled and or linked in to the PHP engine');
         }
@@ -81,7 +93,7 @@ class ezSQL_pdo extends ezSQLcore
 
         if ( !empty($dsn) && !empty($user) && !empty($password) ) {
             print "<p>constructor: $dsn</p>";
-            $this->connect($dsn, $user, $password, $options);
+            $this->connect($dsn, $user, $password, $options, $isFileBased);
         }
     } // __construct
 
@@ -97,30 +109,49 @@ class ezSQL_pdo extends ezSQLcore
      * @param array $options Array for setting connection options as MySQL
      *                       charset for example
      *                       Default is an empty array
+     * @param boolean $isFileBased File based databases like SQLite don't need
+     *                             user and password, they work with path in the
+     *                             dsn parameter
+     *                             Default is false
      * @return boolean
      */
-    public function connect($dsn='', $dbuser='', $dbpassword='', $options=array()) {
+    public function connect($dsn='', $dbuser='', $dbpassword='', $options=array(), $isFileBased=false) {
         $this->connected = false;
 
-        $this->dbuser = empty($dbuser) ? $this->dbuser : $dbuser;
-        $this->dbpassword = empty($dbpassword) ? $this->dbpassword : $dbpassword;
         $this->dsn = empty($dsn) ? $this->dsn : $dsn;
-        $this->options = $options;        
+        $this->isFileBased = $isFileBased;
+        
+        if (!$isFileBased) {
+            $this->dbuser = empty($dbuser) ? $this->dbuser : $dbuser;
+            $this->dbpassword = empty($dbpassword) ? $this->dbpassword : $dbpassword;
+            $this->options = $options;        
 
-        // Must have a user and a password
-        if ( empty($this->dsn) || empty($this->dbuser) || empty($this->dbpassword) ) {
-            $this->register_error($this->ezsql_pdo_str[1] . ' in ' . __FILE__ . ' on line ' . __LINE__);
-            $this->show_errors ? trigger_error($this->ezsql_pdo_str[1], E_USER_WARNING) : null;
+            // Must have a user and a password if not file based
+            if ( empty($this->dsn) || empty($this->dbuser) || empty($this->dbpassword) ) {
+                $this->register_error($this->ezsql_pdo_str[1] . ' in ' . __FILE__ . ' on line ' . __LINE__);
+                $this->show_errors ? trigger_error($this->ezsql_pdo_str[1], E_USER_WARNING) : null;
+            }
+        } elseif (empty($this->dsn)) {
+            // Must have a dsn
+            $this->register_error($this->ezsql_pdo_str[2] . ' in ' . __FILE__ . ' on line ' . __LINE__);
+            $this->show_errors ? trigger_error($this->ezsql_pdo_str[2], E_USER_WARNING) : null;
+        
         }
+        
 
         // Establish PDO connection
         try  {
-            $this->dbh = new PDO($this->dsn, $this->dbuser, $this->dbpassword, $this->options);
-            $this->connected = true;
+            if ($this->isFileBased) {
+                $this->dbh = new PDO($this->dsn);
+                $this->connected = true;
+            } else {
+                $this->dbh = new PDO($this->dsn, $this->dbuser, $this->dbpassword, $this->options);
+                $this->connected = true;
+            }
         }
         catch (PDOException $e) {
             $this->register_error($e->getMessage());
-            $this->show_errors ? trigger_error($e->getMessage(), E_USER_WARNING) : null;
+            $this->show_errors ? trigger_error($e->getMessage() . '- $dsn: ' . $dsn, E_USER_WARNING) : null;
         }
 
         $this->isConnected = $this->connected;
@@ -140,10 +171,14 @@ class ezSQL_pdo extends ezSQLcore
      * @param array $options Array for setting connection options as MySQL
      *                       charset for example
      *                       Default is an empty array
+     * @param boolean $isFileBased File based databases like SQLite don't need
+     *                             user and password, they work with path in the
+     *                             dsn parameter
+     *                             Default is false
      * @return boolean
      */
-    public function quick_connect($dsn='', $user='', $password='', $options=array()) {
-        return $this->connect($dsn, $user, $password, $options);
+    public function quick_connect($dsn='', $user='', $password='', $options=array(), $isFileBased=false) {
+        return $this->connect($dsn, $user, $password, $options, $isFileBased);
     } // quick_connect
 
     /**********************************************************************
@@ -163,10 +198,14 @@ class ezSQL_pdo extends ezSQLcore
      * @param array $options Array for setting connection options as MySQL
      *                       charset for example
      *                       Default is an empty array
+     * @param boolean $isFileBased File based databases like SQLite don't need
+     *                             user and password, they work with path in the
+     *                             dsn parameter
+     *                             Default is false
      * @return boolean
      */
-    public function select($dsn='', $user='', $password='', $options=array()) {
-        return $this->connect($dsn, $user, $password, $options);
+    public function select($dsn='', $user='', $password='', $options=array(), $isFileBased=false) {
+        return $this->connect($dsn, $user, $password, $options, $isFileBased);
     } // select
 
     /**********************************************************************
@@ -183,7 +222,7 @@ class ezSQL_pdo extends ezSQLcore
     public function escape($str) {
         // If there is no existing database connection then try to connect
         if ( ! isset($this->dbh) || ! $this->dbh ) {
-            $this->connect($this->dsn, $this->user, $this->password);
+            $this->connect($this->dsn, $this->user, $this->password, $this->options, $this->isFileBased);
         }
 
         // pdo quote adds ' at the beginning and at the end, remove them for standard behavior
@@ -272,7 +311,7 @@ class ezSQL_pdo extends ezSQLcore
 
         // If there is no existing database connection then try to connect
         if ( ! isset($this->dbh) || ! $this->dbh ) {
-            $this->connect($this->dsn, $this->user, $this->password, $this->options);
+            $this->connect($this->dsn, $this->user, $this->password, $this->options, $this->isFileBased);
         }
 
         // Query was an insert, delete, update, replace
