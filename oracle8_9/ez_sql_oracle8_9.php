@@ -301,7 +301,8 @@ class ezSQL_oracle8_9 extends ezSQLcore
             $is_insert = true;
 
             // num afected rows
-            $return_value = $this->rows_affected = @OCIRowCount($stmt);
+            $this->affectedRows = @OCIRowCount($stmt);
+            $return_value = $this->affectedRows;
         } else {
             // If query was a select
             // Get column information
