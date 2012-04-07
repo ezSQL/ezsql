@@ -207,5 +207,11 @@ class ezSQLcoreTest extends PHPUnit_Framework_TestCase {
         $this->object->timer_update_global('test_timer');
     }
 
+    /**
+     * @covers ezSQLcore::affectedRows
+     */
+    public function testAffectedRows() {
+        $this->assertEquals(0, $this->object->affectedRows());
+    } // testAffectedRows
 
 } //

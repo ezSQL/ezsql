@@ -182,6 +182,12 @@ class ezSQLcore
      * @var boolean Default is false
      */
     protected $connected = false;
+    
+    /**
+     * Contains the number of affected rows of a query
+     * @var int Default is 0
+     */
+    protected $affectedRows = 0;
 
     /**
      * == TJH == default now needed for echo of debug function
@@ -703,4 +709,13 @@ class ezSQLcore
         return $this->show_errors;
     } // getShowErrors
 
+    /**
+     * Returns the affected rows of a query
+     * 
+     * @return int
+     */
+    public function affectedRows() {
+        return $this->affectedRows;
+    } // affectedRows
+    
 } // ezSQLcore
