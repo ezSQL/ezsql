@@ -303,7 +303,7 @@ class ezSQL_sybase extends ezSQLcore
         // Query was an insert, delete, update, replace
         $is_insert = false;
         if ( preg_match("/^(insert|delete|update|replace)\s+/i", $query) ) {
-            $this->rows_affected = @sybase_rows_affected($this->dbh);
+            $this->affectedRows = @sybase_rows_affected($this->dbh);
 
             // Take note of the insert_id
             if ( preg_match("/^(insert|replace)\s+/i",$query) ) {
@@ -317,7 +317,7 @@ class ezSQL_sybase extends ezSQLcore
             }
 
             // Return number of rows affected
-            $return_val = $this->rows_affected;
+            $return_val = $this->affectedRows;
         } else {
             // Query was a select
             // Take note of column info
