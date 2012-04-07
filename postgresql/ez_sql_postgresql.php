@@ -273,7 +273,7 @@ class ezSQL_postgresql extends ezSQLcore
         // Query was an insert, delete, update, replace
         $is_insert = false;
         if ( preg_match("/^(insert|delete|update|replace)\s+/i", $query) ) {
-            $this->rows_affected = @pg_affected_rows($this->result);
+            $this->affectedRows = @pg_affected_rows($this->result);
 
             // Take note of the insert_id
             if ( preg_match("/^(insert|replace)\s+/i", $query) ) {
@@ -287,7 +287,7 @@ class ezSQL_postgresql extends ezSQLcore
             }
 
             // Return number fo rows affected
-            $return_val = $this->rows_affected;
+            $return_val = $this->affectedRows;
         } else {
             // Query was a select
             $num_rows=0;
