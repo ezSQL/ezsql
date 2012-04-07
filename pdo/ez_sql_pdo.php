@@ -318,7 +318,7 @@ class ezSQL_pdo extends ezSQLcore
         if ( preg_match("/^(insert|delete|update|replace|drop|create)\s+/i", $query) ) {
 
             // Perform the query and log number of affected rows
-            $this->rows_affected = $this->dbh->exec($query);
+            $this->affectedRows = $this->dbh->exec($query);
 
             // If there is an error then take note of it..
             if ( $this->catch_error() ) {
@@ -333,7 +333,7 @@ class ezSQL_pdo extends ezSQLcore
             }
 
             // Return number fo rows affected
-            $return_val = $this->rows_affected;
+            $return_val = $this->affectedRows;
 
         } else {
             // Query was an select
