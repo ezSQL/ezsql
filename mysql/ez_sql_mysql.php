@@ -326,4 +326,12 @@ class ezSQL_mysql extends ezSQLcore
         return $this->charset;
     } // getCharset
 
+    /**
+     * Returns the last inserted autoincrement
+     * 
+     * @return int
+     */
+    public function getInsertId() {
+        return mysql_insert_id();
+    } // getInsertId
 } // ezSQL_mysql

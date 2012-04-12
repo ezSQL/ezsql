@@ -124,7 +124,6 @@ class ezSQL_mysqlTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals($this->object->query('CREATE TABLE unit_test(id integer, test_key varchar(50), PRIMARY KEY (ID))'), 0);
         $this->assertEquals($this->object->query('INSERT INTO unit_test(id, test_key) VALUES(1, \'test 1\')'), 1);
         $this->assertEquals($this->object->query('DROP TABLE unit_test'), 0);
-
     } // testQuery
 
     /**
@@ -150,4 +149,20 @@ class ezSQL_mysqlTest extends PHPUnit_Framework_TestCase {
         $this->assertTrue(true);
     } // testDisconnect
 
+    /**
+     * @covers ezSQL_mysql::getInsertId 
+     */
+    public function testGetInsertId() {
+        $this->object->connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD);
+
+        $this->object->select(self::TEST_DB_NAME);
+
+        $this->assertEquals($this->object->query('CREATE TABLE unit_test(id int(11) NOT NULL AUTO_INCREMENT, test_key varchar(50), PRIMARY KEY (ID))ENGINE=MyISAM  DEFAULT CHARSET=utf8'), 0);
+        $this->assertEquals($this->object->query('INSERT INTO unit_test(id, test_key) VALUES(1, \'test 1\')'), 1);
+        
+        $this->assertEquals(1, $this->object->getInsertId($this->object->dbh));
+        
+        $this->assertEquals($this->object->query('DROP TABLE unit_test'), 0);
+    } // testInsertId
+     
 } // ezSQL_mysqlTest
