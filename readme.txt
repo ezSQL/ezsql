@@ -15,6 +15,8 @@ http://techzinglive.com
 
 Change Log:
 
+3.00 - Changed the code to PHP5, added PHPDoc tags, and added unit tests (thx Stefanie Janine Stoelting)
+
 2.17 - Updates to ezSQL_postgresql (thx Stefanie Janine Stoelting)
 
 2.16 - Added profiling functions to mySQL version & added fix to stop mySQL hanging on very long runnign scripts
