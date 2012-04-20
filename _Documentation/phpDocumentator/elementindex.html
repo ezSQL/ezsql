@@ -25,6 +25,7 @@
 	<a class="index-letter" href="elementindex.html#g">g</a>
 	<a class="index-letter" href="elementindex.html#h">h</a>
 	<a class="index-letter" href="elementindex.html#i">i</a>
+	<a class="index-letter" href="elementindex.html#k">k</a>
 	<a class="index-letter" href="elementindex.html#l">l</a>
 	<a class="index-letter" href="elementindex.html#n">n</a>
 	<a class="index-letter" href="elementindex.html#o">o</a>
@@ -45,6 +46,20 @@
 		<div style="clear: both"></div>
 	</div>
 	<dl>
+			<dt class="field">
+						<span class="var-title">$affectedRows</span>
+					</dt>
+		<dd class="index-item-body">
+			<div class="index-item-details"><a href="ezSQL/ezSQLcore.html#var$affectedRows">ezSQLcore::$affectedRows</a> in ezSQL</div>
+							<div class="index-item-description">Contains the number of affected rows of a query</div>
+					</dd>
+			<dt class="field">
+						<span class="method-title">affectedRows</span>
+					</dt>
+		<dd class="index-item-body">
+			<div class="index-item-details"><a href="ezSQL/ezSQLcore.html#methodaffectedRows">ezSQLcore::affectedRows()</a> in ezSQL</div>
+							<div class="index-item-description">Returns the affected rows of a query</div>
+					</dd>
 			<dt class="field">
 						ARRAY_A
 					</dt>
@@ -184,13 +199,6 @@
 						<span class="method-title">connect</span>
 					</dt>
 		<dd class="index-item-body">
-			<div class="index-item-details"><a href="ezSQL/ezSQL_sybase.html#methodconnect">ezSQL_sybase::connect()</a> in ezSQL_sybase</div>
-							<div class="index-item-description">Try to connect to sybase database server</div>
-					</dd>
-			<dt class="field">
-						<span class="method-title">connect</span>
-					</dt>
-		<dd class="index-item-body">
 			<div class="index-item-details"><a href="ezSQL/ezSQL_oracle8_9.html#methodconnect">ezSQL_oracle8_9::connect()</a> in ezSQL_oracle8_9</div>
 							<div class="index-item-description">Try to connect to Oracle database server</div>
 					</dd>
@@ -209,6 +217,13 @@
 							<div class="index-item-description">Try to connect to PostgreSQL database server</div>
 					</dd>
 			<dt class="field">
+						<span class="method-title">connect</span>
+					</dt>
+		<dd class="index-item-body">
+			<div class="index-item-details"><a href="ezSQL/ezSQL_sybase.html#methodconnect">ezSQL_sybase::connect()</a> in ezSQL_sybase</div>
+							<div class="index-item-description">Try to connect to sybase database server</div>
+					</dd>
+			<dt class="field">
 						<span class="method-title">ConvertMySqlToMSSql</span>
 					</dt>
 		<dd class="index-item-body">
@@ -223,6 +238,13 @@
 			<div class="index-item-details"><a href="ezSQL/ezSQL_sybase.html#methodConvertMySqlTosybase">ezSQL_sybase::ConvertMySqlTosybase()</a> in ezSQL_sybase</div>
 							<div class="index-item-description">Convert a Query From MySql Syntax to Sybase syntax  Following conversions are made: <ol><li>The '`' character used for MySql queries is not supported - the
     character is removed.</li></ol></div>
+					</dd>
+			<dt class="field">
+						<span class="method-title">current</span>
+					</dt>
+		<dd class="index-item-body">
+			<div class="index-item-details"><a href="ezSQL/ezSQL_recordset.html#methodcurrent">ezSQL_recordset::current()</a> in ezSQL_recordset</div>
+							<div class="index-item-description">Returns the current row of the recordset as stdClass, which is the  default mode, or as array as fieldname - fieldvalue.</div>
 					</dd>
 		</dl>
 	<a name="d"></a>
@@ -411,24 +433,17 @@
 	</div>
 	<dl>
 			<dt class="field">
+						<span class="var-title">$ezSQL</span>
+					</dt>
+		<dd class="index-item-body">
+			<div class="index-item-details"><a href="ezSQL/unitTests/ezSQL_recordsetTest.html#var$ezSQL">ezSQL_recordsetTest::$ezSQL</a> in ezSQL_recordsetTest.php</div>
+							<div class="index-item-description">ezSQL connection</div>
+					</dd>
+			<dt class="field">
 						<span class="include-title">ezSQL_codeigniter</span>
 					</dt>
 		<dd class="index-item-body">
 			<div class="index-item-details"><a href="ezSQL/_codeigniter---Ezsql_codeigniter.php.html">ezSQL_codeigniter</a> in ezSQL_codeigniter</div>
-					</dd>
-			<dt class="field">
-						<span class="method-title">escape</span>
-					</dt>
-		<dd class="index-item-body">
-			<div class="index-item-details"><a href="ezSQL/ezSQL_mssql.html#methodescape">ezSQL_mssql::escape()</a> in ezSQL_mssql</div>
-							<div class="index-item-description">Format a mssql string correctly for safe mssql insert</div>
-					</dd>
-			<dt class="field">
-						<span class="method-title">escape</span>
-					</dt>
-		<dd class="index-item-body">
-			<div class="index-item-details"><a href="ezSQL/ezSQL_pdo.html#methodescape">ezSQL_pdo::escape()</a> in ezSQL_pdo</div>
-							<div class="index-item-description">Escape a string with the PDO method</div>
 					</dd>
 			<dt class="field">
 						<span class="method-title">escape</span>
@@ -448,6 +463,13 @@
 						<span class="method-title">escape</span>
 					</dt>
 		<dd class="index-item-body">
+			<div class="index-item-details"><a href="ezSQL/ezSQL_postgresql.html#methodescape">ezSQL_postgresql::escape()</a> in ezSQL_postgresql</div>
+							<div class="index-item-description">Format a mySQL string correctly for safe mySQL insert  (no matter if magic quotes are on or not)</div>
+					</dd>
+			<dt class="field">
+						<span class="method-title">escape</span>
+					</dt>
+		<dd class="index-item-body">
 			<div class="index-item-details"><a href="ezSQL/ezSQL_sybase.html#methodescape">ezSQL_sybase::escape()</a> in ezSQL_sybase</div>
 							<div class="index-item-description">Format a sybase string correctly for safe sybase insert</div>
 					</dd>
@@ -455,15 +477,8 @@
 						<span class="method-title">escape</span>
 					</dt>
 		<dd class="index-item-body">
-			<div class="index-item-details"><a href="ezSQL/ezSQL_codeigniter.html#methodescape">ezSQL_codeigniter::escape()</a> in ezSQL_codeigniter</div>
-							<div class="index-item-description">Format a sql string correctly for safe insert</div>
-					</dd>
-			<dt class="field">
-						<span class="method-title">escape</span>
-					</dt>
-		<dd class="index-item-body">
-			<div class="index-item-details"><a href="ezSQL/ezSQL_postgresql.html#methodescape">ezSQL_postgresql::escape()</a> in ezSQL_postgresql</div>
-							<div class="index-item-description">Format a mySQL string correctly for safe mySQL insert  (no matter if magic quotes are on or not)</div>
+			<div class="index-item-details"><a href="ezSQL/ezSQL_mssql.html#methodescape">ezSQL_mssql::escape()</a> in ezSQL_mssql</div>
+							<div class="index-item-description">Format a mssql string correctly for safe mssql insert</div>
 					</dd>
 			<dt class="field">
 						<span class="method-title">escape</span>
@@ -473,11 +488,18 @@
 							<div class="index-item-description">********************************************************************</div>
 					</dd>
 			<dt class="field">
-						ezSQLcore
+						<span class="method-title">escape</span>
 					</dt>
 		<dd class="index-item-body">
-			<div class="index-item-details"><a href="ezSQL/ezSQLcore.html">ezSQLcore</a> in ezSQL</div>
-							<div class="index-item-description">ezSQL Core module - database abstraction library to make it very easy  to deal with databases. ezSQLcore can not be used by  itself  (it is designed for use by database specific modules).</div>
+			<div class="index-item-details"><a href="ezSQL/ezSQL_pdo.html#methodescape">ezSQL_pdo::escape()</a> in ezSQL_pdo</div>
+							<div class="index-item-description">Escape a string with the PDO method</div>
+					</dd>
+			<dt class="field">
+						<span class="method-title">escape</span>
+					</dt>
+		<dd class="index-item-body">
+			<div class="index-item-details"><a href="ezSQL/ezSQL_codeigniter.html#methodescape">ezSQL_codeigniter::escape()</a> in ezSQL_codeigniter</div>
+							<div class="index-item-description">Format a sql string correctly for safe insert</div>
 					</dd>
 			<dt class="field">
 						ezSQLcore
@@ -494,6 +516,13 @@
 							<div class="index-item-description">********************************************************************</div>
 					</dd>
 			<dt class="field">
+						ezSQLcore
+					</dt>
+		<dd class="index-item-body">
+			<div class="index-item-details"><a href="ezSQL/ezSQLcore.html">ezSQLcore</a> in ezSQL</div>
+							<div class="index-item-description">ezSQL Core module - database abstraction library to make it very easy  to deal with databases. ezSQLcore can not be used by  itself  (it is designed for use by database specific modules).</div>
+					</dd>
+			<dt class="field">
 						ezSQLcoreTest
 					</dt>
 		<dd class="index-item-body">
@@ -506,6 +535,27 @@
 		<dd class="index-item-body">
 			<div class="index-item-details"><a href="ezSQL/ezSQL_codeigniter.html">ezSQL_codeigniter</a> in ezSQL_codeigniter</div>
 							<div class="index-item-description">ezSQL Database specific class - codeigniter  Desc..: codeigniter component (part of ezSQL databse abstraction library)</div>
+					</dd>
+			<dt class="field">
+						<span class="method-title">ezSQL_fetch_assoc</span>
+					</dt>
+		<dd class="index-item-body">
+			<div class="index-item-details"><a href="ezSQL/ezSQL_recordset.html#methodezSQL_fetch_assoc">ezSQL_recordset::ezSQL_fetch_assoc()</a> in ezSQL_recordset</div>
+							<div class="index-item-description">Behaves like mysql_fetch_assoc. This method it to implement ezSQL easier  in an existing system, that made us of mysql_fetch_assoc.</div>
+					</dd>
+			<dt class="field">
+						<span class="method-title">ezSQL_fetch_object</span>
+					</dt>
+		<dd class="index-item-body">
+			<div class="index-item-details"><a href="ezSQL/ezSQL_recordset.html#methodezSQL_fetch_object">ezSQL_recordset::ezSQL_fetch_object()</a> in ezSQL_recordset</div>
+							<div class="index-item-description">Behaves like mysql_fetch_object This method it to implement ezSQL easier  in an existing system, that made us of mysql_fetch_object.</div>
+					</dd>
+			<dt class="field">
+						<span class="method-title">ezSQL_fetch_row</span>
+					</dt>
+		<dd class="index-item-body">
+			<div class="index-item-details"><a href="ezSQL/ezSQL_recordset.html#methodezSQL_fetch_row">ezSQL_recordset::ezSQL_fetch_row()</a> in ezSQL_recordset</div>
+							<div class="index-item-description">Behaves like mysql_fetch_row This method it to implement ezSQL easier  in an existing system, that made us of mysql_fetch_row.</div>
 					</dd>
 			<dt class="field">
 						ezSQL_mssql
@@ -578,6 +628,20 @@
 							<div class="index-item-description">Test class for ezSQL_postgresql.</div>
 					</dd>
 			<dt class="field">
+						ezSQL_recordset
+					</dt>
+		<dd class="index-item-body">
+			<div class="index-item-details"><a href="ezSQL/ezSQL_recordset.html">ezSQL_recordset</a> in ezSQL_recordset</div>
+							<div class="index-item-description">ezSQL Database specific class for working with query results  Desc..: recordset component (part of ezSQL databse abstraction library)</div>
+					</dd>
+			<dt class="field">
+						ezSQL_recordsetTest
+					</dt>
+		<dd class="index-item-body">
+			<div class="index-item-details"><a href="ezSQL/unitTests/ezSQL_recordsetTest.html">ezSQL_recordsetTest</a> in ezSQL_recordsetTest.php</div>
+							<div class="index-item-description">Test class for ezSQL_recordset.</div>
+					</dd>
+			<dt class="field">
 						ezSQL_sybase
 					</dt>
 		<dd class="index-item-body">
@@ -647,6 +711,12 @@
 			<div class="index-item-details"><a href="default/_shared---ez_sql_core_202console.php.html">ez_sql_core_202console.php</a> in ez_sql_core_202console.php</div>
 					</dd>
 			<dt class="field">
+						<span class="include-title">ezSQL_recordset</span>
+					</dt>
+		<dd class="index-item-body">
+			<div class="index-item-details"><a href="ezSQL/_shared---ez_sql_recordset.php.html">ezSQL_recordset</a> in ezSQL_recordset</div>
+					</dd>
+			<dt class="field">
 						<span class="include-title">ezSQL_sybase</span>
 					</dt>
 		<dd class="index-item-body">
@@ -687,6 +757,12 @@
 					</dt>
 		<dd class="index-item-body">
 			<div class="index-item-details"><a href="ezSQL/unitTests/__Test---unit_tests---shared---ezSQLcoreTest.php.html">ezSQLcoreTest.php</a> in ezSQLcoreTest.php</div>
+					</dd>
+			<dt class="field">
+						<span class="include-title">ezSQL_recordsetTest.php</span>
+					</dt>
+		<dd class="index-item-body">
+			<div class="index-item-details"><a href="ezSQL/unitTests/__Test---unit_tests---shared---ezSQL_recordsetTest.php.html">ezSQL_recordsetTest.php</a> in ezSQL_recordsetTest.php</div>
 					</dd>
 			<dt class="field">
 						<span class="include-title">ezSQL_sybaseTest.php</span>
@@ -772,6 +848,13 @@
 		<dd class="index-item-body">
 			<div class="index-item-details"><a href="ezSQL/ezSQL_oracle8_9.html#methodgetDBName">ezSQL_oracle8_9::getDBName()</a> in ezSQL_oracle8_9</div>
 							<div class="index-item-description">Returns the current database name</div>
+					</dd>
+			<dt class="field">
+						<span class="method-title">getInsertId</span>
+					</dt>
+		<dd class="index-item-body">
+			<div class="index-item-details"><a href="ezSQL/ezSQL_mysql.html#methodgetInsertId">ezSQL_mysql::getInsertId()</a> in ezSQL_mysql</div>
+							<div class="index-item-description">Returns the last inserted autoincrement</div>
 					</dd>
 			<dt class="field">
 						<span class="method-title">getPort</span>
@@ -936,6 +1019,21 @@
 							<div class="index-item-description">Returns an escaped equal string</div>
 					</dd>
 		</dl>
+	<a name="k"></a>
+	<div class="index-letter-section">
+		<div style="float: left" class="index-letter-title">k</div>
+		<div style="float: right"><a href="#top">top</a></div>
+		<div style="clear: both"></div>
+	</div>
+	<dl>
+			<dt class="field">
+						<span class="method-title">key</span>
+					</dt>
+		<dd class="index-item-body">
+			<div class="index-item-details"><a href="ezSQL/ezSQL_recordset.html#methodkey">ezSQL_recordset::key()</a> in ezSQL_recordset</div>
+							<div class="index-item-description">Returns the current position in the recordset</div>
+					</dd>
+		</dl>
 	<a name="l"></a>
 	<div class="index-letter-section">
 		<div style="float: left" class="index-letter-title">l</div>
@@ -988,14 +1086,21 @@
 						<span class="var-title">$num_queries</span>
 					</dt>
 		<dd class="index-item-body">
-			<div class="index-item-details"><a href="ezSQL/ezSQLcore.html#var$num_queries">ezSQLcore::$num_queries</a> in ezSQL</div>
-							<div class="index-item-description">Number of queries</div>
+			<div class="index-item-details"><a href="default/ezSQLcore.html#var$num_queries">ezSQLcore::$num_queries</a> in ez_sql_core_202console.php</div>
 					</dd>
 			<dt class="field">
 						<span class="var-title">$num_queries</span>
 					</dt>
 		<dd class="index-item-body">
-			<div class="index-item-details"><a href="default/ezSQLcore.html#var$num_queries">ezSQLcore::$num_queries</a> in ez_sql_core_202console.php</div>
+			<div class="index-item-details"><a href="ezSQL/ezSQLcore.html#var$num_queries">ezSQLcore::$num_queries</a> in ezSQL</div>
+							<div class="index-item-description">Number of queries</div>
+					</dd>
+			<dt class="field">
+						<span class="method-title">next</span>
+					</dt>
+		<dd class="index-item-body">
+			<div class="index-item-details"><a href="ezSQL/ezSQL_recordset.html#methodnext">ezSQL_recordset::next()</a> in ezSQL_recordset</div>
+							<div class="index-item-description">Sets the position of the recordset up by one</div>
 					</dd>
 			<dt class="field">
 						<span class="method-title">nextVal</span>
@@ -1016,13 +1121,13 @@
 						<span class="var-title">$object</span>
 					</dt>
 		<dd class="index-item-body">
-			<div class="index-item-details"><a href="ezSQL/unitTests/ezSQL_pdoTest.html#var$object">ezSQL_pdoTest::$object</a> in ezSQL_pdoTest.php</div>
+			<div class="index-item-details"><a href="ezSQL/unitTests/ezSQL_postgresqlTest.html#var$object">ezSQL_postgresqlTest::$object</a> in ezSQL_postgresqlTest.php</div>
 					</dd>
 			<dt class="field">
 						<span class="var-title">$object</span>
 					</dt>
 		<dd class="index-item-body">
-			<div class="index-item-details"><a href="ezSQL/unitTests/ezSQL_postgresqlTest.html#var$object">ezSQL_postgresqlTest::$object</a> in ezSQL_postgresqlTest.php</div>
+			<div class="index-item-details"><a href="ezSQL/unitTests/ezSQL_recordsetTest.html#var$object">ezSQL_recordsetTest::$object</a> in ezSQL_recordsetTest.php</div>
 					</dd>
 			<dt class="field">
 						<span class="var-title">$object</span>
@@ -1034,13 +1139,13 @@
 						<span class="var-title">$object</span>
 					</dt>
 		<dd class="index-item-body">
-			<div class="index-item-details"><a href="ezSQL/unitTests/ezSQL_oracle8_9Test.html#var$object">ezSQL_oracle8_9Test::$object</a> in ezSQL_oracle8_9Test.php</div>
+			<div class="index-item-details"><a href="ezSQL/unitTests/ezSQL_pdoTest.html#var$object">ezSQL_pdoTest::$object</a> in ezSQL_pdoTest.php</div>
 					</dd>
 			<dt class="field">
 						<span class="var-title">$object</span>
 					</dt>
 		<dd class="index-item-body">
-			<div class="index-item-details"><a href="ezSQL/unitTests/ezSQL_mysqlTest.html#var$object">ezSQL_mysqlTest::$object</a> in ezSQL_mysqlTest.php</div>
+			<div class="index-item-details"><a href="ezSQL/unitTests/ezSQL_oracle8_9Test.html#var$object">ezSQL_oracle8_9Test::$object</a> in ezSQL_oracle8_9Test.php</div>
 					</dd>
 			<dt class="field">
 						<span class="var-title">$object</span>
@@ -1053,6 +1158,12 @@
 					</dt>
 		<dd class="index-item-body">
 			<div class="index-item-details"><a href="ezSQL/unitTests/ezSQL_mssqlTest.html#var$object">ezSQL_mssqlTest::$object</a> in ezSQL_mssqlTest.php</div>
+					</dd>
+			<dt class="field">
+						<span class="var-title">$object</span>
+					</dt>
+		<dd class="index-item-body">
+			<div class="index-item-details"><a href="ezSQL/unitTests/ezSQL_mysqlTest.html#var$object">ezSQL_mysqlTest::$object</a> in ezSQL_mysqlTest.php</div>
 					</dd>
 			<dt class="field">
 						OBJECT
@@ -1075,6 +1186,13 @@
 		<dd class="index-item-body">
 			<div class="index-item-details"><a href="ezSQL/ezSQLcore.html#var$profile_times">ezSQLcore::$profile_times</a> in ezSQL</div>
 							<div class="index-item-description">Array for storing profiling times</div>
+					</dd>
+			<dt class="field">
+						<span class="method-title">previous</span>
+					</dt>
+		<dd class="index-item-body">
+			<div class="index-item-details"><a href="ezSQL/ezSQL_recordset.html#methodprevious">ezSQL_recordset::previous()</a> in ezSQL_recordset</div>
+							<div class="index-item-description">Sets position of the recordset down by one, if the position is below the</div>
 					</dd>
 		</dl>
 	<a name="q"></a>
@@ -1194,15 +1312,43 @@
 						<span class="method-title">register_error</span>
 					</dt>
 		<dd class="index-item-body">
-			<div class="index-item-details"><a href="ezSQL/ezSQLcore.html#methodregister_error">ezSQLcore::register_error()</a> in ezSQL</div>
-							<div class="index-item-description">Print SQL/DB error - over-ridden by specific DB class</div>
+			<div class="index-item-details"><a href="default/ezSQLcore.html#methodregister_error">ezSQLcore::register_error()</a> in ez_sql_core_202console.php</div>
+							<div class="index-item-description">********************************************************************</div>
 					</dd>
 			<dt class="field">
 						<span class="method-title">register_error</span>
 					</dt>
 		<dd class="index-item-body">
-			<div class="index-item-details"><a href="default/ezSQLcore.html#methodregister_error">ezSQLcore::register_error()</a> in ez_sql_core_202console.php</div>
-							<div class="index-item-description">********************************************************************</div>
+			<div class="index-item-details"><a href="ezSQL/ezSQLcore.html#methodregister_error">ezSQLcore::register_error()</a> in ezSQL</div>
+							<div class="index-item-description">Print SQL/DB error - over-ridden by specific DB class</div>
+					</dd>
+			<dt class="field">
+						RESULT_AS_ARRAY
+					</dt>
+		<dd class="index-item-body">
+			<div class="index-item-details"><a href="ezSQL/ezSQL_recordset.html#constRESULT_AS_ARRAY">ezSQL_recordset::RESULT_AS_ARRAY</a> in ezSQL_recordset</div>
+							<div class="index-item-description">Returns the result as array</div>
+					</dd>
+			<dt class="field">
+						RESULT_AS_OBJECT
+					</dt>
+		<dd class="index-item-body">
+			<div class="index-item-details"><a href="ezSQL/ezSQL_recordset.html#constRESULT_AS_OBJECT">ezSQL_recordset::RESULT_AS_OBJECT</a> in ezSQL_recordset</div>
+							<div class="index-item-description">Returns the result as object of stdClass</div>
+					</dd>
+			<dt class="field">
+						RESULT_AS_ROW
+					</dt>
+		<dd class="index-item-body">
+			<div class="index-item-details"><a href="ezSQL/ezSQL_recordset.html#constRESULT_AS_ROW">ezSQL_recordset::RESULT_AS_ROW</a> in ezSQL_recordset</div>
+							<div class="index-item-description">Returns the result as numeric array</div>
+					</dd>
+			<dt class="field">
+						<span class="method-title">rewind</span>
+					</dt>
+		<dd class="index-item-body">
+			<div class="index-item-details"><a href="ezSQL/ezSQL_recordset.html#methodrewind">ezSQL_recordset::rewind()</a> in ezSQL_recordset</div>
+							<div class="index-item-description">Sets the position to zero</div>
 					</dd>
 		</dl>
 	<a name="s"></a>
@@ -1230,19 +1376,6 @@
 						<span class="var-title">$show_errors</span>
 					</dt>
 		<dd class="index-item-body">
-			<div class="index-item-details"><a href="ezSQL/ezSQL_sybase.html#var$show_errors">ezSQL_sybase::$show_errors</a> in ezSQL_sybase</div>
-							<div class="index-item-description">Show errors</div>
-					</dd>
-			<dt class="field">
-						<span class="var-title">$show_errors</span>
-					</dt>
-		<dd class="index-item-body">
-			<div class="index-item-details"><a href="default/ezSQLcore.html#var$show_errors">ezSQLcore::$show_errors</a> in ez_sql_core_202console.php</div>
-					</dd>
-			<dt class="field">
-						<span class="var-title">$show_errors</span>
-					</dt>
-		<dd class="index-item-body">
 			<div class="index-item-details"><a href="ezSQL/ezSQL_mysql.html#var$show_errors">ezSQL_mysql::$show_errors</a> in ezSQL_mysql</div>
 							<div class="index-item-description">Show errors</div>
 					</dd>
@@ -1264,8 +1397,21 @@
 						<span class="var-title">$show_errors</span>
 					</dt>
 		<dd class="index-item-body">
+			<div class="index-item-details"><a href="ezSQL/ezSQL_sybase.html#var$show_errors">ezSQL_sybase::$show_errors</a> in ezSQL_sybase</div>
+							<div class="index-item-description">Show errors</div>
+					</dd>
+			<dt class="field">
+						<span class="var-title">$show_errors</span>
+					</dt>
+		<dd class="index-item-body">
 			<div class="index-item-details"><a href="ezSQL/ezSQL_codeigniter.html#var$show_errors">ezSQL_codeigniter::$show_errors</a> in ezSQL_codeigniter</div>
 							<div class="index-item-description">Show errors</div>
+					</dd>
+			<dt class="field">
+						<span class="var-title">$show_errors</span>
+					</dt>
+		<dd class="index-item-body">
+			<div class="index-item-details"><a href="default/ezSQLcore.html#var$show_errors">ezSQLcore::$show_errors</a> in ez_sql_core_202console.php</div>
 					</dd>
 			<dt class="field">
 						<span class="var-title">$sql_log_file</span>
@@ -1285,8 +1431,29 @@
 						<span class="method-title">select</span>
 					</dt>
 		<dd class="index-item-body">
+			<div class="index-item-details"><a href="default/ezSQLcore.html#methodselect">ezSQLcore::select()</a> in ez_sql_core_202console.php</div>
+							<div class="index-item-description">********************************************************************</div>
+					</dd>
+			<dt class="field">
+						<span class="method-title">select</span>
+					</dt>
+		<dd class="index-item-body">
+			<div class="index-item-details"><a href="ezSQL/ezSQL_sybase.html#methodselect">ezSQL_sybase::select()</a> in ezSQL_sybase</div>
+							<div class="index-item-description">Try to select a sybase database</div>
+					</dd>
+			<dt class="field">
+						<span class="method-title">select</span>
+					</dt>
+		<dd class="index-item-body">
 			<div class="index-item-details"><a href="ezSQL/ezSQL_postgresql.html#methodselect">ezSQL_postgresql::select()</a> in ezSQL_postgresql</div>
 							<div class="index-item-description">No real equivalent of mySQL select in PostgreSQL once again, function  included for the sake of consistency</div>
+					</dd>
+			<dt class="field">
+						<span class="method-title">select</span>
+					</dt>
+		<dd class="index-item-body">
+			<div class="index-item-details"><a href="ezSQL/ezSQL_pdo.html#methodselect">ezSQL_pdo::select()</a> in ezSQL_pdo</div>
+							<div class="index-item-description">With PDO it is only an alias for the connect method</div>
 					</dd>
 			<dt class="field">
 						<span class="method-title">select</span>
@@ -1303,31 +1470,10 @@
 							<div class="index-item-description">Try to select a mySQL database</div>
 					</dd>
 			<dt class="field">
-						<span class="method-title">select</span>
-					</dt>
-		<dd class="index-item-body">
-			<div class="index-item-details"><a href="default/ezSQLcore.html#methodselect">ezSQLcore::select()</a> in ez_sql_core_202console.php</div>
-							<div class="index-item-description">********************************************************************</div>
-					</dd>
-			<dt class="field">
-						<span class="method-title">select</span>
-					</dt>
-		<dd class="index-item-body">
-			<div class="index-item-details"><a href="ezSQL/ezSQL_pdo.html#methodselect">ezSQL_pdo::select()</a> in ezSQL_pdo</div>
-							<div class="index-item-description">With PDO it is only an alias for the connect method</div>
-					</dd>
-			<dt class="field">
-						<span class="method-title">select</span>
-					</dt>
-		<dd class="index-item-body">
-			<div class="index-item-details"><a href="ezSQL/ezSQL_sybase.html#methodselect">ezSQL_sybase::select()</a> in ezSQL_sybase</div>
-							<div class="index-item-description">Try to select a sybase database</div>
-					</dd>
-			<dt class="field">
 						<span class="method-title">setUp</span>
 					</dt>
 		<dd class="index-item-body">
-			<div class="index-item-details"><a href="ezSQL/unitTests/ezSQL_postgresqlTest.html#methodsetUp">ezSQL_postgresqlTest::setUp()</a> in ezSQL_postgresqlTest.php</div>
+			<div class="index-item-details"><a href="ezSQL/unitTests/ezSQL_mssqlTest.html#methodsetUp">ezSQL_mssqlTest::setUp()</a> in ezSQL_mssqlTest.php</div>
 							<div class="index-item-description">Sets up the fixture, for example, opens a network connection.</div>
 					</dd>
 			<dt class="field">
@@ -1341,7 +1487,7 @@
 						<span class="method-title">setUp</span>
 					</dt>
 		<dd class="index-item-body">
-			<div class="index-item-details"><a href="ezSQL/unitTests/ezSQLcoreTest.html#methodsetUp">ezSQLcoreTest::setUp()</a> in ezSQLcoreTest.php</div>
+			<div class="index-item-details"><a href="ezSQL/unitTests/ezSQL_mysqlTest.html#methodsetUp">ezSQL_mysqlTest::setUp()</a> in ezSQL_mysqlTest.php</div>
 							<div class="index-item-description">Sets up the fixture, for example, opens a network connection.</div>
 					</dd>
 			<dt class="field">
@@ -1355,7 +1501,14 @@
 						<span class="method-title">setUp</span>
 					</dt>
 		<dd class="index-item-body">
-			<div class="index-item-details"><a href="ezSQL/unitTests/ezSQL_mysqlTest.html#methodsetUp">ezSQL_mysqlTest::setUp()</a> in ezSQL_mysqlTest.php</div>
+			<div class="index-item-details"><a href="ezSQL/unitTests/ezSQL_recordsetTest.html#methodsetUp">ezSQL_recordsetTest::setUp()</a> in ezSQL_recordsetTest.php</div>
+							<div class="index-item-description">Sets up the fixture, for example, opens a network connection.</div>
+					</dd>
+			<dt class="field">
+						<span class="method-title">setUp</span>
+					</dt>
+		<dd class="index-item-body">
+			<div class="index-item-details"><a href="ezSQL/unitTests/ezSQL_postgresqlTest.html#methodsetUp">ezSQL_postgresqlTest::setUp()</a> in ezSQL_postgresqlTest.php</div>
 							<div class="index-item-description">Sets up the fixture, for example, opens a network connection.</div>
 					</dd>
 			<dt class="field">
@@ -1369,7 +1522,7 @@
 						<span class="method-title">setUp</span>
 					</dt>
 		<dd class="index-item-body">
-			<div class="index-item-details"><a href="ezSQL/unitTests/ezSQL_mssqlTest.html#methodsetUp">ezSQL_mssqlTest::setUp()</a> in ezSQL_mssqlTest.php</div>
+			<div class="index-item-details"><a href="ezSQL/unitTests/ezSQLcoreTest.html#methodsetUp">ezSQLcoreTest::setUp()</a> in ezSQLcoreTest.php</div>
 							<div class="index-item-description">Sets up the fixture, for example, opens a network connection.</div>
 					</dd>
 			<dt class="field">
@@ -1404,22 +1557,15 @@
 						<span class="method-title">store_cache</span>
 					</dt>
 		<dd class="index-item-body">
-			<div class="index-item-details"><a href="default/ezSQLcore.html#methodstore_cache">ezSQLcore::store_cache()</a> in ez_sql_core_202console.php</div>
-							<div class="index-item-description">********************************************************************</div>
+			<div class="index-item-details"><a href="ezSQL/ezSQLcore.html#methodstore_cache">ezSQLcore::store_cache()</a> in ezSQL</div>
+							<div class="index-item-description">Store the cache</div>
 					</dd>
 			<dt class="field">
 						<span class="method-title">store_cache</span>
 					</dt>
 		<dd class="index-item-body">
-			<div class="index-item-details"><a href="ezSQL/ezSQLcore.html#methodstore_cache">ezSQLcore::store_cache()</a> in ezSQL</div>
-							<div class="index-item-description">Store the cache</div>
-					</dd>
-			<dt class="field">
-						<span class="method-title">sysdate</span>
-					</dt>
-		<dd class="index-item-body">
-			<div class="index-item-details"><a href="ezSQL/ezSQL_oracle8_9.html#methodsysdate">ezSQL_oracle8_9::sysdate()</a> in ezSQL_oracle8_9</div>
-							<div class="index-item-description">Return Oracle specific system date syntax  i.e. Oracle: SYSDATE Mysql: NOW()</div>
+			<div class="index-item-details"><a href="default/ezSQLcore.html#methodstore_cache">ezSQLcore::store_cache()</a> in ez_sql_core_202console.php</div>
+							<div class="index-item-description">********************************************************************</div>
 					</dd>
 			<dt class="field">
 						<span class="method-title">sysdate</span>
@@ -1439,8 +1585,8 @@
 						<span class="method-title">sysdate</span>
 					</dt>
 		<dd class="index-item-body">
-			<div class="index-item-details"><a href="ezSQL/ezSQL_mssql.html#methodsysdate">ezSQL_mssql::sysdate()</a> in ezSQL_mssql</div>
-							<div class="index-item-description">Return mssql specific system date syntax  i.e. Oracle: SYSDATE mssql: NOW(), MS-SQL : getDate()</div>
+			<div class="index-item-details"><a href="ezSQL/ezSQL_oracle8_9.html#methodsysdate">ezSQL_oracle8_9::sysdate()</a> in ezSQL_oracle8_9</div>
+							<div class="index-item-description">Return Oracle specific system date syntax  i.e. Oracle: SYSDATE Mysql: NOW()</div>
 					</dd>
 			<dt class="field">
 						<span class="method-title">sysdate</span>
@@ -1455,6 +1601,13 @@
 		<dd class="index-item-body">
 			<div class="index-item-details"><a href="ezSQL/ezSQL_pdo.html#methodsysdate">ezSQL_pdo::sysdate()</a> in ezSQL_pdo</div>
 							<div class="index-item-description">Return SQLite specific system date syntax  i.e. Oracle: SYSDATE Mysql: NOW()</div>
+					</dd>
+			<dt class="field">
+						<span class="method-title">sysdate</span>
+					</dt>
+		<dd class="index-item-body">
+			<div class="index-item-details"><a href="ezSQL/ezSQL_mssql.html#methodsysdate">ezSQL_mssql::sysdate()</a> in ezSQL_mssql</div>
+							<div class="index-item-description">Return mssql specific system date syntax  i.e. Oracle: SYSDATE mssql: NOW(), MS-SQL : getDate()</div>
 					</dd>
 			<dt class="field">
 						<span class="method-title">sysdate</span>
@@ -1509,27 +1662,6 @@
 						<span class="method-title">tearDown</span>
 					</dt>
 		<dd class="index-item-body">
-			<div class="index-item-details"><a href="ezSQL/unitTests/ezSQL_sybaseTest.html#methodtearDown">ezSQL_sybaseTest::tearDown()</a> in ezSQL_sybaseTest.php</div>
-							<div class="index-item-description">Tears down the fixture, for example, closes a network connection.</div>
-					</dd>
-			<dt class="field">
-						<span class="method-title">tearDown</span>
-					</dt>
-		<dd class="index-item-body">
-			<div class="index-item-details"><a href="ezSQL/unitTests/ezSQL_mysqlTest.html#methodtearDown">ezSQL_mysqlTest::tearDown()</a> in ezSQL_mysqlTest.php</div>
-							<div class="index-item-description">Tears down the fixture, for example, closes a network connection.</div>
-					</dd>
-			<dt class="field">
-						<span class="method-title">tearDown</span>
-					</dt>
-		<dd class="index-item-body">
-			<div class="index-item-details"><a href="ezSQL/unitTests/ezSQL_oracle8_9Test.html#methodtearDown">ezSQL_oracle8_9Test::tearDown()</a> in ezSQL_oracle8_9Test.php</div>
-							<div class="index-item-description">Tears down the fixture, for example, closes a network connection.</div>
-					</dd>
-			<dt class="field">
-						<span class="method-title">tearDown</span>
-					</dt>
-		<dd class="index-item-body">
 			<div class="index-item-details"><a href="ezSQL/unitTests/ezSQL_mssqlTest.html#methodtearDown">ezSQL_mssqlTest::tearDown()</a> in ezSQL_mssqlTest.php</div>
 							<div class="index-item-description">Tears down the fixture, for example, closes a network connection.</div>
 					</dd>
@@ -1544,7 +1676,28 @@
 						<span class="method-title">tearDown</span>
 					</dt>
 		<dd class="index-item-body">
-			<div class="index-item-details"><a href="ezSQL/unitTests/ezSQLcoreTest.html#methodtearDown">ezSQLcoreTest::tearDown()</a> in ezSQLcoreTest.php</div>
+			<div class="index-item-details"><a href="ezSQL/unitTests/ezSQL_recordsetTest.html#methodtearDown">ezSQL_recordsetTest::tearDown()</a> in ezSQL_recordsetTest.php</div>
+							<div class="index-item-description">Tears down the fixture, for example, closes a network connection.</div>
+					</dd>
+			<dt class="field">
+						<span class="method-title">tearDown</span>
+					</dt>
+		<dd class="index-item-body">
+			<div class="index-item-details"><a href="ezSQL/unitTests/ezSQL_oracle8_9Test.html#methodtearDown">ezSQL_oracle8_9Test::tearDown()</a> in ezSQL_oracle8_9Test.php</div>
+							<div class="index-item-description">Tears down the fixture, for example, closes a network connection.</div>
+					</dd>
+			<dt class="field">
+						<span class="method-title">tearDown</span>
+					</dt>
+		<dd class="index-item-body">
+			<div class="index-item-details"><a href="ezSQL/unitTests/ezSQL_sybaseTest.html#methodtearDown">ezSQL_sybaseTest::tearDown()</a> in ezSQL_sybaseTest.php</div>
+							<div class="index-item-description">Tears down the fixture, for example, closes a network connection.</div>
+					</dd>
+			<dt class="field">
+						<span class="method-title">tearDown</span>
+					</dt>
+		<dd class="index-item-body">
+			<div class="index-item-details"><a href="ezSQL/unitTests/ezSQL_mysqlTest.html#methodtearDown">ezSQL_mysqlTest::tearDown()</a> in ezSQL_mysqlTest.php</div>
 							<div class="index-item-description">Tears down the fixture, for example, closes a network connection.</div>
 					</dd>
 			<dt class="field">
@@ -1555,22 +1708,17 @@
 							<div class="index-item-description">Tears down the fixture, for example, closes a network connection.</div>
 					</dd>
 			<dt class="field">
-						<span class="method-title">testConnect</span>
+						<span class="method-title">tearDown</span>
 					</dt>
 		<dd class="index-item-body">
-			<div class="index-item-details"><a href="ezSQL/unitTests/ezSQL_postgresqlTest.html#methodtestConnect">ezSQL_postgresqlTest::testConnect()</a> in ezSQL_postgresqlTest.php</div>
+			<div class="index-item-details"><a href="ezSQL/unitTests/ezSQLcoreTest.html#methodtearDown">ezSQLcoreTest::tearDown()</a> in ezSQLcoreTest.php</div>
+							<div class="index-item-description">Tears down the fixture, for example, closes a network connection.</div>
 					</dd>
 			<dt class="field">
-						<span class="method-title">testConnect</span>
+						<span class="method-title">testAffectedRows</span>
 					</dt>
 		<dd class="index-item-body">
-			<div class="index-item-details"><a href="ezSQL/unitTests/ezSQL_sybaseTest.html#methodtestConnect">ezSQL_sybaseTest::testConnect()</a> in ezSQL_sybaseTest.php</div>
-					</dd>
-			<dt class="field">
-						<span class="method-title">testConnect</span>
-					</dt>
-		<dd class="index-item-body">
-			<div class="index-item-details"><a href="ezSQL/unitTests/ezSQL_mysqlTest.html#methodtestConnect">ezSQL_mysqlTest::testConnect()</a> in ezSQL_mysqlTest.php</div>
+			<div class="index-item-details"><a href="ezSQL/unitTests/ezSQLcoreTest.html#methodtestAffectedRows">ezSQLcoreTest::testAffectedRows()</a> in ezSQLcoreTest.php</div>
 					</dd>
 			<dt class="field">
 						<span class="method-title">testConnect</span>
@@ -1582,7 +1730,25 @@
 						<span class="method-title">testConnect</span>
 					</dt>
 		<dd class="index-item-body">
+			<div class="index-item-details"><a href="ezSQL/unitTests/ezSQL_sybaseTest.html#methodtestConnect">ezSQL_sybaseTest::testConnect()</a> in ezSQL_sybaseTest.php</div>
+					</dd>
+			<dt class="field">
+						<span class="method-title">testConnect</span>
+					</dt>
+		<dd class="index-item-body">
 			<div class="index-item-details"><a href="ezSQL/unitTests/ezSQL_mssqlTest.html#methodtestConnect">ezSQL_mssqlTest::testConnect()</a> in ezSQL_mssqlTest.php</div>
+					</dd>
+			<dt class="field">
+						<span class="method-title">testConnect</span>
+					</dt>
+		<dd class="index-item-body">
+			<div class="index-item-details"><a href="ezSQL/unitTests/ezSQL_postgresqlTest.html#methodtestConnect">ezSQL_postgresqlTest::testConnect()</a> in ezSQL_postgresqlTest.php</div>
+					</dd>
+			<dt class="field">
+						<span class="method-title">testConnect</span>
+					</dt>
+		<dd class="index-item-body">
+			<div class="index-item-details"><a href="ezSQL/unitTests/ezSQL_mysqlTest.html#methodtestConnect">ezSQL_mysqlTest::testConnect()</a> in ezSQL_mysqlTest.php</div>
 					</dd>
 			<dt class="field">
 						<span class="method-title">testConvertMySqlToMSSql</span>
@@ -1595,6 +1761,12 @@
 					</dt>
 		<dd class="index-item-body">
 			<div class="index-item-details"><a href="ezSQL/unitTests/ezSQL_sybaseTest.html#methodtestConvertMySqlTosybase">ezSQL_sybaseTest::testConvertMySqlTosybase()</a> in ezSQL_sybaseTest.php</div>
+					</dd>
+			<dt class="field">
+						<span class="method-title">testCurrent</span>
+					</dt>
+		<dd class="index-item-body">
+			<div class="index-item-details"><a href="ezSQL/unitTests/ezSQL_recordsetTest.html#methodtestCurrent">ezSQL_recordsetTest::testCurrent()</a> in ezSQL_recordsetTest.php</div>
 					</dd>
 			<dt class="field">
 						<span class="method-title">testDebug</span>
@@ -1612,19 +1784,7 @@
 						<span class="method-title">testDisconnect</span>
 					</dt>
 		<dd class="index-item-body">
-			<div class="index-item-details"><a href="ezSQL/unitTests/ezSQL_mysqlTest.html#methodtestDisconnect">ezSQL_mysqlTest::testDisconnect()</a> in ezSQL_mysqlTest.php</div>
-					</dd>
-			<dt class="field">
-						<span class="method-title">testDisconnect</span>
-					</dt>
-		<dd class="index-item-body">
 			<div class="index-item-details"><a href="ezSQL/unitTests/ezSQL_mssqlTest.html#methodtestDisconnect">ezSQL_mssqlTest::testDisconnect()</a> in ezSQL_mssqlTest.php</div>
-					</dd>
-			<dt class="field">
-						<span class="method-title">testDisconnect</span>
-					</dt>
-		<dd class="index-item-body">
-			<div class="index-item-details"><a href="ezSQL/unitTests/ezSQL_sybaseTest.html#methodtestDisconnect">ezSQL_sybaseTest::testDisconnect()</a> in ezSQL_sybaseTest.php</div>
 					</dd>
 			<dt class="field">
 						<span class="method-title">testDisconnect</span>
@@ -1636,7 +1796,19 @@
 						<span class="method-title">testDisconnect</span>
 					</dt>
 		<dd class="index-item-body">
+			<div class="index-item-details"><a href="ezSQL/unitTests/ezSQL_sybaseTest.html#methodtestDisconnect">ezSQL_sybaseTest::testDisconnect()</a> in ezSQL_sybaseTest.php</div>
+					</dd>
+			<dt class="field">
+						<span class="method-title">testDisconnect</span>
+					</dt>
+		<dd class="index-item-body">
 			<div class="index-item-details"><a href="ezSQL/unitTests/ezSQL_oracle8_9Test.html#methodtestDisconnect">ezSQL_oracle8_9Test::testDisconnect()</a> in ezSQL_oracle8_9Test.php</div>
+					</dd>
+			<dt class="field">
+						<span class="method-title">testDisconnect</span>
+					</dt>
+		<dd class="index-item-body">
+			<div class="index-item-details"><a href="ezSQL/unitTests/ezSQL_mysqlTest.html#methodtestDisconnect">ezSQL_mysqlTest::testDisconnect()</a> in ezSQL_mysqlTest.php</div>
 					</dd>
 			<dt class="field">
 						<span class="method-title">testDonation</span>
@@ -1655,13 +1827,7 @@
 						<span class="method-title">testEscape</span>
 					</dt>
 		<dd class="index-item-body">
-			<div class="index-item-details"><a href="ezSQL/unitTests/ezSQL_mssqlTest.html#methodtestEscape">ezSQL_mssqlTest::testEscape()</a> in ezSQL_mssqlTest.php</div>
-					</dd>
-			<dt class="field">
-						<span class="method-title">testEscape</span>
-					</dt>
-		<dd class="index-item-body">
-			<div class="index-item-details"><a href="ezSQL/unitTests/ezSQL_oracle8_9Test.html#methodtestEscape">ezSQL_oracle8_9Test::testEscape()</a> in ezSQL_oracle8_9Test.php</div>
+			<div class="index-item-details"><a href="ezSQL/unitTests/ezSQL_sybaseTest.html#methodtestEscape">ezSQL_sybaseTest::testEscape()</a> in ezSQL_sybaseTest.php</div>
 					</dd>
 			<dt class="field">
 						<span class="method-title">testEscape</span>
@@ -1673,13 +1839,37 @@
 						<span class="method-title">testEscape</span>
 					</dt>
 		<dd class="index-item-body">
+			<div class="index-item-details"><a href="ezSQL/unitTests/ezSQL_oracle8_9Test.html#methodtestEscape">ezSQL_oracle8_9Test::testEscape()</a> in ezSQL_oracle8_9Test.php</div>
+					</dd>
+			<dt class="field">
+						<span class="method-title">testEscape</span>
+					</dt>
+		<dd class="index-item-body">
 			<div class="index-item-details"><a href="ezSQL/unitTests/ezSQL_mysqlTest.html#methodtestEscape">ezSQL_mysqlTest::testEscape()</a> in ezSQL_mysqlTest.php</div>
 					</dd>
 			<dt class="field">
 						<span class="method-title">testEscape</span>
 					</dt>
 		<dd class="index-item-body">
-			<div class="index-item-details"><a href="ezSQL/unitTests/ezSQL_sybaseTest.html#methodtestEscape">ezSQL_sybaseTest::testEscape()</a> in ezSQL_sybaseTest.php</div>
+			<div class="index-item-details"><a href="ezSQL/unitTests/ezSQL_mssqlTest.html#methodtestEscape">ezSQL_mssqlTest::testEscape()</a> in ezSQL_mssqlTest.php</div>
+					</dd>
+			<dt class="field">
+						<span class="method-title">testEzSQL_fetch_assoc</span>
+					</dt>
+		<dd class="index-item-body">
+			<div class="index-item-details"><a href="ezSQL/unitTests/ezSQL_recordsetTest.html#methodtestEzSQL_fetch_assoc">ezSQL_recordsetTest::testEzSQL_fetch_assoc()</a> in ezSQL_recordsetTest.php</div>
+					</dd>
+			<dt class="field">
+						<span class="method-title">testEzSQL_fetch_object</span>
+					</dt>
+		<dd class="index-item-body">
+			<div class="index-item-details"><a href="ezSQL/unitTests/ezSQL_recordsetTest.html#methodtestEzSQL_fetch_object">ezSQL_recordsetTest::testEzSQL_fetch_object()</a> in ezSQL_recordsetTest.php</div>
+					</dd>
+			<dt class="field">
+						<span class="method-title">testEzSQL_fetch_row</span>
+					</dt>
+		<dd class="index-item-body">
+			<div class="index-item-details"><a href="ezSQL/unitTests/ezSQL_recordsetTest.html#methodtestEzSQL_fetch_row">ezSQL_recordsetTest::testEzSQL_fetch_row()</a> in ezSQL_recordsetTest.php</div>
 					</dd>
 			<dt class="field">
 						<span class="method-title">testFlush</span>
@@ -1697,19 +1887,13 @@
 						<span class="method-title">testGetDBHost</span>
 					</dt>
 		<dd class="index-item-body">
-			<div class="index-item-details"><a href="ezSQL/unitTests/ezSQL_postgresqlTest.html#methodtestGetDBHost">ezSQL_postgresqlTest::testGetDBHost()</a> in ezSQL_postgresqlTest.php</div>
-					</dd>
-			<dt class="field">
-						<span class="method-title">testGetDBHost</span>
-					</dt>
-		<dd class="index-item-body">
 			<div class="index-item-details"><a href="ezSQL/unitTests/ezSQL_mysqlTest.html#methodtestGetDBHost">ezSQL_mysqlTest::testGetDBHost()</a> in ezSQL_mysqlTest.php</div>
 					</dd>
 			<dt class="field">
 						<span class="method-title">testGetDBHost</span>
 					</dt>
 		<dd class="index-item-body">
-			<div class="index-item-details"><a href="ezSQL/unitTests/ezSQL_mssqlTest.html#methodtestGetDBHost">ezSQL_mssqlTest::testGetDBHost()</a> in ezSQL_mssqlTest.php</div>
+			<div class="index-item-details"><a href="ezSQL/unitTests/ezSQL_postgresqlTest.html#methodtestGetDBHost">ezSQL_postgresqlTest::testGetDBHost()</a> in ezSQL_postgresqlTest.php</div>
 					</dd>
 			<dt class="field">
 						<span class="method-title">testGetDBHost</span>
@@ -1718,10 +1902,22 @@
 			<div class="index-item-details"><a href="ezSQL/unitTests/ezSQL_sybaseTest.html#methodtestGetDBHost">ezSQL_sybaseTest::testGetDBHost()</a> in ezSQL_sybaseTest.php</div>
 					</dd>
 			<dt class="field">
+						<span class="method-title">testGetDBHost</span>
+					</dt>
+		<dd class="index-item-body">
+			<div class="index-item-details"><a href="ezSQL/unitTests/ezSQL_mssqlTest.html#methodtestGetDBHost">ezSQL_mssqlTest::testGetDBHost()</a> in ezSQL_mssqlTest.php</div>
+					</dd>
+			<dt class="field">
 						<span class="method-title">testGetDBName</span>
 					</dt>
 		<dd class="index-item-body">
 			<div class="index-item-details"><a href="ezSQL/unitTests/ezSQL_oracle8_9Test.html#methodtestGetDBName">ezSQL_oracle8_9Test::testGetDBName()</a> in ezSQL_oracle8_9Test.php</div>
+					</dd>
+			<dt class="field">
+						<span class="method-title">testGetInsertId</span>
+					</dt>
+		<dd class="index-item-body">
+			<div class="index-item-details"><a href="ezSQL/unitTests/ezSQL_mysqlTest.html#methodtestGetInsertId">ezSQL_mysqlTest::testGetInsertId()</a> in ezSQL_mysqlTest.php</div>
 					</dd>
 			<dt class="field">
 						<span class="method-title">testGetPort</span>
@@ -1790,6 +1986,12 @@
 			<div class="index-item-details"><a href="ezSQL/unitTests/ezSQL_oracle8_9Test.html#methodtestIs_equal_str">ezSQL_oracle8_9Test::testIs_equal_str()</a> in ezSQL_oracle8_9Test.php</div>
 					</dd>
 			<dt class="field">
+						<span class="method-title">testKey</span>
+					</dt>
+		<dd class="index-item-body">
+			<div class="index-item-details"><a href="ezSQL/unitTests/ezSQL_recordsetTest.html#methodtestKey">ezSQL_recordsetTest::testKey()</a> in ezSQL_recordsetTest.php</div>
+					</dd>
+			<dt class="field">
 						<span class="method-title">testMySQLCatch_error</span>
 					</dt>
 		<dd class="index-item-body">
@@ -1848,6 +2050,12 @@
 					</dt>
 		<dd class="index-item-body">
 			<div class="index-item-details"><a href="ezSQL/unitTests/ezSQL_pdoTest.html#methodtestMySQLSysdate">ezSQL_pdoTest::testMySQLSysdate()</a> in ezSQL_pdoTest.php</div>
+					</dd>
+			<dt class="field">
+						<span class="method-title">testNext</span>
+					</dt>
+		<dd class="index-item-body">
+			<div class="index-item-details"><a href="ezSQL/unitTests/ezSQL_recordsetTest.html#methodtestNext">ezSQL_recordsetTest::testNext()</a> in ezSQL_recordsetTest.php</div>
 					</dd>
 			<dt class="field">
 						<span class="method-title">testNextVal</span>
@@ -1910,6 +2118,12 @@
 			<div class="index-item-details"><a href="ezSQL/unitTests/ezSQL_pdoTest.html#methodtestPostgreSQLGet_set">ezSQL_pdoTest::testPostgreSQLGet_set()</a> in ezSQL_pdoTest.php</div>
 					</dd>
 			<dt class="field">
+						<span class="method-title">testPrevious</span>
+					</dt>
+		<dd class="index-item-body">
+			<div class="index-item-details"><a href="ezSQL/unitTests/ezSQL_recordsetTest.html#methodtestPrevious">ezSQL_recordsetTest::testPrevious()</a> in ezSQL_recordsetTest.php</div>
+					</dd>
+			<dt class="field">
 						<span class="method-title">testQuery</span>
 					</dt>
 		<dd class="index-item-body">
@@ -1934,16 +2148,16 @@
 			<div class="index-item-details"><a href="ezSQL/unitTests/ezSQL_postgresqlTest.html#methodtestQuery">ezSQL_postgresqlTest::testQuery()</a> in ezSQL_postgresqlTest.php</div>
 					</dd>
 			<dt class="field">
-						<span class="method-title">testQuery</span>
+						<span class="method-title">testQueryInsert</span>
 					</dt>
 		<dd class="index-item-body">
-			<div class="index-item-details"><a href="ezSQL/unitTests/ezSQL_mysqlTest.html#methodtestQuery">ezSQL_mysqlTest::testQuery()</a> in ezSQL_mysqlTest.php</div>
+			<div class="index-item-details"><a href="ezSQL/unitTests/ezSQL_mysqlTest.html#methodtestQueryInsert">ezSQL_mysqlTest::testQueryInsert()</a> in ezSQL_mysqlTest.php</div>
 					</dd>
 			<dt class="field">
-						<span class="method-title">testQuick_connect</span>
+						<span class="method-title">testQuerySelect</span>
 					</dt>
 		<dd class="index-item-body">
-			<div class="index-item-details"><a href="ezSQL/unitTests/ezSQL_sybaseTest.html#methodtestQuick_connect">ezSQL_sybaseTest::testQuick_connect()</a> in ezSQL_sybaseTest.php</div>
+			<div class="index-item-details"><a href="ezSQL/unitTests/ezSQL_mysqlTest.html#methodtestQuerySelect">ezSQL_mysqlTest::testQuerySelect()</a> in ezSQL_mysqlTest.php</div>
 					</dd>
 			<dt class="field">
 						<span class="method-title">testQuick_connect</span>
@@ -1955,7 +2169,7 @@
 						<span class="method-title">testQuick_connect</span>
 					</dt>
 		<dd class="index-item-body">
-			<div class="index-item-details"><a href="ezSQL/unitTests/ezSQL_oracle8_9Test.html#methodtestQuick_connect">ezSQL_oracle8_9Test::testQuick_connect()</a> in ezSQL_oracle8_9Test.php</div>
+			<div class="index-item-details"><a href="ezSQL/unitTests/ezSQL_sybaseTest.html#methodtestQuick_connect">ezSQL_sybaseTest::testQuick_connect()</a> in ezSQL_sybaseTest.php</div>
 					</dd>
 			<dt class="field">
 						<span class="method-title">testQuick_connect</span>
@@ -1970,28 +2184,34 @@
 			<div class="index-item-details"><a href="ezSQL/unitTests/ezSQL_mysqlTest.html#methodtestQuick_connect">ezSQL_mysqlTest::testQuick_connect()</a> in ezSQL_mysqlTest.php</div>
 					</dd>
 			<dt class="field">
+						<span class="method-title">testQuick_connect</span>
+					</dt>
+		<dd class="index-item-body">
+			<div class="index-item-details"><a href="ezSQL/unitTests/ezSQL_oracle8_9Test.html#methodtestQuick_connect">ezSQL_oracle8_9Test::testQuick_connect()</a> in ezSQL_oracle8_9Test.php</div>
+					</dd>
+			<dt class="field">
 						<span class="method-title">testRegister_error</span>
 					</dt>
 		<dd class="index-item-body">
 			<div class="index-item-details"><a href="ezSQL/unitTests/ezSQLcoreTest.html#methodtestRegister_error">ezSQLcoreTest::testRegister_error()</a> in ezSQLcoreTest.php</div>
 					</dd>
 			<dt class="field">
-						<span class="method-title">testSelect</span>
+						<span class="method-title">testRewind</span>
 					</dt>
 		<dd class="index-item-body">
-			<div class="index-item-details"><a href="ezSQL/unitTests/ezSQL_mssqlTest.html#methodtestSelect">ezSQL_mssqlTest::testSelect()</a> in ezSQL_mssqlTest.php</div>
-					</dd>
-			<dt class="field">
-						<span class="method-title">testSelect</span>
-					</dt>
-		<dd class="index-item-body">
-			<div class="index-item-details"><a href="ezSQL/unitTests/ezSQL_mysqlTest.html#methodtestSelect">ezSQL_mysqlTest::testSelect()</a> in ezSQL_mysqlTest.php</div>
+			<div class="index-item-details"><a href="ezSQL/unitTests/ezSQL_recordsetTest.html#methodtestRewind">ezSQL_recordsetTest::testRewind()</a> in ezSQL_recordsetTest.php</div>
 					</dd>
 			<dt class="field">
 						<span class="method-title">testSelect</span>
 					</dt>
 		<dd class="index-item-body">
 			<div class="index-item-details"><a href="ezSQL/unitTests/ezSQL_oracle8_9Test.html#methodtestSelect">ezSQL_oracle8_9Test::testSelect()</a> in ezSQL_oracle8_9Test.php</div>
+					</dd>
+			<dt class="field">
+						<span class="method-title">testSelect</span>
+					</dt>
+		<dd class="index-item-body">
+			<div class="index-item-details"><a href="ezSQL/unitTests/ezSQL_mysqlTest.html#methodtestSelect">ezSQL_mysqlTest::testSelect()</a> in ezSQL_mysqlTest.php</div>
 					</dd>
 			<dt class="field">
 						<span class="method-title">testSelect</span>
@@ -2004,6 +2224,12 @@
 					</dt>
 		<dd class="index-item-body">
 			<div class="index-item-details"><a href="ezSQL/unitTests/ezSQL_sybaseTest.html#methodtestSelect">ezSQL_sybaseTest::testSelect()</a> in ezSQL_sybaseTest.php</div>
+					</dd>
+			<dt class="field">
+						<span class="method-title">testSelect</span>
+					</dt>
+		<dd class="index-item-body">
+			<div class="index-item-details"><a href="ezSQL/unitTests/ezSQL_mssqlTest.html#methodtestSelect">ezSQL_mssqlTest::testSelect()</a> in ezSQL_mssqlTest.php</div>
 					</dd>
 			<dt class="field">
 						<span class="method-title">testShowDatabases</span>
@@ -2099,12 +2325,6 @@
 						<span class="method-title">testSysdate</span>
 					</dt>
 		<dd class="index-item-body">
-			<div class="index-item-details"><a href="ezSQL/unitTests/ezSQL_oracle8_9Test.html#methodtestSysdate">ezSQL_oracle8_9Test::testSysdate()</a> in ezSQL_oracle8_9Test.php</div>
-					</dd>
-			<dt class="field">
-						<span class="method-title">testSysdate</span>
-					</dt>
-		<dd class="index-item-body">
 			<div class="index-item-details"><a href="ezSQL/unitTests/ezSQL_mysqlTest.html#methodtestSysdate">ezSQL_mysqlTest::testSysdate()</a> in ezSQL_mysqlTest.php</div>
 					</dd>
 			<dt class="field">
@@ -2112,6 +2332,12 @@
 					</dt>
 		<dd class="index-item-body">
 			<div class="index-item-details"><a href="ezSQL/unitTests/ezSQL_mssqlTest.html#methodtestSysdate">ezSQL_mssqlTest::testSysdate()</a> in ezSQL_mssqlTest.php</div>
+					</dd>
+			<dt class="field">
+						<span class="method-title">testSysdate</span>
+					</dt>
+		<dd class="index-item-body">
+			<div class="index-item-details"><a href="ezSQL/unitTests/ezSQL_oracle8_9Test.html#methodtestSysdate">ezSQL_oracle8_9Test::testSysdate()</a> in ezSQL_oracle8_9Test.php</div>
 					</dd>
 			<dt class="field">
 						<span class="method-title">testTimer_elapsed</span>
@@ -2138,6 +2364,12 @@
 			<div class="index-item-details"><a href="ezSQL/unitTests/ezSQLcoreTest.html#methodtestTimer_update_global">ezSQLcoreTest::testTimer_update_global()</a> in ezSQLcoreTest.php</div>
 					</dd>
 			<dt class="field">
+						<span class="method-title">testValid</span>
+					</dt>
+		<dd class="index-item-body">
+			<div class="index-item-details"><a href="ezSQL/unitTests/ezSQL_recordsetTest.html#methodtestValid">ezSQL_recordsetTest::testValid()</a> in ezSQL_recordsetTest.php</div>
+					</dd>
+			<dt class="field">
 						<span class="method-title">testVardump</span>
 					</dt>
 		<dd class="index-item-body">
@@ -2155,6 +2387,13 @@
 						TEST_DB_CHARSET
 					</dt>
 		<dd class="index-item-body">
+			<div class="index-item-details"><a href="ezSQL/unitTests/ezSQL_recordsetTest.html#constTEST_DB_CHARSET">ezSQL_recordsetTest::TEST_DB_CHARSET</a> in ezSQL_recordsetTest.php</div>
+							<div class="index-item-description">constant database connection charset</div>
+					</dd>
+			<dt class="field">
+						TEST_DB_CHARSET
+					</dt>
+		<dd class="index-item-body">
 			<div class="index-item-details"><a href="ezSQL/unitTests/ezSQL_mysqlTest.html#constTEST_DB_CHARSET">ezSQL_mysqlTest::TEST_DB_CHARSET</a> in ezSQL_mysqlTest.php</div>
 							<div class="index-item-description">constant database connection charset</div>
 					</dd>
@@ -2162,7 +2401,7 @@
 						TEST_DB_HOST
 					</dt>
 		<dd class="index-item-body">
-			<div class="index-item-details"><a href="ezSQL/unitTests/ezSQL_mysqlTest.html#constTEST_DB_HOST">ezSQL_mysqlTest::TEST_DB_HOST</a> in ezSQL_mysqlTest.php</div>
+			<div class="index-item-details"><a href="ezSQL/unitTests/ezSQL_postgresqlTest.html#constTEST_DB_HOST">ezSQL_postgresqlTest::TEST_DB_HOST</a> in ezSQL_postgresqlTest.php</div>
 							<div class="index-item-description">constant database host</div>
 					</dd>
 			<dt class="field">
@@ -2176,8 +2415,22 @@
 						TEST_DB_HOST
 					</dt>
 		<dd class="index-item-body">
-			<div class="index-item-details"><a href="ezSQL/unitTests/ezSQL_postgresqlTest.html#constTEST_DB_HOST">ezSQL_postgresqlTest::TEST_DB_HOST</a> in ezSQL_postgresqlTest.php</div>
+			<div class="index-item-details"><a href="ezSQL/unitTests/ezSQL_recordsetTest.html#constTEST_DB_HOST">ezSQL_recordsetTest::TEST_DB_HOST</a> in ezSQL_recordsetTest.php</div>
 							<div class="index-item-description">constant database host</div>
+					</dd>
+			<dt class="field">
+						TEST_DB_HOST
+					</dt>
+		<dd class="index-item-body">
+			<div class="index-item-details"><a href="ezSQL/unitTests/ezSQL_mysqlTest.html#constTEST_DB_HOST">ezSQL_mysqlTest::TEST_DB_HOST</a> in ezSQL_mysqlTest.php</div>
+							<div class="index-item-description">constant database host</div>
+					</dd>
+			<dt class="field">
+						TEST_DB_NAME
+					</dt>
+		<dd class="index-item-body">
+			<div class="index-item-details"><a href="ezSQL/unitTests/ezSQL_recordsetTest.html#constTEST_DB_NAME">ezSQL_recordsetTest::TEST_DB_NAME</a> in ezSQL_recordsetTest.php</div>
+							<div class="index-item-description">constant database name</div>
 					</dd>
 			<dt class="field">
 						TEST_DB_NAME
@@ -2190,15 +2443,29 @@
 						TEST_DB_NAME
 					</dt>
 		<dd class="index-item-body">
-			<div class="index-item-details"><a href="ezSQL/unitTests/ezSQL_mysqlTest.html#constTEST_DB_NAME">ezSQL_mysqlTest::TEST_DB_NAME</a> in ezSQL_mysqlTest.php</div>
-							<div class="index-item-description">constant database name</div>
+			<div class="index-item-details"><a href="ezSQL/unitTests/ezSQL_pdoTest.html#constTEST_DB_NAME">ezSQL_pdoTest::TEST_DB_NAME</a> in ezSQL_pdoTest.php</div>
+							<div class="index-item-description">constant string database name</div>
 					</dd>
 			<dt class="field">
 						TEST_DB_NAME
 					</dt>
 		<dd class="index-item-body">
-			<div class="index-item-details"><a href="ezSQL/unitTests/ezSQL_pdoTest.html#constTEST_DB_NAME">ezSQL_pdoTest::TEST_DB_NAME</a> in ezSQL_pdoTest.php</div>
-							<div class="index-item-description">constant string database name</div>
+			<div class="index-item-details"><a href="ezSQL/unitTests/ezSQL_mysqlTest.html#constTEST_DB_NAME">ezSQL_mysqlTest::TEST_DB_NAME</a> in ezSQL_mysqlTest.php</div>
+							<div class="index-item-description">constant database name</div>
+					</dd>
+			<dt class="field">
+						TEST_DB_PASSWORD
+					</dt>
+		<dd class="index-item-body">
+			<div class="index-item-details"><a href="ezSQL/unitTests/ezSQL_pdoTest.html#constTEST_DB_PASSWORD">ezSQL_pdoTest::TEST_DB_PASSWORD</a> in ezSQL_pdoTest.php</div>
+							<div class="index-item-description">constant string password</div>
+					</dd>
+			<dt class="field">
+						TEST_DB_PASSWORD
+					</dt>
+		<dd class="index-item-body">
+			<div class="index-item-details"><a href="ezSQL/unitTests/ezSQL_recordsetTest.html#constTEST_DB_PASSWORD">ezSQL_recordsetTest::TEST_DB_PASSWORD</a> in ezSQL_recordsetTest.php</div>
+							<div class="index-item-description">constant string password</div>
 					</dd>
 			<dt class="field">
 						TEST_DB_PASSWORD
@@ -2215,13 +2482,6 @@
 							<div class="index-item-description">constant string password</div>
 					</dd>
 			<dt class="field">
-						TEST_DB_PASSWORD
-					</dt>
-		<dd class="index-item-body">
-			<div class="index-item-details"><a href="ezSQL/unitTests/ezSQL_pdoTest.html#constTEST_DB_PASSWORD">ezSQL_pdoTest::TEST_DB_PASSWORD</a> in ezSQL_pdoTest.php</div>
-							<div class="index-item-description">constant string password</div>
-					</dd>
-			<dt class="field">
 						TEST_DB_PORT
 					</dt>
 		<dd class="index-item-body">
@@ -2234,6 +2494,13 @@
 		<dd class="index-item-body">
 			<div class="index-item-details"><a href="ezSQL/unitTests/ezSQL_pdoTest.html#constTEST_DB_PORT">ezSQL_pdoTest::TEST_DB_PORT</a> in ezSQL_pdoTest.php</div>
 							<div class="index-item-description">constant string database port</div>
+					</dd>
+			<dt class="field">
+						TEST_DB_USER
+					</dt>
+		<dd class="index-item-body">
+			<div class="index-item-details"><a href="ezSQL/unitTests/ezSQL_recordsetTest.html#constTEST_DB_USER">ezSQL_recordsetTest::TEST_DB_USER</a> in ezSQL_recordsetTest.php</div>
+							<div class="index-item-description">constant string user name</div>
 					</dd>
 			<dt class="field">
 						TEST_DB_USER
@@ -2341,6 +2608,13 @@
 							<div class="index-item-description">Vardump called</div>
 					</dd>
 			<dt class="field">
+						<span class="method-title">valid</span>
+					</dt>
+		<dd class="index-item-body">
+			<div class="index-item-details"><a href="ezSQL/ezSQL_recordset.html#methodvalid">ezSQL_recordset::valid()</a> in ezSQL_recordset</div>
+							<div class="index-item-description">Whether the current position contains a row, or not</div>
+					</dd>
+			<dt class="field">
 						<span class="method-title">vardump</span>
 					</dt>
 		<dd class="index-item-body">
@@ -2366,15 +2640,15 @@
 						<span class="method-title">__construct</span>
 					</dt>
 		<dd class="index-item-body">
-			<div class="index-item-details"><a href="ezSQL/ezSQL_pdo.html#method__construct">ezSQL_pdo::__construct()</a> in ezSQL_pdo</div>
-							<div class="index-item-description">Constructor - allow the user to perform a qucik connect at the same time  as initialising the ezSQL_sqlite class</div>
+			<div class="index-item-details"><a href="ezSQL/ezSQL_postgresql.html#method__construct">ezSQL_postgresql::__construct()</a> in ezSQL_postgresql</div>
+							<div class="index-item-description">Constructor - allow the user to perform a qucik connect at the same time  as initialising the ezSQL_postgresql class</div>
 					</dd>
 			<dt class="field">
 						<span class="method-title">__construct</span>
 					</dt>
 		<dd class="index-item-body">
-			<div class="index-item-details"><a href="ezSQL/ezSQL_postgresql.html#method__construct">ezSQL_postgresql::__construct()</a> in ezSQL_postgresql</div>
-							<div class="index-item-description">Constructor - allow the user to perform a qucik connect at the same time  as initialising the ezSQL_postgresql class</div>
+			<div class="index-item-details"><a href="ezSQL/ezSQL_recordset.html#method__construct">ezSQL_recordset::__construct()</a> in ezSQL_recordset</div>
+							<div class="index-item-description">Initializes the record object</div>
 					</dd>
 			<dt class="field">
 						<span class="method-title">__construct</span>
@@ -2386,15 +2660,15 @@
 						<span class="method-title">__construct</span>
 					</dt>
 		<dd class="index-item-body">
-			<div class="index-item-details"><a href="ezSQL/ezSQL_oracle8_9.html#method__construct">ezSQL_oracle8_9::__construct()</a> in ezSQL_oracle8_9</div>
-							<div class="index-item-description">Constructor - allow the user to perform a qucik connect at the same time  as initialising the ezSQL_oracle8_9 class</div>
+			<div class="index-item-details"><a href="ezSQL/ezSQL_pdo.html#method__construct">ezSQL_pdo::__construct()</a> in ezSQL_pdo</div>
+							<div class="index-item-description">Constructor - allow the user to perform a qucik connect at the same time  as initialising the ezSQL_sqlite class</div>
 					</dd>
 			<dt class="field">
 						<span class="method-title">__construct</span>
 					</dt>
 		<dd class="index-item-body">
-			<div class="index-item-details"><a href="ezSQL/ezSQL_mysql.html#method__construct">ezSQL_mysql::__construct()</a> in ezSQL_mysql</div>
-							<div class="index-item-description">Constructor - allow the user to perform a qucik connect at the same time  as initialising the ezSQL_mysql class</div>
+			<div class="index-item-details"><a href="ezSQL/ezSQL_oracle8_9.html#method__construct">ezSQL_oracle8_9::__construct()</a> in ezSQL_oracle8_9</div>
+							<div class="index-item-description">Constructor - allow the user to perform a qucik connect at the same time  as initialising the ezSQL_oracle8_9 class</div>
 					</dd>
 			<dt class="field">
 						<span class="method-title">__construct</span>
@@ -2408,6 +2682,13 @@
 		<dd class="index-item-body">
 			<div class="index-item-details"><a href="ezSQL/ezSQL_mssql.html#method__construct">ezSQL_mssql::__construct()</a> in ezSQL_mssql</div>
 							<div class="index-item-description">Constructor - allow the user to perform a qucik connect at the same time  as initialising the ezSQL_mssql class</div>
+					</dd>
+			<dt class="field">
+						<span class="method-title">__construct</span>
+					</dt>
+		<dd class="index-item-body">
+			<div class="index-item-details"><a href="ezSQL/ezSQL_mysql.html#method__construct">ezSQL_mysql::__construct()</a> in ezSQL_mysql</div>
+							<div class="index-item-description">Constructor - allow the user to perform a qucik connect at the same time  as initialising the ezSQL_mysql class</div>
 					</dd>
 			<dt class="field">
 						<span class="method-title">__construct</span>
@@ -2427,6 +2708,7 @@
 	<a class="index-letter" href="elementindex.html#g">g</a>
 	<a class="index-letter" href="elementindex.html#h">h</a>
 	<a class="index-letter" href="elementindex.html#i">i</a>
+	<a class="index-letter" href="elementindex.html#k">k</a>
 	<a class="index-letter" href="elementindex.html#l">l</a>
 	<a class="index-letter" href="elementindex.html#n">n</a>
 	<a class="index-letter" href="elementindex.html#o">o</a>

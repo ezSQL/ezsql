@@ -82,7 +82,7 @@
 		</div>
 		<div class="info-box-body">			
 			<div class="method-summary">
-																																																																																				
+																																																																																												
 												<div class="method-definition">
 											<span class="method-result">ezSQL_mysql</span>
 										<a href="#__construct" title="details" class="method-name">__construct</a>
@@ -111,6 +111,11 @@
 																<div class="method-definition">
 											<span class="method-result">string</span>
 										<a href="#getDBHost" title="details" class="method-name">getDBHost</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">int</span>
+										<a href="#getInsertId" title="details" class="method-name">getInsertId</a>
 										()
 									</div>
 																<div class="method-definition">
@@ -153,7 +158,7 @@
 					</div>
 		<div class="info-box-body">
 			<a name="var$show_errors" id="$show_errors"><!-- --></A>
-<div class="evenrow">
+<div class="oddrow">
 
 	<div class="var-header">
 		<span class="var-title">
@@ -179,6 +184,9 @@
 				<A NAME='inherited_vars'><!-- --></A>
 									<p>Inherited from <span class="classname"><a href="../ezSQL/ezSQLcore.html">ezSQLcore</a></span></p>
 					<blockquote>
+													<span class="var-title">
+								<span class="var-name"><a href="../ezSQL/ezSQLcore.html#var$affectedRows">ezSQLcore::$affectedRows</a></span><br>
+							</span>
 													<span class="var-title">
 								<span class="var-name"><a href="../ezSQL/ezSQLcore.html#var$cache_dir">ezSQLcore::$cache_dir</a></span><br>
 							</span>
@@ -280,7 +288,7 @@
 			<A NAME='method_detail'></A>
 
 <a name="method__construct" id="__construct"><!-- --></a>
-<div class="oddrow">
+<div class="evenrow">
 	
 	<div class="method-header">
 		<span class="method-title">Constructor __construct</span> (line <span class="line-number">78</span>)
@@ -327,7 +335,7 @@
 			
 	</div>
 <a name="methodconnect" id="connect"><!-- --></a>
-<div class="evenrow">
+<div class="oddrow">
 	
 	<div class="method-header">
 		<span class="method-title">connect</span> (line <span class="line-number">126</span>)
@@ -365,7 +373,7 @@
 			
 	</div>
 <a name="methoddisconnect" id="disconnect"><!-- --></a>
-<div class="oddrow">
+<div class="evenrow">
 	
 	<div class="method-header">
 		<span class="method-title">disconnect</span> (line <span class="line-number">302</span>)
@@ -389,7 +397,7 @@
 			
 	</div>
 <a name="methodescape" id="escape"><!-- --></a>
-<div class="evenrow">
+<div class="oddrow">
 	
 	<div class="method-header">
 		<span class="method-title">escape</span> (line <span class="line-number">189</span>)
@@ -418,7 +426,7 @@
 			
 	</div>
 <a name="methodgetCharset" id="getCharset"><!-- --></a>
-<div class="oddrow">
+<div class="evenrow">
 	
 	<div class="method-header">
 		<span class="method-title">getCharset</span> (line <span class="line-number">325</span>)
@@ -442,7 +450,7 @@
 			
 	</div>
 <a name="methodgetDBHost" id="getDBHost"><!-- --></a>
-<div class="evenrow">
+<div class="oddrow">
 	
 	<div class="method-header">
 		<span class="method-title">getDBHost</span> (line <span class="line-number">316</span>)
@@ -458,6 +466,30 @@
 		<span class="method-result">string</span>
 		<span class="method-name">
 			getDBHost
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodgetInsertId" id="getInsertId"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">getInsertId</span> (line <span class="line-number">334</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns the last inserted autoincrement</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">int</span>
+		<span class="method-name">
+			getInsertId
 		</span>
 				()
 			</div>
@@ -591,6 +623,7 @@
 					<p>Inherited From <span class="classname"><a href="../ezSQL/ezSQLcore.html">ezSQLcore</a></span></p>
 					<blockquote>
 													<span class="method-name"><a href="../ezSQL/ezSQLcore.html#method__construct">ezSQLcore::__construct()</a></span><br>
+													<span class="method-name"><a href="../ezSQL/ezSQLcore.html#methodaffectedRows">ezSQLcore::affectedRows()</a></span><br>
 													<span class="method-name"><a href="../ezSQL/ezSQLcore.html#methoddebug">ezSQLcore::debug()</a></span><br>
 													<span class="method-name"><a href="../ezSQL/ezSQLcore.html#methoddonation">ezSQLcore::donation()</a></span><br>
 													<span class="method-name"><a href="../ezSQL/ezSQLcore.html#methoddumpvar">ezSQLcore::dumpvar()</a></span><br>
@@ -653,7 +686,7 @@
 	</div>
 
 	<p class="notes" id="credit">
-		Documentation generated on Fri, 06 Apr 2012 16:49:25 +0200 by <a href="http://www.phpdoc.org" target="_blank">phpDocumentor 1.4.4</a>
+		Documentation generated on Fri, 20 Apr 2012 21:20:33 +0200 by <a href="http://www.phpdoc.org" target="_blank">phpDocumentor 1.4.4</a>
 	</p>
 	</div></body>
 </html>
