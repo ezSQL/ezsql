@@ -15,6 +15,8 @@ http://techzinglive.com
 
 Change Log:
 
+3.01 - Added a class for query result handling. The ezSQL_recordset contains methods that behave like fetch_assoc, fetch_row, and fetch_object (thx Stefanie Janine Stoelting)
+
 3.00 - Changed the code to PHP5, added PHPDoc tags, and added unit tests (thx Stefanie Janine Stoelting)
 
 2.17 - Updates to ezSQL_postgresql (thx Stefanie Janine Stoelting)
