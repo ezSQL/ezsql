@@ -116,7 +116,7 @@ class ezSQL_mysqlTest extends PHPUnit_Framework_TestCase {
     /**
      * @covers ezSQL_mysql::query
      */
-    public function testQuery() {
+    public function testQueryInsert() {
         $this->object->connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD);
 
         $this->object->select(self::TEST_DB_NAME);
@@ -124,7 +124,33 @@ class ezSQL_mysqlTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals($this->object->query('CREATE TABLE unit_test(id integer, test_key varchar(50), PRIMARY KEY (ID))'), 0);
         $this->assertEquals($this->object->query('INSERT INTO unit_test(id, test_key) VALUES(1, \'test 1\')'), 1);
         $this->assertEquals($this->object->query('DROP TABLE unit_test'), 0);
-    } // testQuery
+    } // testQueryInsert
+
+    /**
+     * @covers ezSQL_mysql::query
+     */
+    public function testQuerySelect() {
+        $this->object->connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD);
+
+        $this->object->select(self::TEST_DB_NAME);
+        
+        $this->assertEquals($this->object->query('CREATE TABLE unit_test(id integer, test_key varchar(50), PRIMARY KEY (ID))'), 0);
+        
+        $this->assertEquals($this->object->query('INSERT INTO unit_test(id, test_key) VALUES(1, \'test 1\')'), 1);
+        $this->assertEquals($this->object->query('INSERT INTO unit_test(id, test_key) VALUES(2, \'test 2\')'), 1);
+        $this->assertEquals($this->object->query('INSERT INTO unit_test(id, test_key) VALUES(3, \'test 3\')'), 1);
+        
+        $result = $this->object->query('SELECT * FROM unit_test');
+        
+        $i = 1;
+        foreach ($this->object->get_results() as $row) {
+            $this->assertEquals($i, $row->id);
+            $this->assertEquals('test ' . $i, $row->test_key);
+            ++$i;
+        }
+        
+        $this->assertEquals($this->object->query('DROP TABLE unit_test'), 0);
+    } // testQuerySelect
 
     /**
      * @covers ezSQL_mysql::getDBHost
