@@ -86,30 +86,30 @@ class ezSQL_recordset implements Iterator
             throw new Exception(sprintf('$mode is not in %s1 or %s2', self::RESULT_AS_OBJECT, self::RESULT_AS_ARRAY));
         }
 
-        switch ($mode) {
-            case self::RESULT_AS_OBJECT:
-                // The result is a standard ezSQL row of stdClass
-                $return_val = $this->_recordset[$this->_position];
+        if ($this->valid()) {
+            switch ($mode) {
+                case self::RESULT_AS_OBJECT:
+                    // The result is a standard ezSQL row of stdClass
+                    $return_val = $this->_recordset[$this->_position];
 
-                break;
+                    break;
 
-            case self::RESULT_AS_ARRAY:
-                $return_val = array();
-                foreach ($this->_recordset[$this->_position] as $key => $value) {
-                    $return_val[$key] = $value;
-                }
+                case self::RESULT_AS_ARRAY:
+                    $return_val = get_object_vars($this->_recordset[$this->_position]);
 
-                break;
+                    break;
 
-            case self::RESULT_AS_ROW:
-                $return_val = array();
-                foreach ($this->_recordset[$this->_position] as $value) {
-                    $return_val[] = $value;
-                }
+                case self::RESULT_AS_ROW:
+                    $return_val = array_values(get_object_vars($this->_recordset[$this->_position]));
+                    
+                    break;
 
-            default:
+                default:
 
-                break;
+                    break;
+            }
+        } else {
+            $result = false;
         }
 
         return $return_val;
