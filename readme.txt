@@ -1,5 +1,6 @@
 =======================================================================
 Author: Justin Vincent - http://justinvincent.com/ezsql
+Author: Stefanei Janine Stoelting - http://stefanie-stoelting.de
 Name: ezSQL
 Desc: Class to make it very easy to deal with database connections.
 License: FREE / Donation (LGPL - You may do what you like with ezSQL - no exceptions.)
@@ -15,9 +16,11 @@ http://techzinglive.com
 
 Change Log:
 
-3.01 - Added a class for query result handling. The ezSQL_recordset contains methods that behave like fetch_assoc, fetch_row, and fetch_object (thx Stefanie Janine Stoelting)
+3.02 - Improved ezSQL_recordset, array results of rows are faster
 
-3.00 - Changed the code to PHP5, added PHPDoc tags, and added unit tests (thx Stefanie Janine Stoelting)
+3.01 - Added a class for query result handling. The ezSQL_recordset contains methods that behave like fetch_assoc, fetch_row, and fetch_object
+
+3.00 - Changed the code to PHP5, added PHPDoc tags, and added unit tests
 
 2.17 - Updates to ezSQL_postgresql (thx Stefanie Janine Stoelting)
 
