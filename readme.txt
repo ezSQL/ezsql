@@ -1,6 +1,6 @@
 =======================================================================
 Author: Justin Vincent - http://justinvincent.com/ezsql
-Author: Stefanei Janine Stoelting - http://stefanie-stoelting.de
+Author: Stefanie Janine Stoelting - http://stefanie-stoelting.de
 Name: ezSQL
 Desc: Class to make it very easy to deal with database connections.
 License: FREE / Donation (LGPL - You may do what you like with ezSQL - no exceptions.)
