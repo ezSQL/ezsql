@@ -21,6 +21,19 @@
 		4 => 'SQL Server database connection is not active',
 		5 => 'Unexpected error while trying to select database'
 	);
+	
+	/**********************************************************************
+	*  ezSQL non duplicating data type id's; converting dtype ids to str
+	*/
+	
+	$ezsql_sqlsrv_type2str_non_dup = array
+	(
+		-5 => 'bigint', -7 => 'bit', 1 => 'char', 91 => 'date', -155 => 'datetimeoffset', 6 => 'float', -4 => 'image', 4 => 'int', -8 => 'nchar',
+		-10 => 'ntext', 2 => 'numeric', -9 => 'nvarchar', 7 => 'real', 5 => 'smallint', -1 => 'text', -154 => 'time', -6 => 'tinyint', -151 => 'udt', 
+		-11 => 'uniqueidentifier', -3 => 'varbinary', 12 => 'varchar', -152 => 'xml'
+	);
+
+
 
 	/**********************************************************************
 	*  ezSQL Database specific class - sqlsrv
@@ -115,14 +128,19 @@
 
 		}
 
+
 		/**********************************************************************
 		*  Return mssql specific system date syntax
 		*  i.e. Oracle: SYSDATE mssql: NOW(), MS-SQL : getDate()
+		*
+		*  The SQLSRV drivers pull back the data into a Date class.  Converted
+		*   it to a string inside of SQL in order to prevent this from ocurring
+		*  ** make sure to use " AS <label>" after calling this...
 		*/
 
 		function sysdate()
 		{
-			return 'getDate()';
+			return "convert(varchar, GetDate(), 9)";
 		}
 
 		/**********************************************************************
@@ -204,7 +222,7 @@
 
 					if ($identityresultset != false )
 					{
-						$identityrow = @sql_fetch($identityresultset);
+						$identityrow = @sqlsrv_fetch($identityresultset);
 						$this->insert_id = $identityrow[0];
 					}
 
@@ -219,11 +237,18 @@
 
 				// Take note of column info
 				$i=0;
-				while ($i < @sqlsrv_num_fields($this->result))
-				{
-					$this->col_info[$i] = @sqlsrv_get_field($this->result, $i);
-					$i++;
+				foreach ( @sqlsrv_field_metadata( $this->result) as $field ) {
+					foreach ($field as $name => $value) {
+						$name = strtolower($name);
+						if ($name == "size") $name = "max_length";
+						else if ($name == "type") $name = "typeid";
+						
+						$col->{$name} = $value;
+					}
 
+					$col->type = $this->get_datatype($col);
+					$this->col_info[$i++] = $col;
+					unset($col);
 				}
 
 				// Store Query Results
@@ -301,7 +326,53 @@
 
 		}
 
+		function get_datatype($col)
+		{
+			global $ezsql_sqlsrv_type2str_non_dup;
+			$datatype = "dt not defined";
+			switch ($col->typeid) {
+				case -2 :
+					if ($col->max_length < 8000)
+						$datatype = "binary";
+					else
+						$datatype = "timestamp";
+					break;
+				case 3 :
+					if (($col->scale == 4) && ($col->precision == 19))
+						$datatype = "money";
+					else if (($col->scale == 4) && ($col->precision == 10))
+						$datatype = "smallmoney";
+					else
+						$datatype = "decimal";
+					break;
+				case 93 :
+					if (($col->precision == 16) && ($col->scale == 0))
+						$datatype = "smalldatetime";
+					else if (($col->precision == 23) && ($col->scale == 3))
+						$datatype = "datetime";
+					else
+						$datatype = "datetime2";
+					break;
+				default :
+					$datatype = $ezsql_sqlsrv_type2str_non_dup[$col->typeid];
+					break;
+			}
+			
+			return $datatype;
+		}
+
+
+		/**********************************************************************
+		*  Close the active SQLSRV connection
+		*/
+
+		function disconnect()
+		{
+			@sqlsrv_close($this->dbh);
+		}
+
 
 	} // end class
+
 
 ?>
