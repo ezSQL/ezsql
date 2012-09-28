@@ -5,7 +5,7 @@
  * based on ezSql_mssql library class.
  *
  * @author  Muhammad Iyas (iyasilias@gmail.com)
- * @author  Stefanie Janine Stoelting (mail@stefanie-stoelting.de)
+ * @author  Stefanie Janine Stoelting <mail@stefanie-stoelting.de>
  * @link
  * @name    ezSQL_sybase
  * @package ezSQL

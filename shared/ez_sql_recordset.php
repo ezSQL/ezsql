@@ -3,7 +3,7 @@
  * ezSQL Database specific class for working with query results
  * Desc..: recordset component (part of ezSQL databse abstraction library)
  *
- * @author  Stefanie Janine Stoelting (mail@stefanie-stoelting.de)
+ * @author  Stefanie Janine Stoelting <mail@stefanie-stoelting.de>
  * @name    ezSQL_recordset
  * @package ezSQL
  * @license FREE / Donation (LGPL - You may do what you like with ezSQL - no exceptions.)

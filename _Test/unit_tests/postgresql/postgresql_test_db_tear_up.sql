@@ -1,7 +1,7 @@
 /**
  * Tear up script for generating database and user for tests
  *
- * @author  Stefanie Janine Stoelting (mail@stefanie-stoelting.de)
+ * @author  Stefanie Janine Stoelting <mail@stefanie-stoelting.de>
  * @name    ezSQL_postgresql_tear_up
  * @package ezSQL
  * @subpackage unitTests

@@ -17,7 +17,7 @@ require_once dirname(__FILE__) . '/../../../pdo/ez_sql_pdo.php';
  * The PDO tests where done with a PostgreSQL database, please use the scripts
  * of PostgreSQL
  *
- * @author  Stefanie Janine Stoelting (mail@stefanie-stoelting.de)
+ * @author  Stefanie Janine Stoelting <mail@stefanie-stoelting.de>
  * @name    ezSQL_pdoTest
  * @uses    postgresql_test_db_tear_up.sql
  * @uses    postgresql_test_db_tear_down.sql

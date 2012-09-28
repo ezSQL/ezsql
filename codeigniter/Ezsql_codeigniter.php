@@ -5,7 +5,7 @@ if ( ! defined('BASEPATH')) exit('No direct script access allowed');
  * Desc..: codeigniter component (part of ezSQL databse abstraction library)
  *
  * @author  Justin Vincent (jv@jvmultimedia.com)
- * @author  Stefanie Janine Stoelting (mail@stefanie-stoelting.de)
+ * @author  Stefanie Janine Stoelting <mail@stefanie-stoelting.de>
  * @link    http://twitter.com/justinvincent
  * @name    ezSQL_codeigniter
  * @package ezSQL

@@ -5,7 +5,7 @@
  * (it is designed for use by database specific modules).
  *
  * @author  Justin Vincent (jv@vip.ie)
- * @author  Stefanie Janine Stoelting (mail@stefanie-stoelting.de)
+ * @author  Stefanie Janine Stoelting <mail@stefanie-stoelting.de>
  * @link    http://justinvincent.com
  * @name    ezSQL
  * @package ezSQL

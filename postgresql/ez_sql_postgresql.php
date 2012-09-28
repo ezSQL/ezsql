@@ -4,7 +4,7 @@
  * Desc..: PostgreSQL component (part of ezSQL databse abstraction library)
  *
  * @author  Justin Vincent (jv@jvmultimedia.com)
- * @author  Stefanie Janine Stoelting (mail@stefanie-stoelting.de)
+ * @author  Stefanie Janine Stoelting <mail@stefanie-stoelting.de>
  * @link    http://twitter.com/justinvincent
  * @name    ezSQL_postgresql
  * @package ezSQL

@@ -11,7 +11,7 @@ require_once dirname(__FILE__) . '/../../../postgresql/ez_sql_postgresql.php';
  * appropriate rights.
  * Run database tear down after tests to get rid of the database and the user.
  *
- * @author  Stefanie Janine Stoelting (mail@stefanie-stoelting.de)
+ * @author  Stefanie Janine Stoelting <mail@stefanie-stoelting.de>
  * @name    ezSQL_postgresql_tear_up
  * @uses    postgresql_test_db_tear_up.sql
  * @uses    postgresql_test_db_tear_down.sql

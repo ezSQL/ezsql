@@ -14,7 +14,7 @@ require_once dirname(__FILE__) . '/../../../shared/ez_sql_recordset.php';
  * @subpackage unitTests
  * @license FREE / Donation (LGPL - You may do what you like with ezSQL - no exceptions.)
  */
-class ezSQL_recordsetTest extends PHPUnit_Framework_TestCase {
+class ezSQL_recordsetTest2 extends PHPUnit_Framework_TestCase {
 
     /**
      * constant string user name
@@ -70,7 +70,7 @@ class ezSQL_recordsetTest extends PHPUnit_Framework_TestCase {
         $this->ezSQL->query('INSERT INTO unit_test(id, test_key) VALUES(4, \'test 4\')');        
         $this->ezSQL->query('INSERT INTO unit_test(id, test_key) VALUES(5, \'test 5\')'); 
         
-        $this->ezSQL->query('SELECT * FROM unit_test');
+        $this->ezSQL->query('SELECT * FROM unit_test WHERE id = 7');
 
         $this->object = new ezSQL_recordset($this->ezSQL->get_results());
     } // setUp

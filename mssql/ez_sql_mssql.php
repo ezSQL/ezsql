@@ -5,7 +5,7 @@
  * based on ezSql_mySql library class.
  *
  * @author  ashank (ashank@gmail.com)
- * @author  Stefanie Janine Stoelting (mail@stefanie-stoelting.de)
+ * @author  Stefanie Janine Stoelting <mail@stefanie-stoelting.de>
  * @link    http://twitter.com/justinvincent
  * @name    ezSQL_mssql
  * @package ezSQL
