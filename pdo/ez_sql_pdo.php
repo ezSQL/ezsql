@@ -80,10 +80,10 @@ class ezSQL_pdo extends ezSQLcore
      */
     public function __construct($dsn='', $user='', $password='', $options=array(), $isFileBased=false) {
         if ( ! class_exists ('PDO') ) {
-            throw new Exception('<b>Fatal Error:</b> ezSQL_sqlite requires PDO Lib to be compiled and or linked in to the PHP engine');
+            throw new Exception('<b>Fatal Error:</b> ezSQL_pdo requires PDO Lib to be compiled and or linked in to the PHP engine');
         }
         if ( ! class_exists ('ezSQLcore') ) {
-            throw new Exception('<b>Fatal Error:</b> ezSQL_sqlite requires ezSQLcore (ez_sql_core.php) to be included/loaded before it can be used');
+            throw new Exception('<b>Fatal Error:</b> ezSQL_pdo requires ezSQLcore (ez_sql_core.php) to be included/loaded before it can be used');
         }
 
         parent::__construct();
