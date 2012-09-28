@@ -16,6 +16,8 @@ http://techzinglive.com
 
 Change Log:
 
+3.03 - Changed error messages, wrong classname used in a messages
+
 3.02 - Improved ezSQL_recordset, array results of rows are faster
 
 3.01 - Added a class for query result handling. The ezSQL_recordset contains methods that behave like fetch_assoc, fetch_row, and fetch_object
