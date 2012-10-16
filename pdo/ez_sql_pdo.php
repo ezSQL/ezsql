@@ -36,7 +36,7 @@
 		*  same time as initialising the ezSQL_sqlite class
 		*/
 
-		function ezSQL_pdo($dsn='', $user='', $password='')
+		function ezSQL_pdo($dsn='', $user='', $password='', $ssl=array())
 		{
 			// Turn on track errors 
 			ini_set('track_errors',1);
@@ -51,7 +51,7 @@
 		*  Try to connect to SQLite database server
 		*/
 
-		function connect($dsn='', $user='', $password='')
+		function connect($dsn='', $user='', $password='', $ssl=array())
 		{
 			global $ezsql_pdo_str; $return_val = false;
 			
@@ -65,13 +65,21 @@
 			// Establish PDO connection
 			try 
 			{
-    			$this->dbh = new PDO($dsn, $user, $password);
-    			$return_val = true;
+				if(!empty($ssl))
+				{
+					$this->dbh = new PDO($dsn, $user, $password, $ssl);
+				}
+				else
+				{
+					$this->dbh = new PDO($dsn, $user, $password);
+				}
+				
+				$return_val = true;
 			} 
 			catch (PDOException $e) 
 			{
 				$this->register_error($e->getMessage());
-    			$this->show_errors ? trigger_error($e->getMessage(),E_USER_WARNING) : null;
+				$this->show_errors ? trigger_error($e->getMessage(),E_USER_WARNING) : null;
 			}
 
 			return $return_val;			
@@ -83,7 +91,7 @@
 		*  but for the sake of consistency it has been included
 		*/
 
-		function quick_connect($dsn='', $user='', $password='')
+		function quick_connect($dsn='', $user='', $password='', $ssl=array())
 		{
 			return $this->connect($dsn, $user, $password);
 		}
@@ -93,7 +101,7 @@
 		*  once again, function included for the sake of consistency
 		*/
 
-		function select($dsn='', $user='', $password='')
+		function select($dsn='', $user='', $password='', $ssl=array())
 		{
 			return $this->connect($dsn, $user, $password);
 		}
@@ -244,10 +252,12 @@
 				
 				for ( $i=0 ; $i < $col_count ; $i++ )
 				{
+					$this->col_info[$i] = new stdClass();
+					
 					if ( $meta = $sth->getColumnMeta($i) )
 					{					
 						$this->col_info[$i]->name =  $meta['name'];
-						$this->col_info[$i]->type =  $meta['native_type'];
+						$this->col_info[$i]->type =  !empty($meta['native_type']) ? $meta['native_type'] : 'undefined';
 						$this->col_info[$i]->max_length =  '';
 					}
 					else
@@ -295,5 +305,3 @@
 		}
 
 	}
-
-?>
