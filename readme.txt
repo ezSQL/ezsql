@@ -15,6 +15,8 @@ http://techzinglive.com
 
 Change Log:
 
+Note: This change log isn't being used any more due to automated github tracking
+
 2.17 - Updates to ezSQL_postgresql (thx Stefanie Janine Stoelting)
 
 2.16 - Added profiling functions to mySQL version & added fix to stop mySQL hanging on very long runnign scripts
