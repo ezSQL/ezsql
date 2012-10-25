@@ -3,6 +3,7 @@
 /**********************************************************************
 *  Author: Justin Vincent (jv@jvmultimedia.com)
 *  Web...: http://twitter.com/justinvincent
+*  Update: Isuru Sampath Ratnayake @isuru_ra
 *  Name..: ezSQL_pdo
 *  Desc..: SQLite component (part of ezSQL databse abstraction library)
 *
@@ -44,6 +45,10 @@ class ezSQL_pdo extends ezSQLcore
 
 		if ( $dsn && $user && $password )
 		{
+			$this->dsn = $dsn; 
+			$this->user = $user;
+			$this->password = $password;
+			$this->ssl = $ssl;
 			$this->connect($dsn, $user, $password,$ssl);
 		}
 	}
