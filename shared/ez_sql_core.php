@@ -303,7 +303,9 @@
 						'num_rows' => $this->num_rows,
 						'return_value' => $this->num_rows,
 					);
-					error_log ( serialize($result_cache), 3, $cache_file);
+					file_put_contents($cache_file, serialize($result_cache));
+					if( file_exists($cache_file . ".updating") )
+						unlink($cache_file . ".updating");
 				}
 			}
 
@@ -323,9 +325,10 @@
 			if ( $this->use_disk_cache && file_exists($cache_file) )
 			{
 				// Only use this cache file if less than 'cache_timeout' (hours)
-				if ( (time() - filemtime($cache_file)) > ($this->cache_timeout*3600) )
+				if ( (time() - filemtime($cache_file)) > ($this->cache_timeout*3600) && 
+					!(file_exists($cache_file . ".updating") && (time() - filemtime($cache_file . ".updating") < 60)) ) 
 				{
-					unlink($cache_file);
+					touch($cache_file . ".updating"); // Show that we in the process of updating the cache
 				}
 				else
 				{
