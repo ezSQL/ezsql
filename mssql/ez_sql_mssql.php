@@ -76,16 +76,14 @@
 		{
 			global $ezsql_mssql_str; $return_val = false;
 
-			// Must have a user and a password
-			if ( ! $dbuser )
-			{
-				$this->register_error($ezsql_mssql_str[1].' in '.__FILE__.' on line '.__LINE__);
-				$this->show_errors ? trigger_error($ezsql_mssql_str[1],E_USER_WARNING) : null;
-			}
 			// Try to establish the server database handle
-
-			else if ( ! $this->dbh = @mssql_connect($dbhost,$dbuser,$dbpassword) )
+			 if ( ! $this->dbh = @mssql_connect($dbhost,$dbuser,$dbpassword) )
 			{
+				if ( ! $dbuser )
+				{
+					$this->register_error($ezsql_mssql_str[1].' in '.__FILE__.' on line '.__LINE__);
+					$this->show_errors ? trigger_error($ezsql_mssql_str[1],E_USER_WARNING) : null;
+				}
 				$this->register_error($ezsql_mssql_str[2].' in '.__FILE__.' on line '.__LINE__);
 				$this->show_errors ? trigger_error($ezsql_mssql_str[2],E_USER_WARNING) : null;
 			}
