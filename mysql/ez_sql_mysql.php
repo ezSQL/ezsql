@@ -58,7 +58,7 @@
 		{
 			$return_val = false;
 			if ( ! $this->connect($dbuser, $dbpassword, $dbhost,true) ) ;
-			else if ( ! $this->select($dbname) ) ;
+			else if ( ! $this->select($dbname,$encoding) ) ;
 			else $return_val = true;
 			return $return_val;
 		}
@@ -101,7 +101,7 @@
 		*  Try to select a mySQL database
 		*/
 
-		function select($dbname='')
+		function select($dbname='',$encoding='utf8')
 		{
 			global $ezsql_mysql_str; $return_val = false;
 
@@ -132,6 +132,9 @@
 			else
 			{
 				$this->dbname = $dbname;
+				if($encoding!=''){
+					mysql_query("SET NAMES '".$encoding."'");
+				}
 				$return_val = true;
 			}
 
