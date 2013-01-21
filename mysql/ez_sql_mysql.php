@@ -35,18 +35,20 @@
 		var $dbpassword = false;
 		var $dbname = false;
 		var $dbhost = false;
+		var $encoding = false;
 
 		/**********************************************************************
 		*  Constructor - allow the user to perform a qucik connect at the
 		*  same time as initialising the ezSQL_mysql class
 		*/
 
-		function ezSQL_mysql($dbuser='', $dbpassword='', $dbname='', $dbhost='localhost')
+		function ezSQL_mysql($dbuser='', $dbpassword='', $dbname='', $dbhost='localhost', $encoding='utf8')
 		{
 			$this->dbuser = $dbuser;
 			$this->dbpassword = $dbpassword;
 			$this->dbname = $dbname;
 			$this->dbhost = $dbhost;
+			$this->encoding = $encoding;
 		}
 
 		/**********************************************************************
@@ -54,11 +56,11 @@
 		*  and select a mySQL database at the same time
 		*/
 
-		function quick_connect($dbuser='', $dbpassword='', $dbname='', $dbhost='localhost')
+		function quick_connect($dbuser='', $dbpassword='', $dbname='', $dbhost='localhost', $encoding='')
 		{
 			$return_val = false;
 			if ( ! $this->connect($dbuser, $dbpassword, $dbhost,true) ) ;
-			else if ( ! $this->select($dbname) ) ;
+			else if ( ! $this->select($dbname,$encoding) ) ;
 			else $return_val = true;
 			return $return_val;
 		}
@@ -101,7 +103,7 @@
 		*  Try to select a mySQL database
 		*/
 
-		function select($dbname='')
+		function select($dbname='', $encoding='')
 		{
 			global $ezsql_mysql_str; $return_val = false;
 
@@ -132,6 +134,9 @@
 			else
 			{
 				$this->dbname = $dbname;
+				if($encoding!=''){
+					mysql_query("SET NAMES '".$encoding."'");
+				}
 				$return_val = true;
 			}
 
@@ -149,7 +154,7 @@
 			if ( ! isset($this->dbh) || ! $this->dbh )
 			{
 				$this->connect($this->dbuser, $this->dbpassword, $this->dbhost);
-				$this->select($this->dbname);
+				$this->select($this->dbname, $this->encoding);
 			}
 
 			return mysql_real_escape_string(stripslashes($str));
@@ -176,7 +181,7 @@
 			if ( $this->num_queries >= 500 )
 			{
 				$this->disconnect();
-				$this->quick_connect($this->dbuser,$this->dbpassword,$this->dbname,$this->dbhost);
+				$this->quick_connect($this->dbuser,$this->dbpassword,$this->dbname,$this->dbhost,$this->encoding);
 			}
 
 			// Initialise return
@@ -219,7 +224,7 @@
 			if ( ! isset($this->dbh) || ! $this->dbh )
 			{
 				$this->connect($this->dbuser, $this->dbpassword, $this->dbhost);
-				$this->select($this->dbname);
+				$this->select($this->dbname,$this->encoding);
 			}
 
 			// Perform the query via std mysql_query function..
