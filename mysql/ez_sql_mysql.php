@@ -136,6 +136,7 @@
 				$this->dbname = $dbname;
 				if($encoding!='')
 				{
+					$encoding = strtolower(str_replace("-","",$encoding));
 					$charsets = array();
 					$result = mysql_query("SHOW CHARACTER SET");
 					while($row = mysql_fetch_array($result,MYSQL_ASSOC))
