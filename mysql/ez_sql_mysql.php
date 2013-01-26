@@ -134,9 +134,11 @@
 			else
 			{
 				$this->dbname = $dbname;
-				if($encoding!=''){
+				if($encoding!='')
+				{
 					mysql_query("SET NAMES '".$encoding."'");
 				}
+				
 				$return_val = true;
 			}
 
