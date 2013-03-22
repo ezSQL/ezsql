@@ -242,7 +242,8 @@
 						$name = strtolower($name);
 						if ($name == "size") $name = "max_length";
 						else if ($name == "type") $name = "typeid";
-						
+						//DEFINED FOR E_STRICT
+						$col = new StdClass();
 						$col->{$name} = $value;
 					}
 
@@ -315,11 +316,11 @@
 					1 => "\\1", 
 					2 => "");
 			preg_match($limit_str, $query, $regs);
-			$query = preg_replace($patterns, $replacement, $query);
-
-			if($regs[2])
+			$query = preg_replace($patterns, $replacements, $query);
+			
+			if(isset($regs[2]))
 				$query = str_ireplace("SELECT ", "SELECT TOP ".$regs[3]." ", $query);
-			else if($regs[1])
+			else if(isset($regs[1]))
 				$query  = str_ireplace("SELECT ", "SELECT TOP ".$regs[1]." ", $query);
 
 			return $query;
@@ -330,32 +331,35 @@
 		{
 			global $ezsql_sqlsrv_type2str_non_dup;
 			$datatype = "dt not defined";
-			switch ($col->typeid) {
-				case -2 :
-					if ($col->max_length < 8000)
-						$datatype = "binary";
-					else
-						$datatype = "timestamp";
-					break;
-				case 3 :
-					if (($col->scale == 4) && ($col->precision == 19))
-						$datatype = "money";
-					else if (($col->scale == 4) && ($col->precision == 10))
-						$datatype = "smallmoney";
-					else
-						$datatype = "decimal";
-					break;
-				case 93 :
-					if (($col->precision == 16) && ($col->scale == 0))
-						$datatype = "smalldatetime";
-					else if (($col->precision == 23) && ($col->scale == 3))
-						$datatype = "datetime";
-					else
-						$datatype = "datetime2";
-					break;
-				default :
-					$datatype = $ezsql_sqlsrv_type2str_non_dup[$col->typeid];
-					break;
+			if(isset($col->typeid))
+			{
+				switch ($col->typeid) {
+					case -2 :
+						if ($col->max_length < 8000)
+							$datatype = "binary";
+						else
+							$datatype = "timestamp";
+						break;
+					case 3 :
+						if (($col->scale == 4) && ($col->precision == 19))
+							$datatype = "money";
+						else if (($col->scale == 4) && ($col->precision == 10))
+							$datatype = "smallmoney";
+						else
+							$datatype = "decimal";
+						break;
+					case 93 :
+						if (($col->precision == 16) && ($col->scale == 0))
+							$datatype = "smalldatetime";
+						else if (($col->precision == 23) && ($col->scale == 3))
+							$datatype = "datetime";
+						else
+							$datatype = "datetime2";
+						break;
+					default :
+						$datatype = $ezsql_sqlsrv_type2str_non_dup[$col->typeid];
+						break;
+				}
 			}
 			
 			return $datatype;

@@ -42,7 +42,7 @@
 		*  same time as initialising the ezSQL_mysql class
 		*/
 
-		function ezSQL_mysql($dbuser='', $dbpassword='', $dbname='', $dbhost='localhost', $encoding='utf8')
+		function ezSQL_mysql($dbuser='', $dbpassword='', $dbname='', $dbhost='localhost', $encoding='')
 		{
 			$this->dbuser = $dbuser;
 			$this->dbpassword = $dbpassword;
@@ -136,7 +136,16 @@
 				$this->dbname = $dbname;
 				if($encoding!='')
 				{
-					mysql_query("SET NAMES '".$encoding."'");
+					$encoding = strtolower(str_replace("-","",$encoding));
+					$charsets = array();
+					$result = mysql_query("SHOW CHARACTER SET");
+					while($row = mysql_fetch_array($result,MYSQL_ASSOC))
+					{
+						$charsets[] = $row["Charset"];
+					}
+					if(in_array($encoding,$charsets)){
+						mysql_query("SET NAMES '".$encoding."'");						
+					}
 				}
 				
 				$return_val = true;
