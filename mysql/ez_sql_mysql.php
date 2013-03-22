@@ -182,6 +182,7 @@
 			// This keeps the connection alive for very long running scripts
 			if ( $this->num_queries >= 500 )
 			{
+				$this->num_queries = 0;
 				$this->disconnect();
 				$this->quick_connect($this->dbuser,$this->dbpassword,$this->dbname,$this->dbhost,$this->encoding);
 			}
