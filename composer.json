@@ -1,0 +1,29 @@
+{
+    "name": "jv2222/ezsql",
+    "description": "PHP class to make interacting with a database ridiculusly easy.",
+    "license": "LGPL",
+    "authors": [
+        {
+            "name": "Justin Vincent",
+            "email": "webmaster@justinvincent.com"
+        }
+    ],
+    "require": {
+
+    },
+    "autoload": {
+        "classmap": [
+            "cubrid/ez_sql_cubrid.php",
+            "pdo/ez_sql_pdo.php",
+            "postgresql/ez_sql_postgresql.php",
+            "mysql/ez_sql_mysql.php",
+            "sqlsrv/ez_sql_sqlsrv.php",
+            "oracle8_9/ez_sql_oracle8_9.php",
+            "sqlite/ez_sql_sqlite.php",
+            "shared/ez_sql_core.php",
+            "mssql/ez_sql_mssql.php",
+            "sybase/ez_sql_sybase.php",
+            "codeigniter/Ezsql_codeigniter.php"
+        ]
+    }
+}
