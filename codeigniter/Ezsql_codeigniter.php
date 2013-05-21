@@ -15,6 +15,7 @@
 	{
 	
 		var $debug = true;
+		var $rows_affected = false;
 	
 		function __construct()
 		{
