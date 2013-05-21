@@ -33,6 +33,7 @@
 		var $dbname = false;
 		var $dbhost = false;
         var $dbport = false;
+		var $rows_affected = false;
 
 		/**********************************************************************
 		*  Constructor - allow the user to perform a quick connect at the

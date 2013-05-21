@@ -30,6 +30,7 @@
 		var $dsn;
 		var $user;
 		var $password;
+		var $rows_affected = false;
 
 		/**********************************************************************
 		*  Constructor - allow the user to perform a qucik connect at the 

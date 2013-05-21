@@ -37,6 +37,8 @@
 		var $dbpassword = false;
 		var $dbname = false;
 		var $dbhost = false;
+		var $rows_affected = false;
+		
 		//if we want to convert Queries in MySql syntax to Sybase syntax. Yes, there
 		//are some differences in query syntax.
 		var $convertMySqlTosybaseQuery = TRUE;
