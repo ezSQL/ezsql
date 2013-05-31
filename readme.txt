@@ -16,6 +16,8 @@ http://techzinglive.com
 
 Change Log:
 
+3.04 - Added a new class for Oracle database connection to get rid of TNSNAMES.ORA configuration files
+
 3.03 - Changed error messages, wrong classname used in a messages
 
 3.02 - Improved ezSQL_recordset, array results of rows are faster
