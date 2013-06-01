@@ -119,6 +119,7 @@ class ezSQL_codeigniter extends ezSQLcore
                     if ( $num_rows == 0 ) {
                         $i = 0;
                         foreach ( get_object_vars($row) as $k => $v ) {
+                            $this->col_info[$i] = new Stdclass();
                             $this->col_info[$i]->name = $k;
                             $this->col_info[$i]->max_length = $k;
                             $this->col_info[$i]->type = '';
