@@ -90,7 +90,7 @@ class ezSQL_mysql extends ezSQLcore
         $this->dbname = $dbname;
         $this->dbhost = $dbhost;
         if ( ! empty($charset) ) {
-            $this->charset = $charset;
+            $this->charset = strtolower(str_replace('-', '', $charset));
         }
     } // __construct
 
