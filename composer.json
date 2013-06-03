@@ -17,6 +17,7 @@
             "pdo/ez_sql_pdo.php",
             "postgresql/ez_sql_postgresql.php",
             "mysql/ez_sql_mysql.php",
+            "mysqli/ez_sql_mysqli.php",
             "sqlsrv/ez_sql_sqlsrv.php",
             "oracle8_9/ez_sql_oracle8_9.php",
             "sqlite/ez_sql_sqlite.php",
