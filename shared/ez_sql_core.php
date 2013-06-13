@@ -240,7 +240,7 @@
 				}
 				else
 				{
-					return null;
+					return array();
 				}
 			}
 		}
