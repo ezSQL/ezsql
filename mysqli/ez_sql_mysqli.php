@@ -255,7 +255,7 @@
 			$is_insert = false;
 			
 			//if ( preg_match("/^(insert|delete|update|replace|truncate|drop|create|alter)\s+/i",$query) )
-			if ( preg_match("/^(insert|delete|update|replace|truncate|drop|create|alter|begin|commit|rollback)/i",$query) )
+			if ( preg_match("/^(insert|delete|update|replace|truncate|drop|create|alter|begin|commit|rollback|set)/i",$query) )
 			{
 				$this->rows_affected = @$this->dbh->affected_rows;
 
