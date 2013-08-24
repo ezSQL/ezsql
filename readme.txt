@@ -6,11 +6,7 @@ Desc: Class to make it very easy to deal with database connections.
 License: FREE / Donation (LGPL - You may do what you like with ezSQL - no exceptions.)
 =======================================================================
 
-Follow me on twitter:
-http://twitter.com/justinvincent
-
-Check out my podcast TechZing where we talk about tech and tech startups:
-http://techzinglive.com
+News about ezSQL are available at http://stefanie-stoelting.de/ezsql-news.html
 
 =======================================================================
 
