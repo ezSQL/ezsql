@@ -6,14 +6,14 @@ require_once dirname(__FILE__) . '/../../../oracle8_9/ez_sql_oracleTNS.php';
 /**
  * Test class for ezSQL_oracleTNS.
  * Desc..: Oracle TNS component (part of ezSQL databse abstraction library)
- * 
+ *
+ * @author  Justin Vincent (jv@jvmultimedia.com)
  * @author  Stefanie Janine Stoelting (mail@stefanie-stoelting.de)
  * @link    http://twitter.com/justinvincent
  * @name    ezSQL_oracleTNSTest
  * @package ezSQL
  * @subpackage unitTests
  * @license FREE / Donation (LGPL - You may do what you like with ezSQL - no exceptions.)
- *
  */
 class ezSQL_oracleTNSTest extends PHPUnit_Framework_TestCase {
 
@@ -24,18 +24,17 @@ class ezSQL_oracleTNSTest extends PHPUnit_Framework_TestCase {
 
     /**
      * The connection parameters for the Oracle DB connection
-     * Insert your own database connection, to run the tests
      * @var array
      */
     private $oraConnectionParamsTestConnection = array(
-        'User'          => '',
-        'Password'      => '',
-        'Host'          => '',
+        'User'          => 'CMP',
+        'Password'      => 'cmp',
+        'Host'          => 'en-yoda-1',
         'Port'          => '1521',
-        'SessionName'   => '',
+        'SessionName'   => 'ppisa.febi.bilstein.local',
         'TNS'           => 'AL32UTF8'
     );
-    
+
     private $sequenceName = 'UNITTEST_ORATNS';
 
     /**
@@ -51,11 +50,11 @@ class ezSQL_oracleTNSTest extends PHPUnit_Framework_TestCase {
                     $this->oraConnectionParamsTestConnection['Password'],
                     $this->oraConnectionParamsTestConnection['TNS']
                 );
-        
+
         // Create the sequence
         $sql = 'CREATE SEQUENCE ' . $this->sequenceName;
         $this->object->query($sql);
-        
+
     } // setUp
 
     /**
@@ -80,6 +79,35 @@ class ezSQL_oracleTNSTest extends PHPUnit_Framework_TestCase {
                 );
         $this->assertTrue($this->object->isConnected());
     } // testConnect
+
+    /**
+     * To test connection pooling with oci_pconnect instead of oci_connect
+     * @covers ezSQL_oracleTNS::connect
+     */
+    public function testPConnect() {
+        $this->object = null;
+
+        $this->object = new ezSQL_oracleTNS(
+                    $this->oraConnectionParamsTestConnection['Host'],
+                    $this->oraConnectionParamsTestConnection['Port'],
+                    $this->oraConnectionParamsTestConnection['SessionName'],
+                    $this->oraConnectionParamsTestConnection['User'],
+                    $this->oraConnectionParamsTestConnection['Password'],
+                    $this->oraConnectionParamsTestConnection['TNS'],
+                    true
+                );
+
+        $this->object->connect(
+                    $this->oraConnectionParamsTestConnection['User'],
+                    $this->oraConnectionParamsTestConnection['Password']
+                );
+        $this->assertTrue($this->object->isConnected());
+
+        $sql = 'SELECT 5*5 AS TEST_RESULT FROM DUAL';
+
+        $recordset = $this->object->query($sql);
+        $this->assertEquals(1, $recordset);
+    } // testPConnect
 
     /**
      * @covers ezSQL_oracleTNS::quick_connect
@@ -124,7 +152,7 @@ class ezSQL_oracleTNSTest extends PHPUnit_Framework_TestCase {
      */
     public function testIs_equal_str() {
         $expected = '= \'ezTest string\'';
-        
+
         $this->assertEquals($expected, $this->object->is_equal_str('ezTest string'));
     } // testIs_equal_str
 
@@ -133,7 +161,7 @@ class ezSQL_oracleTNSTest extends PHPUnit_Framework_TestCase {
      */
     public function testIs_equal_int() {
         $expected = '= 123';
-        
+
         $this->assertEquals($expected, $this->object->is_equal_int(123));
     } // testIs_equal_int
 
@@ -145,13 +173,13 @@ class ezSQL_oracleTNSTest extends PHPUnit_Framework_TestCase {
                     $this->oraConnectionParamsTestConnection['User'],
                     $this->oraConnectionParamsTestConnection['Password']
                 );
-        
+
         $result = $this->object->insert_id($this->sequenceName);
-        
+
         $this->assertEquals(1, $result);
-        
+
         $result = $this->object->insert_id($this->sequenceName);
-        
+
         $this->assertEquals(2, $result);
     } // testInsert_id
 
@@ -164,11 +192,11 @@ class ezSQL_oracleTNSTest extends PHPUnit_Framework_TestCase {
                     $this->oraConnectionParamsTestConnection['Password']
                 );
         $result = $this->object->nextVal($this->sequenceName);
-        
+
         $this->assertEquals(1, $result);
 
         $result = $this->object->nextVal($this->sequenceName);
-        
+
         $this->assertEquals(2, $result);
     } // testNextVal
 
@@ -180,9 +208,9 @@ class ezSQL_oracleTNSTest extends PHPUnit_Framework_TestCase {
                     $this->oraConnectionParamsTestConnection['User'],
                     $this->oraConnectionParamsTestConnection['Password']
                 );
-        
+
         $sql = 'SELECT 5*5 AS TEST_RESULT FROM DUAL';
-        
+
         $recordset = $this->object->query($sql);
         $this->assertEquals(1, $recordset);
     } // testQuery
@@ -192,7 +220,7 @@ class ezSQL_oracleTNSTest extends PHPUnit_Framework_TestCase {
      */
     public function testDisconnect() {
         $this->object->disconnect();
-        
+
         $this->assertFalse($this->object->isConnected());
     } // testDisconnect
 
