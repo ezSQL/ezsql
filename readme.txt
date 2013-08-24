@@ -16,6 +16,8 @@ http://techzinglive.com
 
 Change Log:
 
+3.05 - Extended ez_sql_oracleTNS class, that does now support client site connection pooling
+
 3.04 - Added a new class for Oracle database connection to get rid of TNSNAMES.ORA configuration files
 
 3.03 - Changed error messages, wrong classname used in a messages
