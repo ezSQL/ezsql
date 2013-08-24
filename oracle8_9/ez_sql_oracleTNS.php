@@ -65,6 +65,13 @@ class ezSQL_oracleTNS extends ezSQLcore
     private $characterSet;
     
     /**
+     * Use oci_pconnect instead of oci_connect to have connection pooling
+     * enabled with PHP
+     * @var boolean
+     */
+    private $pooling;
+    
+    /**
      * Show errors
      * @var boolean Default is true
      */
@@ -84,9 +91,12 @@ class ezSQL_oracleTNS extends ezSQLcore
      *                           Default is empty string
      * @param string $characterSet The Oracle NLS_LANG character string
      *                             Default is empty string
+     * @param boolean $pooling Use connection pooling with pconnect instead of
+     *                         connect
+     *                         Default is false
      * @throws Exception Requires Orcle OCI Lib and ez_sql_core.php
      */
-    public function __construct($host, $port, $serviceName, $dbuser='', $dbpassword='', $characterSet='') {
+    public function __construct($host, $port, $serviceName, $dbuser='', $dbpassword='', $characterSet='', $pooling=false) {
         if ( ! function_exists ('OCILogon') ) {
             throw new Exception('<b>Fatal Error:</b> ezSQL_oracleTNS requires Oracle OCI Lib to be compiled and/or linked in to the PHP engine');
         }
@@ -106,6 +116,7 @@ class ezSQL_oracleTNS extends ezSQLcore
         $this->serviceName = $serviceName;
         $this->characterSet = $characterSet;
         $this->setTNS();
+        $this->pooling = $pooling;
 
     } // __construct
 
@@ -120,6 +131,13 @@ class ezSQL_oracleTNS extends ezSQLcore
      */
     public function connect($dbuser='', $dbpassword='') {
         $this->connected = false;
+        
+        if (empty($dbuser)) {
+            $dbuser = $this->dbuser;
+        }
+        if (empty($dbpassword)) {
+            $dbpassword = $this->dbpassword;
+        }
 
         // Must have a user and a password
         if ( ! $dbuser || ! $dbpassword) {
@@ -129,8 +147,60 @@ class ezSQL_oracleTNS extends ezSQLcore
 
         // Try to establish the server database handle
         else {
+                if ($this->pooling) {
+                    $this->_pconnect($dbuser, $dbpassword);
+                }  else {
+                    $this->_connect($dbuser, $dbpassword);
+                }
 
-            if ( ! empty($this->characterSet) ) {
+            }
+
+        return $this->connected;
+    } // connect
+
+    /**
+     * Try to connect to Oracle database server with connection pooling
+     *
+     * @param string $dbuser The database user name
+     *                       Default is empty string
+     * @param string $dbpassword The database users password
+     *                           Default is empty string
+     * @return boolean
+     */
+    public function pconnect($dbuser='', $dbpassword='') {
+        $this->connected = false;
+        
+        if (empty($dbuser)) {
+            $dbuser = $this->dbuser;
+        }
+        if (empty($dbpassword)) {
+            $dbpassword = $this->dbpassword;
+        }
+
+        // Must have a user and a password
+        if ( ! $dbuser || ! $dbpassword) {
+            $this->register_error($this->ezsql_oracle_str[1] . ' in ' . __FILE__ . ' on line ' . __LINE__);
+            $this->show_errors ? trigger_error($this->ezsql_oracle_str[1], E_USER_WARNING) : null;
+        }
+
+        // Try to establish the server database handle
+        else {
+                $this->_pconnect($dbuser, $dbpassword);
+            }
+
+        return $this->connected;
+    } // pconnect
+
+    /**
+     * Try to connect to Oracle database server without connection pooling
+     *
+     * @param string $dbuser The database user name
+     *                       Default is empty string
+     * @param string $dbpassword The database users password
+     *                           Default is empty string
+     */
+    private function _connect($dbuser='', $dbpassword='') {
+        if ( ! empty($this->characterSet) ) {
                 if ( ! $this->dbh = @oci_connect($dbuser, $dbpassword, $this->tns, $this->characterSet) ) {
                     $this->register_error($php_errormsg);
                     $this->show_errors ? trigger_error($php_errormsg,E_USER_WARNING) : null;
@@ -139,7 +209,7 @@ class ezSQL_oracleTNS extends ezSQLcore
                     $this->dbpassword = $dbpassword;
                     $this->connected = true;
                 }
-            } else {
+        } else {
                 if ( ! $this->dbh = @oci_connect($dbuser, $dbpassword, $this->tns) ) {
                     $this->register_error($php_errormsg);
                     $this->show_errors ? trigger_error($php_errormsg,E_USER_WARNING) : null;
@@ -149,11 +219,38 @@ class ezSQL_oracleTNS extends ezSQLcore
                     $this->connected = true;
                 }
             }
-        }
-
-        return $this->connected;
     }
-
+    
+    /**
+     * Try to connect to Oracle database server with connection pooling
+     *
+     * @param string $dbuser The database user name
+     *                       Default is empty string
+     * @param string $dbpassword The database users password
+     *                           Default is empty string
+     */
+    private function _pconnect($dbuser='', $dbpassword='') {
+        if ( ! empty($this->characterSet) ) {
+                if ( ! $this->dbh = @oci_pconnect($dbuser, $dbpassword, $this->tns, $this->characterSet) ) {
+                    $this->register_error($php_errormsg);
+                    $this->show_errors ? trigger_error($php_errormsg,E_USER_WARNING) : null;
+                } else {
+                    $this->dbuser = $dbuser;
+                    $this->dbpassword = $dbpassword;
+                    $this->connected = true;
+                }
+        } else {
+                if ( ! $this->dbh = @oci_pconnect($dbuser, $dbpassword, $this->tns) ) {
+                    $this->register_error($php_errormsg);
+                    $this->show_errors ? trigger_error($php_errormsg,E_USER_WARNING) : null;
+                } else {
+                    $this->dbuser = $dbuser;
+                    $this->dbpassword = $dbpassword;
+                    $this->connected = true;
+                }
+            }
+    } // _connect
+    
     /**
      * In the case of Oracle quick_connect is not really needed because std.
      * connect already does what quick connect does - but for the sake of
