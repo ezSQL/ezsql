@@ -80,11 +80,11 @@
 		</div>
 		<div class="info-box-body">			
 			<div class="method-summary">
-																																																																																																				
+																																																																																																												
 												<div class="method-definition">
 											<span class="method-result">ezSQL_oracleTNS</span>
 										<a href="#__construct" title="details" class="method-name">__construct</a>
-											(<span class="var-type">string</span>&nbsp;<span class="var-name">$host</span>, <span class="var-type">integer</span>&nbsp;<span class="var-name">$port</span>, <span class="var-type">string</span>&nbsp;<span class="var-name">$serviceName</span>, [<span class="var-type">string</span>&nbsp;<span class="var-name">$dbuser</span> = <span class="var-default">''</span>], [<span class="var-type">string</span>&nbsp;<span class="var-name">$dbpassword</span> = <span class="var-default">''</span>], [<span class="var-type">string</span>&nbsp;<span class="var-name">$characterSet</span> = <span class="var-default">''</span>])
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$host</span>, <span class="var-type">integer</span>&nbsp;<span class="var-name">$port</span>, <span class="var-type">string</span>&nbsp;<span class="var-name">$serviceName</span>, [<span class="var-type">string</span>&nbsp;<span class="var-name">$dbuser</span> = <span class="var-default">''</span>], [<span class="var-type">string</span>&nbsp;<span class="var-name">$dbpassword</span> = <span class="var-default">''</span>], [<span class="var-type">string</span>&nbsp;<span class="var-name">$characterSet</span> = <span class="var-default">''</span>], [<span class="var-type">boolean</span>&nbsp;<span class="var-name">$pooling</span> = <span class="var-default">false</span>])
 									</div>
 																<div class="method-definition">
 											<span class="method-result">boolean</span>
@@ -120,6 +120,11 @@
 											<span class="method-result">string</span>
 										<a href="#nextVal" title="details" class="method-name">nextVal</a>
 											(<span class="var-type">string</span>&nbsp;<span class="var-name">$seq_name</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">boolean</span>
+										<a href="#pconnect" title="details" class="method-name">pconnect</a>
+											([<span class="var-type">string</span>&nbsp;<span class="var-name">$dbuser</span> = <span class="var-default">''</span>], [<span class="var-type">string</span>&nbsp;<span class="var-name">$dbpassword</span> = <span class="var-default">''</span>])
 									</div>
 																<div class="method-definition">
 											<span class="method-result">object</span>
@@ -167,7 +172,7 @@
 		<span class="var-title">
 			<span class="var-type">boolean</span>
 			<span class="var-name">$show_errors</span>
-			 = <span class="var-default"> true</span>			(line <span class="line-number">71</span>)
+			 = <span class="var-default"> true</span>			(line <span class="line-number">78</span>)
 		</span>
 	</div>
 
@@ -294,7 +299,7 @@
 <div class="evenrow">
 	
 	<div class="method-header">
-		<span class="method-title">Constructor __construct</span> (line <span class="line-number">89</span>)
+		<span class="method-title">Constructor __construct</span> (line <span class="line-number">99</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -309,7 +314,7 @@
 		<span class="method-name">
 			__construct
 		</span>
-					(<span class="var-type">string</span>&nbsp;<span class="var-name">$host</span>, <span class="var-type">integer</span>&nbsp;<span class="var-name">$port</span>, <span class="var-type">string</span>&nbsp;<span class="var-name">$serviceName</span>, [<span class="var-type">string</span>&nbsp;<span class="var-name">$dbuser</span> = <span class="var-default">''</span>], [<span class="var-type">string</span>&nbsp;<span class="var-name">$dbpassword</span> = <span class="var-default">''</span>], [<span class="var-type">string</span>&nbsp;<span class="var-name">$characterSet</span> = <span class="var-default">''</span>])
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$host</span>, <span class="var-type">integer</span>&nbsp;<span class="var-name">$port</span>, <span class="var-type">string</span>&nbsp;<span class="var-name">$serviceName</span>, [<span class="var-type">string</span>&nbsp;<span class="var-name">$dbuser</span> = <span class="var-default">''</span>], [<span class="var-type">string</span>&nbsp;<span class="var-name">$dbpassword</span> = <span class="var-default">''</span>], [<span class="var-type">string</span>&nbsp;<span class="var-name">$characterSet</span> = <span class="var-default">''</span>], [<span class="var-type">boolean</span>&nbsp;<span class="var-name">$pooling</span> = <span class="var-default">false</span>])
 			</div>
 	
 			<ul class="parameters">
@@ -331,6 +336,9 @@
 					<li>
 				<span class="var-type">string</span>
 				<span class="var-name">$characterSet</span><span class="var-description">: The Oracle NLS_LANG character string                              Default is empty string</span>			</li>
+					<li>
+				<span class="var-type">boolean</span>
+				<span class="var-name">$pooling</span><span class="var-description">: Use connection pooling with pconnect instead of                          connect                          Default is false</span>			</li>
 				</ul>
 		
 			<hr class="separator" />
@@ -345,7 +353,7 @@
 <div class="oddrow">
 	
 	<div class="method-header">
-		<span class="method-title">connect</span> (line <span class="line-number">121</span>)
+		<span class="method-title">connect</span> (line <span class="line-number">132</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -377,7 +385,7 @@
 <div class="evenrow">
 	
 	<div class="method-header">
-		<span class="method-title">disconnect</span> (line <span class="line-number">386</span>)
+		<span class="method-title">disconnect</span> (line <span class="line-number">483</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -401,7 +409,7 @@
 <div class="oddrow">
 	
 	<div class="method-header">
-		<span class="method-title">escape</span> (line <span class="line-number">192</span>)
+		<span class="method-title">escape</span> (line <span class="line-number">289</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -430,7 +438,7 @@
 <div class="evenrow">
 	
 	<div class="method-header">
-		<span class="method-title">insert_id</span> (line <span class="line-number">268</span>)
+		<span class="method-title">insert_id</span> (line <span class="line-number">365</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -460,7 +468,7 @@
 <div class="oddrow">
 	
 	<div class="method-header">
-		<span class="method-title">is_equal_int</span> (line <span class="line-number">254</span>)
+		<span class="method-title">is_equal_int</span> (line <span class="line-number">351</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -489,7 +497,7 @@
 <div class="evenrow">
 	
 	<div class="method-header">
-		<span class="method-title">is_equal_str</span> (line <span class="line-number">244</span>)
+		<span class="method-title">is_equal_str</span> (line <span class="line-number">341</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -518,7 +526,7 @@
 <div class="oddrow">
 	
 	<div class="method-header">
-		<span class="method-title">nextVal</span> (line <span class="line-number">288</span>)
+		<span class="method-title">nextVal</span> (line <span class="line-number">385</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -543,11 +551,43 @@
 		
 			
 	</div>
-<a name="methodquery" id="query"><!-- --></a>
+<a name="methodpconnect" id="pconnect"><!-- --></a>
 <div class="evenrow">
 	
 	<div class="method-header">
-		<span class="method-title">query</span> (line <span class="line-number">298</span>)
+		<span class="method-title">pconnect</span> (line <span class="line-number">170</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Try to connect to Oracle database server with connection pooling</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">boolean</span>
+		<span class="method-name">
+			pconnect
+		</span>
+					([<span class="var-type">string</span>&nbsp;<span class="var-name">$dbuser</span> = <span class="var-default">''</span>], [<span class="var-type">string</span>&nbsp;<span class="var-name">$dbpassword</span> = <span class="var-default">''</span>])
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$dbuser</span><span class="var-description">: The database user name                        Default is empty string</span>			</li>
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$dbpassword</span><span class="var-description">: The database users password                            Default is empty string</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodquery" id="query"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">query</span> (line <span class="line-number">395</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -573,10 +613,10 @@
 			
 	</div>
 <a name="methodquick_connect" id="quick_connect"><!-- --></a>
-<div class="oddrow">
+<div class="evenrow">
 	
 	<div class="method-header">
-		<span class="method-title">quick_connect</span> (line <span class="line-number">168</span>)
+		<span class="method-title">quick_connect</span> (line <span class="line-number">265</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -606,10 +646,10 @@
 			
 	</div>
 <a name="methodselect" id="select"><!-- --></a>
-<div class="evenrow">
+<div class="oddrow">
 	
 	<div class="method-header">
-		<span class="method-title">select</span> (line <span class="line-number">182</span>)
+		<span class="method-title">select</span> (line <span class="line-number">279</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -638,10 +678,10 @@
 			
 	</div>
 <a name="methodsysdate" id="sysdate"><!-- --></a>
-<div class="oddrow">
+<div class="evenrow">
 	
 	<div class="method-header">
-		<span class="method-title">sysdate</span> (line <span class="line-number">225</span>)
+		<span class="method-title">sysdate</span> (line <span class="line-number">322</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -730,7 +770,7 @@
 	</div>
 
 	<p class="notes" id="credit">
-		Documentation generated on Fri, 31 May 2013 12:45:54 +0200 by <a href="http://www.phpdoc.org" target="_blank">phpDocumentor 1.4.4</a>
+		Documentation generated on Mon, 26 Aug 2013 23:22:22 +0200 by <a href="http://www.phpdoc.org" target="_blank">phpDocumentor 1.4.4</a>
 	</p>
 	</div></body>
 </html>
