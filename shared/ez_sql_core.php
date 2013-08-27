@@ -63,6 +63,20 @@
 		}
 
 		/**********************************************************************
+		*  Get host and port from an "host:port" notation.
+		*  Returns array of host and port. If port is omitted, returns $default
+		*/
+
+		function get_host_port( $host, $default = false )
+		{
+			$port = $default;
+			if ( false !== strpos( $host, ':' ) ) {
+				list( $host, $port ) = explode( ':', $host );
+			}
+			return array( $host, $port );
+		}
+
+		/**********************************************************************
 		*  Print SQL/DB error - over-ridden by specific DB class
 		*/
 
