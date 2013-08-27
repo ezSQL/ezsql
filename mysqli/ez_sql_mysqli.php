@@ -4,7 +4,7 @@
 	*  Author: Juergen Bouché (jbouche@nurfuerspam.de)
 	*  Web...: http://www.juergenbouche.de
 	*  Name..: ezSQL_mysqli
-	*  Desc..: mySQLi component (part of ezSQL databse abstraction library)
+	*  Desc..: mySQLi component (part of ezSQL database abstraction library)
 	*
 	*/
 
@@ -35,6 +35,7 @@
 		var $dbpassword = false;
 		var $dbname = false;
 		var $dbhost = false;
+		var $dbport = false;
 		var $encoding = false;
 		var $rows_affected = false;
 
@@ -48,7 +49,7 @@
 			$this->dbuser = $dbuser;
 			$this->dbpassword = $dbpassword;
 			$this->dbname = $dbname;
-			$this->dbhost = $dbhost;
+			list( $this->dbhost, $this->dbport ) = $this->get_host_port( $dbhost, 3306 );
 			$this->encoding = $encoding;
 		}
 
@@ -57,10 +58,10 @@
 		*  and select a mySQL database at the same time
 		*/
 
-		function quick_connect($dbuser='', $dbpassword='', $dbname='', $dbhost='localhost', $encoding='')
+		function quick_connect($dbuser='', $dbpassword='', $dbname='', $dbhost='localhost', $dbport='3306', $encoding='')
 		{
 			$return_val = false;
-			if ( ! $this->connect($dbuser, $dbpassword, $dbhost,true) ) ;
+			if ( ! $this->connect($dbuser, $dbpassword, $dbhost, $dbport) ) ;
 			else if ( ! $this->select($dbname,$encoding) ) ;
 			else $return_val = true;
 			return $return_val;
@@ -70,13 +71,18 @@
 		*  Try to connect to mySQL database server
 		*/
 
-		function connect($dbuser='', $dbpassword='', $dbhost='localhost')
+		function connect($dbuser='', $dbpassword='', $dbhost='localhost', $dbport=false)
 		{
 			global $ezsql_mysqli_str; $return_val = false;
 			
 			// Keep track of how long the DB takes to connect
 			$this->timer_start('db_connect_time');
-
+			
+			// If port not specified (new connection issued), get it
+			if( ! $dbport ) {
+				list( $dbhost, $dbport ) = $this->get_host_port( $dbhost, 3306 );
+			}
+			
 			// Must have a user and a password
 			if ( ! $dbuser )
 			{
@@ -84,7 +90,7 @@
 				$this->show_errors ? trigger_error($ezsql_mysqli_str[1],E_USER_WARNING) : null;
 			}
 			// Try to establish the server database handle
-			else if ( ! $this->dbh = new mysqli($dbhost,$dbuser,$dbpassword) )
+			else if ( ! $this->dbh = new mysqli($dbhost,$dbuser,$dbpassword, '', $dbport) )
 			{
 				$this->register_error($ezsql_mysqli_str[2].' in '.__FILE__.' on line '.__LINE__);
 				$this->show_errors ? trigger_error($ezsql_mysqli_str[2],E_USER_WARNING) : null;
@@ -94,6 +100,7 @@
 				$this->dbuser = $dbuser;
 				$this->dbpassword = $dbpassword;
 				$this->dbhost = $dbhost;
+				$this->dbport = $dbport;
 				$return_val = true;
 			}
 
@@ -165,7 +172,7 @@
 			// If there is no existing database connection then try to connect
 			if ( ! isset($this->dbh) || ! $this->dbh )
 			{
-				$this->connect($this->dbuser, $this->dbpassword, $this->dbhost);
+				$this->connect($this->dbuser, $this->dbpassword, $this->dbhost, $this->dbport);
 				$this->select($this->dbname, $this->encoding);
 			}
 
@@ -193,7 +200,7 @@
 			if ( $this->num_queries >= 500 )
 			{
 				$this->disconnect();
-				$this->quick_connect($this->dbuser,$this->dbpassword,$this->dbname,$this->dbhost,$this->encoding);
+				$this->quick_connect($this->dbuser,$this->dbpassword,$this->dbname,$this->dbhost,$this->dbport,$this->encoding);
 			}
 
 			// Initialise return
@@ -235,7 +242,7 @@
 			// If there is no existing database connection then try to connect
 			if ( ! isset($this->dbh) || ! $this->dbh )
 			{
-				$this->connect($this->dbuser, $this->dbpassword, $this->dbhost);
+				$this->connect($this->dbuser, $this->dbpassword, $this->dbhost, $this->dbport);
 				$this->select($this->dbname,$this->encoding);
 			}
 
