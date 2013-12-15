@@ -12,6 +12,8 @@ News about ezSQL are available at http://stefanie-stoelting.de/ezsql3-news.html
 
 Change Log:
 
+3.06 - Extended ezSQL_mysql method quick_connect with a charset parameter
+
 3.05 - Extended ez_sql_oracleTNS class, that does now support client site connection pooling
 
 3.04 - Added a new class for Oracle database connection to get rid of TNSNAMES.ORA configuration files
@@ -40,7 +42,7 @@ Change Log:
 
 2.10 - Added isset($this->dbh) check to orcale version
 
-2.09 - Fixed issues with mysql_real_escape_string not woirkign if no connection 
+2.09 - Fixed issues with mysql_real_escape_string not woirkign if no connection
        (Thanks to Nicolas Vannier)
 
 2.08 - Re-added timer functions that seemed to have disappeared
