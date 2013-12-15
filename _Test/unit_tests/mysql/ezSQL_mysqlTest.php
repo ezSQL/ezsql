@@ -77,6 +77,15 @@ class ezSQL_mysqlTest extends PHPUnit_Framework_TestCase {
     }
 
     /**
+     * @covers ezSQL_mysql::quick_connect
+     */
+    public function testQuick_connect2() {
+        $result = $this->object->quick_connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME, self::TEST_DB_CHARSET);
+
+        $this->assertTrue($result);
+    }
+
+    /**
      * @covers ezSQL_mysql::connect
      */
     public function testConnect() {
@@ -133,22 +142,22 @@ class ezSQL_mysqlTest extends PHPUnit_Framework_TestCase {
         $this->object->connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD);
 
         $this->object->select(self::TEST_DB_NAME);
-        
+
         $this->assertEquals($this->object->query('CREATE TABLE unit_test(id integer, test_key varchar(50), PRIMARY KEY (ID))'), 0);
-        
+
         $this->assertEquals($this->object->query('INSERT INTO unit_test(id, test_key) VALUES(1, \'test 1\')'), 1);
         $this->assertEquals($this->object->query('INSERT INTO unit_test(id, test_key) VALUES(2, \'test 2\')'), 1);
         $this->assertEquals($this->object->query('INSERT INTO unit_test(id, test_key) VALUES(3, \'test 3\')'), 1);
-        
+
         $result = $this->object->query('SELECT * FROM unit_test');
-        
+
         $i = 1;
         foreach ($this->object->get_results() as $row) {
             $this->assertEquals($i, $row->id);
             $this->assertEquals('test ' . $i, $row->test_key);
             ++$i;
         }
-        
+
         $this->assertEquals($this->object->query('DROP TABLE unit_test'), 0);
     } // testQuerySelect
 
@@ -176,7 +185,7 @@ class ezSQL_mysqlTest extends PHPUnit_Framework_TestCase {
     } // testDisconnect
 
     /**
-     * @covers ezSQL_mysql::getInsertId 
+     * @covers ezSQL_mysql::getInsertId
      */
     public function testGetInsertId() {
         $this->object->connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD);
@@ -185,10 +194,10 @@ class ezSQL_mysqlTest extends PHPUnit_Framework_TestCase {
 
         $this->assertEquals($this->object->query('CREATE TABLE unit_test(id int(11) NOT NULL AUTO_INCREMENT, test_key varchar(50), PRIMARY KEY (ID))ENGINE=MyISAM  DEFAULT CHARSET=utf8'), 0);
         $this->assertEquals($this->object->query('INSERT INTO unit_test(id, test_key) VALUES(1, \'test 1\')'), 1);
-        
+
         $this->assertEquals(1, $this->object->getInsertId($this->object->dbh));
-        
+
         $this->assertEquals($this->object->query('DROP TABLE unit_test'), 0);
     } // testInsertId
-     
+
 } // ezSQL_mysqlTest
