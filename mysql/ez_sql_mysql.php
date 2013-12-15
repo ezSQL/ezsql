@@ -103,11 +103,12 @@ class ezSQL_mysql extends ezSQLcore
      * @param string $dbname The name of the database
      * @param string $dbhost The host name or IP address of the database server.
      *                       Default is localhost
+     * @param string $charset Encoding of the database
      * @return boolean 
      */
-    public function quick_connect($dbuser='', $dbpassword='', $dbname='', $dbhost='localhost') {
+    public function quick_connect($dbuser='', $dbpassword='', $dbname='', $dbhost='localhost', $charset='') {
         if ( ! $this->connect($dbuser, $dbpassword, $dbhost, true) ) ;
-        else if ( ! $this->select($dbname) ) ;
+        else if ( ! $this->select($dbname, $charset) ) ;
         
         return $this->connected;
     } // quick_connect
@@ -151,9 +152,10 @@ class ezSQL_mysql extends ezSQLcore
      * Try to select a mySQL database
      *
      * @param string $dbname The name of the database
+     * @param string $charset Encoding of the database
      * @return boolean 
      */
-    public function select($dbname='') {
+    public function select($dbname='', $charset='') {
         if ( ! $dbname ) {
             // Must have a database name
             $this->register_error($this->ezsql_mysql_str[3] . ' in ' . __FILE__ . ' on line ' . __LINE__);
@@ -173,6 +175,20 @@ class ezSQL_mysql extends ezSQLcore
             $this->show_errors ? trigger_error($str, E_USER_WARNING) : null;
         } else {
             $this->dbname = $dbname;
+            if ( $charset == '') {
+                $charset = $this->charset;
+            }
+             if ( $charset != '' ) {
+                $encoding = strtolower(str_replace('-', '', $charset));
+                $charsets = array();
+                $recordset = mysql_query('SHOW CHARACTER SET');
+                while ( $row = mysql_fetch_array($recordset, MYSQL_ASSOC) ) {
+                        $charsets[] = $row['Charset'];
+                }
+                if ( in_array($charset, $charsets) ) {
+                    mysql_query('SET NAMES \'' . $encoding . '\'');                                                
+                }    
+            }
             $this->connected = true;
         }
 
