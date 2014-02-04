@@ -12,6 +12,8 @@
 	*  ezSQL error strings - CUBRID
 	*/
 
+	global ezSQL_cubrid_str;
+	
 	$ezSQL_cubrid_str = array
 	(
 		1 => 'Require $dbuser and $dbname to connect to a database server',

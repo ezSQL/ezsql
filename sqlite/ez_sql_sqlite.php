@@ -12,6 +12,8 @@
 	*  ezSQL error strings - SQLite
 	*/
 
+	global $ezsql_sqlite_str;
+	
 	$ezsql_sqlite_str = array
 	(
 		1 => 'Require $dbpath and $dbname to open an SQLite database'
