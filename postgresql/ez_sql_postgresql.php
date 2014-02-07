@@ -199,7 +199,6 @@
 			// If there is an error then take note of it..
 			if ( $str = @pg_last_error($this->dbh) )
 			{
-				$is_insert = true;
 				$this->register_error($str);
 				$this->show_errors ? trigger_error($str,E_USER_WARNING) : null;
 				return false;
@@ -208,6 +207,7 @@
 			$is_insert = false;
 			if ( preg_match("/^(insert|delete|update|replace)\s+/i",$query) )
 			{
+				$is_insert = true;
 				$this->rows_affected = @pg_affected_rows($this->result);
 
 				// Take note of the insert_id
