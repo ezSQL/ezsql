@@ -244,7 +244,6 @@
 
 				$sqlError = "ErrorCode: ".$errorCode." ### Error Severity: ".$errorSeverity." ### Error Message: ".$errorMessage." ### Query: ".$query;
 
-				$is_insert = true;
 				$this->register_error($sqlError);
 				$this->show_errors ? trigger_error($sqlError ,E_USER_WARNING) : null;
 				return false;
@@ -254,9 +253,9 @@
 
 
 			// Query was an insert, delete, update, replace
-			$is_insert = false;
 			if ( preg_match("/^(insert|delete|update|replace)\s+/i",$query) )
 			{
+				$is_insert = true;
 				$this->rows_affected = @mssql_rows_affected($this->dbh);
 
 				// Take note of the insert_id
@@ -279,6 +278,7 @@
 			// Query was a select
 			else
 			{
+				$is_insert = false;
 
 				// Take note of column info
 				$i=0;

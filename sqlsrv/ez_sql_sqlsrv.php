@@ -201,7 +201,6 @@
 			{
 				$errors = sqlsrv_errors();
 				if (!empty($errors)) {
-					$is_insert = true;
 					foreach ($errors as $error) {
 						$sqlError = "ErrorCode: ".$error['code']." ### State: ".$error['SQLSTATE']." ### Error Message: ".$error['message']." ### Query: ".$query;
 						$this->register_error($sqlError);
@@ -216,6 +215,7 @@
 			$is_insert = false;
 			if ( preg_match("/^(insert|delete|update|replace)\s+/i",$query) )
 			{
+				$is_insert = true;
 				$this->rows_affected = @sqlsrv_rows_affected($this->dbh);
 
 				// Take note of the insert_id

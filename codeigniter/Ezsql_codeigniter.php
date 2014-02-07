@@ -79,10 +79,9 @@
 			}
 			
 			// Query was write (insert/delete/update etc.) query?
-			$is_insert = false;
-			
 			if ( preg_match("/^(insert|delete|update|replace|truncate|drop|create|alter)\s+/i",$query) )
 			{
+				$is_insert = true;
 				$this->rows_affected = $this->CI->db->affected_rows();
 
 				// Take note of the insert_id
@@ -97,6 +96,7 @@
 			// Query was a select
 			else
 			{
+				$is_insert = false;
 				
 				// Store Query Results
 				$num_rows=0;
