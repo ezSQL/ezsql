@@ -249,16 +249,15 @@
 			// If there is an error then take note of it..
 			if ( $str = @mysql_error($this->dbh) )
 			{
-				$is_insert = true;
 				$this->register_error($str);
 				$this->show_errors ? trigger_error($str,E_USER_WARNING) : null;
 				return false;
 			}
 
 			// Query was an insert, delete, update, replace
-			$is_insert = false;
 			if ( preg_match("/^(insert|delete|update|replace|truncate|drop|create|alter|set)\s+/i",$query) )
 			{
+				$is_insert = true;
 				$this->rows_affected = @mysql_affected_rows($this->dbh);
 
 				// Take note of the insert_id
@@ -273,6 +272,7 @@
 			// Query was a select
 			else
 			{
+				$is_insert = false;
 
 				// Take note of column info
 				$i=0;
