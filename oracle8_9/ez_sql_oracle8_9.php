@@ -12,6 +12,8 @@
 	*  ezSQL error strings - Oracle
 	*/
 
+	global ezsql_oracle8_9_str;
+	
 	$ezsql_oracle8_9_str = array
 	(
 		1 => 'Require $dbuser, $dbpassword and $dbname to connect to a database server',

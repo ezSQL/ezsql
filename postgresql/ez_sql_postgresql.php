@@ -13,6 +13,8 @@
 	*  ezSQL error strings - PostgreSQL
 	*/
 
+	global ezsql_postgresql_str;
+	
 	$ezsql_postgresql_str = array
 	(
 		1 => 'Require $dbuser and $dbpassword to connect to a database server',
@@ -212,7 +214,7 @@
 				if ( preg_match("/^(insert|replace)\s+/i",$query) )
 				{
 					//$this->insert_id = @postgresql_insert_id($this->dbh);
-                    //$this->insert_id = pg_last_oid($this->result);
+					//$this->insert_id = pg_last_oid($this->result);
 
 					// Thx. Rafael Bernal
 					$insert_query = pg_query("SELECT lastval();");
@@ -226,35 +228,35 @@
 			// Query was a select
 			else
 			{               $num_rows=0;
-                			//if ( $this->result )  //may be needed but my tests did not
-                			//{	
-                			
-        					// =======================================================
-        					// Take note of column info
+							//if ( $this->result )  //may be needed but my tests did not
+							//{	
+							
+							// =======================================================
+							// Take note of column info
 
-        					$i=0;
-        					while ($i < @pg_num_fields($this->result))
-        					{
-        	    					$this->col_info[$i]->name = pg_field_name($this->result,$i);
-            						$this->col_info[$i]->type = pg_field_type($this->result,$i);
-            						$this->col_info[$i]->size = pg_field_size($this->result,$i);
-        						$i++;
-        					}
+							$i=0;
+							while ($i < @pg_num_fields($this->result))
+							{
+			    					$this->col_info[$i]->name = pg_field_name($this->result,$i);
+									$this->col_info[$i]->type = pg_field_type($this->result,$i);
+									$this->col_info[$i]->size = pg_field_size($this->result,$i);
+								$i++;
+							}
 
-        					// =======================================================
-        					// Store Query Results
+							// =======================================================
+							// Store Query Results
 
-        					//while ( $row = @pg_fetch_object($this->result, $i, PGSQL_ASSOC) ) doesn't work? donno
-        					//while ( $row = @pg_fetch_object($this->result,$num_rows) ) does work
-        					while ( $row = @pg_fetch_object($this->result) )
-        					{
-        						// Store results as an objects within main array
-        						$this->last_result[$num_rows] = $row ;
-        						$num_rows++;
-        					}
+							//while ( $row = @pg_fetch_object($this->result, $i, PGSQL_ASSOC) ) doesn't work? donno
+							//while ( $row = @pg_fetch_object($this->result,$num_rows) ) does work
+							while ( $row = @pg_fetch_object($this->result) )
+							{
+								// Store results as an objects within main array
+								$this->last_result[$num_rows] = $row ;
+								$num_rows++;
+							}
 
 				                @pg_free_result($this->result);
-                                        //}
+										//}
 				// Log number of rows the query returned
 				$this->num_rows = $num_rows;
 

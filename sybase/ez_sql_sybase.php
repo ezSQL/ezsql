@@ -14,6 +14,8 @@
 	*  ezSQL error strings - sybase
 	*/
 
+	global $ezsql_sybase_str;
+	
 	$ezsql_sybase_str = array
 	(
 		1 => 'Require $dbuser and $dbpassword to connect to a database server',

@@ -13,6 +13,8 @@
 	*  ezSQL error strings - mssql
 	*/
 
+	global ezsql_mssql_str;
+	
 	$ezsql_mssql_str = array
 	(
 		1 => 'Require $dbuser and $dbpassword to connect to a database server',
