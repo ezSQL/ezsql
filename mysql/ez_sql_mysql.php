@@ -241,6 +241,9 @@
 			{
 				$this->connect($this->dbuser, $this->dbpassword, $this->dbhost);
 				$this->select($this->dbname,$this->encoding);
+				// No existing connection at this point means the server is unreachable
+				if ( ! isset($this->dbh) || ! $this->dbh )
+					return false;
 			}
 
 			// Perform the query via std mysql_query function..

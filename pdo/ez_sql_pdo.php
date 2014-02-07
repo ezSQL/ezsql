@@ -215,6 +215,9 @@
 			if ( ! isset($this->dbh) || ! $this->dbh )
 			{
 				$this->connect($this->dsn, $this->user, $this->password);
+				// No existing connection at this point means the server is unreachable
+				if ( ! isset($this->dbh) || ! $this->dbh )
+					return false;
 			}
 
 			// Query was an insert, delete, update, replace
