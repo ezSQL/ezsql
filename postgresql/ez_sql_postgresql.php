@@ -13,7 +13,7 @@
 	*  ezSQL error strings - PostgreSQL
 	*/
 
-	global ezsql_postgresql_str;
+	global $ezsql_postgresql_str;
 	
 	$ezsql_postgresql_str = array
 	(
