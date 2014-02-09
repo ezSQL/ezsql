@@ -12,7 +12,7 @@
 	*  ezSQL error strings - Oracle
 	*/
 
-	global ezsql_oracle8_9_str;
+	global $ezsql_oracle8_9_str;
 	
 	$ezsql_oracle8_9_str = array
 	(

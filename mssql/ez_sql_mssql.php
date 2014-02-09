@@ -13,7 +13,7 @@
 	*  ezSQL error strings - mssql
 	*/
 
-	global ezsql_mssql_str;
+	global $ezsql_mssql_str;
 	
 	$ezsql_mssql_str = array
 	(

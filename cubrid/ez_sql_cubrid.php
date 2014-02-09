@@ -12,7 +12,7 @@
 	*  ezSQL error strings - CUBRID
 	*/
 
-	global ezSQL_cubrid_str;
+	global $ezSQL_cubrid_str;
 	
 	$ezSQL_cubrid_str = array
 	(
