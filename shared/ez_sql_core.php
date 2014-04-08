@@ -465,7 +465,15 @@
 
 				for ( $i=0; $i < count($this->col_info); $i++ )
 				{
-					echo "<td nowrap align=left valign=top><font size=1 color=555599 face=arial>{$this->col_info[$i]->type} {$this->col_info[$i]->max_length}</font><br><span style='font-family: arial; font-size: 10pt; font-weight: bold;'>{$this->col_info[$i]->name}</span></td>";
+					/* when selecting count(*) the maxlengh is not set, size is set instead. */
+					echo "<td nowrap align=left valign=top><font size=1 color=555599 face=arial>{$this->col_info[$i]->type}";
+					if (!isset($this->col_info[$i]->max_length))
+					{
+						echo "{$this->col_info[$i]->size}";
+					} else {
+						echo "{$this->col_info[$i]->max_length}";
+					}
+					echo "</font><br><span style='font-family: arial; font-size: 10pt; font-weight: bold;'>{$this->col_info[$i]->name}</span></td>";
 				}
 
 				echo "</tr>";
