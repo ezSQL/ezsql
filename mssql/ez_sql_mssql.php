@@ -221,7 +221,7 @@
 
 			// Perform the query via std mssql_query function..
 
-			$this->result = @mssql_query($query);
+			$this->result = @mssql_query($query, $this->dbh);
 
 
 
