@@ -258,7 +258,7 @@
 			}
 
 			// Query was an insert, delete, update, replace
-			if ( preg_match("/^(insert|delete|update|replace|truncate|drop|create|alter|set)\s+/i",$query) )
+			if ( preg_match("/^(insert|delete|update|replace|truncate|drop|create|alter|set|lock|unlock)\s+/i",$query) )
 			{
 				$is_insert = true;
 				$this->rows_affected = @mysql_affected_rows($this->dbh);
