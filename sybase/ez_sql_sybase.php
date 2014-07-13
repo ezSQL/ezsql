@@ -46,7 +46,7 @@
 		var $convertMySqlTosybaseQuery = TRUE;
 
 		/**********************************************************************
-		*  Constructor - allow the user to perform a qucik connect at the
+		*  Constructor - allow the user to perform a quick connect at the
 		*  same time as initialising the ezSQL_sybase class
 		*/
 
