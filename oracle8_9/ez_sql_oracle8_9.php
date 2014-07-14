@@ -36,7 +36,7 @@
 		var $rows_affected = false;
 
 		/**********************************************************************
-		*  Constructor - allow the user to perform a qucik connect at the
+		*  Constructor - allow the user to perform a quick connect at the
 		*  same time as initialising the ezSQL_oracle8_9 class
 		*/
 
