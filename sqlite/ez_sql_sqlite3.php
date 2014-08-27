@@ -176,7 +176,7 @@
 				$this->col_info = array();
 				while ($i < @$this->result->numColumns())
 				{
-					$this->col_info[$i]             = new stdClass();
+					$this->col_info[$i] = new StdClass;
 					$this->col_info[$i]->name       = $this->result->columnName($i);
 					$this->col_info[$i]->type       = null;
 					$this->col_info[$i]->max_length = null;
