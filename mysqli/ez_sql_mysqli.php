@@ -1,7 +1,7 @@
 <?php
 
 	/**********************************************************************
-	*  Author: Juergen Bouché (jbouche@nurfuerspam.de)
+	*  Author: Juergen BouchÃ© (jbouche@nurfuerspam.de)
 	*  Web...: http://www.juergenbouche.de
 	*  Name..: ezSQL_mysqli
 	*  Desc..: mySQLi component (part of ezSQL database abstraction library)
@@ -268,7 +268,7 @@
 			}
 
 			// Query was an insert, delete, update, replace
-			if ( preg_match("/^(insert|delete|update|replace|truncate|drop|create|alter|begin|commit|rollback|set|lock|unlock)/i",$query) )
+			if ( preg_match("/^(insert|delete|update|replace|truncate|drop|create|alter|begin|commit|rollback|set|lock|unlock|call)/i",$query) )
 			{
 				$is_insert = true;
 				$this->rows_affected = @$this->dbh->affected_rows;
