@@ -235,11 +235,11 @@
 					// Fetch the column meta data
 	    			for ( $i = 1; $i <= $num_cols; $i++ )
 	    			{					
-						# Check is_object to rid the following PHP 4.5+ error
-						# PHP Warning:  Creating default object from empty value in ez_sql_oracle8_9.php on line xxx
-						if ( !is_object($this->col_info) ) {
-							$this->col_info[] = new stdClass;
-						}
+					# Check is_object to rid the following PHP 4.5+ error
+					# PHP Warning:  Creating default object from empty value in ez_sql_oracle8_9.php on line xxx
+					if ( !is_object($this->col_info) ) {
+						$this->col_info[] = new stdClass;
+					}
 
 	    				$this->col_info[($i-1)]->name = @OCIColumnName($stmt,$i);
 	    				$this->col_info[($i-1)]->type = @OCIColumnType($stmt,$i);
