@@ -216,7 +216,7 @@
 			if ( preg_match("/^(insert|delete|update|replace)\s+/i",$query) )
 			{
 				$is_insert = true;
-				$this->rows_affected = @sqlsrv_rows_affected($this->dbh);
+				$this->rows_affected = @sqlsrv_rows_affected($this->result);
 
 				// Take note of the insert_id
 				if ( preg_match("/^(insert|replace)\s+/i",$query) )
