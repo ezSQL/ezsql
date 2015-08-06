@@ -78,6 +78,8 @@
 				$this->dbpassword = $dbpassword;
 				$this->dbname = $dbname;
 				$return_val = true;
+
+				$this->conn_queries = 0;
 			}
 
 			return $return_val;
@@ -184,7 +186,7 @@
 			// Keep track of the last query for debug..
 			$this->last_query = $query;
 
-			$this->num_queries++;
+			$this->count(true, true);
 
 			// Use core file cache function
 			if ( $cache = $this->get_cache($query) )

@@ -33,6 +33,7 @@
 		var $vardump_called   = false;
 		var $show_errors      = true;
 		var $num_queries      = 0;
+		var $conn_queries     = 0;
 		var $last_query       = null;
 		var $last_error       = null;
 		var $col_info         = null;
@@ -619,4 +620,19 @@
 			return implode( ', ' , $sql );
 		}
 
+		/**
+		 * Function for operating query count
+		 *
+		 * @param bool $all Set to false for function to return queries only during this connection
+		 * @param bool $increase Set to true to increase query count (internal usage)
+		 * @return int Returns query count base on $all
+		 */
+		function count ($all = true, $increase = false) {
+			if ($increase) {
+				$this->num_queries++;
+				$this->conn_queries++;
+			}
+
+			return ($all) ? $this->num_queries : $this->conn_queries;
+		}
 	}
