@@ -42,7 +42,7 @@
 			$this->last_query = $query;
 			
 			// Count how many queries there have been
-			$this->num_queries++;
+			$this->count(true, true);
 			
 			// Start timer
 			$this->timer_start($this->num_queries);

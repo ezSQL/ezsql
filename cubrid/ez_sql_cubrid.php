@@ -92,6 +92,8 @@
                 $this->dbname = $dbname;
                 $this->dbport = $dbport;
 				$return_val = true;
+
+				$this->conn_queries = 0;
 			}
 
 			return $return_val;
@@ -162,7 +164,7 @@
 			$this->last_query = $query;
 
 			// Count how many queries there have been
-			$this->num_queries++;
+			$this->count(true, true);
 			
 			// Start timer
 			$this->timer_start($this->num_queries);
@@ -270,7 +272,8 @@
 
 		function disconnect()
 		{
-			@cubrid_close($this->dbh);	
+			$this->conn_queries = 0;
+			@cubrid_close($this->dbh);
 		}
 
 	}
