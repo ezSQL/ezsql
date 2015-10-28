@@ -97,6 +97,8 @@
 				$this->dbpassword = $dbpassword;
 				$this->dbhost = $dbhost;
 				$return_val = true;
+
+				$this->conn_queries = 0;
 			}
 
 			return $return_val;
@@ -193,9 +195,8 @@
 		{
 
 			// This keeps the connection alive for very long running scripts
-			if ( $this->num_queries >= 500 )
+			if ( $this->count(false) >= 500 )
 			{
-				$this->num_queries = 0;
 				$this->disconnect();
 				$this->quick_connect($this->dbuser,$this->dbpassword,$this->dbname,$this->dbhost,$this->encoding);
 			}
@@ -216,7 +217,7 @@
 			$this->last_query = $query;
 
 			// Count how many queries there have been
-			$this->num_queries++;
+			$this->count(true, true);
 			
 			// Start timer
 			$this->timer_start($this->num_queries);
@@ -328,7 +329,8 @@
 
 		function disconnect()
 		{
-			@mysql_close($this->dbh);	
+			$this->conn_queries = 0; // Reset connection queries count
+			@mysql_close($this->dbh);
 		}
 
 	}

@@ -76,7 +76,8 @@
 				{
 					$this->dbh = new PDO($dsn, $user, $password);
 				}
-				
+				$this->conn_queries = 0;
+
 				$return_val = true;
 			} 
 			catch (PDOException $e) 
@@ -190,7 +191,7 @@
 			// Keep track of the last query for debug..
 			$this->last_query = $query;
 
-			$this->num_queries++;
+			$this->count(true, true);
 
 			// Start timer
 			$this->timer_start($this->num_queries);

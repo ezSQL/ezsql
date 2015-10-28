@@ -97,6 +97,8 @@
 				$this->dbname = $dbname;
 				$this->port = $port;
 				$return_val = true;
+
+				$this->conn_queries = 0;
 			}
 
 			return $return_val;
@@ -178,7 +180,7 @@
 			$this->last_query = $query;
 
 			// Count how many queries there have been
-			$this->num_queries++;
+			$this->count(true, true);
 
 			// Use core file cache function
 			if ( $cache = $this->get_cache($query) )
@@ -283,7 +285,8 @@
 		{
 			if ( $this->dbh )
 			{
-			    @pg_close($this->dbh);
+			    $this->conn_queries = 0;
+				@pg_close($this->dbh);
 			}
 		}
 
