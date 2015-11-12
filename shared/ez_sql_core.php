@@ -464,7 +464,7 @@
 				echo "<tr bgcolor=eeeeee><td nowrap valign=bottom><font color=555599 face=arial size=2><b>(row)</b></font></td>";
 
 
-				for ( $i=0; $i < count($this->col_info); $i++ )
+				for ( $i=0, $j=count($this->col_info); $i < $j; $i++ )
 				{
 					/* when selecting count(*) the maxlengh is not set, size is set instead. */
 					echo "<td nowrap align=left valign=top><font size=1 color=555599 face=arial>{$this->col_info[$i]->type}";
