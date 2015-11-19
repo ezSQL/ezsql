@@ -14,10 +14,10 @@
 	*  ezSQL Constants
 	*/
 
-	define('EZSQL_VERSION','2.17');
-	define('OBJECT','OBJECT',true);
-	define('ARRAY_A','ARRAY_A',true);
-	define('ARRAY_N','ARRAY_N',true);
+	define('EZSQL_VERSION', '2.17');
+	define('OBJECT', 'OBJECT');
+	define('ARRAY_A', 'ARRAY_A');
+	define('ARRAY_N', 'ARRAY_N');
 
 	/**********************************************************************
 	*  Core class containg common functions to manipulate query result
