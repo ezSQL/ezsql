@@ -204,7 +204,8 @@
 			}
 
 			// Extract the column values
-			for ( $i=0; $i < count($this->last_result); $i++ )
+			$j = count($this->last_result);
+			for ( $i=0; $i < $j; $i++ )
 			{
 				$new_array[$i] = $this->get_var(null,$x,$i);
 			}
