@@ -184,6 +184,10 @@
 				$this->connect($this->dbuser, $this->dbpassword, $this->dbhost, $this->dbport);
 				$this->select($this->dbname, $this->encoding);
 			}
+                        
+                        if ( get_magic_quotes_gpc() ) {
+				$str = stripslashes($str);
+                        }                        
 
 			return $this->dbh->escape_string(stripslashes($str));
 		}
