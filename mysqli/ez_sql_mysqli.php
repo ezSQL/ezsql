@@ -189,7 +189,7 @@
 				$str = stripslashes($str);
                         }                        
 
-			return $this->dbh->escape_string(stripslashes($str));
+			return $this->dbh->escape_string($str);
 		}
 
 		/**********************************************************************
