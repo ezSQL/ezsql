@@ -184,8 +184,12 @@
 				$this->connect($this->dbuser, $this->dbpassword, $this->dbhost, $this->dbport);
 				$this->select($this->dbname, $this->encoding);
 			}
+                        
+                        if ( get_magic_quotes_gpc() ) {
+				$str = stripslashes($str);
+                        }                        
 
-			return $this->dbh->escape_string(stripslashes($str));
+			return $this->dbh->escape_string($str);
 		}
 
 		/**********************************************************************
@@ -270,7 +274,7 @@
 			}
 
 			// Query was an insert, delete, update, replace
-			if ( preg_match("/^(insert|delete|update|replace|truncate|drop|create|alter|begin|commit|rollback|set|lock|unlock|call)/i",$query) )
+			if ( preg_match("/^(insert|delete|update|start|replace|truncate|drop|create|alter|begin|commit|rollback|set|lock|unlock|call)/i",$query) )
 			{
 				$is_insert = true;
 				$this->rows_affected = @$this->dbh->affected_rows;
