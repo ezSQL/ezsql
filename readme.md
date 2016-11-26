@@ -1,20 +1,20 @@
-=======================================================================
-Author: Justin Vincent - http://justinvincent.com/ezsql
-Name: ezSQL
-Desc: Class to make it very easy to deal with database connections.
-License: FREE / Donation (LGPL - You may do what you like with ezSQL - no exceptions.)
-=======================================================================
+ezSQL
+=====
 
-Follow me on twitter:
-http://twitter.com/justinvincent
+Author
+------
+Justin Vincent - http://justinvincent.com/ezsql
 
-Check out my podcast TechZing where we talk about tech and tech startups:
-http://techzinglive.com
+Description
+------------
+Class to make it very easy to deal with database connections.
 
-=======================================================================
+License
+-------
+FREE / Donation (LGPL - You may do what you like with ezSQL - no exceptions.)
 
-Change Log:
-
+Change Log
+==========
 Note: This change log isn't being used any more due to automated github tracking
 
 2.17 - Updates to ezSQL_postgresql (thx Stefanie Janine Stoelting)
@@ -299,3 +299,11 @@ Note: This change log isn't being used any more due to automated github tracking
 		- $db->select -- select a new database to work with
 		- $db->get_col_info - get information about one or all columns such as column name or type
 		- $db = new db -- Initiate new db object.
+
+Contact Info
+=======================================================================
+Follow me on twitter:
+http://twitter.com/justinvincent
+
+Check out my podcast TechZing where we talk about tech and tech startups:
+http://techzinglive.com
