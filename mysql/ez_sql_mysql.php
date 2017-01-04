@@ -258,8 +258,8 @@
 				return false;
 			}
 
-			// Query was an insert, delete, update, replace
-			if ( preg_match("/^(insert|delete|update|replace|truncate|drop|create|alter|set|lock|unlock)\s+/i",$query) )
+			// Query was a Data Manipulation Query (insert, delete, update, replace, ...)
+			if ( !is_resource($this->result) )
 			{
 				$is_insert = true;
 				$this->rows_affected = @mysql_affected_rows($this->dbh);
@@ -273,7 +273,7 @@
 				// Return number fo rows affected
 				$return_val = $this->rows_affected;
 			}
-			// Query was a select
+			// Query was a Data Query Query (select, show, describe, explain, ...)
 			else
 			{
 				$is_insert = false;

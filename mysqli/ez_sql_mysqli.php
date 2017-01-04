@@ -273,8 +273,8 @@
 				return false;
 			}
 
-			// Query was an insert, delete, update, replace
-			if ( preg_match("/^(insert|delete|update|start|replace|truncate|drop|create|alter|begin|commit|rollback|set|lock|unlock|call)/i",$query) )
+			// Query was a Data Manipulation Query (insert, delete, update, replace, ...)
+			if ( !is_object($this->result) )
 			{
 				$is_insert = true;
 				$this->rows_affected = @$this->dbh->affected_rows;
@@ -288,7 +288,7 @@
 				// Return number fo rows affected
 				$return_val = $this->rows_affected;
 			}
-			// Query was a select
+			// Query was a Data Query Query (select, show, ...)
 			else
 			{
 				$is_insert = false;
