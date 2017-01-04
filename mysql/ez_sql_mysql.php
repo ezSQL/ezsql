@@ -259,7 +259,7 @@
 			}
 
 			// Query was a Data Manipulation Query (insert, delete, update, replace, ...)
-			if ( !is_object($this->result) )
+			if ( !is_resource($this->result) )
 			{
 				$is_insert = true;
 				$this->rows_affected = @mysql_affected_rows($this->dbh);
@@ -273,7 +273,7 @@
 				// Return number fo rows affected
 				$return_val = $this->rows_affected;
 			}
-			// Query was a Data Query Query (select, show, ...)
+			// Query was a Data Query Query (select, show, describe, explain, ...)
 			else
 			{
 				$is_insert = false;
