@@ -161,7 +161,7 @@
 						$charsets[] = $row["Charset"];
 					}
 					if(in_array($encoding,$charsets)){
-						$this->dbh->query("SET NAMES '".$encoding."'");						
+						$this->dbh->set_charset($encoding);
 					}
 				}
 				
