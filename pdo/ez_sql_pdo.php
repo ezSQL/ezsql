@@ -33,7 +33,10 @@
 		var $user;
 		var $password;
 		var $rows_affected = false;
-
+		var $insert_id;
+		var $last_query;
+		var $last_result;
+		var $num_rows;
 		/**********************************************************************
 		*  Constructor - allow the user to perform a quick connect at the 
 		*  same time as initialising the ezSQL_pdo class
