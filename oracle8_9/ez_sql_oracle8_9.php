@@ -40,7 +40,7 @@
 		*  same time as initialising the ezSQL_oracle8_9 class
 		*/
 
-		function ezSQL_oracle8_9($dbuser='', $dbpassword='', $dbname='')
+		function __construct($dbuser='', $dbpassword='', $dbname='')
 		{
 
 			// Turn on track errors

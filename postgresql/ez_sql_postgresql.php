@@ -45,7 +45,7 @@
 		*  same time as initialising the ezSQL_postgresql class
 		*/
 
-		function ezSQL_postgresql($dbuser='', $dbpassword='', $dbname='', $dbhost='localhost', $port='5432')
+		function __construct($dbuser='', $dbpassword='', $dbname='', $dbhost='localhost', $port='5432')
 		{
 			$this->dbuser = $dbuser;
 			$this->dbpassword = $dbpassword;

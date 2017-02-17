@@ -42,7 +42,7 @@
 		*  same time as initialising the ezSQL_cubrid class
 		*/
 
-		function ezSQL_cubrid($dbuser='', $dbpassword='', $dbname='', $dbhost='localhost', $dbport=33000)
+		function __construct($dbuser='', $dbpassword='', $dbname='', $dbhost='localhost', $dbport=33000)
 		{
 			$this->dbuser = $dbuser;
 			$this->dbpassword = $dbpassword;
