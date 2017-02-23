@@ -36,7 +36,7 @@
 		*  same time as initialising the ezSQL_sqlite class
 		*/
 
-		function ezSQL_sqlite($dbpath='', $dbname='')
+		function __construct($dbpath='', $dbname='')
 		{
 			// Turn on track errors 
 			ini_set('track_errors',1);

@@ -50,7 +50,7 @@
 		*  same time as initialising the ezSQL_sybase class
 		*/
 
-		function ezSQL_sybase($dbuser='', $dbpassword='', $dbname='', $dbhost='localhost', $convertMySqlTosybaseQuery=true)
+		function __construct($dbuser='', $dbpassword='', $dbname='', $dbhost='localhost', $convertMySqlTosybaseQuery=true)
 		{
 			$this->dbuser = $dbuser;
 			$this->dbpassword = $dbpassword;

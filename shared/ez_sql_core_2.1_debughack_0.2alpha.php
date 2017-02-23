@@ -98,7 +98,7 @@
 		*  Constructor
 		*/
 
-		function ezSQLcore()
+		function __construct()
 		{
 		}
 
