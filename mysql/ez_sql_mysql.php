@@ -324,6 +324,23 @@
 		}
 		
 		/**********************************************************************
+		*  Bind array values to the list of named field
+		*/
+		function db_prepare($sql,$data=array())
+		{
+		  $search = array();
+		  $replace = array();
+		
+		  foreach($data as $key => $value)
+		  {
+		    $search[] = ':'.$key;
+		    $replace[] = addslashes($value);
+		  }
+		
+		  return str_replace($search,$replace,$sql);
+		}
+		
+		/**********************************************************************
 		*  Close the active mySQL connection
 		*/
 
