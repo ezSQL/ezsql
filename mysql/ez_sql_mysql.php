@@ -322,6 +322,23 @@
 			return $return_val;
 
 		}
+
+		/**********************************************************************
+		*  mySQL prepare
+		*/
+		function db_prepare($sql,$data=array())
+		{
+		  $search = array();
+		  $replace = array();
+		
+		  foreach($data as $key => $value)
+		  {
+		    $search[] = ':'.$key;
+		    $replace[] = $value;
+		  }
+		
+		  return str_replace($search,$replace,$sql);
+		}
 		
 		/**********************************************************************
 		*  Close the active mySQL connection
