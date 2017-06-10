@@ -48,7 +48,7 @@
 			
 			if ( $dsn && $user )
 			{
-				$this->connect($dsn, $user, $password);
+				$this->connect($dsn, $user, $password, $ssl);
 			}
 		}
 
