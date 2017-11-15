@@ -24,7 +24,7 @@
 	*  ezSQL Database specific class - Oracle
 	*/
 
-	if ( ! function_exists ('OCILogon') ) die('<b>Fatal Error:</b> ezSQL_oracle8_9 requires Oracle OCI Lib to be compiled and/or linked in to the PHP engine');
+	if ( ! function_exists ('oci_connect') ) die('<b>Fatal Error:</b> ezSQL_oracle8_9 requires Oracle OCI Lib to be compiled and/or linked in to the PHP engine');
 	if ( ! class_exists ('ezSQLcore') ) die('<b>Fatal Error:</b> ezSQL_oracle8_9 requires ezSQLcore (ez_sql_core.php) to be included/loaded before it can be used');
 
 	class ezSQL_oracle8_9 extends ezSQLcore
@@ -67,7 +67,7 @@
 				$this->show_errors ? trigger_error($ezsql_oracle8_9_str[1],E_USER_WARNING) : null;
 			}
 			// Try to establish the server database handle
-			else if ( ! $this->dbh = OCILogon($dbuser, $dbpassword, $dbname) )
+			else if ( ! $this->dbh = oci_connect($dbuser, $dbpassword, $dbname) )
 			{
 				$this->register_error($php_errormsg);
 				$this->show_errors ? trigger_error($php_errormsg,E_USER_WARNING) : null;
@@ -201,18 +201,18 @@
 			}
 
 			// Parses the query and returns a statement..
-			if ( ! $stmt = OCIParse($this->dbh, $query))
+			if ( ! $stmt = oci_parse($this->dbh, $query))
 			{
-				$error = OCIError($this->dbh);
+				$error = oci_error($this->dbh);
 				$this->register_error($error["message"]);
 				$this->show_errors ? trigger_error($error["message"],E_USER_WARNING) : null;
 				return false;
 			}
 
 			// Execut the query..
-			elseif ( ! $this->result = OCIExecute($stmt))
+			elseif ( ! $this->result = oci_execute($stmt))
 			{
-				$error = OCIError($stmt);
+				$error = oci_error($stmt);
 				$this->register_error($error["message"]);
 				$this->show_errors ? trigger_error($error["message"],E_USER_WARNING) : null;
 				return false;
@@ -225,7 +225,7 @@
 				$is_insert = true;
 
 				// num afected rows
-				$return_value = $this->rows_affected = @OCIRowCount($stmt);
+				$return_value = $this->rows_affected = @oci_num_rows($stmt);
 			}
 			// If query was a select
 			else
