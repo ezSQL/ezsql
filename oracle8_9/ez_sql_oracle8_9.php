@@ -237,6 +237,11 @@
 					// Fetch the column meta data
 	    			for ( $i = 1; $i <= $num_cols; $i++ )
 	    			{
+                                    
+                                    if ( !is_object($this->col_info) ) {
+                                        $this->col_info[] = new stdClass;
+                                    }
+                                    
 	    				$this->col_info[($i-1)]->name = @OCIColumnName($stmt,$i);
 	    				$this->col_info[($i-1)]->type = @OCIColumnType($stmt,$i);
 	    				$this->col_info[($i-1)]->size = @OCIColumnSize($stmt,$i);
