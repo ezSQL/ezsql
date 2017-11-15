@@ -24,7 +24,7 @@
 	*  ezSQL Database specific class - Oracle
 	*/
 
-	if ( ! function_exists ('OCILogon') ) die('<b>Fatal Error:</b> ezSQL_oracle8_9 requires Oracle OCI Lib to be compiled and/or linked in to the PHP engine');
+	if ( ! function_exists ('oci_connect') ) die('<b>Fatal Error:</b> ezSQL_oracle8_9 requires Oracle OCI Lib to be compiled and/or linked in to the PHP engine');
 	if ( ! class_exists ('ezSQLcore') ) die('<b>Fatal Error:</b> ezSQL_oracle8_9 requires ezSQLcore (ez_sql_core.php) to be included/loaded before it can be used');
 
 	class ezSQL_oracle8_9 extends ezSQLcore
@@ -67,7 +67,7 @@
 				$this->show_errors ? trigger_error($ezsql_oracle8_9_str[1],E_USER_WARNING) : null;
 			}
 			// Try to establish the server database handle
-			else if ( ! $this->dbh = OCILogon($dbuser, $dbpassword, $dbname) )
+			else if ( ! $this->dbh = oci_connect($dbuser, $dbpassword, $dbname) )
 			{
 				$this->register_error($php_errormsg);
 				$this->show_errors ? trigger_error($php_errormsg,E_USER_WARNING) : null;
@@ -201,18 +201,18 @@
 			}
 
 			// Parses the query and returns a statement..
-			if ( ! $stmt = OCIParse($this->dbh, $query))
+			if ( ! $stmt = oci_parse($this->dbh, $query))
 			{
-				$error = OCIError($this->dbh);
+				$error = oci_error($this->dbh);
 				$this->register_error($error["message"]);
 				$this->show_errors ? trigger_error($error["message"],E_USER_WARNING) : null;
 				return false;
 			}
 
 			// Execut the query..
-			elseif ( ! $this->result = OCIExecute($stmt))
+			elseif ( ! $this->result = oci_execute($stmt))
 			{
-				$error = OCIError($stmt);
+				$error = oci_error($stmt);
 				$this->register_error($error["message"]);
 				$this->show_errors ? trigger_error($error["message"],E_USER_WARNING) : null;
 				return false;
@@ -225,7 +225,7 @@
 				$is_insert = true;
 
 				// num afected rows
-				$return_value = $this->rows_affected = @OCIRowCount($stmt);
+				$return_value = $this->rows_affected = @oci_num_rows($stmt);
 			}
 			// If query was a select
 			else
@@ -237,31 +237,28 @@
 					// Fetch the column meta data
 	    			for ( $i = 1; $i <= $num_cols; $i++ )
 	    			{
+                                    
+                                    if ( !is_object($this->col_info) ) {
+                                        $this->col_info[] = new stdClass;
+                                    }
+                                    
 	    				$this->col_info[($i-1)]->name = @OCIColumnName($stmt,$i);
 	    				$this->col_info[($i-1)]->type = @OCIColumnType($stmt,$i);
 	    				$this->col_info[($i-1)]->size = @OCIColumnSize($stmt,$i);
 				    }
 				}
+                            
+                            // Store Query Results 
+                            $num_rows=0; 
+                            while ( $row = @oci_fetch_object($stmt) ) 
+                            { 
+                                // Store relults as an objects within main array 
+                                $this->last_result[$num_rows] = $row; 
+                                $num_rows++; 
+                            } 
 
-				// If there are any results then get them
-				if ($this->num_rows = @OCIFetchStatement($stmt,$results))
-				{
-					// Convert results into object orientated results..
-					// Due to Oracle strange return structure - loop through columns
-					foreach ( $results as $col_title => $col_contents )
-					{
-						$row_num=0;
-						// then - loop through rows
-						foreach (  $col_contents as $col_content )
-						{
-							$this->last_result[$row_num]->{$col_title} = $col_content;
-							$row_num++;
-						}
-					}
-				}
-
-				// num result rows
-				$return_value = $this->num_rows;
+                            // num result rows
+                            $return_value = $num_rows;
 			}
 
 			// disk caching of queries
