@@ -247,18 +247,26 @@
 	    				$this->col_info[($i-1)]->size = @OCIColumnSize($stmt,$i);
 				    }
 				}
-                            
-                            // Store Query Results 
-                            $num_rows=0; 
-                            while ( $row = @oci_fetch_object($stmt) ) 
-                            { 
-                                // Store relults as an objects within main array 
-                                $this->last_result[$num_rows] = $row; 
-                                $num_rows++; 
-                            } 
 
-                            // num result rows
-                            $return_value = $num_rows;
+				// If there are any results then get them
+				if ($this->num_rows = @OCIFetchStatement($stmt,$results))
+				{
+					// Convert results into object orientated results..
+					// Due to Oracle strange return structure - loop through columns
+					foreach ( $results as $col_title => $col_contents )
+					{
+						$row_num=0;
+						// then - loop through rows
+						foreach (  $col_contents as $col_content )
+						{
+							$this->last_result[$row_num]->{$col_title} = $col_content;
+							$row_num++;
+						}
+					}
+				}
+
+				// num result rows
+				$return_value = $this->num_rows;
 			}
 
 			// disk caching of queries
