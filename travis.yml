@@ -1,1 +1,31 @@
+language: php
+
+# Versions of PHP you want your project run with.
+php:
   - 5.4
+  - 5.5
+  - 5.6
+  - 7.0
+
+env:
+  - MYSQL_HOST=127.0.0.1 MYSQL_USER=root
+
+services:
+  - mysql
+
+# Commands to be run before your environment runs.
+before_script:
+  - composer self-update
+  - composer install --prefer-source --no-interaction --dev
+  - mysql -e 'CREATE DATABASE IF NOT EXISTS test;'
+
+# Commands you want to run that will verify your build.
+script: phpunit
+
+# allow_failures: Allow this build to fail under the specified environments.
+# fast_finish: If your build fails do not continue trying to build, just stop.
+matrix:
+  allow_failures:
+    - php: 5.6
+    - php: 7.0
+  fast_finish: true
