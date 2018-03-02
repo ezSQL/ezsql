@@ -13,18 +13,22 @@
     },
     "autoload": {
         "classmap": [
-            "cubrid/ez_sql_cubrid.php",
-            "pdo/ez_sql_pdo.php",
-            "postgresql/ez_sql_postgresql.php",
-            "mysql/ez_sql_mysql.php",
-            "mysqli/ez_sql_mysqli.php",
-            "sqlsrv/ez_sql_sqlsrv.php",
-            "oracle8_9/ez_sql_oracle8_9.php",
-            "sqlite/ez_sql_sqlite.php",
-            "shared/ez_sql_core.php",
-            "mssql/ez_sql_mssql.php",
-            "sybase/ez_sql_sybase.php",
-            "codeigniter/Ezsql_codeigniter.php"
+            "cubrid/cubrid.php",
+            "pdo/pdo.php",
+            "postgresql/postgresql.php",
+            "mysql/mysql.php",
+            "mysqli/mysqli.php",
+            "sqlsrv/sqlsrv.php",
+            "oracle8_9/oracle8_9.php",
+            "sqlite/sqlite.php",
+            "ezSQLcore/ezSQLcore.php",
+            "mssql/mssql.php",
+            "sybase/sybase.php",
+            "codeigniter/codeigniter.php"
         ]
+    },
+    "require-dev": {
+        "phpunit/dbunit": "^4.0",
+        "phpunit/phpunit": "^7.0"
     }
 }

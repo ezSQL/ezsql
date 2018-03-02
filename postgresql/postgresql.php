@@ -31,7 +31,7 @@
 	if ( ! function_exists ('pg_connect') ) die('<b>Fatal Error:</b> ezSQL_postgresql requires PostgreSQL Lib to be compiled and or linked in to the PHP engine');
 	if ( ! class_exists ('ezSQLcore') ) die('<b>Fatal Error:</b> ezSQL_postgresql requires ezSQLcore (ez_sql_core.php) to be included/loaded before it can be used');
 
-	class ezSQL_postgresql extends ezSQLcore
+	class postgresql extends ezSQLcore
 	{
 
 		var $dbuser = false;

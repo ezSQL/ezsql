@@ -1,56 +1,57 @@
 <?php
 
 	/**********************************************************************
-	*  Author: Justin Vincent (jv@jvmultimedia.com)
-	*  Web...: http://twitter.com/justinvincent
-	*  Name..: ezSQL_mysql
-	*  Desc..: mySQL component (part of ezSQL databse abstraction library)
+	*  Author: Juergen Bouché (jbouche@nurfuerspam.de)
+	*  Web...: http://www.juergenbouche.de
+	*  Name..: ezSQL_mysqli
+	*  Desc..: mySQLi component (part of ezSQL database abstraction library)
 	*
 	*/
 
 	/**********************************************************************
-	*  ezSQL error strings - mySQL
+	*  ezSQL error strings - mySQLi
 	*/
     
-    global $ezsql_mysql_str;
+    global $ezsql_mysqli_str;
 
-	$ezsql_mysql_str = array
+	$ezsql_mysqli_str = array
 	(
 		1 => 'Require $dbuser and $dbpassword to connect to a database server',
-		2 => 'Error establishing mySQL database connection. Correct user/password? Correct hostname? Database server running?',
+		2 => 'Error establishing mySQLi database connection. Correct user/password? Correct hostname? Database server running?',
 		3 => 'Require $dbname to select a database',
-		4 => 'mySQL database connection is not active',
+		4 => 'mySQLi database connection is not active',
 		5 => 'Unexpected error while trying to select database'
 	);
 
 	/**********************************************************************
-	*  ezSQL Database specific class - mySQL
+	*  ezSQL Database specific class - mySQLi
 	*/
 
-	if ( ! function_exists ('mysql_connect') ) die('<b>Fatal Error:</b> ezSQL_mysql requires mySQL Lib to be compiled and or linked in to the PHP engine');
+	if ( ! function_exists ('mysqli_connect') ) die('<b>Fatal Error:</b> ezSQL_mysql requires mySQLi Lib to be compiled and or linked in to the PHP engine');
 	if ( ! class_exists ('ezSQLcore') ) die('<b>Fatal Error:</b> ezSQL_mysql requires ezSQLcore (ez_sql_core.php) to be included/loaded before it can be used');
 
-	class ezSQL_mysql extends ezSQLcore
+	class mysqli extends ezSQLcore
 	{
 
 		var $dbuser = false;
 		var $dbpassword = false;
 		var $dbname = false;
 		var $dbhost = false;
+		var $dbport = false;
 		var $encoding = false;
 		var $rows_affected = false;
 
 		/**********************************************************************
 		*  Constructor - allow the user to perform a quick connect at the
-		*  same time as initialising the ezSQL_mysql class
+		*  same time as initialising the ezSQL_mysqli class
 		*/
 
-		function ezSQL_mysql($dbuser='', $dbpassword='', $dbname='', $dbhost='localhost', $encoding='')
+		function __construct($dbuser='', $dbpassword='', $dbname='', $dbhost='localhost', $encoding='')
 		{
 			$this->dbuser = $dbuser;
 			$this->dbpassword = $dbpassword;
 			$this->dbname = $dbname;
-			$this->dbhost = $dbhost;
+			list( $this->dbhost, $this->dbport ) = $this->get_host_port( $dbhost, 3306 );
 			$this->encoding = $encoding;
 		}
 
@@ -59,10 +60,10 @@
 		*  and select a mySQL database at the same time
 		*/
 
-		function quick_connect($dbuser='', $dbpassword='', $dbname='', $dbhost='localhost', $encoding='')
+		function quick_connect($dbuser='', $dbpassword='', $dbname='', $dbhost='localhost', $dbport='3306', $encoding='')
 		{
 			$return_val = false;
-			if ( ! $this->connect($dbuser, $dbpassword, $dbhost,true) ) ;
+			if ( ! $this->connect($dbuser, $dbpassword, $dbhost, $dbport) ) ;
 			else if ( ! $this->select($dbname,$encoding) ) ;
 			else $return_val = true;
 			return $return_val;
@@ -72,33 +73,44 @@
 		*  Try to connect to mySQL database server
 		*/
 
-		function connect($dbuser='', $dbpassword='', $dbhost='localhost')
+		function connect($dbuser='', $dbpassword='', $dbhost='localhost', $dbport=false)
 		{
-			global $ezsql_mysql_str; $return_val = false;
+			global $ezsql_mysqli_str; $return_val = false;
 			
 			// Keep track of how long the DB takes to connect
 			$this->timer_start('db_connect_time');
-
+			
+			// If port not specified (new connection issued), get it
+			if( ! $dbport ) {
+				list( $dbhost, $dbport ) = $this->get_host_port( $dbhost, 3306 );
+			}
+			
 			// Must have a user and a password
 			if ( ! $dbuser )
 			{
-				$this->register_error($ezsql_mysql_str[1].' in '.__FILE__.' on line '.__LINE__);
-				$this->show_errors ? trigger_error($ezsql_mysql_str[1],E_USER_WARNING) : null;
+				$this->register_error($ezsql_mysqli_str[1].' in '.__FILE__.' on line '.__LINE__);
+				$this->show_errors ? trigger_error($ezsql_mysqli_str[1],E_USER_WARNING) : null;
 			}
 			// Try to establish the server database handle
-			else if ( ! $this->dbh = @mysql_connect($dbhost,$dbuser,$dbpassword,true,131074) )
-			{
-				$this->register_error($ezsql_mysql_str[2].' in '.__FILE__.' on line '.__LINE__);
-				$this->show_errors ? trigger_error($ezsql_mysql_str[2],E_USER_WARNING) : null;
-			}
 			else
 			{
-				$this->dbuser = $dbuser;
-				$this->dbpassword = $dbpassword;
-				$this->dbhost = $dbhost;
-				$return_val = true;
+				$this->dbh = new mysqli($dbhost,$dbuser,$dbpassword, '', $dbport);
+				// Check for connection problem
+				if( $this->dbh->connect_errno )
+				{
+					$this->register_error($ezsql_mysqli_str[2].' in '.__FILE__.' on line '.__LINE__);
+					$this->show_errors ? trigger_error($ezsql_mysqli_str[2],E_USER_WARNING) : null;
+				}
+				else
+				{
+					$this->dbuser = $dbuser;
+					$this->dbpassword = $dbpassword;
+					$this->dbhost = $dbhost;
+					$this->dbport = $dbport;
+					$return_val = true;
 
-				$this->conn_queries = 0;
+					$this->conn_queries = 0;
+				}
 			}
 
 			return $return_val;
@@ -110,28 +122,28 @@
 
 		function select($dbname='', $encoding='')
 		{
-			global $ezsql_mysql_str; $return_val = false;
+			global $ezsql_mysqli_str; $return_val = false;
 
 			// Must have a database name
 			if ( ! $dbname )
 			{
-				$this->register_error($ezsql_mysql_str[3].' in '.__FILE__.' on line '.__LINE__);
-				$this->show_errors ? trigger_error($ezsql_mysql_str[3],E_USER_WARNING) : null;
+				$this->register_error($ezsql_mysqli_str[3].' in '.__FILE__.' on line '.__LINE__);
+				$this->show_errors ? trigger_error($ezsql_mysqli_str[3],E_USER_WARNING) : null;
 			}
 
 			// Must have an active database connection
 			else if ( ! $this->dbh )
 			{
-				$this->register_error($ezsql_mysql_str[4].' in '.__FILE__.' on line '.__LINE__);
-				$this->show_errors ? trigger_error($ezsql_mysql_str[4],E_USER_WARNING) : null;
+				$this->register_error($ezsql_mysqli_str[4].' in '.__FILE__.' on line '.__LINE__);
+				$this->show_errors ? trigger_error($ezsql_mysqli_str[4],E_USER_WARNING) : null;
 			}
 
 			// Try to connect to the database
-			else if ( !@mysql_select_db($dbname,$this->dbh) )
+			else if ( !@$this->dbh->select_db($dbname) )
 			{
 				// Try to get error supplied by mysql if not use our own
-				if ( !$str = @mysql_error($this->dbh))
-					  $str = $ezsql_mysql_str[5];
+				if ( !$str = @$this->dbh->error)
+					  $str = $ezsql_mysqli_str[5];
 
 				$this->register_error($str.' in '.__FILE__.' on line '.__LINE__);
 				$this->show_errors ? trigger_error($str,E_USER_WARNING) : null;
@@ -139,18 +151,17 @@
 			else
 			{
 				$this->dbname = $dbname;
-				if ( $encoding == '') $encoding = $this->encoding;
 				if($encoding!='')
 				{
 					$encoding = strtolower(str_replace("-","",$encoding));
 					$charsets = array();
-					$result = mysql_query("SHOW CHARACTER SET");
-					while($row = mysql_fetch_array($result,MYSQL_ASSOC))
+					$result = $this->dbh->query("SHOW CHARACTER SET");
+					while($row = $result->fetch_array(MYSQLI_ASSOC))
 					{
 						$charsets[] = $row["Charset"];
 					}
 					if(in_array($encoding,$charsets)){
-						mysql_query("SET NAMES '".$encoding."'");						
+						$this->dbh->set_charset($encoding);
 					}
 				}
 				
@@ -170,11 +181,15 @@
 			// If there is no existing database connection then try to connect
 			if ( ! isset($this->dbh) || ! $this->dbh )
 			{
-				$this->connect($this->dbuser, $this->dbpassword, $this->dbhost);
+				$this->connect($this->dbuser, $this->dbpassword, $this->dbhost, $this->dbport);
 				$this->select($this->dbname, $this->encoding);
 			}
+                        
+                        if ( get_magic_quotes_gpc() ) {
+				$str = stripslashes($str);
+                        }                        
 
-			return mysql_real_escape_string(stripslashes($str));
+			return $this->dbh->escape_string($str);
 		}
 
 		/**********************************************************************
@@ -188,7 +203,7 @@
 		}
 
 		/**********************************************************************
-		*  Perform mySQL query and try to detirmin result value
+		*  Perform mySQL query and try to determine result value
 		*/
 
 		function query($query)
@@ -198,7 +213,7 @@
 			if ( $this->count(false) >= 500 )
 			{
 				$this->disconnect();
-				$this->quick_connect($this->dbuser,$this->dbpassword,$this->dbname,$this->dbhost,$this->encoding);
+				$this->quick_connect($this->dbuser,$this->dbpassword,$this->dbname,$this->dbhost,$this->dbport,$this->encoding);
 			}
 
 			// Initialise return
@@ -240,18 +255,18 @@
 			// If there is no existing database connection then try to connect
 			if ( ! isset($this->dbh) || ! $this->dbh )
 			{
-				$this->connect($this->dbuser, $this->dbpassword, $this->dbhost);
+				$this->connect($this->dbuser, $this->dbpassword, $this->dbhost, $this->dbport);
 				$this->select($this->dbname,$this->encoding);
 				// No existing connection at this point means the server is unreachable
-				if ( ! isset($this->dbh) || ! $this->dbh )
+				if ( ! isset($this->dbh) || ! $this->dbh || $this->dbh->connect_errno )
 					return false;
 			}
 
 			// Perform the query via std mysql_query function..
-			$this->result = @mysql_query($query,$this->dbh);
+			$this->result = @$this->dbh->query($query);
 
 			// If there is an error then take note of it..
-			if ( $str = @mysql_error($this->dbh) )
+			if ( $str = @$this->dbh->error )
 			{
 				$this->register_error($str);
 				$this->show_errors ? trigger_error($str,E_USER_WARNING) : null;
@@ -259,43 +274,43 @@
 			}
 
 			// Query was a Data Manipulation Query (insert, delete, update, replace, ...)
-			if ( !is_resource($this->result) )
+			if ( !is_object($this->result) )
 			{
 				$is_insert = true;
-				$this->rows_affected = @mysql_affected_rows($this->dbh);
+				$this->rows_affected = @$this->dbh->affected_rows;
 
 				// Take note of the insert_id
 				if ( preg_match("/^(insert|replace)\s+/i",$query) )
 				{
-					$this->insert_id = @mysql_insert_id($this->dbh);
+					$this->insert_id = @$this->dbh->insert_id;
 				}
 
 				// Return number fo rows affected
 				$return_val = $this->rows_affected;
 			}
-			// Query was a Data Query Query (select, show, describe, explain, ...)
+			// Query was a Data Query Query (select, show, ...)
 			else
 			{
 				$is_insert = false;
 
 				// Take note of column info
 				$i=0;
-				while ($i < @mysql_num_fields($this->result))
+				while ($i < @$this->result->field_count)
 				{
-					$this->col_info[$i] = @mysql_fetch_field($this->result);
+					$this->col_info[$i] = @$this->result->fetch_field();
 					$i++;
 				}
 
 				// Store Query Results
 				$num_rows=0;
-				while ( $row = @mysql_fetch_object($this->result) )
+				while ( $row = @$this->result->fetch_object() )
 				{
 					// Store relults as an objects within main array
 					$this->last_result[$num_rows] = $row;
 					$num_rows++;
 				}
 
-				@mysql_free_result($this->result);
+				@$this->result->free_result();
 
 				// Log number of rows the query returned
 				$this->num_rows = $num_rows;
@@ -322,15 +337,75 @@
 			return $return_val;
 
 		}
-		
+
 		/**********************************************************************
-		*  Close the active mySQL connection
+		 * Variables
+		 */
+		 private $s_query = "";
+		 
+		 private $s_params;
+		/**********************************************************************
+		*  set query
+		*/
+		function set_query($query)
+		{
+			$this->s_query = $query;
+			$this->s_params = array();
+		}
+
+		/**********************************************************************
+		*  Special query to escape all parameters
+		*/
+		function bind_param($parameter, $value)
+		{
+			$value = $this->escape($value);
+			$this->s_params[$parameter] = $value;
+			return 1;
+		}
+
+		/**********************************************************************
+		*  Special query to escape all parameters
+		*/
+		function execute()
+		{
+			if($this->s_query != '')
+			{
+				$query = $this->s_query;
+
+				if(!empty($this->s_params))
+				{
+					foreach($this->s_params as $param => $value)
+					{
+						$count = 0;
+						$query = str_replace($param, $value, $query, $count);
+						if($count == 0)
+						{
+							$str = $query .' no parameter was changed';
+							$this->register_error($str .' in '.__FILE__.' on line '.__LINE__);
+							$this->show_errors ? trigger_error($str,E_USER_WARNING) : null;
+						}
+					}
+				}
+
+				$this->s_query = "";
+				$this->s_params = array();
+
+				return $this->query($query);
+			}
+			else
+			{
+				return NULL;
+			}
+		}
+
+		/**********************************************************************
+		*  Close the active mySQLi connection
 		*/
 
 		function disconnect()
 		{
-			$this->conn_queries = 0; // Reset connection queries count
-			@mysql_close($this->dbh);
+			$this->conn_queries = 0;
+			@$this->dbh->close();
 		}
 
 	}

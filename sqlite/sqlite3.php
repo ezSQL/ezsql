@@ -1,10 +1,10 @@
 <?php
 
 	/**********************************************************************
-	*  Author: Justin Vincent (jv@jvmultimedia.com)
+	*  Author: Justin Vincent (jv@jvmultimedia.com) / Silvio Wanka 
 	*  Web...: http://twitter.com/justinvincent
-	*  Name..: ezSQL_sqlite
-	*  Desc..: SQLite component (part of ezSQL databse abstraction library)
+	*  Name..: ezSQL_sqlite3
+	*  Desc..: SQLite3 component (part of ezSQL databse abstraction library)
 	*
 	*/
 
@@ -12,9 +12,9 @@
 	*  ezSQL error strings - SQLite
 	*/
 
-	global $ezsql_sqlite_str;
+	global $ezsql_sqlite3_str;
 	
-	$ezsql_sqlite_str = array
+	$ezsql_sqlite3_str = array
 	(
 		1 => 'Require $dbpath and $dbname to open an SQLite database'
 	);
@@ -23,17 +23,17 @@
 	*  ezSQL Database specific class - SQLite
 	*/
 
-	if ( ! function_exists ('sqlite_open') ) die('<b>Fatal Error:</b> ezSQL_sqlite requires SQLite Lib to be compiled and or linked in to the PHP engine');
-	if ( ! class_exists ('ezSQLcore') ) die('<b>Fatal Error:</b> ezSQL_sqlite requires ezSQLcore (ez_sql_core.php) to be included/loaded before it can be used');
+	if ( ! class_exists ('SQLite3') ) die('<b>Fatal Error:</b> ezSQL_sqlite3 requires SQLite3 Lib to be compiled and or linked in to the PHP engine');
+	if ( ! class_exists ('ezSQLcore') ) die('<b>Fatal Error:</b> ezSQL_sqlite3 requires ezSQLcore (ez_sql_core.php) to be included/loaded before it can be used');
 
-	class ezSQL_sqlite extends ezSQLcore
+	class sqlite3 extends ezSQLcore
 	{
 
 		var $rows_affected = false;
 
 		/**********************************************************************
 		*  Constructor - allow the user to perform a quick connect at the 
-		*  same time as initialising the ezSQL_sqlite class
+		*  same time as initialising the ezSQL_sqlite3 class
 		*/
 
 		function __construct($dbpath='', $dbname='')
@@ -53,16 +53,16 @@
 
 		function connect($dbpath='', $dbname='')
 		{
-			global $ezsql_sqlite_str; $return_val = false;
+			global $ezsql_sqlite3_str; $return_val = false;
 			
 			// Must have a user and a password
 			if ( ! $dbpath || ! $dbname )
 			{
-				$this->register_error($ezsql_sqlite_str[1].' in '.__FILE__.' on line '.__LINE__);
-				$this->show_errors ? trigger_error($ezsql_sqlite_str[1],E_USER_WARNING) : null;
+				$this->register_error($ezsql_sqlite3_str[1].' in '.__FILE__.' on line '.__LINE__);
+				$this->show_errors ? trigger_error($ezsql_sqlite3_str[1],E_USER_WARNING) : null;
 			}
 			// Try to establish the server database handle
-			else if ( ! $this->dbh = @sqlite_open($dbpath.$dbname) )
+			else if ( ! $this->dbh = @new SQLite3($dbpath.$dbname) )
 			{
 				$this->register_error($php_errormsg);
 				$this->show_errors ? trigger_error($php_errormsg,E_USER_WARNING) : null;
@@ -104,7 +104,7 @@
 
 		function escape($str)
 		{
-			return sqlite_escape_string(stripslashes(preg_replace("/[\r\n]/",'',$str)));				
+			return $this->dbh->escapeString(stripslashes(preg_replace("/[\r\n]/",'',$str)));				
 		}
 
 		/**********************************************************************
@@ -143,13 +143,13 @@
 			$this->last_query = $query;
 
 			// Perform the query via std mysql_query function..
-			$this->result = @sqlite_query($this->dbh,$query);
+			$this->result = $this->dbh->query($query);
 			$this->count(true, true);
 
 			// If there is an error then take note of it..
-			if (@sqlite_last_error($this->dbh))
+			if (@$this->dbh->lastErrorCode())
 			{
-				$err_str = sqlite_error_string (sqlite_last_error($this->dbh));
+				$err_str = $this->dbh->lastErrorMsg();
 				$this->register_error($err_str);
 				$this->show_errors ? trigger_error($err_str,E_USER_WARNING) : null;
 				return false;
@@ -158,12 +158,12 @@
 			// Query was an insert, delete, update, replace
 			if ( preg_match("/^(insert|delete|update|replace)\s+/i",$query) )
 			{
-				$this->rows_affected = @sqlite_changes($this->dbh);
+				$this->rows_affected = @$this->dbh->changes();
 				
 				// Take note of the insert_id
 				if ( preg_match("/^(insert|replace)\s+/i",$query) )
 				{
-					$this->insert_id = @sqlite_last_insert_rowid($this->dbh);	
+					$this->insert_id = @$this->dbh->lastInsertRowID();	
 				}
 				
 				// Return number fo rows affected
@@ -176,9 +176,11 @@
 				
 				// Take note of column info	
 				$i=0;
-				while ($i < @sqlite_num_fields($this->result))
+				$this->col_info = array();
+				while ($i < @$this->result->numColumns())
 				{
-					$this->col_info[$i]->name       = sqlite_field_name ( $this->result, $i);
+					$this->col_info[$i] = new StdClass;
+					$this->col_info[$i]->name       = $this->result->columnName($i);
 					$this->col_info[$i]->type       = null;
 					$this->col_info[$i]->max_length = null;
 					$i++;
@@ -186,7 +188,7 @@
 				
 				// Store Query Results
 				$num_rows=0;
-				while ($row =  @sqlite_fetch_array($this->result,SQLITE_ASSOC) )
+				while ($row =  @$this->result->fetchArray(SQLITE3_ASSOC))
 				{
 					// Store relults as an objects within main array
 					$obj= (object) $row; //convert to object
