@@ -179,6 +179,43 @@ class ezSQL_mysqliTest extends TestCase {
     } // testGetCharset
 
     /**
+     * @covers ezSQL_mysqli::set_query
+     * @todo   Implement testSet_query().
+     */
+	 
+    public function testSet_query()
+    {
+        // Remove the following lines when you implement this test.
+        $this->markTestIncomplete(
+            'This test has not been implemented yet.'
+        );
+    }
+
+    /**
+     * @covers ezSQL_mysqli::bind_param
+     * @todo   Implement testBind_param().
+     */
+    public function testBind_param()
+    {
+        // Remove the following lines when you implement this test.
+        $this->markTestIncomplete(
+            'This test has not been implemented yet.'
+        );
+    }
+
+    /**
+     * @covers ezSQL_mysqli::execute
+     * @todo   Implement testExecute().
+     */
+    public function testExecute()
+    {
+        // Remove the following lines when you implement this test.
+        $this->markTestIncomplete(
+            'This test has not been implemented yet.'
+        );
+    }
+
+    /**
      * @covers ezSQL_mysqli::disconnect
      */
     public function testDisconnect() {

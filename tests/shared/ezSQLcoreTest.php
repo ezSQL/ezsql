@@ -23,18 +23,6 @@ class ezSQLcoreTest extends TestCase {
      * @var ezSQLcore
      */
     protected $object;
-
-    /**
-     * only instantiate pdo once for test clean-up/fixture load
-     * @var PDO
-     */
-    static private $pdo = null;
-
-    /**
-     * only instantiate PHPUnit_Extensions_Database_DB_IDatabaseConnection once per test
-     * @var type 
-     */
-    private $conn = null;
 	
     /**
      * Sets up the fixture, for example, opens a network connection.
@@ -54,37 +42,36 @@ class ezSQLcoreTest extends TestCase {
 	
     public function getConnection()
     {
-        $database = 'testing_database';
-        $dbuser = 'root';
-        $dbpassword = '';
-        if ($this->conn === null) {
-            if (self::$pdo == null) {
-                self::$pdo = new PDO("mysql:dbname=".$database.";host=localhost", $dbuser, $dbpassword);
-            }
-            $this->conn = $this->createDefaultDBConnection(self::$pdo, 'ezsql_testing');
-        }
-        return $this->conn;
+        $pdo = new PDO('sqlite::memory:');
+        $pdo->exec("CREATE TABLE users (id PRIMARY KEY, name VARCHAR(50), email VARCHAR(50), phone VARCHAR(20), address VARCHAR(50))");
+		$pdo->exec("INSERT INTO users (id, name, email) VALUES (99, 'foo', 'bar@email', '123 456-7890', '123 main')");
+        return $this->createDefaultDBConnection($pdo, ':memory:');
     }
-
+	
     public function getDataSet()
     {
-        return $this->createMySQLXMLDataSet(__DIR__ . '/datapump.xml');
+        return $this->createMySQLXMLDataSet(__DIR__ . '/ezsqldb.xml');
     }
     
     /**
      * This is here to ensure that the database is working correctly
      */
     public function testDataBaseConnection()
-    {
-        
-        $this->getConnection()->createDataSet(array('products'));
-        $prod = $this->getDataSet();
+    {        
+        $this->getConnection()->createDataSet(array('users'));
         $queryTable = $this->getConnection()->createQueryTable(
-            'products', 'SELECT * FROM products'
-        );
-        $expectedTable = $this->getDataSet()->getTable('products');
+            'users', 'SELECT * FROM users' );
+        $expectedTable = $this->getDataSet()->getTable('users');
         //Here we check that the table in the database matches the data in the XML file
         $this->assertTablesEqual($expectedTable, $queryTable);
+    }
+    
+    public function testCreateDataSetAssertion()
+    {
+		$ds = new PHPUnit\DbUnit\DataSet\QueryDataSet($this->getConnection());
+		$ds->addTable('usersTest', 'SELECT * FROM users');
+        $expectedDataSet = $this->getDataSet();
+        $this->assertDataSetsEqual($expectedDataSet, $ds);
     }
 	
     /**
