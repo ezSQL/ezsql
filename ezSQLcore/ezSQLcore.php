@@ -25,7 +25,7 @@
 	*/
 
 	class ezSQLcore
-	{
+	{ 
 
 		var $trace            = false;  // same as $debug_all
 		var $debug_all        = false;  // same as $trace
