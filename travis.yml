@@ -17,7 +17,8 @@ services:
 before_script:
   - composer self-update
   - composer install --prefer-source --no-interaction --dev
-  - mysql -e 'CREATE DATABASE IF NOT EXISTS testing_database;'
+  - mysql -e 'CREATE DATABASE IF NOT EXISTS ez_test;'
+  - mysql -e 'GRANT ALL PRIVILEGES ON ez_test.* TO ez_test@localhost IDENTIFIED BY 'ezTest';'
   - pear install phpunit/DbUnit
 
 # Commands you want to run that will verify your build.
