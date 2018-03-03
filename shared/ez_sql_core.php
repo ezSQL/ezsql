@@ -1,7 +1,7 @@
 <?php
-
 	/**********************************************************************
 	*  Author: Justin Vincent (jv@vip.ie)
+           * Author: Stefanie Janine Stoelting <mail@stefanie-stoelting.de>
 	*  Web...: http://justinvincent.com
 	*  Name..: ezSQL
 	*  Desc..: ezSQL Core module - database abstraction library to make
@@ -14,7 +14,7 @@
 	*  ezSQL Constants
 	*/
 
-	defined('EZSQL_VERSION') or define('EZSQL_VERSION', '2.17');
+	defined('EZSQL_VERSION') or define('EZSQL_VERSION', '3.05');
 	defined('OBJECT') or define('OBJECT', 'OBJECT');
 	defined('ARRAY_A') or define('ARRAY_A', 'ARRAY_A');
 	defined('ARRAY_N') or define('ARRAY_N', 'ARRAY_N');
@@ -51,6 +51,17 @@
 		var $sql_log_file     = false;
 		var $do_profile       = false;
 		var $profile_times    = array();
+        
+  /**
+     * Whether the database connection is established, or not
+     * @var boolean Default is false
+     */
+    protected $_connected = false;    
+  /**
+     * Contains the number of affected rows of a query
+     * @var int Default is 0
+     */
+    protected $_affectedRows = 0;
 
 		// == TJH == default now needed for echo of debug function
 		var $debug_echo_is_on = true;
@@ -637,3 +648,32 @@
 			return ($all) ? $this->num_queries : $this->conn_queries;
 		}
 	}
+    
+    /**
+     * Returns, whether a database connection is established, or not
+     *
+     * @return boolean
+     */
+    public function isConnected() {
+        return $this->_connected;
+    } // isConnected
+
+    /**
+     * Returns the current show error state
+     *
+     * @return boolean
+     */
+    public function getShowErrors() {
+        return $this->_show_errors;
+    } // getShowErrors
+
+    /**
+     * Returns the affected rows of a query
+     * 
+     * @return int
+     */
+    public function affectedRows() {
+        return $this->_affectedRows;
+    } // affectedRows
+    
+} // ezSQLcore
