@@ -31,7 +31,7 @@
 	if ( ! function_exists ('mssql_connect') ) die('<b>Fatal Error:</b> ezSQL_mssql requires ntwdblib.dll to be present in your winowds\system32 folder. Also enable MS-SQL extenstion in PHP.ini file ');
 	if ( ! class_exists ('ezSQLcore') ) die('<b>Fatal Error:</b> ezSQL_mssql requires ezSQLcore (ez_sql_core.php) to be included/loaded before it can be used');
 
-	class mssql extends ezSQLcore
+	class ezSQL_mssql extends ezSQLcore
 	{
 
 		var $dbuser = false;

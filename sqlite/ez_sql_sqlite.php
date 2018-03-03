@@ -26,7 +26,7 @@
 	if ( ! function_exists ('sqlite_open') ) die('<b>Fatal Error:</b> ezSQL_sqlite requires SQLite Lib to be compiled and or linked in to the PHP engine');
 	if ( ! class_exists ('ezSQLcore') ) die('<b>Fatal Error:</b> ezSQL_sqlite requires ezSQLcore (ez_sql_core.php) to be included/loaded before it can be used');
 
-	class sqlite extends ezSQLcore
+	class ezSQL_sqlite extends ezSQLcore
 	{
 
 		var $rows_affected = false;

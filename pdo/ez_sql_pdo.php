@@ -26,7 +26,7 @@
 	if ( ! class_exists ('PDO') ) die('<b>Fatal Error:</b> ezSQL_pdo requires PDO Lib to be compiled and or linked in to the PHP engine');
 	if ( ! class_exists ('ezSQLcore') ) die('<b>Fatal Error:</b> ezSQL_pdo requires ezSQLcore (ez_sql_core.php) to be included/loaded before it can be used');
 
-	class pdo extends ezSQLcore
+	class ezSQL_pdo extends ezSQLcore
 	{
 
 		var $dsn;

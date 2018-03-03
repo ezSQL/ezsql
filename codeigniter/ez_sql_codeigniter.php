@@ -11,7 +11,7 @@
 	if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 	if ( ! class_exists ('ezSQLcore') ) die('<b>Fatal Error:</b> ezSQL requires ezSQLcore (application/helpers/ez_sql_core_helper.php) to be included/loaded before it can be used');
 
-	class codeigniter extends ezSQLcore
+	class ezSQL_codeigniter extends ezSQLcore
 	{
 	
 		var $debug = true;
