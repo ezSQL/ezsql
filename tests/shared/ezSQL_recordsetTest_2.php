@@ -61,7 +61,7 @@ class ezSQL_recordsetTest2 extends PHPUnit_Framework_TestCase {
      * This method is called before a test is executed.
      */
     protected function setUp() {
-        $this->ezSQL = new ezSQL_mysql;
+        $this->ezSQL = new mysql;
         $this->ezSQL->quick_connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME);        
         
         $this->ezSQL->select(self::TEST_DB_NAME);
@@ -75,7 +75,7 @@ class ezSQL_recordsetTest2 extends PHPUnit_Framework_TestCase {
         
         $this->ezSQL->query('SELECT * FROM unit_test WHERE id = 7');
 
-        $this->object = new ezSQL_recordset($this->ezSQL->get_results());
+        $this->object = new recordset($this->ezSQL->get_results());
     } // setUp
 
     /**

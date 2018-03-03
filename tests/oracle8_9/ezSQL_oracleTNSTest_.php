@@ -45,7 +45,7 @@ class ezSQL_oracleTNSTest extends TestCase {
      * This method is called before a test is executed.
      */
     protected function setUp() {
-        $this->object = new ezSQL_oracleTNS(
+        $this->object = new oracleTNS(
                     $this->oraConnectionParamsTestConnection['Host'],
                     $this->oraConnectionParamsTestConnection['Port'],
                     $this->oraConnectionParamsTestConnection['SessionName'],
@@ -90,7 +90,7 @@ class ezSQL_oracleTNSTest extends TestCase {
     public function testPConnect() {
         $this->object = null;
 
-        $this->object = new ezSQL_oracleTNS(
+        $this->object = new oracleTNS(
                     $this->oraConnectionParamsTestConnection['Host'],
                     $this->oraConnectionParamsTestConnection['Port'],
                     $this->oraConnectionParamsTestConnection['SessionName'],

@@ -59,7 +59,7 @@ class ezSQL_mysqlTest extends TestCase {
      * This method is called before a test is executed.
      */
     protected function setUp() {
-        $this->object = new ezSQL_mysql;
+        $this->object = new mysql;
     }
 
     /**

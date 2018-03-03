@@ -9,7 +9,7 @@
  * @license FREE / Donation (LGPL - You may do what you like with ezSQL - no exceptions.)
  *
  */
-class ezSQL_oracleTNS extends ezSQLcore
+class oracleTNS extends ezSQLcore
 {
     /**
      * ezSQL error strings - Oracle 8 and 9

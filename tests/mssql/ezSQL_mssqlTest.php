@@ -33,7 +33,7 @@ class ezSQL_mssqlTest extends TestCase {
      * This method is called before a test is executed.
      */
     protected function setUp() {
-        $this->object = new ezSQL_mssql;
+        $this->object = new mssql;
     } // setUp
 
     /**

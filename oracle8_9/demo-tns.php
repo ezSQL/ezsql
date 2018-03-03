@@ -4,10 +4,9 @@
 </head>
 <body>
 <?php
-    include_once dirname(__FILE__) . '/../shared/ez_sql_core.php';
-    include_once dirname(__FILE__) . '/ez_sql_oracleTNS.php';
+    include_once dirname(__FILE__) . "../ez_sql_loader.php";
     
-    $db = new ezSQL_oracleTNS('en-yoda-1', '1521', 'ppisa.febi.bilstein.local', 'cmp', 'cmp');
+    $db = new oracleTNS('en-yoda-1', '1521', 'ppisa.febi.bilstein.local', 'cmp', 'cmp');
     
     $db->connect();
     

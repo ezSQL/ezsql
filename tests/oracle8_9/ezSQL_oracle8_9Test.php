@@ -33,7 +33,7 @@ class ezSQL_oracle8_9Test extends TestCase {
      * This method is called before a test is executed.
      */
     protected function setUp() {
-        $this->object = new ezSQL_oracle8_9;
+        $this->object = new oracle8_9;
     } // setUp
 
     /**

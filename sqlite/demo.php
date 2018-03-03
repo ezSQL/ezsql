@@ -5,14 +5,11 @@
 	*/
 
 	// Include ezSQL core
-	include_once "../shared/ez_sql_core.php";
-	
-	// Include ezSQL database specific component
-	include_once "ez_sql_sqlite.php";
+	include_once "../ez_sql_loader.php";
 
 	// Initialise database object and establish a connection
 	// at the same time - db_path / db_name
-	$db = new ezSQL_sqlite('./','sqlite_test.db');        
+	$db = new sqlite('./','sqlite_test.db');        
 
 	// Create a table..
 	$db->query("CREATE TABLE test_table ( MyColumnA INTEGER PRIMARY KEY, MyColumnB TEXT(32) );");
