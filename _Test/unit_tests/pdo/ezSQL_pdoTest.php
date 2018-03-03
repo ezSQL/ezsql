@@ -1,7 +1,10 @@
 <?php
 
-require_once dirname(__FILE__) . '/../../../shared/ez_sql_core.php';
-require_once dirname(__FILE__) . '/../../../pdo/ez_sql_pdo.php';
+require_once('ez_sql_loader.php');
+
+require 'vendor/autoload.php';
+use PHPUnit\Framework\TestCase;
+use PHPUnit\DbUnit\TestCaseTrait;
 
 /**
  * Test class for ezSQL_pdo.
@@ -28,7 +31,7 @@ require_once dirname(__FILE__) . '/../../../pdo/ez_sql_pdo.php';
  * @subpackage unitTests
  * @license FREE / Donation (LGPL - You may do what you like with ezSQL - no exceptions.)
  */
-class ezSQL_pdoTest extends PHPUnit_Framework_TestCase {
+class ezSQL_pdoTest extends TestCase {
 
     /**
      * constant string user name

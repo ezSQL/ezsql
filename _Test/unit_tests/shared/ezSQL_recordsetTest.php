@@ -1,8 +1,11 @@
 <?php
 
-require_once dirname(__FILE__) . '/../../../shared/ez_sql_core.php';
-require_once dirname(__FILE__) . '/../../../mysql/ez_sql_mysql.php';
-require_once dirname(__FILE__) . '/../../../shared/ez_sql_recordset.php';
+require_once('ez_sql_loader.php');
+
+require 'vendor/autoload.php';
+use PHPUnit\Framework\TestCase;
+use PHPUnit\DbUnit\TestCaseTrait;
+require_once dirname(__FILE__) . '/shared/ez_sql_recordset.php';
 
 /**
  * Test class for ezSQL_recordset.
@@ -14,7 +17,7 @@ require_once dirname(__FILE__) . '/../../../shared/ez_sql_recordset.php';
  * @subpackage unitTests
  * @license FREE / Donation (LGPL - You may do what you like with ezSQL - no exceptions.)
  */
-class ezSQL_recordsetTest extends PHPUnit_Framework_TestCase {
+class ezSQL_recordsetTest extends TestCase {
 
     /**
      * constant string user name

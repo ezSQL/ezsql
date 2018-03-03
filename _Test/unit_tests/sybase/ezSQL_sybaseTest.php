@@ -1,7 +1,10 @@
 <?php
 
-require_once dirname(__FILE__) . '/../../../shared/ez_sql_core.php';
-require_once dirname(__FILE__) . '/../../../sybase/ez_sql_sybase.php';
+require_once('ez_sql_loader.php');
+
+require 'vendor/autoload.php';
+use PHPUnit\Framework\TestCase;
+use PHPUnit\DbUnit\TestCaseTrait;
 
 /**
  * Test class for ezSQL_sybase.
@@ -18,7 +21,7 @@ require_once dirname(__FILE__) . '/../../../sybase/ez_sql_sybase.php';
  *       be tests done for different versions of Sybase ASE
  *
  */
-class ezSQL_sybaseTest extends PHPUnit_Framework_TestCase {
+class ezSQL_sybaseTest extends TestCase {
 
     /**
      * @var ezSQL_sybase

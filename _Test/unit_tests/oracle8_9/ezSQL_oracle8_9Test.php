@@ -1,7 +1,10 @@
 <?php
 
-require_once dirname(__FILE__) . '/../../../shared/ez_sql_core.php';
-require_once dirname(__FILE__) . '/../../../oracle8_9/ez_sql_oracle8_9.php';
+require_once('ez_sql_loader.php');
+
+require 'vendor/autoload.php';
+use PHPUnit\Framework\TestCase;
+use PHPUnit\DbUnit\TestCaseTrait;
 
 /**
  * Test class for ezSQL_oracle8_9.
@@ -18,7 +21,7 @@ require_once dirname(__FILE__) . '/../../../oracle8_9/ez_sql_oracle8_9.php';
  *       tests done for different versions of Oracle
  *
  */
-class ezSQL_oracle8_9Test extends PHPUnit_Framework_TestCase {
+class ezSQL_oracle8_9Test extends TestCase {
 
     /**
      * @var ezSQL_oracle8_9

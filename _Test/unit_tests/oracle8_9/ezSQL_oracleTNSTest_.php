@@ -1,7 +1,10 @@
 <?php
 
-require_once dirname(__FILE__) . '/../../../shared/ez_sql_core.php';
-require_once dirname(__FILE__) . '/../../../oracle8_9/ez_sql_oracleTNS.php';
+require_once('ez_sql_loader.php');
+
+require 'vendor/autoload.php';
+use PHPUnit\Framework\TestCase;
+use PHPUnit\DbUnit\TestCaseTrait;
 
 /**
  * Test class for ezSQL_oracleTNS.
@@ -15,7 +18,7 @@ require_once dirname(__FILE__) . '/../../../oracle8_9/ez_sql_oracleTNS.php';
  * @subpackage unitTests
  * @license FREE / Donation (LGPL - You may do what you like with ezSQL - no exceptions.)
  */
-class ezSQL_oracleTNSTest extends PHPUnit_Framework_TestCase {
+class ezSQL_oracleTNSTest extends TestCase {
 
     /**
      * @var ezSQL_oracleTNS

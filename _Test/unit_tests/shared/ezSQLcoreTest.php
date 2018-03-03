@@ -1,6 +1,9 @@
 <?php
+require_once('ez_sql_loader.php');
 
-require_once dirname(__FILE__) . '/../../../shared/ez_sql_core.php';
+require 'vendor/autoload.php';
+use PHPUnit\Framework\TestCase;
+use PHPUnit\DbUnit\TestCaseTrait;
 
 /**
  * Test class for ezSQLcore.
@@ -12,13 +15,27 @@ require_once dirname(__FILE__) . '/../../../shared/ez_sql_core.php';
  * @subpackage unitTests
  * @license FREE / Donation (LGPL - You may do what you like with ezSQL - no exceptions.)
  */
-class ezSQLcoreTest extends PHPUnit_Framework_TestCase {
+class ezSQLcoreTest extends TestCase {
 
+    use TestCaseTrait;
+	
     /**
      * @var ezSQLcore
      */
     protected $object;
 
+    /**
+     * only instantiate pdo once for test clean-up/fixture load
+     * @var PDO
+     */
+    static private $pdo = null;
+
+    /**
+     * only instantiate PHPUnit_Extensions_Database_DB_IDatabaseConnection once per test
+     * @var type 
+     */
+    private $conn = null;
+	
     /**
      * Sets up the fixture, for example, opens a network connection.
      * This method is called before a test is executed.
@@ -34,7 +51,54 @@ class ezSQLcoreTest extends PHPUnit_Framework_TestCase {
     protected function tearDown() {
         $this->object = null;
     } // tearDown
+	
+    public function getConnection()
+    {
+        $database = 'testing_database';
+        $dbuser = 'root';
+        $dbpassword = '';
+        if ($this->conn === null) {
+            if (self::$pdo == null) {
+                self::$pdo = new PDO("mysql:dbname=".$database.";host=localhost", $dbuser, $dbpassword);
+            }
+            $this->conn = $this->createDefaultDBConnection(self::$pdo, 'ezsql_testing');
+        }
+        return $this->conn;
+    }
 
+    public function getDataSet()
+    {
+        return $this->createMySQLXMLDataSet(__DIR__ . '/datapump.xml');
+    }
+    
+    /**
+     * This is here to ensure that the database is working correctly
+     */
+    public function testDataBaseConnection()
+    {
+        
+        $this->getConnection()->createDataSet(array('products'));
+        $prod = $this->getDataSet();
+        $queryTable = $this->getConnection()->createQueryTable(
+            'products', 'SELECT * FROM products'
+        );
+        $expectedTable = $this->getDataSet()->getTable('products');
+        //Here we check that the table in the database matches the data in the XML file
+        $this->assertTablesEqual($expectedTable, $queryTable);
+    }
+	
+    /**
+     * @covers ezSQLcore::get_host_port
+     * @todo   Implement testGet_host_port().
+     */
+    public function testGet_host_port()
+    {
+        // Remove the following lines when you implement this test.
+        $this->markTestIncomplete(
+            'This test has not been implemented yet.'
+        );
+    }
+	
     /**
      * @covers ezSQLcore::register_error
      */
@@ -92,6 +156,14 @@ class ezSQLcoreTest extends PHPUnit_Framework_TestCase {
      */
     public function testGet_row() {
         $this->assertNull($this->object->get_row());
+		
+		//$rows = $this->object->query( "INSERT INTO $wpdb->users (display_name) VALUES ('Walter Sobchak')" );
+		//$this->assertEquals( 1, $rows );
+		//$this->assertNotEmpty( $this->object->insert_id );
+
+		//$row = $this->object->get_row( $this->object->prepare( "SELECT * FROM $wpdb->users WHERE ID = %d", $this->object->insert_id ) );
+		//$this->assertInternalType( 'object', $row );
+		//$this->assertEquals( 'Walter Sobchak', $row->display_name );
     } // testGet_row
 
     /**
@@ -113,6 +185,12 @@ class ezSQLcoreTest extends PHPUnit_Framework_TestCase {
      */
     public function testGet_col_info() {
         $this->assertEmpty($this->object->get_col_info());
+		
+		//$this->object->get_results( "SELECT ID FROM $wpdb->users" );
+
+		//$this->assertEquals( array( 'ID' ), $this->object->get_col_info() );
+		//$this->assertEquals( array( $this->ezsqldb->users ), $this->object->get_col_info( 'table' ) );
+		//$this->assertEquals( $wpdb->users, $this->object->get_col_info( 'table', 0 ) );
     } // testGet_col_info
 
     /**
@@ -208,10 +286,33 @@ class ezSQLcoreTest extends PHPUnit_Framework_TestCase {
     }
 
     /**
+     * @covers ezSQLcore::get_set
+     * @todo   Implement testGet_set().
+     */
+    public function testGet_set()
+    {
+        // Remove the following lines when you implement this test.
+        $this->markTestIncomplete(
+            'This test has not been implemented yet.'
+        );
+    }
+
+    /**
+     * @covers ezSQLcore::count
+     * @todo   Implement testCount().
+     */
+    public function testCount()
+    {
+        // Remove the following lines when you implement this test.
+        $this->markTestIncomplete(
+            'This test has not been implemented yet.'
+        );
+    }
+	
+    /**
      * @covers ezSQLcore::affectedRows
      */
     public function testAffectedRows() {
         $this->assertEquals(0, $this->object->affectedRows());
     } // testAffectedRows
-
 } //

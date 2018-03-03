@@ -1,7 +1,10 @@
 <?php
 
-require_once dirname(__FILE__) . '/../../../shared/ez_sql_core.php';
-require_once dirname(__FILE__) . '/../../../mssql/ez_sql_mssql.php';
+require_once('ez_sql_loader.php');
+
+require 'vendor/autoload.php';
+use PHPUnit\Framework\TestCase;
+use PHPUnit\DbUnit\TestCaseTrait;
 
 /**
  * Test class for ezSQL_mssql.
@@ -18,7 +21,7 @@ require_once dirname(__FILE__) . '/../../../mssql/ez_sql_mssql.php';
  *       be tests done for different versions of SQL Server
  *
  */
-class ezSQL_mssqlTest extends PHPUnit_Framework_TestCase {
+class ezSQL_mssqlTest extends TestCase {
 
     /**
      * @var ezSQL_mssql
