@@ -78,6 +78,21 @@ class ezSQL_pdoTest extends TestCase {
      * This method is called before a test is executed.
      */
     protected function setUp() {
+        if (!extension_loaded('pdo_mysql')) {
+            $this->markTestSkipped(
+              'The pdo_mysql Lib is not available.'
+            );
+        }
+        if (!extension_loaded('pdo_pgsql')) {
+            $this->markTestSkipped(
+              'The pdo_pgsql Lib is not available.'
+            );
+        }
+        if (!extension_loaded('pdo_sqlite')) {
+            $this->markTestSkipped(
+              'The pdo_sqlite Lib is not available.'
+            );
+        }
         $this->object = new pdo;
     } // setUp
 

@@ -57,6 +57,11 @@ class ezSQL_mysqliTest extends TestCase {
      * This method is called before a test is executed.
      */
     protected function setUp() {
+        if (!extension_loaded('mysqli')) {
+            $this->markTestSkipped(
+              'The MySQLi extension is not available.'
+            );
+        }
         $this->object = new mysqli();
     }
 

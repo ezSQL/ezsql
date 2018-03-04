@@ -33,6 +33,11 @@ class ezSQL_sybaseTest extends TestCase {
      * This method is called before a test is executed.
      */
     protected function setUp() {
+        if (!extension_loaded('ntwdblib')) {
+            $this->markTestSkipped(
+              'The sybase extenstion is not available.'
+            );
+        }
         $this->object = new sybase;
     } // setUp
 

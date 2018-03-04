@@ -45,6 +45,11 @@ class ezSQL_oracleTNSTest extends TestCase {
      * This method is called before a test is executed.
      */
     protected function setUp() {
+        if (!extension_loaded('pdo_oci')) {
+            $this->markTestSkipped(
+              'The Oracle OCI Lib is not available.'
+            );
+        }
         $this->object = new oracleTNS(
                     $this->oraConnectionParamsTestConnection['Host'],
                     $this->oraConnectionParamsTestConnection['Port'],

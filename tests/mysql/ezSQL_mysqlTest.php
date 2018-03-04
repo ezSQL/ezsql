@@ -59,6 +59,11 @@ class ezSQL_mysqlTest extends TestCase {
      * This method is called before a test is executed.
      */
     protected function setUp() {
+        if (!extension_loaded('pdo_mysql')) {
+            $this->markTestSkipped(
+              'The MySQL Lib is not available.'
+            );
+        }
         $this->object = new mysql;
     }
 

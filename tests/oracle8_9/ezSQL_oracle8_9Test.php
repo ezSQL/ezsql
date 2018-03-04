@@ -33,6 +33,11 @@ class ezSQL_oracle8_9Test extends TestCase {
      * This method is called before a test is executed.
      */
     protected function setUp() {
+        if (!extension_loaded('oci8_12c')) {
+            $this->markTestSkipped(
+              'The Oracle OCI Lib is not available.'
+            );
+        }
         $this->object = new oracle8_9;
     } // setUp
 

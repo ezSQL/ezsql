@@ -59,6 +59,11 @@ class ezSQL_postgresqlTest extends TestCase {
      * This method is called before a test is executed.
      */
     protected function setUp() {
+        if (!extension_loaded('pgsql')) {
+            $this->markTestSkipped(
+              'The PostgreSQL Lib is not available.'
+            );
+        }
         $this->object = new postgresql;
     } // setUp
 
