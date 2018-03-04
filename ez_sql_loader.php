@@ -1,7 +1,8 @@
 <?php
 require_once('shared'.DIRECTORY_SEPARATOR.'ez_sql_core.php');
 function ezsql_autoloader($class) {    
-    $file = strtolower($class).DIRECTORY_SEPARATOR.'ez_sql_'.strtolower($class).'.php';
+	$foldername = str_replace('ezSQL_', '', $class);
+    $file = strtolower($foldername).DIRECTORY_SEPARATOR.'ez_sql_'.strtolower($foldername).'.php';
     if (file_exists($file)) {
         require_once($file);
     }
