@@ -1,27 +1,24 @@
 <?php
-/**
- * @ignore 
- */
 
 	/**********************************************************************
-	*  ezSQL initialisation for mySQL
+	*  ezSQL initialisation for CUBRID
 	*/
 
 	// Include ezSQL core
-	include_once "../ez_sql_loader.php";
+	include_once "../../ez_sql_loader.php";
 
 	// Initialise database object and establish a connection
-	// at the same time - db_user / db_password / db_name / db_host
-	$db = new ezSQL_mysql('db_user','db_password','db_name','db_host');
+	// at the same time - db_user / db_password / db_name / db_host / db_port
+	$db = new ezSQL_cubrid('dba','','demodb','localhost',33000);
 
 	/**********************************************************************
-	*  ezSQL demo for mySQL database
+	*  ezSQL demo for CUBRID database
 	*/
 
 	// Demo of getting a single variable from the db
 	// (and using abstracted function sysdate)
 	$current_time = $db->get_var("SELECT " . $db->sysdate());
-	print "ezSQL demo for mySQL database run @ $current_time";
+	print "ezSQL demo for CUBRID database run @ $current_time";
 
 	// Print out last query and results..
 	$db->debug();

@@ -1,18 +1,12 @@
 <?php
-/**
- * @ignore 
- */
-
-	/**********************************************************************
-	*  ezSQL initialisation for mySQL
-	*/
 
 	// Include ezSQL core
-	include_once "../ez_sql_loader.php";
+	include_once "../../ez_sql_loader.php";
 
-	// Initialise database object and establish a connection
-	// at the same time - db_user / db_password / db_name / db_host
-	$db = new ezSQL_mysql('db_user','db_password','db_name','db_host');
+	// Initialise database object and establish a connection at the same time
+	// db_user / db_password / db_name / db_host
+	// If you need to specify a custom port, use notation: 'mysql:host=127.0.0.1;port=9999;dbname=some_db'
+	$db = new ezSQL_pdo('mysql:host=db_host;dbname=db_name', 'db_user', 'db_password');
 
 	/**********************************************************************
 	*  ezSQL demo for mySQL database

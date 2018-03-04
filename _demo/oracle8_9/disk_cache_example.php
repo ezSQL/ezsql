@@ -4,10 +4,11 @@
  */
 
 	// Standard ezSQL Libs
-	include_once "../ez_sql_loader.php";
+	include_once "../../ez_sql_loader.php";
 
-	// Initialise singleton
-	$db = new ezSQL_mysql('db_user', 'db_pass', 'db_name');
+	// Initialise database object and establish a connection
+	// at the same time - db_user / db_password / db_name
+	$db = new ezSQL_oracle8_9('user','password','oracle.instance');
 
 	// Cache expiry
 	$db->cache_timeout = 24; // Note: this is hours
@@ -27,25 +28,25 @@
 	$db->cache_queries = true;
 
 		// At last.. a query!
-		$db->get_results("SHOW TABLES");
+		$db->get_var("SELECT " . $db->sysdate() . " FROM DUAL");
 		$db->debug();
 
-		// Select * from use
-		$db->get_results("SELECT * FROM User");
+		// Now get it from the cache
+		$db->get_var("SELECT " . $db->sysdate() . " FROM DUAL");
 		$db->debug();
 
 	// This ensures only the above querys are cached
 	$db->cache_queries = false;
 
 	// This query is NOT cached
-	$db->get_results("SELECT * FROM User LIMIT 0,1");
+	$db->get_var("SELECT " . $db->sysdate() . " FROM DUAL");
 	$db->debug();
 
 /*
 
 	Of course, if you want to cache EVERYTHING just do..
 
-	$db = new ezSQL_mysql('db_user', 'db_pass', 'db_name');
+	$db = new ezSQL_oracle8_9('user','password','oracle.instance');
 	$db->use_disk_cache = true;
 	$db->cache_queries = true;
 	$db->cache_timeout = 24;

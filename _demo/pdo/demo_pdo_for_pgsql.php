@@ -1,21 +1,21 @@
 <?php
 
 	// Include ezSQL core
-	include_once "../ez_sql_loader.php";
+	include_once "../../ez_sql_loader.php";
 
 	// Initialise database object and establish a connection at the same time
 	// db_user / db_password / db_name / db_host
-	// If you need to specify a custom port, use notation: 'mysql:host=127.0.0.1;port=9999;dbname=some_db'
-	$db = new ezSQL_pdo('mysql:host=db_host;dbname=db_name', 'db_user', 'db_password');
+	// If you need to specify a custom port, use notation: 'pgsql:host=127.0.0.1;port=5432;dbname=some_db'
+	$db = new ezSQL_pdo('pgsql:host=db_host;dbname=db_name', 'db_user', 'db_password');
 
 	/**********************************************************************
-	*  ezSQL demo for mySQL database
+	*  ezSQL demo for pgSQL database
 	*/
 
 	// Demo of getting a single variable from the db
 	// (and using abstracted function sysdate)
 	$current_time = $db->get_var("SELECT " . $db->sysdate());
-	print "ezSQL demo for mySQL database run @ $current_time";
+	print "ezSQL demo for pgSQL database run @ $current_time";
 
 	// Print out last query and results..
 	$db->debug();

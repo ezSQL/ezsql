@@ -5,7 +5,7 @@
 	*/
 
 	// Include ezSQL core
-	include_once "../ez_sql_loader.php";
+	include_once "../../ez_sql_loader.php";
 
 	// Initialize database object and establish a connection
 	// at the same time - db_user / db_password / db_name / db_host

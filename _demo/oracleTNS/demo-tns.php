@@ -4,7 +4,7 @@
 </head>
 <body>
 <?php
-    include_once dirname(__FILE__) . "../ez_sql_loader.php";
+    include_once dirname(__FILE__) . "../../ez_sql_loader.php";
 	
     $db = new ezSQL_oracleTNS('en-yoda-1', '1521', 'ppisa.febi.bilstein.local', 'cmp', 'cmp');
     
