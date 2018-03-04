@@ -1,8 +1,7 @@
 <?php
 
 	// Standard ezSQL Libs
-	include_once "../shared/ez_sql_core.php";
-	include_once "ez_sql_cubrid.php";
+	include_once "../ez_sql_loader.php";
 
 	// Initialise singleton
 	$db = new ezSQL_cubrid('dba','','demodb');

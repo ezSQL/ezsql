@@ -4,8 +4,7 @@
  */
 
 	// Standard ezSQL Libs
-	include_once "../shared/ez_sql_core.php";
-	include_once "ez_sql_mysql.php";
+	include_once "../ez_sql_loader.php";
 
 	// Initialise singleton
 	$db = new ezSQL_mysql('db_user', 'db_pass', 'db_name');

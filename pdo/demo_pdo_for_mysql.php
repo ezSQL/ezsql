@@ -1,10 +1,7 @@
 <?php
 
 	// Include ezSQL core
-	include_once "../shared/ez_sql_core.php";
-
-	// Include ezSQL database specific component
-	include_once "ez_sql_pdo.php";
+	include_once "../ez_sql_loader.php";
 
 	// Initialise database object and establish a connection at the same time
 	// db_user / db_password / db_name / db_host
