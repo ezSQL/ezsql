@@ -17,6 +17,23 @@ Change Log
 ==========
 Note: This change log isn't being used any more due to automated github tracking
 
+3.08 - Merged fork https://github.com/sjstoelting/ezSQL3 to be current with this repo. Updated PHPunit tests, refactor class code to be able to use `spl_autoload_register`. Now you can simplely use `require_once "ez_sql_loader.php";` then `$database = new database_driver_class ;` 
+
+```
+ezSQL3 - From Author: Stefanie Janine Stoelting - http://stefanie-stoelting.de
+
+News about ezSQL3 are available at http://stefanie-stoelting.de/ezsql3-news.html
+
+* 3.07 - Added the new class ezSQL_mysql to use mysqli. To update existing projects, just change the class you are using from ezSQL_mysql to ezSQL_mysqli. This class is downward compatible to ezSQL_mysql, but is able to use prepared statements.
+* 3.06 - Extended ezSQL_mysql method quick_connect with a charset parameter
+* 3.05 - Extended ez_sql_oracleTNS class, that does now support client site connection pooling
+* 3.04 - Added a new class for Oracle database connection to get rid of TNSNAMES.ORA configuration files
+* 3.03 - Changed error messages, wrong classname used in a messages
+* 3.02 - Improved ezSQL_recordset, array results of rows are faster
+* 3.01 - Added a class for query result handling. The ezSQL_recordset contains methods that behave like fetch_assoc, fetch_row, and fetch_object
+* 3.00 - Changed the code to PHP5, added PHPDoc tags, and added unit tests
+```
+
 2.17 - Updates to ezSQL_postgresql (thx Stefanie Janine Stoelting)
 
 2.16 - Added profiling functions to mySQL version & added fix to stop mySQL hanging on very long runnign scripts
