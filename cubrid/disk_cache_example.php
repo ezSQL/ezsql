@@ -1,10 +1,11 @@
 <?php
 
 	// Standard ezSQL Libs
-	include_once "../ez_sql_loader.php";
+	include_once "../shared/ez_sql_core.php";
+	include_once "ez_sql_cubrid.php";
 
 	// Initialise singleton
-	$db = new cubrid('dba','','demodb');
+	$db = new ezSQL_cubrid('dba','','demodb');
 
 	// Cache expiry
 	$db->cache_timeout = 24; // Note: this is hours
@@ -42,7 +43,7 @@
 
 	Of course, if you want to cache EVERYTHING just do..
 
-	$db = new cubrid('db_user', 'db_pass', 'db_name');
+	$db = new ezSQL_cubrid('db_user', 'db_pass', 'db_name');
 	$db->use_disk_cache = true;
 	$db->cache_queries = true;
 	$db->cache_timeout = 24;

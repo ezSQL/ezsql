@@ -1,12 +1,15 @@
 <?php
 
 	// Include ezSQL core
-	include_once "../ez_sql_loader.php";
+	include_once "../shared/ez_sql_core.php";
+
+	// Include ezSQL database specific component
+	include_once "ez_sql_pdo.php";
 
 	// Initialise database object and establish a connection at the same time
 	// db_user / db_password / db_name / db_host
 	// If you need to specify a custom port, use notation: 'pgsql:host=127.0.0.1;port=5432;dbname=some_db'
-	$db = new pdo('pgsql:host=db_host;dbname=db_name', 'db_user', 'db_password');
+	$db = new ezSQL_pdo('pgsql:host=db_host;dbname=db_name', 'db_user', 'db_password');
 
 	/**********************************************************************
 	*  ezSQL demo for pgSQL database

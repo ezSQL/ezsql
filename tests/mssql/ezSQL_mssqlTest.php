@@ -38,7 +38,7 @@ class ezSQL_mssqlTest extends TestCase {
               'The MS-SQL extenstion is not available.'
             );
         }
-        $this->object = new mssql;
+        $this->object = new ezSQL_mssql;
     } // setUp
 
     /**

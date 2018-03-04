@@ -5,7 +5,10 @@
 	*/
 
 	// Include ezSQL core
-	include_once "../ez_sql_loader.php";
+	include_once "../shared/ez_sql_core.php";
+
+	// Include ezSQL database specific component
+	include_once "ez_sql_sqlsrv.php";
 
 	// Initialize database object and establish a connection
 	// at the same time - db_user / db_password / db_name / db_host
@@ -22,7 +25,7 @@
 	 //$db_password = 'password';
 
 
-	$db = new sqlsrv($db_user, $db_password, $db_name, $db_host);
+	$db = new ezSQL_sqlsrv($db_user, $db_password, $db_name, $db_host);
 
 	/*****************************************************************************
 	*  ezSQL demo for MS-SQL database with Microsoft supported SQL drivers for PHP

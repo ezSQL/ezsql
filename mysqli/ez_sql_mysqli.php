@@ -11,7 +11,7 @@
  * @license FREE / Donation (LGPL - You may do what you like with ezSQL - no exceptions.)
  *
  */
-class mysqli extends ezSQLcore
+class ezSQL_mysqli extends ezSQLcore
 {
     /*
      * ezSQL error strings - mySQL

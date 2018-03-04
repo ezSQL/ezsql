@@ -38,7 +38,7 @@ class ezSQL_oracle8_9Test extends TestCase {
               'The Oracle OCI Lib is not available.'
             );
         }
-        $this->object = new oracle8_9;
+        $this->object = new ezSQL_oracle8_9;
     } // setUp
 
     /**

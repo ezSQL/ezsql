@@ -38,7 +38,7 @@ class ezSQL_sybaseTest extends TestCase {
               'The sybase extenstion is not available.'
             );
         }
-        $this->object = new sybase;
+        $this->object = new ezSQL_sybase;
     } // setUp
 
     /**

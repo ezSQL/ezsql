@@ -64,7 +64,7 @@ class ezSQL_mysqlTest extends TestCase {
               'The MySQL Lib is not available.'
             );
         }
-        $this->object = new mysql;
+        $this->object = new ezSQL_mysql;
     }
 
     /**

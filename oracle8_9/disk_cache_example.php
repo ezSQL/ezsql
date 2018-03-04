@@ -4,11 +4,14 @@
  */
 
 	// Standard ezSQL Libs
-	include_once "../ez_sql_loader.php";
+	include_once "../shared/ez_sql_core.php";
+
+	// Include ezSQL database specific component
+	include_once "ez_sql_oracle8_9.php";
 
 	// Initialise database object and establish a connection
 	// at the same time - db_user / db_password / db_name
-	$db = new oracle8_9('user','password','oracle.instance');
+	$db = new ezSQL_oracle8_9('user','password','oracle.instance');
 
 	// Cache expiry
 	$db->cache_timeout = 24; // Note: this is hours
@@ -46,7 +49,7 @@
 
 	Of course, if you want to cache EVERYTHING just do..
 
-	$db = new oracle8_9('user','password','oracle.instance');
+	$db = new ezSQL_oracle8_9('user','password','oracle.instance');
 	$db->use_disk_cache = true;
 	$db->cache_queries = true;
 	$db->cache_timeout = 24;

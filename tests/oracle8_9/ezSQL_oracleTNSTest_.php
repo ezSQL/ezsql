@@ -50,7 +50,7 @@ class ezSQL_oracleTNSTest extends TestCase {
               'The Oracle OCI Lib is not available.'
             );
         }
-        $this->object = new oracleTNS(
+        $this->object = new ezSQL_oracleTNS(
                     $this->oraConnectionParamsTestConnection['Host'],
                     $this->oraConnectionParamsTestConnection['Port'],
                     $this->oraConnectionParamsTestConnection['SessionName'],
@@ -95,7 +95,7 @@ class ezSQL_oracleTNSTest extends TestCase {
     public function testPConnect() {
         $this->object = null;
 
-        $this->object = new oracleTNS(
+        $this->object = new ezSQL_oracleTNS(
                     $this->oraConnectionParamsTestConnection['Host'],
                     $this->oraConnectionParamsTestConnection['Port'],
                     $this->oraConnectionParamsTestConnection['SessionName'],

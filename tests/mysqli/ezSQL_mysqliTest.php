@@ -62,7 +62,7 @@ class ezSQL_mysqliTest extends TestCase {
               'The MySQLi extension is not available.'
             );
         }
-        $this->object = new mysqli();
+        $this->object = new ezSQL_mysqli();
     }
 
     /**
