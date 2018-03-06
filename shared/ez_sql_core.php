@@ -51,6 +51,7 @@
 		var $sql_log_file     = false;
 		var $do_profile       = false;
 		var $profile_times    = array();
+		var $insert_id        = null;
         
   /**
      * Whether the database connection is established, or not
@@ -648,7 +649,124 @@
 			return ($all) ? $this->num_queries : $this->conn_queries;
 		}
 	}
+        
+	/**********************************************************************
+           * desc: does an update query with an array, by conditional array
+           * param: @table, - database table to access
+           *             @keyandvalue, - assoc array with key = value (doesn't need escaped)
+           *             @wherekey, - where  assoc array key, value 
+           *             Either: 
+           *             @condition, - set the condition either '<','>', '=', '!=', '>=', '<=', '<>'
+           *                                    or set to 'raw' conditions are directly in @wherekey
+           *             Or:
+           *             @conditionarray, - an array of conditions either '<','>', '=', '!=', '>=', '<=', '<>', 'like', 'between', 'not between'
+           *                                    will be joined with @wherekey
+           *             @combine - combine conditions with either 'AND','OR', 'NOT', 'AND NOT'
+           * returns: (query_id) for fetching results etc
+	*/
+    public function update($table, $keyandvalue, $wherekey = array( '1' ), $condition = '=', $combine = 'AND') {
+        $q="UPDATE `".$table."` SET ";
+        $where='1';
+        $joinconditions=false;
+        $combinewith=(in_array( strtoupper($combine), array( 'AND', 'OR', 'NOT', 'AND NOT' ))) ? strtoupper($combine) : 'AND' ;
+            
+        if ( ! is_array( $keyandvalue ) ) {
+            return false;
+        }
+           
+        if (is_array($condition) && is_array($wherekey)) {
+            if ( count($condition) == count($wherekey) ) $joinconditions = true;
+            else return false;
+        } elseif ((! is_array( $wherekey )) && (strtolower($condition)!='raw')) {
+            return false;
+        } elseif ( ! in_array( strtolower($condition), array( '<', '>', '=', '!=', '>=', '<=', '<>', 'raw' )) ) {
+            return false;
+        }
+            
+        foreach($keyandvalue as $key=>$val) {
+            if(strtolower($val)=='null') $q.= "`$key` = NULL, ";
+            elseif(strtolower($val)=='now()') $q.= "`$key` = NOW(), ";
+            else $q.= "`$key`='".$this->escape($val)."', ";
+        }
     
+        if (strtolower($condition)=='raw') {
+            $where=$this->escape($wherekey);        
+        } elseif ($wherekey!=array('1')) {
+            $where='';
+            if ($joinconditions) {
+                $i=0;
+                $needtoskip=false;
+                foreach($wherekey as $key=>$val) {
+                    $iscondition = strtoupper($condition[$i]);
+                    if (! in_array( $iscondition, array( '<', '>', '=', '!=', '>=', '<=', '<>', 'LIKE', 'BETWEEN', 'NOT BETWEEN' ) ) {
+                        return false;
+                    } else {
+                        if ($needtoskip) $where.= "'".$this->escape($val)."' ".$combinewith." ";
+                        else $where.= "`$key`".$iscondition."'".$this->escape($val)."' ".$combinewith." ";                            
+                        $needtoskip = (($iscondition=='BETWEEN') || ($iscondition=='NOT BETWEEN')) ? true : false;
+                        $i++;
+                    }
+                }
+            } else {
+                foreach($wherekey as $key=>$val) {
+                    $where.= "`$key`".$condition."'".$this->escape($val)."' ".$combinewith." ";
+                }
+            }
+            $where = rtrim($where, " ".$combinewith." ");
+        }
+
+        $q = rtrim($q, ', ') . ' WHERE '.$where.';';
+        return $this->query($q);
+    }   
+         
+	/**********************************************************************
+           * desc: helper does the actual insert or replace query with an array
+	*/
+    function _query_insert_replace($table, $keyandvalue, $type) {
+        if ( ! in_array( strtoupper( $type ), array( 'REPLACE', 'INSERT' )) ) {
+            return false;
+        }
+            
+        if ( ! is_array( $keyandvalue ) ) {
+            return false;
+        }
+            
+        $q="$type INTO `".$table."` ";
+        $v=''; $n='';
+
+        foreach($keyandvalue as $key=>$val) {
+            $n.="`$key`, ";
+            if(strtolower($val)=='null') $v.="NULL, ";
+            elseif(strtolower($val)=='now()') $v.="NOW(), ";
+            else $v.= "'".$this->escape($val)."', ";
+        }
+
+        $q .= "(". rtrim($n, ', ') .") VALUES (". rtrim($v, ', ') .");";
+
+        if ($this->query($q)) return $this->insert_id;
+        else return false;
+    }
+        
+	/**********************************************************************
+           * desc: does an replace query with an array
+           * param: @table, - database table to access
+           *             @keyandvalue, - assoc array with key = value (doesn't need escaped)
+           * returns: id of inserted record, false if error
+	*/
+    public function replace($table, $keyandvalue) {
+            return _query_insert_replace($table, $keyandvalue, 'REPLACE');
+        }
+
+	/**********************************************************************
+           * desc: does an insert query with an array
+           * param: @table, - database table to access
+           *             @keyandvalue, - assoc array with key = value (doesn't need escaped)
+           * returns: id of inserted record, false if error
+	*/
+    public function insert($table, $keyandvalue) {
+            return _query_insert_replace($table, $keyandvalue, 'INSERT');
+        }
+        
     /**
      * Returns, whether a database connection is established, or not
      *
