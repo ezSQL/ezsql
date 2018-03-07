@@ -74,9 +74,11 @@
 		function quick_connect($dbuser='', $dbpassword='', $dbname='', $dbhost='localhost', $encoding='')
 		{
 			$return_val = false;
+            $this->_connected = false;
 			if ( ! $this->connect($dbuser, $dbpassword, $dbhost,true) ) ;
 			else if ( ! $this->select($dbname,$encoding) ) ;
-			else $return_val = true;
+			else { $return_val = true;
+                $this->_connected = true; }
 			return $return_val;
 		}
 
@@ -87,6 +89,7 @@
 		function connect($dbuser='', $dbpassword='', $dbhost='localhost')
 		{
 			global $ezsql_mysql_str; $return_val = false;
+            $this->_connected = false;
 			
 			// Keep track of how long the DB takes to connect
 			$this->timer_start('db_connect_time');
@@ -109,6 +112,7 @@
 				$this->dbpassword = $dbpassword;
 				$this->dbhost = $dbhost;
 				$return_val = true;
+                $this->_connected = true;
 
 				$this->conn_queries = 0;
 			}
@@ -123,6 +127,7 @@
 		function select($dbname='', $encoding='')
 		{
 			global $ezsql_mysql_str; $return_val = false;
+            $this->_connected = false;
 
 			// Must have a database name
 			if ( ! $dbname )
@@ -167,6 +172,7 @@
 				}
 				
 				$return_val = true;
+                $this->_connected = true;
 			}
 
 			return $return_val;
@@ -343,6 +349,7 @@
 		{
 			$this->conn_queries = 0; // Reset connection queries count
 			@mysql_close($this->dbh);
+            $this->_connected = false;
 		}
         
     /**

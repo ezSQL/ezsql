@@ -54,6 +54,7 @@
 		function connect($dbpath='', $dbname='')
 		{
 			global $ezsql_sqlite3_str; $return_val = false;
+            $this->_connected = false;
 			
 			// Must have a user and a password
 			if ( ! $dbpath || ! $dbname )
@@ -71,6 +72,7 @@
 			{
 				$return_val = true;
 				$this->conn_queries = 0;
+                $this->_connected = true;
 			}
 
 			return $return_val;			

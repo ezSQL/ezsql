@@ -39,7 +39,19 @@
 		var $dbname = false;
 		var $dbhost = false;
 		var $rows_affected = false;
+        
+    /**
+     * Host name or IP address
+     * @var string
+     */
+    private $_dbhost;
 
+    /**
+     * TCP/IP port of PostgreSQL
+     * @var string Default is PostgreSQL default port 5432
+     */
+    private $_dbport = '5432';
+    
 		/**********************************************************************
 		*  Constructor - allow the user to perform a quick connect at the
 		*  same time as initialising the ezSQL_postgresql class
@@ -76,6 +88,7 @@
 		function connect($dbuser='', $dbpassword='', $dbname='', $dbhost='localhost', $port='5432')
 		{
 			global $ezsql_postgresql_str; $return_val = false;
+            $this->_connected = false;
 
 			// Must have a user and a password
 			if ( ! $dbuser )
@@ -96,6 +109,7 @@
 				$this->dbhost = $dbhost;
 				$this->dbname = $dbname;
 				$this->port = $port;
+                $this->_connected = true;
 				$return_val = true;
 
 				$this->conn_queries = 0;
@@ -112,9 +126,11 @@
 		function select($dbuser='', $dbpassword='', $dbname='', $dbhost='localhost', $port='5432')
 		{  
 			$return_val = false;
+            $this->_connected = false;
 			if ( ! $this->connect($dbuser, $dbpassword, $dbname, $dbhost,true) ) ;
 			else if ( ! $this->select($dbname) ) ;
-			else $return_val = true;
+			else { $return_val = true;
+                $this->_connected = true; }
 			return $return_val;
 		}
 
@@ -287,7 +303,26 @@
 			{
 			    $this->conn_queries = 0;
 				@pg_close($this->dbh);
+                $this->_connected = false;
 			}
 		}
 
+    /**
+     * Returns the current database server host
+     *
+     * @return string
+     */
+    public function getDBHost() {
+        return $this->_dbhost;
+    } // getDBHost
+
+         /**
+     * Returns the current TCP/IP port
+     *
+     * @return string
+     */
+    public function getPort() {
+        return $this->_dbport;
+    } // getPort
+    
 	}

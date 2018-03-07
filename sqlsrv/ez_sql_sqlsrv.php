@@ -79,8 +79,10 @@
 		function quick_connect($dbuser='', $dbpassword='', $dbname='', $dbhost='localhost')
 		{
 			$return_val = false;
+            $this->_connected = false;
 			if ( ! $this->connect($dbuser, $dbpassword, $dbname, $dbhost) ) ;
-			else $return_val = true;
+			else { $return_val = true;
+                $this->_connected = true; }
 			return $return_val;
 		}
 
@@ -91,6 +93,7 @@
 		function connect($dbuser='', $dbpassword='', $dbname='', $dbhost='localhost')
 		{
 			global $ezsql_sqlsrv_str; $return_val = false;
+            $this->_connected = false;
 
 			// Blank dbuser assumes Windows Authentication
 			$connectionOptions["Database"] =$dbname;
@@ -111,6 +114,7 @@
 				$this->dbpassword = $dbpassword;
 				$this->dbhost = $dbhost;
 				$return_val = true;
+                $this->_connected = true;
 
 				$this->conn_queries = 0;
 			}
@@ -380,6 +384,7 @@
 		{
 			$this->conn_queries = 0;
 			@sqlsrv_close($this->dbh);
+            $this->_connected = true;
 		}
 
 

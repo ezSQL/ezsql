@@ -59,6 +59,7 @@
 		function connect($dbuser='', $dbpassword='', $dbname='')
 		{
 			global $ezsql_oracle8_9_str; $return_val = false;
+            $this->_connected = false;
 
 			// Must have a user and a password
 			if ( ! $dbuser || ! $dbpassword || ! $dbname )
@@ -78,6 +79,7 @@
 				$this->dbpassword = $dbpassword;
 				$this->dbname = $dbname;
 				$return_val = true;
+                $this->_connected = true;
 
 				$this->conn_queries = 0;
 			}

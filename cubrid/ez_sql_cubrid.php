@@ -68,6 +68,7 @@
 		function connect($dbuser='', $dbpassword='', $dbname='', $dbhost='localhost', $dbport=33000)
 		{
 			global $ezSQL_cubrid_str; $return_val = false;
+            $this->_connected = false;
 			
 			// Keep track of how long the DB takes to connect
 			$this->timer_start('db_connect_time');
@@ -92,6 +93,7 @@
                 $this->dbname = $dbname;
                 $this->dbport = $dbport;
 				$return_val = true;
+                $this->_connected = true;
 
 				$this->conn_queries = 0;
 			}

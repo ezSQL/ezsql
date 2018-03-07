@@ -79,6 +79,7 @@
 		function connect($dbuser='', $dbpassword='', $dbhost='localhost')
 		{
 			global $ezsql_mssql_str; $return_val = false;
+            $this->_connected = false;
 
 			// Must have a user and a password
 			if ( ! $dbuser )
@@ -99,6 +100,7 @@
 				$this->dbpassword = $dbpassword;
 				$this->dbhost = $dbhost;
 				$return_val = true;
+                $this->_connected = true;
 
 				$this->conn_queries = 0;
 			}
@@ -141,6 +143,7 @@
 			{
 				$this->dbname = $dbname;
 				$return_val = true;
+                $this->_connected = true;
 			}
 
 			return $return_val;
@@ -384,7 +387,23 @@
 
 		}
 
+    /**
+     * Close the database connection 
+     */
+    public function disconnect() {
+        if ( $this->dbh ) {
+            $this->dbh = null;
+            $this->_connected = false;
+        }
+    } // disconnect
 
-
-
+    /**
+     * Returns the current database server host
+     *
+     * @return string
+     */
+    public function getDBHost() {
+        return $this->dbhost;
+    } // getDBHost
+    
 	}
