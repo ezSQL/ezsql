@@ -52,17 +52,35 @@
 		var $do_profile       = false;
 		var $profile_times    = array();
 		var $insert_id        = null;
-        
-  /**
+
+    /**
      * Whether the database connection is established, or not
      * @var boolean Default is false
      */
     protected $_connected = false;    
-  /**
+    /**
      * Contains the number of affected rows of a query
      * @var int Default is 0
      */
     protected $_affectedRows = 0;
+
+    /**
+     * The last query result
+     * @var object Default is null
+     */
+    public $last_result = null;
+
+    /**
+     * Get data from disk cache
+     * @var boolean Default is false
+     */
+    public $from_disk_cache = false;
+
+    /**
+     * Function called
+     * @var string
+     */
+    private $func_call;
 
 		// == TJH == default now needed for echo of debug function
 		var $debug_echo_is_on = true;
@@ -428,7 +446,7 @@
 
 		function dumpvar($mixed)
 		{
-			$this->vardump($mixed);
+			return $this->vardump($mixed);
 		}
 
 		/**********************************************************************
@@ -648,47 +666,24 @@
 
 			return ($all) ? $this->num_queries : $this->conn_queries;
 		}
-	}
         
-	/**********************************************************************
-           * desc: does an update query with an array, by conditional array
-           * param: @table, - database table to access
-           *             @keyandvalue, - assoc array with key = value (doesn't need escaped)
-           *             @wherekey, - where  assoc array key, value 
-           *             Either: 
-           *             @condition, - set the condition either '<','>', '=', '!=', '>=', '<=', '<>'
-           *                                    or set to 'raw' conditions are directly in @wherekey
-           *             Or:
-           *             @conditionarray, - an array of conditions either '<','>', '=', '!=', '>=', '<=', '<>', 'like', 'between', 'not between'
-           *                                    will be joined with @wherekey
-           *             @combine - combine conditions with either 'AND','OR', 'NOT', 'AND NOT'
-           * returns: (query_id) for fetching results etc
-	*/
-    public function update($table, $keyandvalue, $wherekey = array( '1' ), $condition = '=', $combine = 'AND') {
-        $q="UPDATE `".$table."` SET ";
-        $where='1';
+ 	/**********************************************************************
+           * desc: helper returns an WHERE sql clause string
+	*/        
+    function _where_clause( $wherekey, $condition, $combine ) {     
+        $where='1';      
         $joinconditions=false;
         $combinewith=(in_array( strtoupper($combine), array( 'AND', 'OR', 'NOT', 'AND NOT' ))) ? strtoupper($combine) : 'AND' ;
-            
-        if ( ! is_array( $keyandvalue ) ) {
-            return false;
-        }
            
         if (is_array($condition) && is_array($wherekey)) {
             if ( count($condition) == count($wherekey) ) $joinconditions = true;
             else return false;
         } elseif ((! is_array( $wherekey )) && (strtolower($condition)!='raw')) {
             return false;
-        } elseif ( ! in_array( strtolower($condition), array( '<', '>', '=', '!=', '>=', '<=', '<>', 'raw' )) ) {
+        } elseif ( ! in_array( strtolower($condition), array( '<', '>', '=', '!=', '>=', '<=', '<>', 'like', 'raw' )) ) {
             return false;
         }
-            
-        foreach($keyandvalue as $key=>$val) {
-            if(strtolower($val)=='null') $q.= "`$key` = NULL, ";
-            elseif(strtolower($val)=='now()') $q.= "`$key` = NOW(), ";
-            else $q.= "`$key`='".$this->escape($val)."', ";
-        }
-    
+ 
         if (strtolower($condition)=='raw') {
             $where=$this->escape($wherekey);        
         } elseif ($wherekey!=array('1')) {
@@ -698,81 +693,165 @@
                 $needtoskip=false;
                 foreach($wherekey as $key=>$val) {
                     $iscondition = strtoupper($condition[$i]);
-                    if (! in_array( $iscondition, array( '<', '>', '=', '!=', '>=', '<=', '<>', 'LIKE', 'BETWEEN', 'NOT BETWEEN' ) ) {
+                    if (! in_array( $iscondition, array( '<', '>', '=', '!=', '>=', '<=', '<>', 'LIKE', 'BETWEEN', 'NOT BETWEEN', 'IS NULL' ) )) {
                         return false;
                     } else {
-                        if ($needtoskip) $where.= "'".$this->escape($val)."' ".$combinewith." ";
-                        else $where.= "`$key`".$iscondition."'".$this->escape($val)."' ".$combinewith." ";                            
+                        if ($needtoskip) $where.= "'".$this->escape($val)."' $combinewith ";
+                        elseif(strtolower($val)=='null') $where.= "`$key` IS NULL $combinewith ";
+                        else $where.= "`$key`".$iscondition."'".$this->escape($val)."' $combinewith ";                            
                         $needtoskip = (($iscondition=='BETWEEN') || ($iscondition=='NOT BETWEEN')) ? true : false;
                         $i++;
                     }
                 }
             } else {
                 foreach($wherekey as $key=>$val) {
-                    $where.= "`$key`".$condition."'".$this->escape($val)."' ".$combinewith." ";
+                    if(strtolower($val)=='null') $where.= "`$key` IS NULL $combinewith ";
+                    else $where.= "`$key`".$condition."'".$this->escape($val)."' $combinewith ";
                 }
             }
-            $where = rtrim($where, " ".$combinewith." ");
+            $where = rtrim($where, " $combinewith ");
         }
-
-        $q = rtrim($q, ', ') . ' WHERE '.$where.';';
-        return $this->query($q);
+        return $where;
+    }
+    
+	/**********************************************************************
+           * desc: shows an result given the table, fields, by operator condition or conditional array
+           * param: @table, - database table to access
+           *        @fields, - table fields, string
+           *        @wherekey, - where clause, assoc array key, value 
+           *       Either: 
+           *        @operator, - set the operator condition, either '<','>', '=', '!=', '>=', '<=', '<>', 'like'
+           *            or set to 'raw' conditions are directly in @wherekey
+           *       Or:
+           *        @operatorarray, - an array of operator conditions, either '<','>', '=', '!=', '>=', '<=', '<>', 'like', 'between', 'not between', 'is null'
+           *            will be joined with @wherekey
+           *        @combine - combine operator conditions with, either 'AND','OR', 'NOT', 'AND NOT'
+           * returns: a result set - see docs for more details
+	*/
+    function show($table, $fields = '*', $wherekey = array( '1' ), $operator = '=', $combine = 'AND') {            
+        if ( ! is_string( $fields ) || ! isset($table) ) {
+            return false;
+        }
+        
+        $sql="SELECT `$fields` FROM ".$table;
+    
+        $where = _where_clause( $wherekey, $operator, $combine );
+        if (is_string($where)) {
+            $sql .= ' WHERE '.$where.';';
+            return $this->get_results($sql);            
+        } else 
+            return false;
+    }
+    
+	/**********************************************************************
+           * desc: does an update query with an array, by conditional operator array
+           * param: @table, - database table to access
+           *             @keyandvalue, - table fields, assoc array with key = value (doesn't need escaped)
+           *             @wherekey, - where clause, assoc array key, value 
+           *             Either: 
+           *             @operator, - set the operator condition, either '<','>', '=', '!=', '>=', '<=', '<>', 'like'
+           *                                    or set to 'raw' operator conditions are directly in @wherekey
+           *             Or:
+           *             @operatorarray, - an array of operator conditions, either '<','>', '=', '!=', '>=', '<=', '<>', 'like', 'between', 'not between', 'is null'
+           *                                    will be joined with @wherekey
+           *             @combine - combine conditions with, either 'AND','OR', 'NOT', 'AND NOT'
+           * returns: (query_id) for fetching results etc
+	*/
+    function update($table, $keyandvalue, $wherekey = array( '1' ), $operator = '=', $combine = 'AND') {            
+        if ( ! is_array( $keyandvalue ) || ! isset($table) ) {
+            return false;
+        }
+        
+        $sql="UPDATE `$table` SET ";
+        
+        foreach($keyandvalue as $key=>$val) {
+            if(strtolower($val)=='null') $sql.= "`$key` = NULL, ";
+            elseif(in_array(strtolower($val), array( 'current_timestamp()', 'date()', 'now()' ))) $sql.= "`$key` = CURRENT_TIMESTAMP(), ";
+            else $sql.= "`$key`='".$this->escape($val)."', ";
+        }
+        
+        $where = _where_clause( $wherekey, $operator, $combine );
+        if (is_string($where)) {   
+            $sql = rtrim($sql, ', ') . ' WHERE '.$where.';';
+            return $this->query($sql);       
+        } else 
+            return false;
     }   
          
 	/**********************************************************************
            * desc: helper does the actual insert or replace query with an array
 	*/
-    function _query_insert_replace($table, $keyandvalue, $type) {
+    function delete($table, $wherekey = array( '1' ), $operator = '=', $combine = 'AND') {            
+        if ( ! is_array( $wherekey ) || ! isset($table) ) {
+            return false;
+        }
+        
+        $sql="DELETE FROM `$table`";
+        
+        $where = _where_clause( $wherekey, $operator, $combine );
+        if (is_string($where)) {   
+            $sql .= ' WHERE '.$where.';';
+            return $this->query($sql);       
+        } else 
+            return false;
+    }
+    
+	/**********************************************************************
+           * desc: helper does the actual insert or replace query with an array
+	*/
+    function _query_insert_replace($table, $keyandvalue, $type) {            
+        if ( ! is_array( $keyandvalue ) || ! isset($table) ) {
+            return false;
+        }
+        
         if ( ! in_array( strtoupper( $type ), array( 'REPLACE', 'INSERT' )) ) {
             return false;
         }
             
-        if ( ! is_array( $keyandvalue ) ) {
-            return false;
-        }
-            
-        $q="$type INTO `".$table."` ";
+        $sql="$type INTO `$table` ";
         $v=''; $n='';
 
         foreach($keyandvalue as $key=>$val) {
             $n.="`$key`, ";
             if(strtolower($val)=='null') $v.="NULL, ";
-            elseif(strtolower($val)=='now()') $v.="NOW(), ";
+            elseif(in_array(strtolower($val), array( 'current_timestamp()', 'date()', 'now()' ))) $v.="CURRENT_TIMESTAMP(), ";
             else $v.= "'".$this->escape($val)."', ";
         }
 
-        $q .= "(". rtrim($n, ', ') .") VALUES (". rtrim($v, ', ') .");";
+        $sql .= "(". rtrim($n, ', ') .") VALUES (". rtrim($v, ', ') .");";
 
-        if ($this->query($q)) return $this->insert_id;
-        else return false;
+        if ($this->query($sql))
+            return $this->insert_id;
+        else 
+            return false;
     }
         
 	/**********************************************************************
            * desc: does an replace query with an array
            * param: @table, - database table to access
-           *             @keyandvalue, - assoc array with key = value (doesn't need escaped)
-           * returns: id of inserted record, false if error
+           *             @keyandvalue - table fields, assoc array with key = value (doesn't need escaped)
+           * returns: id of replaced record, false if error
 	*/
-    public function replace($table, $keyandvalue) {
+    function replace($table, $keyandvalue) {
             return _query_insert_replace($table, $keyandvalue, 'REPLACE');
         }
 
 	/**********************************************************************
            * desc: does an insert query with an array
            * param: @table, - database table to access
-           *             @keyandvalue, - assoc array with key = value (doesn't need escaped)
+           *             @keyandvalue - table fields, assoc array with key = value (doesn't need escaped)
            * returns: id of inserted record, false if error
 	*/
-    public function insert($table, $keyandvalue) {
+    function insert($table, $keyandvalue) {
             return _query_insert_replace($table, $keyandvalue, 'INSERT');
         }
-        
+    
     /**
      * Returns, whether a database connection is established, or not
      *
      * @return boolean
      */
-    public function isConnected() {
+    function isConnected() {
         return $this->_connected;
     } // isConnected
 
@@ -781,8 +860,8 @@
      *
      * @return boolean
      */
-    public function getShowErrors() {
-        return $this->_show_errors;
+    function getShowErrors() {
+        return $this->show_errors;
     } // getShowErrors
 
     /**
@@ -790,7 +869,7 @@
      * 
      * @return int
      */
-    public function affectedRows() {
+    function affectedRows() {
         return $this->_affectedRows;
     } // affectedRows
     

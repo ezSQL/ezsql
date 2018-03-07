@@ -1,10 +1,8 @@
 <?php
-
 require_once('ez_sql_loader.php');
 
 require 'vendor/autoload.php';
 use PHPUnit\Framework\TestCase;
-use PHPUnit\DbUnit\TestCaseTrait;
 
 /**
  * Test class for ezSQL_oracleTNS.
@@ -15,7 +13,7 @@ use PHPUnit\DbUnit\TestCaseTrait;
  * @link    http://twitter.com/justinvincent
  * @name    ezSQL_oracleTNSTest
  * @package ezSQL
- * @subpackage unitTests
+ * @subpackage Tests
  * @license FREE / Donation (LGPL - You may do what you like with ezSQL - no exceptions.)
  */
 class ezSQL_oracleTNSTest extends TestCase {

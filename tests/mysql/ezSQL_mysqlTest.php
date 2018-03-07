@@ -1,10 +1,8 @@
 <?php
-
 require_once('ez_sql_loader.php');
 
 require 'vendor/autoload.php';
 use PHPUnit\Framework\TestCase;
-use PHPUnit\DbUnit\TestCaseTrait;
 
 /**
  * Test class for ezSQL_mysql.
@@ -16,10 +14,8 @@ use PHPUnit\DbUnit\TestCaseTrait;
  *
  * @author  Stefanie Janine Stoelting <mail@stefanie-stoelting.de>
  * @name    ezSQL_mysqlTest
- * @uses    mysql_test_db_tear_up.sql
- * @uses    mysql_test_db_tear_down.sql
  * @package ezSQL
- * @subpackage unitTests
+ * @subpackage Tests
  * @license FREE / Donation (LGPL - You may do what you like with ezSQL - no exceptions.)
  */
 class ezSQL_mysqlTest extends TestCase {
@@ -59,7 +55,7 @@ class ezSQL_mysqlTest extends TestCase {
      * This method is called before a test is executed.
      */
     protected function setUp() {
-        if (!extension_loaded('pdo_mysql')) {
+        if (!extension_loaded('mysql')) {
             $this->markTestSkipped(
               'The MySQL Lib is not available.'
             );

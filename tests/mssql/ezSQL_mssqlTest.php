@@ -1,10 +1,8 @@
 <?php
-
 require_once('ez_sql_loader.php');
 
 require 'vendor/autoload.php';
 use PHPUnit\Framework\TestCase;
-use PHPUnit\DbUnit\TestCaseTrait;
 
 /**
  * Test class for ezSQL_mssql.
@@ -15,7 +13,7 @@ use PHPUnit\DbUnit\TestCaseTrait;
  * @link    http://twitter.com/justinvincent
  * @name    ezSQL_mssqlTest
  * @package ezSQL
- * @subpackage unitTests
+ * @subpackage Tests
  * @license FREE / Donation (LGPL - You may do what you like with ezSQL - no exceptions.)
  * @todo The connection to MS SQL Server is not tested by now. There might also
  *       be tests done for different versions of SQL Server

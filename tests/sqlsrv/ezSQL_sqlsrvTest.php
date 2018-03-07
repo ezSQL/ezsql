@@ -1,10 +1,8 @@
 <?php
-
 require_once('ez_sql_loader.php');
 
 require 'vendor/autoload.php';
 use PHPUnit\Framework\TestCase;
-use PHPUnit\DbUnit\TestCaseTrait;
 
 /**
  * Test class for ezSQL_sqlsrv.
@@ -15,6 +13,7 @@ use PHPUnit\DbUnit\TestCaseTrait;
  * @link    http://twitter.com/justinvincent
  * @name    ezSQL_sqlsrvTest
  * @package ezSQL
+ * @subpackage Tests
  * @license FREE / Donation (LGPL - You may do what you like with ezSQL - no exceptions.)
  * @todo The connection to sqlsrv is not tested by now. There might also
  *       be tests done for different versions of sqlsrv

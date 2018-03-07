@@ -3,7 +3,6 @@ require_once('ez_sql_loader.php');
 
 require 'vendor/autoload.php';
 use PHPUnit\Framework\TestCase;
-use PHPUnit\DbUnit\TestCaseTrait;
 
 /**
  * Test class for ezSQLcore.
@@ -12,12 +11,10 @@ use PHPUnit\DbUnit\TestCaseTrait;
  * @author  Stefanie Janine Stoelting <mail@stefanie-stoelting.de>
  * @name    ezSQLcoreTest
  * @package ezSQL
- * @subpackage unitTests
+ * @subpackage Tests
  * @license FREE / Donation (LGPL - You may do what you like with ezSQL - no exceptions.)
  */
 class ezSQLcoreTest extends TestCase {
-
-    use TestCaseTrait;
 	
     /**
      * @var ezSQLcore
@@ -39,41 +36,7 @@ class ezSQLcoreTest extends TestCase {
     protected function tearDown() {
         $this->object = null;
     } // tearDown
-	
-    public function getConnection()
-    {
-        $pdo = new PDO('sqlite::memory:');
-        $pdo->exec("CREATE TABLE users (id PRIMARY KEY, name VARCHAR(50), email VARCHAR(50), phone VARCHAR(20), address VARCHAR(50))");
-		$pdo->exec("INSERT INTO users (id, name, email) VALUES (99, 'foo', 'bar@email', '123 456-7890', '123 main')");
-        return $this->createDefaultDBConnection($pdo, ':memory:');
-    }
-	
-    public function getDataSet()
-    {
-        return $this->createMySQLXMLDataSet(__DIR__ . '/ezsqldb.xml');
-    }
-    
-    /**
-     * This is here to ensure that the database is working correctly
-     */
-    public function testDataBaseConnection()
-    {        
-        $this->getConnection()->createDataSet(array('users'));
-        $queryTable = $this->getConnection()->createQueryTable(
-            'users', 'SELECT * FROM users' );
-        $expectedTable = $this->getDataSet()->getTable('users');
-        //Here we check that the table in the database matches the data in the XML file
-        $this->assertTablesEqual($expectedTable, $queryTable);
-    }
-    
-    public function testCreateDataSetAssertion()
-    {
-		$ds = new PHPUnit\DbUnit\DataSet\QueryDataSet($this->getConnection());
-		$ds->addTable('usersTest', 'SELECT * FROM users');
-        $expectedDataSet = $this->getDataSet();
-        $this->assertDataSetsEqual($expectedDataSet, $ds);
-    }
-	
+
     /**
      * @covers ezSQLcore::get_host_port
      * @todo   Implement testGet_host_port().
@@ -143,20 +106,13 @@ class ezSQLcoreTest extends TestCase {
      */
     public function testGet_row() {
         $this->assertNull($this->object->get_row());
-		
-		//$rows = $this->object->query( "INSERT INTO $wpdb->users (display_name) VALUES ('Walter Sobchak')" );
-		//$this->assertEquals( 1, $rows );
-		//$this->assertNotEmpty( $this->object->insert_id );
-
-		//$row = $this->object->get_row( $this->object->prepare( "SELECT * FROM $wpdb->users WHERE ID = %d", $this->object->insert_id ) );
-		//$this->assertInternalType( 'object', $row );
-		//$this->assertEquals( 'Walter Sobchak', $row->display_name );
     } // testGet_row
 
     /**
      * @covers ezSQLcore::get_col
      */
     public function testGet_col() {
+        $this->object->last_result = array();
         $this->assertEmpty($this->object->get_col());
     } // testGet_col
 
@@ -207,7 +163,9 @@ class ezSQLcoreTest extends TestCase {
      * @covers ezSQLcore::vardump
      */
     public function testVardump() {
-        $this->object->vardump();
+        $this->object->last_result = array('Test 1', 'Test 2');
+        $this->assertNotEmpty($this->object->vardump());
+        
     } // testVardump
 
     /**
@@ -215,7 +173,8 @@ class ezSQLcoreTest extends TestCase {
      * @covers ezSQLcore::dumpvar
      */
     public function testDumpvar() {
-        $this->object->dumpvar('');
+        $this->object->last_result = array('Test 3');   
+        $this->assertNotEmpty($this->object->dumpvar(''));
     } // testDumpvar
 
     /**
@@ -251,16 +210,15 @@ class ezSQLcoreTest extends TestCase {
      */
     public function testTimer_start() {
         $this->object->timer_start('test_timer');
+        $this->assertNotNull($this->object->timers['test_timer']);        
     } // testTimer_start
 
     /**
      * @covers ezSQLcore::timer_elapsed
      */
     public function testTimer_elapsed() {
-        $expected = 0;
-        
-        $this->object->timer_start('test_timer');
-        
+        $expected = 0;        
+        $this->object->timer_start('test_timer');        
         $this->assertGreaterThanOrEqual($expected, $this->object->timer_elapsed('test_timer'));
     } // testTimer_elapsed
 
@@ -268,8 +226,10 @@ class ezSQLcoreTest extends TestCase {
      * @covers ezSQLcore::timer_update_global
      */
     public function testTimer_update_global() {
-        $this->object->timer_start('test_timer');
+        $this->object->timer_start('test_timer');   
         $this->object->timer_update_global('test_timer');
+        $expected = $this->object->total_query_time;     
+        $this->assertGreaterThanOrEqual($expected, $this->object->timer_elapsed('test_timer'));    
     }
 
     /**
@@ -289,6 +249,66 @@ class ezSQLcoreTest extends TestCase {
      * @todo   Implement testCount().
      */
     public function testCount()
+    {
+        // Remove the following lines when you implement this test.
+        $this->markTestIncomplete(
+            'This test has not been implemented yet.'
+        );
+    }
+    
+    /**
+     * @covers ezSQLcore::delete
+     * @todo   Implement testDelete().
+     */
+    public function testDelete()
+    {
+        // Remove the following lines when you implement this test.
+        $this->markTestIncomplete(
+            'This test has not been implemented yet.'
+        );
+    }
+       
+    /**
+     * @covers ezSQLcore::show
+     * @todo   Implement testShow().
+     */
+    public function testShow()
+    {
+        // Remove the following lines when you implement this test.
+        $this->markTestIncomplete(
+            'This test has not been implemented yet.'
+        );
+    }
+    
+    /**
+     * @covers ezSQLcore::insert
+     * @todo   Implement testInsert().
+     */
+    public function testInsert()
+    {
+        // Remove the following lines when you implement this test.
+        $this->markTestIncomplete(
+            'This test has not been implemented yet.'
+        );
+    }
+    
+    /**
+     * @covers ezSQLcore::update
+     * @todo   Implement testUpdate().
+     */
+    public function testUpdate()
+    {
+        // Remove the following lines when you implement this test.
+        $this->markTestIncomplete(
+            'This test has not been implemented yet.'
+        );
+    }
+	
+    /**
+     * @covers ezSQLcore::replace
+     * @todo   Implement testReplace().
+     */
+    public function testReplace()
     {
         // Remove the following lines when you implement this test.
         $this->markTestIncomplete(

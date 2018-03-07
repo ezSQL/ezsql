@@ -1,10 +1,8 @@
 <?php
-
 require_once('ez_sql_loader.php');
 
 require 'vendor/autoload.php';
 use PHPUnit\Framework\TestCase;
-use PHPUnit\DbUnit\TestCaseTrait;
 
 /**
  * Test class for ezSQL_pdo.
@@ -22,13 +20,9 @@ use PHPUnit\DbUnit\TestCaseTrait;
  *
  * @author  Stefanie Janine Stoelting <mail@stefanie-stoelting.de>
  * @name    ezSQL_pdoTest
- * @uses    postgresql_test_db_tear_up.sql
- * @uses    postgresql_test_db_tear_down.sql
- * @uses    mysql_test_db_tear_up.sql
- * @uses    mysql_test_db_tear_down.sql
  * @uses    ez_test.sqlite
  * @package ezSQL
- * @subpackage unitTests
+ * @subpackage Tests
  * @license FREE / Donation (LGPL - You may do what you like with ezSQL - no exceptions.)
  */
 class ezSQL_pdoTest extends TestCase {

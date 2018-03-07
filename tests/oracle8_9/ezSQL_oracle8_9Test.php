@@ -1,5 +1,4 @@
 <?php
-
 require_once('ez_sql_loader.php');
 
 require 'vendor/autoload.php';
@@ -15,7 +14,7 @@ use PHPUnit\DbUnit\TestCaseTrait;
  * @link    http://twitter.com/justinvincent
  * @name    ezSQL_oracle8_9Test
  * @package ezSQL
- * @subpackage unitTests
+ * @subpackage Tests
  * @license FREE / Donation (LGPL - You may do what you like with ezSQL - no exceptions.)
  * @todo The connection to Oracle is not tested by now. There might also be 
  *       tests done for different versions of Oracle

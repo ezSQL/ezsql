@@ -14,10 +14,8 @@ use PHPUnit\Framework\TestCase;
  *
  * @author  Stefanie Janine Stoelting <mail@stefanie-stoelting.de>
  * @name    ezSQL_mysqliTest
- * @uses    mysql_test_db_tear_up.sql
- * @uses    mysql_test_db_tear_down.sql
  * @package ezSQL
- * @subpackage unitTests
+ * @subpackage Tests
  * @license FREE / Donation (LGPL - You may do what you like with ezSQL - no exceptions.)
  */
 class ezSQL_mysqliTest extends TestCase {

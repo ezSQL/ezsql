@@ -1,11 +1,8 @@
 <?php
-
 require_once('ez_sql_loader.php');
 
 require 'vendor/autoload.php';
 use PHPUnit\Framework\TestCase;
-use PHPUnit\DbUnit\TestCaseTrait;
-require_once dirname(__FILE__) . '/shared/ez_sql_recordset.php';
 
 /**
  * Test class for ezSQL_recordset.
@@ -17,7 +14,7 @@ require_once dirname(__FILE__) . '/shared/ez_sql_recordset.php';
  * @subpackage unitTests
  * @license FREE / Donation (LGPL - You may do what you like with ezSQL - no exceptions.)
  */
-class ezSQL_recordsetTest2 extends PHPUnit_Framework_TestCase {
+class ezSQL_recordsetTest extends TestCase {
 
     /**
      * constant string user name
@@ -61,7 +58,12 @@ class ezSQL_recordsetTest2 extends PHPUnit_Framework_TestCase {
      * This method is called before a test is executed.
      */
     protected function setUp() {
-        $this->ezSQL = new ezSQL_mysql;
+        if (!extension_loaded('mysqli')) {
+            $this->markTestSkipped(
+              'The MySQL Lib is not available.'
+            );
+        }
+        $this->ezSQL = new ezSQL_mysqli;
         $this->ezSQL->quick_connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME);        
         
         $this->ezSQL->select(self::TEST_DB_NAME);
@@ -73,7 +75,7 @@ class ezSQL_recordsetTest2 extends PHPUnit_Framework_TestCase {
         $this->ezSQL->query('INSERT INTO unit_test(id, test_key) VALUES(4, \'test 4\')');        
         $this->ezSQL->query('INSERT INTO unit_test(id, test_key) VALUES(5, \'test 5\')'); 
         
-        $this->ezSQL->query('SELECT * FROM unit_test WHERE id = 7');
+        $this->ezSQL->query('SELECT * FROM unit_test');
 
         $this->object = new ezSQL_recordset($this->ezSQL->get_results());
     } // setUp
