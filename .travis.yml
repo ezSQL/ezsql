@@ -18,7 +18,8 @@ before_script:
   - composer self-update
   - composer install --prefer-source --no-interaction
   - mysql -e 'CREATE DATABASE IF NOT EXISTS ez_test;'
-  - mysql -e 'GRANT ALL PRIVILEGES ON ez_test.* TO ez_test@localhost IDENTIFIED BY ezTest '
+  - mysql -e 'GRANT ALL PRIVILEGES ON ez_test.* TO ez_test@localhost;'
+  - mysql -e "SET PASSWORD FOR 'ez_test'@'localhost' = PASSWORD('ezTest')"
 
 # Commands you want to run that will verify your build.
 script: phpunit
