@@ -21,10 +21,10 @@
             "sqlsrv/ez_sql_sqlsrv.php",
             "oracle8_9/oracle8_9.php",
             "oracleTNS/oracleTNS.php",
--           "sqlite/ez_sql_sqlite.php",
+            "sqlite/ez_sql_sqlite.php",
             "sqlite3/ez_sql_sqlite3.php",
             "shared/ez_sql_core.php",
-            "shared/ez_sql_recordset.php",
+            "recordset/ez_sql_recordset.php",
             "mssql/ez_sql_mssql.php",
             "sybase/ez_sql_sybase.php",
             "codeigniter/ez_sql_codeigniter.php"
