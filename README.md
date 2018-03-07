@@ -1,5 +1,8 @@
 ezSQL
 =====
+[![Build Status](https://travis-ci.org/techno-express/ezSQL.svg?branch=master)](https://travis-ci.org/techno-express/ezSQL)
+[![Coverage Status](https://coveralls.io/repos/github/techno-express/ezSQL/badge.svg?branch=master)](https://coveralls.io/github/techno-express/ezSQL?branch=master)
+[![Maintainability](https://api.codeclimate.com/v1/badges/8db71512a019ab280a16/maintainability)](https://codeclimate.com/github/techno-express/ezSQL/maintainability)
 
 Author
 ------
