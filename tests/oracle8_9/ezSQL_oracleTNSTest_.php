@@ -43,7 +43,7 @@ class ezSQL_oracleTNSTest extends TestCase {
      * This method is called before a test is executed.
      */
     protected function setUp() {
-        if (!extension_loaded('pdo_oci')) {
+        if (!extension_loaded('oci8_12c')) {
             $this->markTestSkipped(
               'The Oracle OCI Lib is not available.'
             );
@@ -69,8 +69,8 @@ class ezSQL_oracleTNSTest extends TestCase {
      */
     protected function tearDown() {
         // Drop the sequence
-        $sql = 'DROP SEQUENCE ' . $this->sequenceName;
-        $this->object->query($sql);
+        //$sql = 'DROP SEQUENCE ' . $this->sequenceName;
+        //$this->object->query($sql);
 
         $this->object = null;
     } // tearDown

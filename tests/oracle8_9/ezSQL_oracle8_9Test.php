@@ -3,7 +3,6 @@ require_once('ez_sql_loader.php');
 
 require 'vendor/autoload.php';
 use PHPUnit\Framework\TestCase;
-use PHPUnit\DbUnit\TestCaseTrait;
 
 /**
  * Test class for ezSQL_oracle8_9.
