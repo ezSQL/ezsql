@@ -164,7 +164,7 @@ class ezSQLcoreTest extends TestCase {
      */
     public function testVardump() {
         $this->object->last_result = array('Test 1', 'Test 2');
-        $this->assertNotEmpty($this->object->vardump());
+        $this->assertNotEmpty($this->object->vardump($this->object->last_result));
         
     } // testVardump
 
@@ -173,8 +173,8 @@ class ezSQLcoreTest extends TestCase {
      * @covers ezSQLcore::dumpvar
      */
     public function testDumpvar() {
-        $this->object->last_result = array('Test 3');   
-        $this->assertNotEmpty($this->object->dumpvar(''));
+        $this->object->last_result = array('Test'=>'Test 3');   
+        $this->assertNotEmpty($this->object->dumpvar($this->object->last_result));
     } // testDumpvar
 
     /**
@@ -269,10 +269,10 @@ class ezSQLcoreTest extends TestCase {
     }
        
     /**
-     * @covers ezSQLcore::show
-     * @todo   Implement testShow().
+     * @covers ezSQLcore::showing
+     * @todo   Implement testShowing().
      */
-    public function testShow()
+    public function testShowing()
     {
         // Remove the following lines when you implement this test.
         $this->markTestIncomplete(

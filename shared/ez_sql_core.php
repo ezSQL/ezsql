@@ -2,6 +2,7 @@
 	/**********************************************************************
 	*  Author: Justin Vincent (jv@vip.ie)
            * Author: Stefanie Janine Stoelting <mail@stefanie-stoelting.de>
+           * Contributor:  Lawrence Stubbs <technoexpressnet@gmail.com>
 	*  Web...: http://justinvincent.com
 	*  Name..: ezSQL
 	*  Desc..: ezSQL Core module - database abstraction library to make
@@ -715,7 +716,7 @@
     }
     
 	/**********************************************************************
-           * desc: shows an result given the table, fields, by operator condition or conditional array
+           * desc: returns an result set given the table, fields, by operator condition or conditional array
            * param: @table, - database table to access
            *        @fields, - table fields, string
            *        @wherekey, - where clause, assoc array key, value 
@@ -728,14 +729,14 @@
            *        @combine - combine operator conditions with, either 'AND','OR', 'NOT', 'AND NOT'
            * returns: a result set - see docs for more details
 	*/
-    function show($table, $fields = '*', $wherekey = array( '1' ), $operator = '=', $combine = 'AND') {            
+    function showing($table, $fields = '*', $wherekey = array( '1' ), $operator = '=', $combine = 'AND') {            
         if ( ! is_string( $fields ) || ! isset($table) ) {
             return false;
         }
         
-        $sql="SELECT `$fields` FROM ".$table;
+        $sql="SELECT $fields FROM ".$table;
     
-        $where = _where_clause( $wherekey, $operator, $combine );
+        $where = $this->_where_clause( $wherekey, $operator, $combine );
         if (is_string($where)) {
             $sql .= ' WHERE '.$where.';';
             return $this->get_results($sql);            
@@ -770,7 +771,7 @@
             else $sql.= "`$key`='".$this->escape($val)."', ";
         }
         
-        $where = _where_clause( $wherekey, $operator, $combine );
+        $where = $this->_where_clause( $wherekey, $operator, $combine );
         if (is_string($where)) {   
             $sql = rtrim($sql, ', ') . ' WHERE '.$where.';';
             return $this->query($sql);       
@@ -788,7 +789,7 @@
         
         $sql="DELETE FROM `$table`";
         
-        $where = _where_clause( $wherekey, $operator, $combine );
+        $where = $this->_where_clause( $wherekey, $operator, $combine );
         if (is_string($where)) {   
             $sql .= ' WHERE '.$where.';';
             return $this->query($sql);       
@@ -833,7 +834,7 @@
            * returns: id of replaced record, false if error
 	*/
     function replace($table, $keyandvalue) {
-            return _query_insert_replace($table, $keyandvalue, 'REPLACE');
+            return $this->_query_insert_replace($table, $keyandvalue, 'REPLACE');
         }
 
 	/**********************************************************************
@@ -843,7 +844,7 @@
            * returns: id of inserted record, false if error
 	*/
     function insert($table, $keyandvalue) {
-            return _query_insert_replace($table, $keyandvalue, 'INSERT');
+            return $this->_query_insert_replace($table, $keyandvalue, 'INSERT');
         }
     
     /**

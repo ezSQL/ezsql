@@ -18,12 +18,12 @@ Change Log
 Note: This change log isn't being used any more due to automated github tracking
 
 3.08 - Merged fork https://github.com/sjstoelting/ezSQL3 to be current with this repo. 
-* Added/Updated PHPunit tests, some marked as incomplete or not fully implemented. My projects are mySQLi based.
+* Added/Updated PHPunit tests, some marked as incomplete or not fully implemented, SQL drivers not loaded will be skipped. My projects are mySQLi based.
 * Refactor class code to use `spl_autoload_register`. 
 * Simplely using `require_once "ez_sql_loader.php";` 
-  then `$database = new database_driver_class;` will get multi classes loaded if need be. 
-* Added methods update, insert, replace, delete to ezSQL Core class, should be able to handle most use cases as is. 
-  These new methods will create proper SQL statements from supplied fields, prevents injections, then execute guery.
+  then `$database = new database_driver_class;`. This will allow multi SQLdb loaded if need be. 
+* Added methods update, insert, replace, delete, and showing to ezSQL Core class, should be able to handle most use cases as is.  
+  These new methods will create proper SQL statements from supplied fields, prevent injections, then execute guery, in case of showing execute get_results. They have been fully PHPunit tested.
 
 ```
 ezSQL3 - From Author: Stefanie Janine Stoelting - http://stefanie-stoelting.de

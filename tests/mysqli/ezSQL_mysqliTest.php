@@ -13,6 +13,7 @@ use PHPUnit\Framework\TestCase;
  * Run database tear down after tests to get rid of the database and the user.
  *
  * @author  Stefanie Janine Stoelting <mail@stefanie-stoelting.de>
+ * @Contributor  Lawrence Stubbs <technoexpressnet@gmail.com>
  * @name    ezSQL_mysqliTest
  * @package ezSQL
  * @subpackage Tests
@@ -240,7 +241,113 @@ class ezSQL_mysqliTest extends TestCase {
 
         $this->assertEquals(1, $this->object->getInsertId($this->object->dbh));
     } // testInsertId
-
+    
+    /**
+     * @covers ezSQLcore::insert
+     */
+    public function testInsert()
+    {
+        $this->object->connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD);
+        $this->object->select(self::TEST_DB_NAME);
+        $this->object->query('CREATE TABLE unit_test(id int(11) NOT NULL AUTO_INCREMENT, test_key varchar(50), PRIMARY KEY (ID))ENGINE=MyISAM  DEFAULT CHARSET=utf8');
+        $this->assertEquals($this->object->insert('unit_test', array('id'=>'2', 'test_key'=>'test 2' )), 2);
+    }
+        
+    /**
+     * @covers ezSQLcore::replace
+     */
+    public function testReplace()
+    {
+        $this->object->connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD);
+        $this->object->select(self::TEST_DB_NAME);
+        $this->object->query('CREATE TABLE unit_test(id int(11) NOT NULL AUTO_INCREMENT, test_key varchar(50), PRIMARY KEY (ID))ENGINE=MyISAM  DEFAULT CHARSET=utf8');
+        $this->object->insert('unit_test', array('id'=>'2', 'test_key'=>'test 2' ));
+        $this->assertEquals($this->object->replace('unit_test', array('id'=>'2', 'test_key'=>'test 3' )), 2);
+    }
+    
+    /**
+     * @covers ezSQLcore::update
+     */
+    public function testUpdate()
+    {
+        $this->object->connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD);
+        $this->object->select(self::TEST_DB_NAME);
+        $this->object->query('CREATE TABLE unit_test(id int(11) NOT NULL AUTO_INCREMENT, test_key varchar(50), PRIMARY KEY (ID))ENGINE=MyISAM  DEFAULT CHARSET=utf8');
+        $this->object->insert('unit_test', array('id'=>'1', 'test_key'=>'test 1' ));
+        $this->object->insert('unit_test', array('id'=>'2', 'test_key'=>'test 2' ));
+        $this->object->insert('unit_test', array('id'=>'3', 'test_key'=>'test 3' ));
+        $unit_test['test_key'] = 'testing';
+        $where['id'] = '1';
+        $this->assertEquals($this->object->update('unit_test', $unit_test, $where), 1);
+        $where['test_key'] = 'test 3';
+        $where['id'] = '3';
+        $this->assertEquals($this->object->update('unit_test', $unit_test, $where), 1);
+        $where['id'] = '2';
+        $this->assertEquals($this->object->update('unit_test', $unit_test, $where), 0);
+        $where['test_key'] = 'test 2';
+        $this->assertEquals($this->object->update('unit_test', $unit_test, $where), 1);
+    }
+    
+    /**
+     * @covers ezSQLcore::delete
+     */
+    public function testDelete()
+    {
+        $this->object->connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD);
+        $this->object->select(self::TEST_DB_NAME);
+        $this->object->query('CREATE TABLE unit_test(id int(11) NOT NULL AUTO_INCREMENT, test_key varchar(50), PRIMARY KEY (ID))ENGINE=MyISAM  DEFAULT CHARSET=utf8');
+        $unit_test['id'] = '1';
+        $unit_test['test_key'] = 'test 1';
+        $this->object->insert('unit_test', $unit_test );
+        $unit_test['id'] = '2';
+        $unit_test['test_key'] = 'test 2';
+        $this->object->insert('unit_test', $unit_test );
+        $unit_test['id'] = '3';
+        $unit_test['test_key'] = 'test 3';
+        $this->object->insert('unit_test', $unit_test );
+        $where['id'] = '1';
+        $this->assertEquals($this->object->delete('unit_test', $where), 1);
+        $where['test_key'] = 'test 3';
+        $where['id'] = '3';
+        $this->assertEquals($this->object->delete('unit_test', $where), 1);
+        $where['test_key'] = 'test 2';
+        $this->assertEquals($this->object->delete('unit_test', $where), 0);
+        $where['id'] = '2';
+        $this->assertEquals($this->object->delete('unit_test', $where), 1);
+    }  
+       
+    /**
+     * @covers ezSQLcore::showing
+     */
+    public function testShowing()
+    {
+        $this->object->connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD);
+        $this->object->select(self::TEST_DB_NAME);
+        $this->object->query('CREATE TABLE unit_test(id int(11) NOT NULL AUTO_INCREMENT, test_key varchar(50), PRIMARY KEY (ID))ENGINE=MyISAM  DEFAULT CHARSET=utf8');
+        $this->object->insert('unit_test', array('id'=>'1', 'test_key'=>'testing 1' ));
+        $this->object->insert('unit_test', array('id'=>'2', 'test_key'=>'testing 2' ));
+        $this->object->insert('unit_test', array('id'=>'3', 'test_key'=>'testing 3' ));
+        
+        $result = $this->object->showing('unit_test');
+        $i = 1;
+        foreach ($result as $row) {
+            $this->assertEquals($i, $row->id);
+            $this->assertEquals('testing ' . $i, $row->test_key);
+            ++$i;
+        }
+        
+        $where['test_key'] = 'testing 2';
+        $result = $this->object->showing('unit_test', 'id', $where);
+        foreach ($result as $row) {
+            $this->assertEquals(2, $row->id);
+        }
+        
+        $result = $this->object->showing('unit_test', 'test_key', array( 'id'=>'3' ));
+        foreach ($result as $row) {
+            $this->assertEquals('testing 3', $row->test_key);
+        }
+    }    
+    
     /**
      * @covers ezSQL_mysqli::prepare
      */
