@@ -39,7 +39,19 @@
 		var $dbhost = false;
 		var $encoding = false;
 		var $rows_affected = false;
+        
+    /**
+     * Host name or IP address
+     * @var string
+     */
+    private $_dbhost;
 
+    /**
+     * Database charset
+     * @var string Default is utf8
+     */
+    private $_charset = 'utf8';
+    
 		/**********************************************************************
 		*  Constructor - allow the user to perform a quick connect at the
 		*  same time as initialising the ezSQL_mysql class
@@ -332,5 +344,31 @@
 			$this->conn_queries = 0; // Reset connection queries count
 			@mysql_close($this->dbh);
 		}
+        
+    /**
+     * Returns the current database server host
+     *
+     * @return string
+     */
+    public function getDBHost() {
+        return $this->_dbhost;
+    } // getDBHost
 
+    /**
+     * Returns the current connection charset
+     *
+     * @return string
+     */
+    public function getCharset() {
+        return $this->_charset;
+    } // getCharset
+
+    /**
+     * Returns the last inserted autoincrement
+     *
+     * @return int
+     */
+    public function getInsertId() {
+        return mysql_insert_id();
+    } // getInsertId
 	}
