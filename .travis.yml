@@ -2,7 +2,6 @@ language: php
 
 # Versions of PHP you want your project run with.
 php:
-  - 5.4
   - 5.5
   - 5.6
   - 7.0
@@ -28,6 +27,5 @@ script: phpunit
 # fast_finish: If your build fails do not continue trying to build, just stop.
 matrix:
   allow_failures:
-    - php: 5.4
-    - php: 7.0
+    - php: 5.5
   fast_finish: true
