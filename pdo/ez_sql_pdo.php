@@ -59,6 +59,7 @@
 		function connect($dsn='', $user='', $password='', $ssl=array())
 		{
 			global $ezsql_pdo_str; $return_val = false;
+            $this->_connected = false;
 			
 			// Must have a dsn and user
 			if ( ! $dsn || ! $user )
@@ -73,10 +74,12 @@
 				if(!empty($ssl))
 				{
 					$this->dbh = new PDO($dsn, $user, $password, $ssl);
+                    $this->_connected = true;
 				}
 				else
 				{
 					$this->dbh = new PDO($dsn, $user, $password);
+                    $this->_connected = true;
 				}
 				$this->conn_queries = 0;
 
@@ -312,5 +315,51 @@
 			return $return_val;
 
 		}
+
+    /**
+     * Close the database connection
+     */
+    public function disconnect(){
+        if ($this->dbh) {
+            $this->dbh = null;
+            $this->_connected = false;
+        }
+     } // disconnect
+
+    /**
+     * Creates a SET nvp sql string from an associative array (and escapes all values)
+     *
+     *     $db_data = array('login'=>'jv','email'=>'jv@vip.ie', 'user_id' => 1, 'created' => 'NOW()');
+     *
+     *     $db->query("INSERT INTO users SET ".$db->get_set($db_data));
+     *
+     *     ...OR...
+     *
+     *     $db->query("UPDATE users SET ".$db->get_set($db_data)." WHERE user_id = 1");
+     *
+     * Output:
+     *
+     *     login = 'jv', email = 'jv@vip.ie', user_id = 1, created = NOW()
+     *
+     * @param array $params
+     * @return string
+     */
+    public function get_set($params) {
+        $sql = '';
+
+        foreach ( $params as $field => $val ) {
+            if ( $val === 'true' ) {
+                $val = 1;
+            } elseif ( $val === 'false' ) {
+                $val = 0;
+            } elseif ( $val == 'NOW()' ) {
+                $sql .= "$field = " . $this->escape($val) . ', ';
+            } else {
+                $sql .= "$field = '".$this->escape($val).'\', ';
+            }
+        }
+
+        return substr($sql, 0, -2);
+    } // get_set
 
 	}
