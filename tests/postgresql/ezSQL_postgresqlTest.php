@@ -170,7 +170,7 @@ class ezSQL_postgresqlTest extends TestCase {
     {
         $this->object->connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME, self::TEST_DB_HOST, self::TEST_DB_PORT);        
         $this->object->query('CREATE TABLE unit_test(id integer, test_key varchar(50), PRIMARY KEY (ID))');
-        $this->assertEquals($this->object->insert('unit_test', array('id'=>'2', 'test_key'=>'test 2' )), 2);
+        $this->assertEquals($this->object->insert('unit_test', array('id'=>'1', 'test_key'=>'test 2' )), 1);
         $this->assertEquals(0, $this->object->query('DROP TABLE unit_test'));
     }
         
@@ -180,20 +180,20 @@ class ezSQL_postgresqlTest extends TestCase {
     public function testUpdate()
     {
         $this->object->connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME, self::TEST_DB_HOST, self::TEST_DB_PORT);        
-        $this->object->query('CREATE TABLE unit_test(id integer, test_key varchar(50), PRIMARY KEY (ID))');
-        $this->object->insert('unit_test', array('id'=>'1', 'test_key'=>'test 1' ));
-        $this->object->insert('unit_test', array('id'=>'2', 'test_key'=>'test 2' ));
-        $this->object->insert('unit_test', array('id'=>'3', 'test_key'=>'test 3' ));
+        $this->object->query('CREATE TABLE unit_test2(id integer, test_key varchar(50), PRIMARY KEY (ID))');
+        $this->object->insert('unit_test2', array('id'=>'1', 'test_key'=>'test 1' ));
+        $this->object->insert('unit_test2', array('id'=>'2', 'test_key'=>'test 2' ));
+        $this->object->insert('unit_test2', array('id'=>'3', 'test_key'=>'test 3' ));
         $unit_test['test_key'] = 'testing';
         $where['id'] = '1';
-        $this->assertEquals($this->object->update('unit_test', $unit_test, $where), 1);
+        $this->assertEquals($this->object->update('unit_test2', $unit_test, $where), 1);
         $where['test_key'] = 'test 3';
         $where['id'] = '3';
-        $this->assertEquals($this->object->update('unit_test', $unit_test, $where), 1);
+        $this->assertEquals($this->object->update('unit_test2', $unit_test, $where), 1);
         $where['id'] = '2';
-        $this->assertEquals($this->object->update('unit_test', $unit_test, $where), 0);
+        $this->assertEquals($this->object->update('unit_test2', $unit_test, $where), 0);
         $where['test_key'] = 'test 2';
-        $this->assertEquals($this->object->update('unit_test', $unit_test, $where), 1);
+        $this->assertEquals($this->object->update('unit_test2', $unit_test, $where), 1);
     }
     
     /**
