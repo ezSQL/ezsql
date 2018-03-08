@@ -698,16 +698,16 @@
                         return false;
                     } else {
                         if ($needtoskip) $where.= "'".$this->escape($val)."' $combinewith ";
-                        elseif(strtolower($val)=='null') $where.= "`$key` IS NULL $combinewith ";
-                        else $where.= "`$key`".$iscondition."'".$this->escape($val)."' $combinewith ";                            
+                        elseif(strtolower($val)=='null') $where.= "$key IS NULL $combinewith ";
+                        else $where.= "$key".$iscondition."'".$this->escape($val)."' $combinewith ";                            
                         $needtoskip = (($iscondition=='BETWEEN') || ($iscondition=='NOT BETWEEN')) ? true : false;
                         $i++;
                     }
                 }
             } else {
                 foreach($wherekey as $key=>$val) {
-                    if(strtolower($val)=='null') $where.= "`$key` IS NULL $combinewith ";
-                    else $where.= "`$key`".$condition."'".$this->escape($val)."' $combinewith ";
+                    if(strtolower($val)=='null') $where.= "$key IS NULL $combinewith ";
+                    else $where.= "$key".$condition."'".$this->escape($val)."' $combinewith ";
                 }
             }
             $where = rtrim($where, " $combinewith ");
@@ -766,9 +766,9 @@
         $sql="UPDATE $table SET ";
         
         foreach($keyandvalue as $key=>$val) {
-            if(strtolower($val)=='null') $sql.= "`$key` = NULL, ";
-            elseif(in_array(strtolower($val), array( 'current_timestamp()', 'date()', 'now()' ))) $sql.= "`$key` = CURRENT_TIMESTAMP(), ";
-            else $sql.= "`$key`='".$this->escape($val)."', ";
+            if(strtolower($val)=='null') $sql.= "$key = NULL, ";
+            elseif(in_array(strtolower($val), array( 'current_timestamp()', 'date()', 'now()' ))) $sql.= "$key = CURRENT_TIMESTAMP(), ";
+            else $sql.= "$key='".$this->escape($val)."', ";
         }
         
         $where = $this->_where_clause( $wherekey, $operator, $combine );
@@ -809,11 +809,11 @@
             return false;
         }
             
-        $sql="$type INTO $table ";
+        $sql="$type INTO $table";
         $v=''; $n='';
 
         foreach($keyandvalue as $key=>$val) {
-            $n.="`$key`, ";
+            $n.="$key, ";
             if(strtolower($val)=='null') $v.="NULL, ";
             elseif(in_array(strtolower($val), array( 'current_timestamp()', 'date()', 'now()' ))) $v.="CURRENT_TIMESTAMP(), ";
             else $v.= "'".$this->escape($val)."', ";
