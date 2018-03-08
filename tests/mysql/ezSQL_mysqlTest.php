@@ -60,7 +60,7 @@ class ezSQL_mysqlTest extends TestCase {
               'The MySQL Lib is not available.'
             );
         }
-        $this->object = new ezSQL_mysql(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME, self::TEST_DB_CHARSET);
+        $this->object = new ezSQL_mysql();
     }
 
     /**
@@ -83,11 +83,11 @@ class ezSQL_mysqlTest extends TestCase {
     /**
      * @covers ezSQL_mysql::quick_connect
      */
-   //public function testQuick_connect2() {
-    //    $result = $this->object->quick_connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME, self::TEST_DB_CHARSET);
+   public function testQuick_connect2() {
+        $result = $this->object->quick_connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME, self::TEST_DB_CHARSET);
 
-    //    $this->assertTrue($result);
-   // }
+        $this->assertTrue($result);
+    }
 
     /**
      * @covers ezSQL_mysql::connect
