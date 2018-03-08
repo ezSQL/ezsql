@@ -15,7 +15,23 @@
             <directory suffix=".php">./tests/</directory>
         </testsuite>
     </testsuites>
- 
+    
+    <filter>
+        <whitelist>
+            <directory>./</directory>
+            <exclude>
+                <directory>./_demo</directory>
+                <directory>./_Documentation</directory>
+                <directory>./tests</directory>
+                <directory>./vendor</directory>
+            </exclude>
+        </whitelist>
+    </filter>
+    
+    <logging>
+        <log type="coverage-clover" target="build/logs/clover.xml"/>
+    </logging>
+    
     <php>
         <var name="DB_DSN" value="mysql:dbname=ez_test;host=localhost" />
         <var name="DB_USER" value="ez_test" />
