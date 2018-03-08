@@ -28,7 +28,7 @@ after_success:
 # Commands you want to run that will verify your build.
 script: 
   - mkdir -p build/logs
-  - phpunit --coverage-clover build/logs/clover.xml
+  - php vendor/bin/phpunit -c phpunit.xml.dist
 
 # allow_failures: Allow this build to fail under the specified environments.
 # fast_finish: If your build fails do not continue trying to build, just stop.
