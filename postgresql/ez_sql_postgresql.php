@@ -270,7 +270,7 @@
 				$this->dbh = $this->connect($this->dbuser, $this->dbpassword, $this->dbname, $this->dbhost, $this->port);
 			}
             
-            pg_query($this->dbh, "SELECT lastval()")
+            pg_query($this->dbh, "SELECT lastval()");
 			// Perform the query via std postgresql_query function..
 			$this->result = @pg_query($this->dbh, $query);
 
