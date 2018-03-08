@@ -20,6 +20,11 @@ class ezSQL_codeigniterTest extends TestCase
      */
     protected function setUp()
     {
+        if (!extension_loaded('codeigniter')) {
+            $this->markTestSkipped(
+              'The Codeigniter Lib is not available.'
+            );
+        }
         $this->object = new ezSQL_codeigniter;
     }
 

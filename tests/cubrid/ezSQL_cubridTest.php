@@ -20,6 +20,11 @@ class ezSQL_cubridTest extends TestCase
      */
     protected function setUp()
     {
+        if (!extension_loaded('cubrid')) {
+            $this->markTestSkipped(
+              'The cubrid Lib is not available.'
+            );
+        }
         $this->object = new ezSQL_cubrid;
     }
 

@@ -20,6 +20,11 @@ class ezSQL_sqlite3Test extends TestCase
      */
     protected function setUp()
     {
+        if (!extension_loaded('sqlite3')) {
+            $this->markTestSkipped(
+              'The sqlite3 Lib is not available.'
+            );
+        }
         $this->object = new ezSQL_sqlite3;
     }
 
