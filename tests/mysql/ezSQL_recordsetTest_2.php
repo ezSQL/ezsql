@@ -73,7 +73,9 @@ class ezSQL_recordsetTest2 extends TestCase {
         $this->ezSQL->query('INSERT INTO unit_test(id, test_key) VALUES(2, \'test 2\')');        
         $this->ezSQL->query('INSERT INTO unit_test(id, test_key) VALUES(3, \'test 3\')');        
         $this->ezSQL->query('INSERT INTO unit_test(id, test_key) VALUES(4, \'test 4\')');        
-        $this->ezSQL->query('INSERT INTO unit_test(id, test_key) VALUES(5, \'test 5\')'); 
+        $this->ezSQL->query('INSERT INTO unit_test(id, test_key) VALUES(5, \'test 5\')');     
+        $this->ezSQL->query('INSERT INTO unit_test(id, test_key) VALUES(6, \'test 6\')');     
+        $this->ezSQL->query('INSERT INTO unit_test(id, test_key) VALUES(7, \'test 7\')'); 
         
         $this->ezSQL->query('SELECT * FROM unit_test WHERE id = 7');
 

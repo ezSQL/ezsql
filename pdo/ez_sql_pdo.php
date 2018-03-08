@@ -1,320 +1,398 @@
 <?php
+/**
+ * ezSQL class - PDO
+ * Desc..: PDO component (part of ezSQL databse abstraction library)
+ *
+ * @author  Justin Vincent (jv@jvmultimedia.com)
+ * @author  Stefanie Janine Stoelting <mail@stefanie-stoelting.de>
+ * @link    http://twitter.com/justinvincent
+ * @name    ezSQL_pdo
+ * @package ezSQL
+ * @license FREE / Donation (LGPL - You may do what you like with ezSQL - no exceptions.)
+ *
+ */
+class ezSQL_pdo extends ezSQLcore
+{
+    /**
+     * ezSQL error strings - PDO
+     * @var array
+     */
+    private $_ezsql_pdo_str = array
+        (
+            1 => 'Require $dsn and $user and $password to create a connection',
+            2 => 'File based databases require $dsn to create a connection'
+        );
 
-	/**********************************************************************
-	*  Author: Justin Vincent (jv@jvmultimedia.com)
-	*  Web...: http://twitter.com/justinvincent
-	*  Name..: ezSQL_pdo
-	*  Desc..: PDO component (part of ezSQL databse abstraction library)
-	*
-	*/
+    /**
+     * The connection parameter string
+     * @var string
+     */
+    private $_dsn;
 
-	/**********************************************************************
-	*  ezSQL error strings - PDO
-	*/
+    /**
+     * The database user name
+     * @var string
+     */
+    private $_dbuser;
+
+    /**
+     * The database password
+     * @var string
+     */
+    private $_dbpassword;
+
+    /**
+     * The array for connection options, MySQL connection charset, for example
+     * @var array
+     */
+    private $_options;
     
-    global $ezsql_pdo_str;
+    /**
+     * Whether it is a file based datbase connection, for example to a SQLite
+     * database file, or not
+     * @var boolean Default is false
+     */
+    private $_isFileBased=false;
 
-	$ezsql_pdo_str = array
-	(
-		1 => 'Require $dsn and $user and $password to create a connection'
-	);
+    /**
+     * Show errors
+     * @var boolean Default is true
+     */
+    public $show_errors = true;
 
-	/**********************************************************************
-	*  ezSQL Database specific class - PDO
-	*/
+    /**
+     * Constructor - allow the user to perform a qucik connect at the same time
+     * as initialising the ezSQL_sqlite class
+     *
+     * @param string $dsn The connection parameter string
+     *                    Default is empty string
+     * @param string $user The database user name
+     *                     Default is empty string
+     * @param string $password The database password
+     *                         Default is empty string
+     * @param array $options Array for setting connection options as MySQL
+     *                       charset for example
+     *                       Default is an empty array
+     * @param boolean $isFileBased File based databases like SQLite don't need
+     *                             user and password, they work with path in the
+     *                             dsn parameter
+     *                             Default is false
+     */
+    public function __construct($dsn='', $user='', $password='', $options=array(), $isFileBased=false) {
+        if ( ! class_exists ('PDO') ) {
+            throw new Exception('<b>Fatal Error:</b> ezSQL_pdo requires PDO Lib to be compiled and or linked in to the PHP engine');
+        }
+        if ( ! class_exists ('ezSQLcore') ) {
+            throw new Exception('<b>Fatal Error:</b> ezSQL_pdo requires ezSQLcore (ez_sql_core.php) to be included/loaded before it can be used');
+        }
 
-	if ( ! class_exists ('PDO') ) die('<b>Fatal Error:</b> ezSQL_pdo requires PDO Lib to be compiled and or linked in to the PHP engine');
-	if ( ! class_exists ('ezSQLcore') ) die('<b>Fatal Error:</b> ezSQL_pdo requires ezSQLcore (ez_sql_core.php) to be included/loaded before it can be used');
+        parent::__construct();
 
-	class ezSQL_pdo extends ezSQLcore
-	{
+        // Turn on track errors
+        ini_set('track_errors', 1);
 
-		var $dsn;
-		var $user;
-		var $password;
-		var $rows_affected = false;
-		var $insert_id;
-		var $last_result;
-		var $num_rows;
-		/**********************************************************************
-		*  Constructor - allow the user to perform a quick connect at the 
-		*  same time as initialising the ezSQL_pdo class
-		*/
+        if ( !empty($dsn) && !empty($user) && !empty($password) ) {
+            print "<p>constructor: $dsn</p>";
+            $this->connect($dsn, $user, $password, $options, $isFileBased);
+        }
+    } // __construct
 
-		function __construct($dsn='', $user='', $password='', $ssl=array())
-		{
-			// Turn on track errors 
-			ini_set('track_errors',1);
-			
-			if ( $dsn && $user )
-			{
-				$this->connect($dsn, $user, $password, $ssl);
-			}
-		}
+    /**
+     * Try to connect to the database server in the DSN parameters
+     *
+     * @param string $dsn The connection parameter string
+     *                    Default is empty string
+     * @param string $dbuser The database user name
+     *                       Default is empty string
+     * @param string $dbpassword The database password
+     *                           Default is empty string
+     * @param array $options Array for setting connection options as MySQL
+     *                       charset for example
+     *                       Default is an empty array
+     * @param boolean $isFileBased File based databases like SQLite don't need
+     *                             user and password, they work with path in the
+     *                             dsn parameter
+     *                             Default is false
+     * @return boolean
+     */
+    public function connect($dsn='', $dbuser='', $dbpassword='', $options=array(), $isFileBased=false) {
+        $this->_connected = false;
 
-		/**********************************************************************
-		*  Try to connect to database server
-		*/
+        $this->_dsn = empty($dsn) ? $this->_dsn : $dsn;
+        $this->_isFileBased = $isFileBased;
+        
+        if (!$isFileBased) {
+            $this->_dbuser = empty($dbuser) ? $this->_dbuser : $dbuser;
+            $this->_dbpassword = empty($dbpassword) ? $this->_dbpassword : $dbpassword;
+            $this->_options = $options;        
 
-		function connect($dsn='', $user='', $password='', $ssl=array())
-		{
-			global $ezsql_pdo_str; $return_val = false;
-            $this->_connected = false;
-			
-			// Must have a dsn and user
-			if ( ! $dsn || ! $user )
-			{
-				$this->register_error($ezsql_pdo_str[1].' in '.__FILE__.' on line '.__LINE__);
-				$this->show_errors ? trigger_error($ezsql_pdo_str[1],E_USER_WARNING) : null;
-			}
-			
-			// Establish PDO connection
-			try 
-			{
-				if(!empty($ssl))
-				{
-					$this->dbh = new PDO($dsn, $user, $password, $ssl);
-                    $this->_connected = true;
-				}
-				else
-				{
-					$this->dbh = new PDO($dsn, $user, $password);
-                    $this->_connected = true;
-				}
-				$this->conn_queries = 0;
+            // Must have a user and a password if not file based
+            if ( empty($this->_dsn) || empty($this->_dbuser) || empty($this->_dbpassword) ) {
+                $this->register_error($this->_ezsql_pdo_str[1] . ' in ' . __FILE__ . ' on line ' . __LINE__);
+                $this->show_errors ? trigger_error($this->_ezsql_pdo_str[1], E_USER_WARNING) : null;
+            }
+        } elseif (empty($this->_dsn)) {
+            // Must have a dsn
+            $this->register_error($this->_ezsql_pdo_str[2] . ' in ' . __FILE__ . ' on line ' . __LINE__);
+            $this->show_errors ? trigger_error($this->_ezsql_pdo_str[2], E_USER_WARNING) : null;
+        
+        }
+        
 
-				$return_val = true;
-			} 
-			catch (PDOException $e) 
-			{
-				$this->register_error($e->getMessage());
-				$this->show_errors ? trigger_error($e->getMessage(),E_USER_WARNING) : null;
-			}
+        // Establish PDO connection
+        try  {
+            if ($this->_isFileBased) {
+                $this->dbh = new PDO($this->_dsn);
+                $this->_connected = true;
+            } else {
+                $this->dbh = new PDO($this->_dsn, $this->_dbuser, $this->_dbpassword, $this->_options);
+                $this->_connected = true;
+            }
+        }
+        catch (PDOException $e) {
+            $this->register_error($e->getMessage());
+            $this->show_errors ? trigger_error($e->getMessage() . '- $dsn: ' . $dsn, E_USER_WARNING) : null;
+        }
 
-			return $return_val;			
-		}
+        $this->isConnected = $this->_connected;
 
-		/**********************************************************************
-		*  In the case of PDO quick_connect is not really needed
-		*  because std. connect already does what quick connect does - 
-		*  but for the sake of consistency it has been included
-		*/
+        return $this->_connected;
+    } // connect
 
-		function quick_connect($dsn='', $user='', $password='', $ssl=array())
-		{
-			return $this->connect($dsn, $user, $password);
-		}
+    /**
+     * With PDO it is only an alias for the connect method
+     *
+     * @param string $dsn The connection parameter string
+     *                    Default is empty string
+     * @param string $user The database user name
+     *                     Default is empty string
+     * @param string $password The database password
+     *                         Default is empty string
+     * @param array $options Array for setting connection options as MySQL
+     *                       charset for example
+     *                       Default is an empty array
+     * @param boolean $isFileBased File based databases like SQLite don't need
+     *                             user and password, they work with path in the
+     *                             dsn parameter
+     *                             Default is false
+     * @return boolean
+     */
+    public function quick_connect($dsn='', $user='', $password='', $options=array(), $isFileBased=false) {
+        return $this->connect($dsn, $user, $password, $options, $isFileBased);
+    } // quick_connect
 
-		/**********************************************************************
-		*  No real equivalent of mySQL select in PDO 
-		*  once again, function included for the sake of consistency
-		*/
+    /**********************************************************************
+    *  No real equivalent of mySQL select in SQLite
+    *  once again, function included for the sake of consistency
+    */
 
-		function select($dsn='', $user='', $password='', $ssl=array())
-		{
-			return $this->connect($dsn, $user, $password);
-		}
-		
-		/**********************************************************************
-		*  Format a string correctly for safe PDO insert
-		*  (no mater if magic quotes are on or not)
-		*/
+    /**
+     * With PDO it is only an alias for the connect method
+     *
+     * @param string $dsn The connection parameter string
+     *                    Default is empty string
+     * @param string $user The database user name
+     *                     Default is empty string
+     * @param string $password The database password
+     *                         Default is empty string
+     * @param array $options Array for setting connection options as MySQL
+     *                       charset for example
+     *                       Default is an empty array
+     * @param boolean $isFileBased File based databases like SQLite don't need
+     *                             user and password, they work with path in the
+     *                             dsn parameter
+     *                             Default is false
+     * @return boolean
+     */
+    public function select($dsn='', $user='', $password='', $options=array(), $isFileBased=false) {
+        return $this->connect($dsn, $user, $password, $options, $isFileBased);
+    } // select
 
-		function escape($str)
-		{
-			switch (gettype($str))
-			{
-				case 'string' : $str = addslashes(stripslashes($str));
-				break;
-				case 'boolean' : $str = ($str === FALSE) ? 0 : 1;
-				break;
-				default : $str = ($str === NULL) ? 'NULL' : $str;
-				break;
-			}
+    /**********************************************************************
+    *  Format a SQLite string correctly for safe SQLite insert
+    *  (no mater if magic quotes are on or not)
+    */
 
-			return $str;
-		}
+    /**
+     * Escape a string with the PDO method
+     *
+     * @param string $str
+     * @return string
+     */
+    public function escape($str) {
+        // If there is no existing database connection then try to connect
+        if ( ! isset($this->dbh) || ! $this->dbh ) {
+            $this->connect($this->_dsn, $this->user, $this->password, $this->_options, $this->_isFileBased);
+        }
 
-		/**********************************************************************
-		*  Return specific system date syntax 
-		*  i.e. Oracle: SYSDATE Mysql: NOW()
-		*/
+        // pdo quote adds ' at the beginning and at the end, remove them for standard behavior
+        $return_val = substr($this->dbh->quote($str), 1, -1);
 
-		function sysdate()
-		{
-			return "NOW()";			
-		}
+        return $return_val;
+    } // escape
 
-		/**********************************************************************
-		*  Hooks into PDO error system and reports it to user
-		*/
+    /**
+     * Return SQLite specific system date syntax
+     * i.e. Oracle: SYSDATE Mysql: NOW()
+     *
+     * @return string
+     */
+    public function sysdate() {
+        return "datetime('now')";
+    } // sysdate
 
-		function catch_error()
-		{
-			$error_str = 'No error info';
-						
-			$err_array = $this->dbh->errorInfo();
-			
-			// Note: Ignoring error - bind or column index out of range
-			if ( isset($err_array[1]) && $err_array[1] != 25)
-			{
-				
-				$error_str = '';
-				foreach ( $err_array as $entry )
-				{
-					$error_str .= $entry . ', ';
-				}
+    /**
+     * Hooks into PDO error system and reports it to user
+     *
+     * @return string
+     */
+    public function catch_error(){
+        $error_str = 'No error info';
 
-				$error_str = substr($error_str,0,-2);
+        $err_array = $this->dbh->errorInfo();
 
-				$this->register_error($error_str);
-				$this->show_errors ? trigger_error($error_str.' '.$this->last_query,E_USER_WARNING) : null;
-				
-				return true;
-			}
+        // Note: Ignoring error - bind or column index out of range
+        if ( isset($err_array[1]) && $err_array[1] != 25) {
 
-		}
+            $error_str = '';
+            foreach ( $err_array as $entry ) {
+                $error_str .= $entry . ', ';
+            }
 
-		// ==================================================================
-		//	Basic Query	- see docs for more detail
+            $error_str = substr($error_str, 0, -2);
 
-		function query($query)
-		{
+            $this->register_error($error_str);
+            $this->show_errors ? trigger_error($error_str . ' ' . $this->last_query, E_USER_WARNING) : null;
 
-			// For reg expressions
-			$query = str_replace("/[\n\r]/",'',trim($query)); 
+            return true;
+        }
 
-			// initialise return
-			$return_val = 0;
+    } // catch_error
 
-			// Flush cached values..
-			$this->flush();
+    /**
+     * Basic Query	- see docs for more detail
+     *
+     * @param type $query
+     * @return object
+     */
+    public function query($query) {
+        // For reg expressions
+        $query = str_replace("/[\n\r]/", '', trim($query));
 
-			// Log how the function was called
-			$this->func_call = "\$db->query(\"$query\")";
+        // Initialise return
+        $return_val = 0;
 
-			// Keep track of the last query for debug..
-			$this->last_query = $query;
+        // Flush cached values..
+        $this->flush();
 
-			$this->count(true, true);
+        // Log how the function was called
+        $this->func_call = "\$db->query(\"$query\")";
 
-			// Start timer
-			$this->timer_start($this->num_queries);
+        // Keep track of the last query for debug..
+        $this->last_query = $query;
 
-			// Use core file cache function
-			if ( $cache = $this->get_cache($query) )
-			{
+        $this->num_queries++;
 
-				// Keep tack of how long all queries have taken
-				$this->timer_update_global($this->num_queries);
+        // Start timer
+        $this->timer_start($this->num_queries);
 
-				// Trace all queries
-				if ( $this->use_trace_log )
-				{
-					$this->trace_log[] = $this->debug(false);
-				}
+        // Use core file cache function
+        if ( $cache = $this->get_cache($query) ) {
+            // Keep tack of how long all queries have taken
+            $this->timer_update_global($this->num_queries);
 
-				return $cache;
-			}
+            // Trace all queries
+            if ( $this->use_trace_log ) {
+                $this->trace_log[] = $this->debug(false);
+            }
 
-			// If there is no existing database connection then try to connect
-			if ( ! isset($this->dbh) || ! $this->dbh )
-			{
-				$this->connect($this->dsn, $this->user, $this->password);
-				// No existing connection at this point means the server is unreachable
-				if ( ! isset($this->dbh) || ! $this->dbh )
-					return false;
-			}
+            return $cache;
+        }
 
-			// Query was an insert, delete, update, replace
-			if ( preg_match("/^(insert|delete|update|replace|drop|create)\s+/i",$query) )
-			{		
+        // If there is no existing database connection then try to connect
+        if ( ! isset($this->dbh) || ! $this->dbh ) {
+            $this->connect($this->_dsn, $this->user, $this->password, $this->_options, $this->_isFileBased);
+        }
 
-				// Perform the query and log number of affected rows
-				$this->rows_affected = $this->dbh->exec($query);
-	
-				// If there is an error then take note of it..
-				if ( $this->catch_error() ) return false;
+        // Query was an insert, delete, update, replace
+        if ( preg_match("/^(insert|delete|update|replace|drop|create)\s+/i", $query) ) {
 
-				$is_insert = true;
+            // Perform the query and log number of affected rows
+            $this->_affectedRows = $this->dbh->exec($query);
 
-				// Take note of the insert_id
-				if ( preg_match("/^(insert|replace)\s+/i",$query) )
-				{
-					$this->insert_id = @$this->dbh->lastInsertId();	
-				}
+            // If there is an error then take note of it..
+            if ( $this->catch_error() ) {
+                return false;
+            }
 
-				// Return number fo rows affected
-				$return_val = $this->rows_affected;
-	
-			}
-			// Query was an select
-			else
-			{
+            $is_insert = true;
 
-				// Perform the query and log number of affected rows
-				$sth = $this->dbh->query($query);
-	
-				// If there is an error then take note of it..
-				if ( $this->catch_error() ) return false;
+            // Take note of the insert_id
+            if ( preg_match("/^(insert|replace)\s+/i", $query) ) {
+                $this->insert_id = @$this->dbh->lastInsertId();
+            }
 
-				$is_insert = false;
-				
-				$col_count = $sth->columnCount();
-				
-				for ( $i=0 ; $i < $col_count ; $i++ )
-				{
-					$this->col_info[$i] = new stdClass();
-					
-					if ( $meta = $sth->getColumnMeta($i) )
-					{					
-						$this->col_info[$i]->name =  $meta['name'];
-						$this->col_info[$i]->type =  !empty($meta['native_type']) ? $meta['native_type'] : 'undefined';
-						$this->col_info[$i]->max_length =  '';
-					}
-					else
-					{
-						$this->col_info[$i]->name =  'undefined';
-						$this->col_info[$i]->type =  'undefined';
-						$this->col_info[$i]->max_length = '';
-					}
-				}
+            // Return number fo rows affected
+            $return_val = $this->_affectedRows;
 
-				// Store Query Results
-				$num_rows=0;
-				while ( $row = @$sth->fetch(PDO::FETCH_ASSOC) )
-				{
-					// Store relults as an objects within main array
-					$this->last_result[$num_rows] = (object) $row;
-					$num_rows++;
-				}
+        } else {
+            // Query was an select
 
-				// Log number of rows the query returned
-				$this->num_rows = $num_rows;
+            // Perform the query and log number of affected rows
+            $sth = $this->dbh->query($query);
 
-				// Return number of rows selected
-				$return_val = $this->num_rows;
+            // If there is an error then take note of it..
+            if ( $this->catch_error() ) return false;
 
-			}
-			
-			// disk caching of queries
-			$this->store_cache($query,$is_insert);
+            $is_insert = false;
 
-			// If debug ALL queries
-			$this->trace || $this->debug_all ? $this->debug() : null ;
+            $col_count = $sth->columnCount();
 
-			// Keep tack of how long all queries have taken
-			$this->timer_update_global($this->num_queries);
+            for ( $i=0 ; $i < $col_count ; $i++ ) {
+                if ( $meta = $sth->getColumnMeta($i) ) {
+                    $this->col_info[$i]->name =  $meta['name'];
+                    $this->col_info[$i]->type =  $meta['native_type'];
+                    $this->col_info[$i]->max_length =  '';
+                } else {
+                    $this->col_info[$i]->name =  'undefined';
+                    $this->col_info[$i]->type =  'undefined';
+                    $this->col_info[$i]->max_length = '';
+                }
+            }
 
-			// Trace all queries
-			if ( $this->use_trace_log )
-			{
-				$this->trace_log[] = $this->debug(false);
-			}
-			
-			return $return_val;
+            // Store Query Results
+            $num_rows=0;
+            while ( $row = @$sth->fetch(PDO::FETCH_ASSOC) ) {
+                // Store relults as an objects within main array
+                $this->last_result[$num_rows] = (object) $row;
+                $num_rows++;
+            }
 
-		}
+            // Log number of rows the query returned
+            $this->num_rows = $num_rows;
+
+            // Return number of rows selected
+            $return_val = $this->num_rows;
+
+        }
+
+        // disk caching of queries
+        $this->store_cache($query, $is_insert);
+
+        // If debug ALL queries
+        $this->trace || $this->debug_all ? $this->debug() : null ;
+
+        // Keep tack of how long all queries have taken
+        $this->timer_update_global($this->num_queries);
+
+        // Trace all queries
+        if ( $this->use_trace_log ) {
+            $this->trace_log[] = $this->debug(false);
+        }
+
+        return $return_val;
+
+    } // query
 
     /**
      * Close the database connection
@@ -362,4 +440,4 @@
         return substr($sql, 0, -2);
     } // get_set
 
-	}
+} // ezSQL_pdo
