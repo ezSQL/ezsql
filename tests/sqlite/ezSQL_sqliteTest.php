@@ -20,7 +20,7 @@ class ezSQL_sqliteTest extends TestCase
      */
     protected function setUp()
     {
-        if (!extension_loaded('sqlite')) {
+        if (!extension_loaded('sqlite_not')) {
             $this->markTestSkipped(
               'The sqlite Lib is not available.'
             );
