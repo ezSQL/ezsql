@@ -2,7 +2,8 @@
 <phpunit 
         backupGlobals="false"
         backupStaticAttributes="false"
-        colors="true"
+        colors="true"        
+        bootstrap="vendor/autoload.php"
         convertErrorsToExceptions="true"
         convertNoticesToExceptions="true"
         convertWarningsToExceptions="true"
@@ -23,7 +24,20 @@
         <var name="DB_DBNAME" value="ez_test" />    
     </php>
     
+    <filter>
+        <whitelist>
+            <directory>./</directory>
+            <exclude>
+                <directory>./_demo</directory>
+                <directory>./_Documentation</directory>
+                <directory>./tests</directory>
+                <directory>./vendor</directory>
+            </exclude>
+        </whitelist>
+    </filter>
+    
     <logging>
         <log type="coverage-clover" target="build/logs/clover.xml"/>
+        <log type="junit" target="build/logs/junit.xml" logIncompleteSkipped="false"/>
     </logging>
 </phpunit>
