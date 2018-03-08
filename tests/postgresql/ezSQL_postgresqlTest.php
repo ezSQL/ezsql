@@ -162,7 +162,97 @@ class ezSQL_postgresqlTest extends TestCase {
         
         $this->assertEquals(0, $this->object->query('DROP TABLE unit_test'));
     } // testQuery
-
+    
+    /**
+     * @covers ezSQLcore::insert
+     */
+    public function testInsert()
+    {
+        $this->object->connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME, self::TEST_DB_HOST, self::TEST_DB_PORT);        
+        $this->object->query('CREATE TABLE unit_test(id integer, test_key varchar(50), PRIMARY KEY (ID))');
+        $this->assertEquals($this->object->insert('unit_test', array('id'=>'2', 'test_key'=>'test 2' )), 2);
+    }
+        
+    /**
+     * @covers ezSQLcore::update
+     */
+    public function testUpdate()
+    {
+        $this->object->connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME, self::TEST_DB_HOST, self::TEST_DB_PORT);        
+        $this->object->query('CREATE TABLE unit_test(id integer, test_key varchar(50), PRIMARY KEY (ID))');
+        $this->object->insert('unit_test', array('id'=>'1', 'test_key'=>'test 1' ));
+        $this->object->insert('unit_test', array('id'=>'2', 'test_key'=>'test 2' ));
+        $this->object->insert('unit_test', array('id'=>'3', 'test_key'=>'test 3' ));
+        $unit_test['test_key'] = 'testing';
+        $where['id'] = '1';
+        $this->assertEquals($this->object->update('unit_test', $unit_test, $where), 1);
+        $where['test_key'] = 'test 3';
+        $where['id'] = '3';
+        $this->assertEquals($this->object->update('unit_test', $unit_test, $where), 1);
+        $where['id'] = '2';
+        $this->assertEquals($this->object->update('unit_test', $unit_test, $where), 0);
+        $where['test_key'] = 'test 2';
+        $this->assertEquals($this->object->update('unit_test', $unit_test, $where), 1);
+    }
+    
+    /**
+     * @covers ezSQLcore::delete
+     */
+    public function testDelete()
+    {
+        $this->object->connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME, self::TEST_DB_HOST, self::TEST_DB_PORT);        
+        $this->object->query('CREATE TABLE unit_test(id integer, test_key varchar(50), PRIMARY KEY (ID))');
+        $unit_test['id'] = '1';
+        $unit_test['test_key'] = 'test 1';
+        $this->object->insert('unit_test', $unit_test );
+        $unit_test['id'] = '2';
+        $unit_test['test_key'] = 'test 2';
+        $this->object->insert('unit_test', $unit_test );
+        $unit_test['id'] = '3';
+        $unit_test['test_key'] = 'test 3';
+        $this->object->insert('unit_test', $unit_test );
+        $where['id'] = '1';
+        $this->assertEquals($this->object->delete('unit_test', $where), 1);
+        $where['test_key'] = 'test 3';
+        $where['id'] = '3';
+        $this->assertEquals($this->object->delete('unit_test', $where), 1);
+        $where['test_key'] = 'test 2';
+        $this->assertEquals($this->object->delete('unit_test', $where), 0);
+        $where['id'] = '2';
+        $this->assertEquals($this->object->delete('unit_test', $where), 1);
+    }  
+       
+    /**
+     * @covers ezSQLcore::showing
+     */
+    public function testShowing()
+    {
+        $this->object->connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME, self::TEST_DB_HOST, self::TEST_DB_PORT);        
+        $this->object->query('CREATE TABLE unit_test(id integer, test_key varchar(50), PRIMARY KEY (ID))');
+        $this->object->insert('unit_test', array('id'=>'1', 'test_key'=>'testing 1' ));
+        $this->object->insert('unit_test', array('id'=>'2', 'test_key'=>'testing 2' ));
+        $this->object->insert('unit_test', array('id'=>'3', 'test_key'=>'testing 3' ));
+        
+        $result = $this->object->showing('unit_test');
+        $i = 1;
+        foreach ($result as $row) {
+            $this->assertEquals($i, $row->id);
+            $this->assertEquals('testing ' . $i, $row->test_key);
+            ++$i;
+        }
+        
+        $where['test_key'] = 'testing 2';
+        $result = $this->object->showing('unit_test', 'id', $where);
+        foreach ($result as $row) {
+            $this->assertEquals(2, $row->id);
+        }
+        
+        $result = $this->object->showing('unit_test', 'test_key', array( 'id'=>'3' ));
+        foreach ($result as $row) {
+            $this->assertEquals('testing 3', $row->test_key);
+        }
+    }    
+    
     /**
      * @covers ezSQL_postgresql::disconnect
      */
