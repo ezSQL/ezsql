@@ -171,6 +171,7 @@ class ezSQL_postgresqlTest extends TestCase {
         $this->object->connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME, self::TEST_DB_HOST, self::TEST_DB_PORT);        
         $this->object->query('CREATE TABLE unit_test(id integer, test_key varchar(50), PRIMARY KEY (ID))');
         $this->assertEquals($this->object->insert('unit_test', array('id'=>'2', 'test_key'=>'test 2' )), 2);
+        $this->assertEquals(0, $this->object->query('DROP TABLE unit_test'));
     }
         
     /**

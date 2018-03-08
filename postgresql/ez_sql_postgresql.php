@@ -293,7 +293,7 @@
 					//$this->insert_id = pg_last_oid($this->result);
 
 					// Thx. Rafael Bernal
-					$insert_query = pg_query("SELECT currval();");
+					$insert_query = pg_query("SELECT lastval();");
 					$insert_row = pg_fetch_row($insert_query);
 					$this->insert_id = $insert_row[0];
 				}
