@@ -52,6 +52,12 @@
      */
     private $_charset = 'utf8';
     
+    /**
+     * Database connection
+     * @var resource
+     */
+    public $dbh;    
+    
 		/**********************************************************************
 		*  Constructor - allow the user to perform a quick connect at the
 		*  same time as initialising the ezSQL_mysql class
