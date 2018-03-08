@@ -63,8 +63,8 @@ class ezSQL_recordsetTest2 extends TestCase {
               'The MySQL Lib is not available.'
             );
         }
-        $this->ezSQL = new ezSQL_mysql();
-        $this->ezSQL->quick_connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME);        
+        $this->ezSQL = new ezSQL_mysql(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME, self::TEST_DB_CHARSET);
+        //$this->ezSQL->quick_connect();        
         
         $this->ezSQL->select(self::TEST_DB_NAME);
 
