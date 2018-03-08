@@ -87,7 +87,7 @@ class ezSQL_pdoTest extends TestCase {
               'The pdo_sqlite Lib is not available.'
             );
         }
-        $this->object = new ezSQL_pdo;
+        $this->object = new ezSQL_pdo();
     } // setUp
 
     /**
