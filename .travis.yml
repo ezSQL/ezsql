@@ -16,6 +16,7 @@ services:
 before_script:
   - composer self-update
   - composer install --prefer-source --no-interaction
+  - composer require php-coveralls/php-coveralls
   - mysql -e 'CREATE DATABASE IF NOT EXISTS ez_test;'
   - mysql -e 'GRANT ALL PRIVILEGES ON ez_test.* TO ez_test@localhost;'
   - mysql -e "SET PASSWORD FOR 'ez_test'@'localhost' = PASSWORD('ezTest')"
@@ -28,7 +29,7 @@ after_success:
 # Commands you want to run that will verify your build.
 script: 
   - mkdir -p build/logs
-  - php vendor/bin/phpunit -c phpunit.xml.dist
+  - phpunit tests --coverage-php
 
 # allow_failures: Allow this build to fail under the specified environments.
 # fast_finish: If your build fails do not continue trying to build, just stop.
