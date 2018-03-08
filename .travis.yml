@@ -19,7 +19,7 @@ before_script:
   - mysql -e 'CREATE DATABASE IF NOT EXISTS ez_test;'
   - mysql -e 'GRANT ALL PRIVILEGES ON ez_test.* TO ez_test@localhost;'
   - mysql -e "SET PASSWORD FOR 'ez_test'@'localhost' = PASSWORD('ezTest')"
-  - psql -c 'CREATE DATABASE IF NOT EXISTS ez_test;' -U postgres
+  - psql -c 'CREATE DATABASE ez_test;' -U postgres
   - psql -c "CREATE USER ez_test WITH PASSWORD 'ezTest';" -U postgres
   
 # Commands you want to run that will verify your build.
