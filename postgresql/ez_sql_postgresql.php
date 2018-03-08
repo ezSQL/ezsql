@@ -61,7 +61,13 @@ class ezSQL_postgresql extends ezSQLcore
      * @var boolean Default is true
      */
     public $show_errors = true;
-
+    
+    /**
+     * Database connection
+     * @var resource
+     */
+    public $dbh;
+    
     /**
      * Constructor - allow the user to perform a qucik connect at the same time
      * as initialising the ezSQL_postgresql class
