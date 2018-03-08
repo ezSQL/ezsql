@@ -295,7 +295,7 @@
 					//$this->insert_id = pg_last_oid($this->result);
 
 					// Thx. Rafael Bernal
-					$insert_query = pg_query($this->dbh, "SELECT lastval()");
+					$insert_query = pg_query($this->dbh, "SELECT lastval();");
 					$insert_row = pg_fetch_row($insert_query);
 					$this->insert_id = $insert_row[0];
 				}
@@ -303,14 +303,14 @@
 				// Return number for rows affected
  				$return_val = $this->rows_affected;
 				
-				if ( preg_match("/returning/smi",$query) )
-				{
-					while ( $row = @pg_fetch_object($this->result) )
-					{
-						$return_valx[] = $row;
-					}
-					$return_val = $return_valx;
-				}
+				//if ( preg_match("/returning/smi",$query) )
+				//{
+				//	while ( $row = @pg_fetch_object($this->result) )
+				//	{
+				//		$return_valx[] = $row;
+				//	}
+				//	$return_val = $return_valx;
+				//}
 			}
 			// Query was a select
 			else
