@@ -763,7 +763,7 @@
             return false;
         }
         
-        $sql="UPDATE `$table` SET ";
+        $sql="UPDATE $table SET ";
         
         foreach($keyandvalue as $key=>$val) {
             if(strtolower($val)=='null') $sql.= "`$key` = NULL, ";
@@ -787,7 +787,7 @@
             return false;
         }
         
-        $sql="DELETE FROM `$table`";
+        $sql="DELETE FROM $table";
         
         $where = $this->_where_clause( $wherekey, $operator, $combine );
         if (is_string($where)) {   
@@ -809,7 +809,7 @@
             return false;
         }
             
-        $sql="$type INTO `$table` ";
+        $sql="$type INTO $table ";
         $v=''; $n='';
 
         foreach($keyandvalue as $key=>$val) {
