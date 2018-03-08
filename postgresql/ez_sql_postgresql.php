@@ -71,17 +71,17 @@
 		var $rows_affected = false;
 
 		/**
-					 * Constructor - allow the user to perform a qucik connect at the same time
-					 * as initialising the ezSQL_postgresql class
-					 *
-					 * @param string $dbuser The database user name
-					 * @param string $dbpassword The database users password
-					 * @param string $dbname The name of the database
-					 * @param string $dbhost The host name or IP address of the database server.
-					 *						 Default is localhost
-					 * @param string $dbport The database TCP/IP port
-					 *						 Default is PostgreSQL default port 5432
-					 */
+		* Constructor - allow the user to perform a qucik connect at the same time
+		* as initialising the ezSQL_postgresql class
+		*
+		* @param string $dbuser The database user name
+		* @param string $dbpassword The database users password
+		* @param string $dbname The name of the database
+		* @param string $dbhost The host name or IP address of the database server.
+		*			Default is localhost
+		* @param string $dbport The database TCP/IP port
+		*			Default is PostgreSQL default port 5432
+		*/
 		public function __construct($dbuser='', $dbpassword='', $dbname='', $dbhost='localhost', $dbport='5432') {
 			if ( ! function_exists ('pg_connect') ) {
 				throw new Exception('<b>Fatal Error:</b> ezSQL_postgresql requires PostgreSQL Lib to be compiled and or linked in to the PHP engine');
@@ -100,19 +100,19 @@
 		} // __construct
 
 		/**
-					 * In the case of PostgreSQL quick_connect is not really needed because std.
-					 * connect already does what quick connect does - but for the sake of
-					 * consistency it has been included
-					 *
-					 * @param string $dbuser The database user name
-					 * @param string $dbpassword The database users password
-					 * @param string $dbname The name of the database
-					 * @param string $dbhost The host name or IP address of the database server.
-					 *						 Default is localhost
-					 * @param string $dbport The database TCP/IP port
-					 *					   Default is PostgreSQL default port 5432
-					 * @return boolean
-					 */
+		* In the case of PostgreSQL quick_connect is not really needed because std.
+		* connect already does what quick connect does - but for the sake of
+		* consistency it has been included
+		*
+		* @param string $dbuser The database user name
+		* @param string $dbpassword The database users password
+		* @param string $dbname The name of the database
+		* @param string $dbhost The host name or IP address of the database server.
+		*			Default is localhost
+		* @param string $dbport The database TCP/IP port
+		*		  Default is PostgreSQL default port 5432
+		* @return boolean
+		*/
 		function quick_connect($dbuser='', $dbpassword='', $dbname='', $dbhost='localhost', $dbport='5432') {
 			if ( ! $this->connect($dbuser, $dbpassword, $dbname, $dbhost, $dbport, true) ) ;
 			else if ( ! $this->select($dbname) );
@@ -121,17 +121,17 @@
 		} // quick_connect
 
 		/**********************************************************************
-					 * Try to connect to PostgreSQL database server
-					 *
-					 * @param string $dbuser The database user name
-					 * @param string $dbpassword The database users password
-					 * @param string $dbname The name of the database
-					 * @param string $dbhost The host name or IP address of the database server.
-					 *						 Default is localhost
-					 * @param string $dbport The database TCP/IP port
-					 *						Default is PostgreSQL default port 5432
-					 * @return boolean
-					 */
+		* Try to connect to PostgreSQL database server
+		*
+		* @param string $dbuser The database user name
+		* @param string $dbpassword The database users password
+		* @param string $dbname The name of the database
+		* @param string $dbhost The host name or IP address of the database server.
+		*			Default is localhost
+		* @param string $dbport The database TCP/IP port
+		*						Default is PostgreSQL default port 5432
+		* @return boolean
+		*/
 		public function connect($dbuser='', $dbpassword='', $dbname='', $dbhost='localhost', $dbport='5432') {
 			$this->_connected = false;
 						
@@ -157,18 +157,18 @@
 		} // connect
 
 		/**
-					 * No real equivalent of mySQL select in PostgreSQL once again, function
-					 * included for the sake of consistency
-					 *
-					 * @param string $dbuser The database user name
-					 * @param string $dbpassword The database users password
-					 * @param string $dbname The name of the database
-					 * @param string $dbhost The host name or IP address of the database server.
-					 *						 Default is localhost
-					 * @param string $dbport The database TCP/IP port
-					 *						Default is PostgreSQL default port 5432
-					 * @return boolean
-					 */
+		* No real equivalent of mySQL select in PostgreSQL once again, function
+		* included for the sake of consistency
+		*
+		* @param string $dbuser The database user name
+		* @param string $dbpassword The database users password
+		* @param string $dbname The name of the database
+		* @param string $dbhost The host name or IP address of the database server.
+		*			Default is localhost
+		* @param string $dbport The database TCP/IP port
+		*						Default is PostgreSQL default port 5432
+		* @return boolean
+		*/
 		public function select($dbuser='', $dbpassword='', $dbname='', $dbhost='localhost', $dbport='5432') {
 			$this->disconnect();						
 			$this->connect($dbuser, $dbpassword, $dbname, $dbhost, $dbport);
@@ -176,67 +176,69 @@
 		} // select
 
 		/**
-					 * Format a mySQL string correctly for safe mySQL insert
-					 * (no matter if magic quotes are on or not)
-					 *
-					 * @param string $str
-					 * @return string
-					 */
+		* Format a mySQL string correctly for safe mySQL insert
+		* (no matter if magic quotes are on or not)
+		*
+		* @param string $str
+		* @return string
+		*/
 		public function escape($str) {
 			return pg_escape_string(stripslashes($str));
 		} // escape
 
 		/**
-					 * Return PostgreSQL specific system date syntax
-					 * i.e. Oracle: SYSDATE Mysql: NOW()
-					 *
-					 * @return string
-					 */
+		* Return PostgreSQL specific system date syntax
+		* i.e. Oracle: SYSDATE Mysql: NOW()
+		*
+		* @return string
+		*/
 		public function sysdate() {
 			return 'NOW()';
 		} // sysdate
 
 		/**
-					 * Return PostgreSQL specific values: Return all tables of the current
-					 * schema
-					 *
-					 * @return string
-					 */
+		* Return PostgreSQL specific values: Return all tables of the current
+		* schema
+		*
+		* @return string
+		*/
 		public function showTables() {
 			return "SELECT table_name FROM information_schema.tables WHERE table_schema = '$this->_dbname' AND table_type='BASE TABLE'";
 		} // showTables
 
 		/**
-					 * Return the description of the given table
-					 *
-					 * @param string $tbl_name The table name
-					 * @return string
-					 */
+		* Return the description of the given table
+		*
+		* @param string $tbl_name The table name
+		* @return string
+		*/
 		public function descTable($tbl_name) {
 			return "SELECT ordinal_position, column_name, data_type, column_default, is_nullable, character_maximum_length, numeric_precision FROM information_schema.columns WHERE table_name = '$tbl_name' AND table_schema='$this->_dbname' ORDER BY ordinal_position";
 		} // descTable
 
 		/**
-					 * Return all databases of the current server
-					 *
-					 * @return string
-					 */
+		* Return all databases of the current server
+		*
+		* @return string
+		*/
 		public function showDatabases() {
 			return "SELECT datname FROM pg_database WHERE datname NOT IN ('template0', 'template1') ORDER BY 1";
 		} // showDatabases
 
 		/**
-					 * Perform PostgreSQL query and try to detirmin result value
-					 *
-					 * @param string $query
-					 * @return boolean
-					 */
+		* Perform PostgreSQL query and try to detirmin result value
+		*
+		* @param string $query
+		* @return boolean
+		*/
 		/**********************************************************************
 		*  Perform PostgreSQL query and try to detirmin result value
 		*/
 
 		function query($query)
 		{
+            // check for and replace tags created by ezSQLcore's insert, update, delete, replace, and showing methods
+            $query = str_replace('__ezsql__', ' RETURNING id', $query);
 
 			// Initialise return
 			$return_val = 0;
@@ -352,8 +354,8 @@
 		} // query
 
 		/**
-					 * Close the database connection
-					 */
+		* Close the database connection
+		*/
 		public function disconnect() {
 			if ( $this->dbh ) {
 				pg_close($this->dbh);
@@ -362,19 +364,19 @@
 		} // disconnect
 
 		/**
-					 * Returns the current database server host
-					 *
-					 * @return string
-					 */
+		* Returns the current database server host
+		*
+		* @return string
+		*/
 		public function getDBHost() {
 			return $this->_dbhost;
 		} // getDBHost
 
 		/**
-					 * Returns the current TCP/IP port
-					 *
-					 * @return string
-					 */
+		* Returns the current TCP/IP port
+		*
+		* @return string
+		*/
 		public function getPort() {
 			return $this->_dbport;
 		} // getPort
