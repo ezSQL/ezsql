@@ -227,7 +227,7 @@ class ezSQL_postgresqlTest extends TestCase {
         
         $where['id'] = '3';
         $where['test_value'] = 'testing string 3';
-        $result = $this->object->showing('unit_test', 'test_key', $where ));
+        $result = $this->object->showing('unit_test', 'test_key', $where);
         foreach ($result as $row) {
             $this->assertEquals('test 3', $row->test_key);
         }      
