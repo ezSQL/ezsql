@@ -189,14 +189,14 @@ class ezSQL_postgresqlTest extends TestCase {
         $this->assertNotEmpty($this->object->vardump($result));
         $unit_test['test_key'] = 'the key string';
         $where['test_key'] = 'test 1';
-        $this->assertEquals($this->object->update('unit_test2', $unit_test, $where), 1);
+        $this->assertEquals($this->object->update('unit_test', $unit_test, $where), 1);
         $where['test_key'] = 'test 3';
         $where['test_value'] = 'testing string 3';
-        $this->assertEquals($this->object->update('unit_test2', $unit_test, $where), 1);
+        $this->assertEquals($this->object->update('unit_test', $unit_test, $where), 1);
         $where['test_value'] = 'testing string 2';
-        $this->assertEquals($this->object->update('unit_test2', $unit_test, $where), 0);
+        $this->assertEquals($this->object->update('unit_test', $unit_test, $where), 0);
         $where['test_key'] = 'test 2';
-        $this->assertEquals($this->object->update('unit_test2', $unit_test, $where), 1);
+        $this->assertEquals($this->object->update('unit_test', $unit_test, $where), 1);
         $this->assertEquals(0, $this->object->query('DROP TABLE unit_test'));
     }
     
