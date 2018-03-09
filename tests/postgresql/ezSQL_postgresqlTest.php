@@ -205,10 +205,10 @@ class ezSQL_postgresqlTest extends TestCase {
     public function testShowing()
     {
         $this->object->connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME, self::TEST_DB_HOST, self::TEST_DB_PORT);
-        $this->object->query('CREATE TABLE unit_test(id serial, test_key varchar(50), test_value varchar(50), PRIMARY KEY (ID))');
-        $this->object->insert('unit_test', array('test_key'=>'test 1', 'test_value'=>'testing string 1' ));
-        $this->object->insert('unit_test', array('test_key'=>'test 2', 'test_value'=>'testing string 2' ));
-        $this->object->insert('unit_test', array('test_key'=>'test 3', 'test_value'=>'testing string 3' ));   
+        $this->object->query('CREATE TABLE unit_test2(id serial, test_key varchar(50), test_value varchar(50), PRIMARY KEY (ID))');
+        $this->object->insert('unit_test2', array('test_key'=>'test 1', 'test_value'=>'testing string 1' ));
+        $this->object->insert('unit_test2', array('test_key'=>'test 2', 'test_value'=>'testing string 2' ));
+        $this->object->insert('unit_test2', array('test_key'=>'test 3', 'test_value'=>'testing string 3' ));   
         
      //   $result = $this->object->showing('unit_test', 'id, test_key, test_value');
      //   $i = 1;
@@ -227,7 +227,7 @@ class ezSQL_postgresqlTest extends TestCase {
         
         //$where['id'] = '3';
 
-        $result = $this->object->query("SELECT test_key FROM unit_test WHERE test_value = 'testing string 3';");
+        $result = $this->object->query("SELECT * FROM unit_test2 ;");
         $this->assertNotEmpty($this->object->vardump($result));   
         foreach ($result as $row) {
             $this->assertEquals('test 3', $row->test_key);
