@@ -206,9 +206,6 @@ class ezSQL_postgresqlTest extends TestCase {
         $this->object->insert('unit_test', array('test_key'=>'test 1', 'test_value'=>'testing string 1' ));
         $this->object->insert('unit_test', array('test_key'=>'test 2', 'test_value'=>'testing string 2' ));
         $this->object->insert('unit_test', array('test_key'=>'test 3', 'test_value'=>'testing string 3' ));   
-        
-        $result = $this->object->get_results("SELECT * FROM unit_test2 ;");
-        $this->assertNotEmpty($this->object->vardump($result));
 		
         $where['test_key'] = 'test 1';
         $this->assertEquals($this->object->delete('unit_test', $where), 1);
