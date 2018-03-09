@@ -172,10 +172,34 @@ class ezSQL_postgresqlTest extends TestCase {
         $this->object->query('CREATE TABLE unit_test(id serial, test_key varchar(50), test_value varchar(50), PRIMARY KEY (ID))');
         $result = $this->object->insert('unit_test', array('test_key'=>'test 1', 'test_value'=>'testing string 1' ));
         $this->assertEquals($result, 1);
-        $this->assertNotEmpty($this->object->vardump($result));
         $this->assertEquals(0, $this->object->query('DROP TABLE unit_test'));
     }
-     
+       
+    /**
+     * @covers ezSQLcore::update
+     */
+    public function testUpdate()
+    {
+        $this->object->connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME, self::TEST_DB_HOST, self::TEST_DB_PORT);   
+        $this->object->query('CREATE TABLE unit_test(id serial, test_key varchar(50), test_value varchar(50), PRIMARY KEY (ID))');
+        $this->object->insert('unit_test', array('test_key'=>'test 1', 'test_value'=>'testing string 1' ));
+        $this->object->insert('unit_test', array('test_key'=>'test 2', 'test_value'=>'testing string 2' ));
+        $result = $this->object->insert('unit_test', array('test_key'=>'test 3', 'test_value'=>'testing string 3' ));
+        $this->assertEquals($result, 3);
+        $this->assertNotEmpty($this->object->vardump($result));
+        $unit_test['test_key'] = 'the key string';
+        $where['test_key'] = 'test 1';
+        $this->assertEquals($this->object->update('unit_test2', $unit_test, $where), 1);
+        $where['test_key'] = 'test 3';
+        $where['test_value'] = 'testing string 3';
+        $this->assertEquals($this->object->update('unit_test2', $unit_test, $where), 1);
+        $where['test_value'] = 'testing string 2';
+        $this->assertEquals($this->object->update('unit_test2', $unit_test, $where), 0);
+        $where['test_key'] = 'test 2';
+        $this->assertEquals($this->object->update('unit_test2', $unit_test, $where), 1);
+        $this->assertEquals(0, $this->object->query('DROP TABLE unit_test'));
+    }
+    
     /**
      * @covers ezSQL_postgresql::disconnect
      */
