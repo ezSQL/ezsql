@@ -197,45 +197,31 @@ class ezSQL_postgresqlTest extends TestCase {
     }
     
     /**
-     * @covers ezSQLcore::showing
+     * @covers ezSQLcore::delete
      */
-    public function testShowing()
+    public function testDelete()
     {
         $this->object->connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME, self::TEST_DB_HOST, self::TEST_DB_PORT);
-        $this->object->query('CREATE TABLE unit_test2(id serial, test_key varchar(50), test_value varchar(50), PRIMARY KEY (ID))');
-        $this->object->insert('unit_test2', array('test_key'=>'test 1', 'test_value'=>'testing string 1' ));
-        $this->object->insert('unit_test2', array('test_key'=>'test 2', 'test_value'=>'testing string 2' ));
-        $this->object->insert('unit_test2', array('test_key'=>'test 3', 'test_value'=>'testing string 3' ));   
+        $this->object->query('CREATE TABLE unit_test(id serial, test_key varchar(50), test_value varchar(50), PRIMARY KEY (ID))');
+        $this->object->insert('unit_test', array('test_key'=>'test 1', 'test_value'=>'testing string 1' ));
+        $this->object->insert('unit_test', array('test_key'=>'test 2', 'test_value'=>'testing string 2' ));
+        $this->object->insert('unit_test', array('test_key'=>'test 3', 'test_value'=>'testing string 3' ));   
         
         $result = $this->object->get_results("SELECT * FROM unit_test2 ;");
-        $this->assertNotEmpty($this->object->vardump($result));   
-     //   $result = $this->object->showing('unit_test', 'id, test_key, test_value');
-        $i = 1;
-        foreach ($result as $row) {
-            $this->assertEquals($i, $row->id);
-            $this->assertEquals('testing string ' . $i, $row->test_value);
-            $this->assertEquals('test ' . $i, $row->test_key);
-            ++$i;
-        }
-        
-     //   $where['id'] = '2';
-    //    $result = $this->object->showing('unit_test', 'id', $where);   
-    //    foreach ($result as $row) {
-     //       $this->assertEquals(2, $row->id);
-      //  }
-        
-        //$where['id'] = '3';
-
-        //foreach ($result as $row) {
-            $this->assertEquals('test 3', $row->test_key);
-        //}      
-        
-       // $result = $this->object->showing('unit_test', 'test_value', array( 'test_key'=>'test 1' ));
-       // foreach ($result as $row) {
-       //     $this->assertEquals('testing string 1', $row->test_value);
-       // }
+        $this->assertNotEmpty($this->object->vardump($result));
+		
+        $where['test_key'] = 'test 1';
+        $this->assertEquals($this->object->delete('unit_test', $where), 1);
+        $where['test_key'] = 'test 3';
+        $where['test_value'] = 'testing string 3';
+        $this->assertEquals($this->object->delete('unit_test', $where), 1);
+        $where['test_value'] = 'testing string 2';
+        $this->assertEquals($this->object->delete('unit_test', $where), 0);
+        $where['test_key'] = 'test 2';
+        $this->assertEquals($this->object->delete('unit_test', $where), 1);
+        $this->assertEquals(0, $this->object->query('DROP TABLE unit_test'));
     }  
-    
+	
     /**
      * @covers ezSQL_postgresql::disconnect
      */
