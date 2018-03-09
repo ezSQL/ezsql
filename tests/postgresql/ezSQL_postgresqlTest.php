@@ -209,7 +209,7 @@ class ezSQL_postgresqlTest extends TestCase {
         $this->object->insert('unit_test', array('test_key'=>'test 1', 'test_value'=>'testing string 1' ));
         $this->object->insert('unit_test', array('test_key'=>'test 2', 'test_value'=>'testing string 2' ));
         $this->object->insert('unit_test', array('test_key'=>'test 3', 'test_value'=>'testing string 3' ));        
-        $result = $this->object->showing('unit_test');
+        $result = $this->object->showing('unit_test', 'id, test_key, test_value');
         $this->assertNotEmpty($this->object->vardump($result));
         $i = 1;
         foreach ($result as $row) {
