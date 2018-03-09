@@ -171,7 +171,7 @@ class ezSQL_postgresqlTest extends TestCase {
         $this->object->connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME, self::TEST_DB_HOST, self::TEST_DB_PORT);        
         $this->object->query('CREATE TABLE unit_test(id serial, test_key varchar(50), test_value varchar(50), PRIMARY KEY (ID))');
         $result = $this->object->query('INSERT INTO unit_test(test_key, test_value) VALUES( \'test 1\', \'testing string 1\') RETURNING lastval()');
-        $this->assertEquals($result, 0);
+        $this->assertEquals($result, 1);
         $this->assertNotEmpty($this->object->vardump($result));
        // $this->assertEquals($this->object->insert('unit_test', array('id'=>'1', 'test_key'=>'test 2', 'test_value'=>'testing string' )), 1);
         $this->assertEquals(0, $this->object->query('DROP TABLE unit_test'));
