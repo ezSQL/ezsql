@@ -62,7 +62,7 @@ class ezSQL_postgresqlTest extends TestCase {
               'The PostgreSQL Lib is not available.'
             );
         }
-        $this->object = new ezSQL_postgresql();
+        $this->object = new ezSQL_postgresql;
     } // setUp
 
     /**
@@ -172,7 +172,7 @@ class ezSQL_postgresqlTest extends TestCase {
         $this->object->query('CREATE TABLE unit_test(id serial, test_key varchar(50), test_value varchar(50), PRIMARY KEY (ID))');
         $result = $this->object->query('INSERT INTO unit_test(test_key, test_value) VALUES( \'test 1\', \'testing string 1\')');
         $this->assertEquals($result[0], null);
-        $this->assertNotEmpty($this->object->vardump($this->object->query('INSERT INTO unit_test(test_key, test_value) VALUES( \'test 2\', \'testing string 2\')')));
+        $this->assertNotEmpty($this->object->vardump($this->object->query('INSERT INTO unit_test(test_key, test_value) VALUES( \'test 2\', \'testing string 2\') RETURNING lastval()')));
        // $this->assertEquals($this->object->insert('unit_test', array('id'=>'1', 'test_key'=>'test 2', 'test_value'=>'testing string' )), 1);
         $this->assertEquals(0, $this->object->query('DROP TABLE unit_test'));
     }

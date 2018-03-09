@@ -162,11 +162,11 @@ class ezSQLcoreTest extends TestCase {
      * The test echos HTML, it is just a test, that is still running
      * @covers ezSQLcore::vardump
      */
-  //  public function testVardump() {
-  //      $this->object->last_result = array('Test 1', 'Test 2');
-  //      $this->assertNotEmpty($this->object->vardump($this->object->last_result));
+    public function testVardump() {
+        $this->object->last_result = array('Test 1', 'Test 2');
+        $this->assertNotEmpty($this->object->vardump($this->object->last_result));
         
-  //  } // testVardump
+    } // testVardump
 
     /**
      * The test echos HTML, it is just a test, that is still running
