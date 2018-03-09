@@ -713,7 +713,7 @@
             $where = rtrim($where, " $combinewith ");
         }
         
-        $where = ($where!='1') ? ' WHERE '.$where.';' : ' WHERE 1=\'1\';' ;
+        $where = ($where!='1') ? ' WHERE '.$where.';' : ' ;' ;
         return $where;
     }
     
