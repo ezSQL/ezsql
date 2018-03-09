@@ -712,6 +712,8 @@
             }
             $where = rtrim($where, " $combinewith ");
         }
+        
+        $where = ($where!='1') ? ' WHERE '.$where.';' : ' WHERE 1=\'1\';' ;
         return $where;
     }
     
@@ -738,7 +740,7 @@
     
         $where = $this->_where_clause( $wherekey, $operator, $combine );
         if (is_string($where)) {
-            $sql .= ' WHERE '.$where.';';
+            $sql .= $where;
             return $this->get_results($sql);            
         } else 
             return false;
@@ -773,7 +775,7 @@
         
         $where = $this->_where_clause( $wherekey, $operator, $combine );
         if (is_string($where)) {   
-            $sql = rtrim($sql, ', ') . ' WHERE '.$where.';';
+            $sql = rtrim($sql, ', ') . $where;
             return $this->query($sql);       
         } else 
             return false;
@@ -791,7 +793,7 @@
         
         $where = $this->_where_clause( $wherekey, $operator, $combine );
         if (is_string($where)) {   
-            $sql .= ' WHERE '.$where.';';
+            $sql .= $where;
             return $this->query($sql);       
         } else 
             return false;
