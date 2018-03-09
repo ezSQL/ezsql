@@ -13,9 +13,6 @@ use PHPUnit\Framework\TestCase;
  * Run database tear down after tests to get rid of the database and the user.
  *
  * @author  Stefanie Janine Stoelting <mail@stefanie-stoelting.de>
- * @name    ezSQL_postgresql_tear_up
- * @uses    postgresql_test_db_tear_up.sql
- * @uses    postgresql_test_db_tear_down.sql
  * @package ezSQL
  * @subpackage Tests
  * @license FREE / Donation (LGPL - You may do what you like with ezSQL - no exceptions.)
@@ -210,14 +207,16 @@ class ezSQL_postgresqlTest extends TestCase {
         $this->object->insert('unit_test2', array('test_key'=>'test 2', 'test_value'=>'testing string 2' ));
         $this->object->insert('unit_test2', array('test_key'=>'test 3', 'test_value'=>'testing string 3' ));   
         
+        $result = $this->object->get_results("SELECT * FROM unit_test2 ;");
+        $this->assertNotEmpty($this->object->vardump($result));   
      //   $result = $this->object->showing('unit_test', 'id, test_key, test_value');
-     //   $i = 1;
-     //   foreach ($result as $row) {
-     //       $this->assertEquals($i, $row->id);
-     //       $this->assertEquals('testing string ' . $i, $row->test_value);
-     //       $this->assertEquals('test ' . $i, $row->test_key);
-     //       ++$i;
-     //   }
+        $i = 1;
+        foreach ($result as $row) {
+            $this->assertEquals($i, $row->id);
+            $this->assertEquals('testing string ' . $i, $row->test_value);
+            $this->assertEquals('test ' . $i, $row->test_key);
+            ++$i;
+        }
         
      //   $where['id'] = '2';
     //    $result = $this->object->showing('unit_test', 'id', $where);   
@@ -227,11 +226,9 @@ class ezSQL_postgresqlTest extends TestCase {
         
         //$where['id'] = '3';
 
-        $result = $this->object->query("SELECT * FROM unit_test2 ;");
-        $this->assertNotEmpty($this->object->vardump($result));   
-        foreach ($result as $row) {
+        //foreach ($result as $row) {
             $this->assertEquals('test 3', $row->test_key);
-        }      
+        //}      
         
        // $result = $this->object->showing('unit_test', 'test_value', array( 'test_key'=>'test 1' ));
        // foreach ($result as $row) {

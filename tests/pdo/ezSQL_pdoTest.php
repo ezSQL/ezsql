@@ -20,7 +20,6 @@ use PHPUnit\Framework\TestCase;
  *
  * @author  Stefanie Janine Stoelting <mail@stefanie-stoelting.de>
  * @name    ezSQL_pdoTest
- * @uses    ez_test.sqlite
  * @package ezSQL
  * @subpackage Tests
  * @license FREE / Donation (LGPL - You may do what you like with ezSQL - no exceptions.)
