@@ -219,16 +219,16 @@ class ezSQL_postgresqlTest extends TestCase {
      //       ++$i;
      //   }
         
-        $where['id'] = '2';
-        $result = $this->object->showing('unit_test', 'id', $where);   
-        $this->assertNotEmpty($this->object->vardump($result));   
-        foreach ($result as $row) {
-            $this->assertEquals(2, $row->id);
-        }
+     //   $where['id'] = '2';
+    //    $result = $this->object->showing('unit_test', 'id', $where);   
+    //    foreach ($result as $row) {
+     //       $this->assertEquals(2, $row->id);
+      //  }
         
-        $where['id'] = '3';
+        //$where['id'] = '3';
         $where['test_value'] = 'testing string 3';
         $result = $this->object->showing('unit_test', 'test_key', $where);
+        $this->assertNotEmpty($this->object->vardump($result));   
         foreach ($result as $row) {
             $this->assertEquals('test 3', $row->test_key);
         }      
