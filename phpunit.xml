@@ -15,7 +15,18 @@
             <directory suffix=".php">./tests/</directory>
         </testsuite>
     </testsuites>
-
+    
+    <filter>
+        <whitelist processUncoveredFilesFromWhitelist="true">
+            <directory>./</directory>
+            <exclude>
+                <directory>./_demo</directory>
+                <directory>./_docs</directory>
+                <directory>./tests</directory>
+                <directory>./vendor</directory>
+            </exclude>
+        </whitelist>
+    </filter>
     
     <php>
         <var name="DB_DSN" value="mysql:dbname=ez_test;host=localhost" />

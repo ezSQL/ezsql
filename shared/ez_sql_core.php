@@ -819,7 +819,8 @@
             else $v.= "'".$this->escape($val)."', ";
         }
 
-        $sql .= "(". rtrim($n, ', ') .") VALUES (". rtrim($v, ', ') .")__ezsql__;";
+        $sql .= "(". rtrim($n, ', ') .") VALUES (". rtrim($v, ', ') .");";
+        //$sql .= "(". rtrim($n, ', ') .") VALUES (". rtrim($v, ', ') .")__ezsql__;";
 
         if ($this->query($sql))
             return $this->insert_id;
