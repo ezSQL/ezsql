@@ -68,6 +68,8 @@
 		* @var resource
 		*/
 		public $dbh;
+		var $result;
+        
 		var $rows_affected = false;
 
 		/**
