@@ -731,7 +731,7 @@
            *        @combine - combine operator conditions with, either 'AND','OR', 'NOT', 'AND NOT'
            * returns: a result set - see docs for more details
 	*/
-    function showing($table, $fields = '*', $wherekey = array( '1' ), $operator = '=', $combine = 'AND') {            
+    function showing($table,$fields = '*',$wherekey=array('1'),$operator='=',$combine='AND',$execute=true) {            
         if ( ! is_string( $fields ) || ! isset($table) ) {
             return false;
         }
@@ -741,7 +741,10 @@
         $where = $this->_where_clause( $wherekey, $operator, $combine );
         if (is_string($where)) {
             $sql .= $where;
-            return $this->get_results($sql);            
+            if ($execute) 
+                return $this->get_results($sql);     
+            else 
+                return $sql;
         } else 
             return false;
     }
@@ -802,32 +805,42 @@
 	/**********************************************************************
            * desc: helper does the actual insert or replace query with an array
 	*/
-    function _query_insert_replace($table, $keyandvalue, $type) {            
-        if ( ! is_array( $keyandvalue ) || ! isset($table) ) {
+    function _query_insert_replace($table, $keyandvalue, $type, $execute=true) {            
+        if ((! is_array($keyandvalue)) && $execute) {
             return false;
         }
         
-        if ( ! in_array( strtoupper( $type ), array( 'REPLACE', 'INSERT' )) ) {
+        if ( ! in_array( strtoupper( $type ), array( 'REPLACE', 'INSERT' )) || ! isset($table) ) {
             return false;
         }
             
         $sql="$type INTO $table";
         $v=''; $n='';
 
-        foreach($keyandvalue as $key=>$val) {
-            $n.="$key, ";
-            if(strtolower($val)=='null') $v.="NULL, ";
-            elseif(in_array(strtolower($val), array( 'current_timestamp()', 'date()', 'now()' ))) $v.="CURRENT_TIMESTAMP(), ";
-            else $v.= "'".$this->escape($val)."', ";
+        if ($execute) {
+            foreach($keyandvalue as $key=>$val) {
+                $n.="$key, ";
+                if(strtolower($val)=='null') $v.="NULL, ";
+                elseif(in_array(strtolower($val), array( 'current_timestamp()', 'date()', 'now()' ))) $v.="CURRENT_TIMESTAMP(), ";
+                else $v.= "'".$this->escape($val)."', ";                
+            }
+            
+            $sql .= "(". rtrim($n, ', ') .") VALUES (". rtrim($v, ', ') .");";
+            //$sql .= "(". rtrim($n, ', ') .") VALUES (". rtrim($v, ', ') .")__ezsql__;";
+
+            if ($this->query($sql))
+                return $this->insert_id;
+            else 
+                return false;
+        } else {
+            if (is_array($keyandvalue)) {
+                foreach($keyandvalue as $key) {
+                    $n.="$key, ";                
+                }
+                $sql .= " (". rtrim($n, ', ') .") ";                
+            } 
+            return $sql;
         }
-
-        $sql .= "(". rtrim($n, ', ') .") VALUES (". rtrim($v, ', ') .");";
-        //$sql .= "(". rtrim($n, ', ') .") VALUES (". rtrim($v, ', ') .")__ezsql__;";
-
-        if ($this->query($sql))
-            return $this->insert_id;
-        else 
-            return false;
     }
         
 	/**********************************************************************
@@ -848,6 +861,21 @@
 	*/
     function insert($table, $keyandvalue) {
             return $this->_query_insert_replace($table, $keyandvalue, 'INSERT');
+        }
+    
+	/**********************************************************************
+           * desc: does an insert into select statement by calling insert method helper then showing method
+           * param: @totable, - database table to insert table into 
+           *             @tocolumns - the receiving columns from other table columns, leave blank for all or array of column fields
+           * returns: id of inserted record, false if error
+	*/
+    function insertselect($totable, $tocolumns, $fromtable, $fromcolumns, $fromwhere, $comparewith, $combinehow) {
+            $puttotable = $this->_query_insert_replace($totable, $tocolumns, 'INSERT', false);
+            $getfromtable = $this->showing($fromtable, $fromcolumns, $fromwhere, $comparewith, $combinehow, false);
+            if (is_string($puttotable) && is_string($getfromtable))
+                return $this->query($puttotable." ".$getfromtable); 
+            else
+                return false;                
         }
     
     /**
