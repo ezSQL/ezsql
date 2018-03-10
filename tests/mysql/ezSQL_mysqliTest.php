@@ -317,9 +317,9 @@ class ezSQL_mysqliTest extends TestCase {
     }  
        
     /**
-     * @covers ezSQLcore::showing
+     * @covers ezSQLcore::selecting
      */
-    public function testShowing()
+    public function testSelecting()
     {
         $this->object->connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD);
         $this->object->select(self::TEST_DB_NAME);
@@ -328,7 +328,7 @@ class ezSQL_mysqliTest extends TestCase {
         $this->object->insert('unit_test', array('id'=>'2', 'test_key'=>'testing 2' ));
         $this->object->insert('unit_test', array('id'=>'3', 'test_key'=>'testing 3' ));
         
-        $result = $this->object->showing('unit_test');
+        $result = $this->object->selecting('unit_test');
         $i = 1;
         foreach ($result as $row) {
             $this->assertEquals($i, $row->id);
@@ -337,15 +337,63 @@ class ezSQL_mysqliTest extends TestCase {
         }
         
         $where['test_key'] = 'testing 2';
-        $result = $this->object->showing('unit_test', 'id', $where);
+        $result = $this->object->selecting('unit_test', 'id', $where);
         foreach ($result as $row) {
             $this->assertEquals(2, $row->id);
         }
         
-        $result = $this->object->showing('unit_test', 'test_key', array( 'id'=>'3' ));
+        $result = $this->object->selecting('unit_test', 'test_key', array( 'id'=>'3' ));
         foreach ($result as $row) {
             $this->assertEquals('testing 3', $row->test_key);
         }
+    }    
+          
+    /**
+     * @covers ezSQLcore::create_select
+     */
+    public function testCreate_select()
+    {
+        $this->object->connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD);
+        $this->object->select(self::TEST_DB_NAME);
+        $this->object->query('CREATE TABLE unit_test(id int(11) NOT NULL AUTO_INCREMENT, test_key varchar(50), PRIMARY KEY (ID))ENGINE=MyISAM  DEFAULT CHARSET=utf8');
+        $this->object->insert('unit_test', array('id'=>'1', 'test_key'=>'testing 1' ));
+        $this->object->insert('unit_test', array('id'=>'2', 'test_key'=>'testing 2' ));
+        $this->object->insert('unit_test', array('id'=>'3', 'test_key'=>'testing 3' ));
+        
+		$this->assertEquals($this->object->create_select('new_new_test','*','unit_test'),0);
+		$result = $this->object->selecting('new_new_test');
+        $i = 1;
+        foreach ($result as $row) {
+            $this->assertEquals($i, $row->id);
+            $this->assertEquals('testing ' . $i, $row->test_key);
+            ++$i;
+        }
+        $this->assertEquals($this->object->query('DROP TABLE IF EXISTS new_new_test'), 0);    
+    }    
+              
+    /**
+     * @covers ezSQLcore::insert_select
+     */
+    public function testInsert_select()
+    {
+        $this->object->connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD);
+        $this->object->select(self::TEST_DB_NAME);
+        $this->object->query('CREATE TABLE unit_test(id int(11) NOT NULL AUTO_INCREMENT, test_key varchar(50), PRIMARY KEY (ID))ENGINE=MyISAM  DEFAULT CHARSET=utf8');
+        $this->object->insert('unit_test', array('id'=>'1', 'test_key'=>'testing 1' ));
+        $this->object->insert('unit_test', array('id'=>'2', 'test_key'=>'testing 2' ));
+        $this->object->insert('unit_test', array('id'=>'3', 'test_key'=>'testing 3' ));
+        
+        $this->object->query('CREATE TABLE new_select_test(id int(11) NOT NULL AUTO_INCREMENT, test_key varchar(50), PRIMARY KEY (ID))ENGINE=MyISAM  DEFAULT CHARSET=utf8');
+		
+		$this->assertEquals($this->object->insert_select('new_select_test','*','unit_test'),3);
+		$result = $this->object->selecting('new_select_test');
+        $i = 1;
+        foreach ($result as $row) {
+            $this->assertEquals($i, $row->id);
+            $this->assertEquals('testing ' . $i, $row->test_key);
+            ++$i;
+        }
+        $this->assertEquals($this->object->query('DROP TABLE IF EXISTS new_select_test'), 0);
     }    
     
     /**

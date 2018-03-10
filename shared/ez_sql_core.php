@@ -421,7 +421,7 @@
 			echo "\n\n<b>Type:</b> " . ucfirst($var_type) . "\n";
 			echo "<b>Last Query</b> [$this->num_queries]<b>:</b> ".($this->last_query?$this->last_query:"NULL")."\n";
 			echo "<b>Last Function Call:</b> " . ($this->func_call?$this->func_call:"None")."\n";
-			echo "<b>Last Rows Returned:</b> ".count($this->last_result)."\n";
+			//echo "<b>Last Rows Returned:</b> ".count($this->last_result)."\n";
 			echo "</font></pre></font></blockquote></td></tr></table>".$this->donation();
 			echo "\n<hr size=1 noshade color=dddddd>";
 
@@ -718,7 +718,7 @@
     }
     
 	/**********************************************************************
-           * desc: returns an result set given the table, fields, by operator condition or conditional array
+           * desc: returns an sql string or result set given the table, fields, by operator condition or conditional array
            * param: @table, - database table to access
            *        @fields, - table fields, string
            *        @wherekey, - where clause, assoc array key, value 
@@ -731,12 +731,15 @@
            *        @combine - combine operator conditions with, either 'AND','OR', 'NOT', 'AND NOT'
            * returns: a result set - see docs for more details
 	*/
-    function showing($table,$fields = '*',$wherekey=array('1'),$operator='=',$combine='AND',$execute=true) {            
+    function selecting($table, $fields='*', $wherekey=array('1'), $operator='=', $combine='AND', $execute=true, $iscreate=false, $fromtable='') {            
         if ( ! is_string( $fields ) || ! isset($table) ) {
             return false;
         }
         
-        $sql="SELECT $fields FROM ".$table;
+		if (isset($fromtable) && ($iscreate)) 
+			$sql="CREATE TABLE $table AS SELECT $fields FROM ".$fromtable;
+        else 
+			$sql="SELECT $fields FROM ".$table;
     
         $where = $this->_where_clause( $wherekey, $operator, $combine );
         if (is_string($where)) {
@@ -748,19 +751,34 @@
         } else 
             return false;
     }
-    
+		
+	/**********************************************************************
+           * desc: does an create select statement by calling selecting method
+           * param: @newtable, - new database table to be created 
+           *		@fromcolumns - the columns from old database table
+           *		@oldtable - old database table 
+           * returns: 
+	*/
+    function create_select($newtable, $fromcolumns, $oldtable, $fromwhere=array('1'), $comparewith='=', $combinehow='AND') {
+            $newtablefromtable = $this->selecting($newtable, $fromcolumns, $fromwhere, $comparewith, $combinehow, false, true, $oldtable);
+            if (is_string($newtablefromtable))
+                return $this->query($newtablefromtable); 
+            else
+                return false;                
+        }
+		
 	/**********************************************************************
            * desc: does an update query with an array, by conditional operator array
            * param: @table, - database table to access
-           *             @keyandvalue, - table fields, assoc array with key = value (doesn't need escaped)
-           *             @wherekey, - where clause, assoc array key, value 
-           *             Either: 
-           *             @operator, - set the operator condition, either '<','>', '=', '!=', '>=', '<=', '<>', 'like'
-           *                                    or set to 'raw' operator conditions are directly in @wherekey
-           *             Or:
-           *             @operatorarray, - an array of operator conditions, either '<','>', '=', '!=', '>=', '<=', '<>', 'like', 'between', 'not between', 'is null'
-           *                                    will be joined with @wherekey
-           *             @combine - combine conditions with, either 'AND','OR', 'NOT', 'AND NOT'
+           *		@keyandvalue, - table fields, assoc array with key = value (doesn't need escaped)
+           *		@wherekey, - where clause, assoc array key, value 
+           *	Either: 
+           *		@operator, - set the operator condition, either '<','>', '=', '!=', '>=', '<=', '<>', 'like'
+           *				or set to 'raw' operator conditions are directly in @wherekey
+           *	Or:
+           * 		@operatorarray, - an array of operator conditions, either '<','>', '=', '!=', '>=', '<=', '<>', 'like', 'between', 'not between', 'is null'
+           *				will be joined with @wherekey
+           *		@combine - combine conditions with, either 'AND','OR', 'NOT', 'AND NOT'
            * returns: (query_id) for fetching results etc
 	*/
     function update($table, $keyandvalue, $wherekey = array( '1' ), $operator = '=', $combine = 'AND') {            
@@ -846,7 +864,7 @@
 	/**********************************************************************
            * desc: does an replace query with an array
            * param: @table, - database table to access
-           *             @keyandvalue - table fields, assoc array with key = value (doesn't need escaped)
+           *		@keyandvalue - table fields, assoc array with key = value (doesn't need escaped)
            * returns: id of replaced record, false if error
 	*/
     function replace($table, $keyandvalue) {
@@ -856,7 +874,7 @@
 	/**********************************************************************
            * desc: does an insert query with an array
            * param: @table, - database table to access
-           *             @keyandvalue - table fields, assoc array with key = value (doesn't need escaped)
+           * 		@keyandvalue - table fields, assoc array with key = value (doesn't need escaped)
            * returns: id of inserted record, false if error
 	*/
     function insert($table, $keyandvalue) {
@@ -864,19 +882,19 @@
         }
     
 	/**********************************************************************
-           * desc: does an insert into select statement by calling insert method helper then showing method
+           * desc: does an insert into select statement by calling insert method helper then selecting method
            * param: @totable, - database table to insert table into 
-           *             @tocolumns - the receiving columns from other table columns, leave blank for all or array of column fields
-           * returns: id of inserted record, false if error
+           *		@tocolumns - the receiving columns from other table columns, leave blank for all or array of column fields
+           * returns: 
 	*/
-    function insertselect($totable, $tocolumns, $fromtable, $fromcolumns, $fromwhere, $comparewith, $combinehow) {
+    function insert_select($totable, $tocolumns='*', $fromtable, $fromcolumns='*', $fromwhere=array('1'), $comparewith='=', $combinehow='AND') {
             $puttotable = $this->_query_insert_replace($totable, $tocolumns, 'INSERT', false);
-            $getfromtable = $this->showing($fromtable, $fromcolumns, $fromwhere, $comparewith, $combinehow, false);
+            $getfromtable = $this->selecting($fromtable, $fromcolumns, $fromwhere, $comparewith, $combinehow, false);
             if (is_string($puttotable) && is_string($getfromtable))
                 return $this->query($puttotable." ".$getfromtable); 
             else
                 return false;                
-        }
+        }    
     
     /**
      * Returns, whether a database connection is established, or not
