@@ -25,9 +25,9 @@ Note: This change log isn't being used any more due to automated github tracking
 * Refactor class code to use `spl_autoload_register`. 
   Simply using `require_once "ez_sql_loader.php";` then `$database = new database_driver_class;`. 
   This will allow multi SQLdb to be loaded if need be. 
-* Added methods `update`, `insert`, `replace`, `delete`, and `showing` an alias for select.
+* Added methods `create_select`, `insert_select`, `update`, `insert`, `replace`, `delete`, and `selecting` an alias for select.
   These are ezSQL Core class shortcut calls and should be able to handle most use cases as is.  
-  These new methods will create proper SQL statements, from supplied arguments variable or array, prevent injections, then execute guery, in case of `showing` execute get_results. They have been fully PHPunit tested under mySQLi and postgresSQL. Currently, postgresSQL class fails to return results on SQL select statements.
+  These new methods will create proper SQL statements, from supplied arguments variable or array, prevent injections, then execute guery, in case of `selecting` execute get_results. They have been fully PHPunit tested under mySQLi and postgresSQL. Currently, postgresSQL class fails to return results on SQL select statements.
 
 ```
 ezSQL3 - From Author: Stefanie Janine Stoelting - http://stefanie-stoelting.de
