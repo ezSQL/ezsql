@@ -395,6 +395,38 @@ class ezSQL_mysqliTest extends TestCase {
         }
         $this->assertEquals($this->object->query('DROP TABLE IF EXISTS new_select_test'), 0);
     }    
+ 
+    /**
+     * @covers ezSQLcore::_where_clause
+     */
+    public function test_Where_clause()
+    {
+        $this->object->connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD);
+        $this->object->select(self::TEST_DB_NAME);
+        $expect = $this->object->_where_clause(
+            array('where_test'=>'testing 1',
+                'test_between'=>'testing 2',
+                'test_null'=>'null'), 
+            array('BETWEEN','>','like'), 'or' );
+        $this->assertContains('WHERE',$expect);
+        $this->assertContains('IS NULL',$expect);
+        $this->assertContains('BETWEEN',$expect);
+        $this->assertFalse($this->object->_where_clause(
+            array('where_test'=>'testing 1',
+                'test_between'=>'testing 2',
+                'test_null'=>'null'), 
+            array('BETWEEN','bad','like'), 'or' ));
+        $this->assertFalse($this->object->_where_clause(
+            array('where_test'=>'testing 1',
+                'test_between'=>'testing 2',
+                'test_null'=>'null'), 
+            array('BETWEEN','like'), 'or' ));
+        $this->assertContains('testing 3', $this->object->_where_clause(
+            array('where_test'=>'testing 1',
+                'test_between'=>'testing 3',
+                'test_null'=>'null'), 
+            array('BETWEEN','=','like'), 'BAD' ));
+    }    
     
     /**
      * @covers ezSQL_mysqli::prepare

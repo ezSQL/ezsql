@@ -685,7 +685,7 @@
             return false;
         }
  
-        if (strtolower($condition)=='raw') {
+        if ($condition=='raw') {
             $where=$this->escape($wherekey);        
         } elseif ($wherekey!=array('1')) {
             $where='';
@@ -699,7 +699,7 @@
                     } else {
                         if ($needtoskip) $where.= "'".$this->escape($val)."' $combinewith ";
                         elseif(strtolower($val)=='null') $where.= "$key IS NULL $combinewith ";
-                        else $where.= "$key".$iscondition."'".$this->escape($val)."' $combinewith ";                            
+                        else $where.= "$key ".$iscondition." '".$this->escape($val)."' $combinewith ";                            
                         $needtoskip = (($iscondition=='BETWEEN') || ($iscondition=='NOT BETWEEN')) ? true : false;
                         $i++;
                     }
