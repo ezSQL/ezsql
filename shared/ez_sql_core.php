@@ -421,7 +421,7 @@
 			echo "\n\n<b>Type:</b> " . ucfirst($var_type) . "\n";
 			echo "<b>Last Query</b> [$this->num_queries]<b>:</b> ".($this->last_query?$this->last_query:"NULL")."\n";
 			echo "<b>Last Function Call:</b> " . ($this->func_call?$this->func_call:"None")."\n";
-			//echo "<b>Last Rows Returned:</b> ".count($this->last_result)."\n";
+			echo "<b>Last Rows Returned:</b> ".count($this->last_result)."\n";
 			echo "</font></pre></font></blockquote></td></tr></table>".$this->donation();
 			echo "\n<hr size=1 noshade color=dddddd>";
 
@@ -731,8 +731,8 @@
            *        @combine - combine operator conditions with, either 'AND','OR', 'NOT', 'AND NOT'
            * returns: a result set - see docs for more details
 	*/
-    function selecting($table, $fields='*', $wherekey=array('1'), $operator='=', $combine='AND', $execute=true, $iscreate=false, $fromtable='') {            
-        if ( ! is_string( $fields ) || ! isset($table) ) {
+    function selecting($table='', $fields='*', $wherekey=array('1'), $operator='=', $combine='AND', $execute=true, $iscreate=false, $fromtable='') {            
+        if ( ! is_string( $fields ) || ! isset($table) || $table=='' ) {
             return false;
         }
         
@@ -781,8 +781,8 @@
            *		@combine - combine conditions with, either 'AND','OR', 'NOT', 'AND NOT'
            * returns: (query_id) for fetching results etc
 	*/
-    function update($table, $keyandvalue, $wherekey = array( '1' ), $operator = '=', $combine = 'AND') {            
-        if ( ! is_array( $keyandvalue ) || ! isset($table) ) {
+    function update($table='', $keyandvalue, $wherekey = array( '1' ), $operator = '=', $combine = 'AND') {            
+        if ( ! is_array( $keyandvalue ) || ! isset($table) || $table=='' ) {
             return false;
         }
         
@@ -805,8 +805,8 @@
 	/**********************************************************************
            * desc: helper does the actual insert or replace query with an array
 	*/
-    function delete($table, $wherekey = array( '1' ), $operator = '=', $combine = 'AND') {            
-        if ( ! is_array( $wherekey ) || ! isset($table) ) {
+    function delete($table='', $wherekey = array( '1' ), $operator = '=', $combine = 'AND') {            
+        if ( ! is_array( $wherekey ) || ! isset($table) || $table=='' ) {
             return false;
         }
         
@@ -823,8 +823,8 @@
 	/**********************************************************************
            * desc: helper does the actual insert or replace query with an array
 	*/
-    function _query_insert_replace($table, $keyandvalue, $type, $execute=true) {            
-        if ((! is_array($keyandvalue)) && $execute) {
+    function _query_insert_replace($table='', $keyandvalue, $type, $execute=true) {            
+        if ((! is_array($keyandvalue)) && $execute || $table=='' ) {
             return false;
         }
         
@@ -867,7 +867,7 @@
            *		@keyandvalue - table fields, assoc array with key = value (doesn't need escaped)
            * returns: id of replaced record, false if error
 	*/
-    function replace($table, $keyandvalue) {
+    function replace($table='', $keyandvalue) {
             return $this->_query_insert_replace($table, $keyandvalue, 'REPLACE');
         }
 
@@ -877,7 +877,7 @@
            * 		@keyandvalue - table fields, assoc array with key = value (doesn't need escaped)
            * returns: id of inserted record, false if error
 	*/
-    function insert($table, $keyandvalue) {
+    function insert($table='', $keyandvalue) {
             return $this->_query_insert_replace($table, $keyandvalue, 'INSERT');
         }
     
@@ -887,7 +887,7 @@
            *		@tocolumns - the receiving columns from other table columns, leave blank for all or array of column fields
            * returns: 
 	*/
-    function insert_select($totable, $tocolumns='*', $fromtable, $fromcolumns='*', $fromwhere=array('1'), $comparewith='=', $combinehow='AND') {
+    function insert_select($totable='', $tocolumns='*', $fromtable, $fromcolumns='*', $fromwhere=array('1'), $comparewith='=', $combinehow='AND') {
             $puttotable = $this->_query_insert_replace($totable, $tocolumns, 'INSERT', false);
             $getfromtable = $this->selecting($fromtable, $fromcolumns, $fromwhere, $comparewith, $combinehow, false);
             if (is_string($puttotable) && is_string($getfromtable))

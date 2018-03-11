@@ -39,14 +39,12 @@ class ezSQLcoreTest extends TestCase {
 
     /**
      * @covers ezSQLcore::get_host_port
-     * @todo   Implement testGet_host_port().
      */
     public function testGet_host_port()
     {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-            'This test has not been implemented yet.'
-        );
+        $hostport = $this->object->get_host_port("localhost:8181");
+        $this->assertEquals($hostport[0],"localhost");
+        $this->assertEquals($hostport[1],"8181");
     }
 	
     /**
@@ -128,12 +126,6 @@ class ezSQLcoreTest extends TestCase {
      */
     public function testGet_col_info() {
         $this->assertEmpty($this->object->get_col_info());
-		
-		//$this->object->get_results( "SELECT ID FROM $wpdb->users" );
-
-		//$this->assertEquals( array( 'ID' ), $this->object->get_col_info() );
-		//$this->assertEquals( array( $this->ezsqldb->users ), $this->object->get_col_info( 'table' ) );
-		//$this->assertEquals( $wpdb->users, $this->object->get_col_info( 'table', 0 ) );
     } // testGet_col_info
 
     /**
@@ -159,11 +151,12 @@ class ezSQLcoreTest extends TestCase {
     } // testGet_cache
 
     /**
-     * The test echos HTML, it is just a test, that is still running
+     * The test does not echos HTML, it is just a test, that is still running
      * @covers ezSQLcore::vardump
      */
     public function testVardump() {
-        $this->object->last_result = array('Test 1', 'Test 2');
+        $this->object->debug_echo_is_on = false;
+        $this->object->last_result = array('Test 1');
         $this->assertNotEmpty($this->object->vardump($this->object->last_result));
         
     } // testVardump
@@ -172,10 +165,10 @@ class ezSQLcoreTest extends TestCase {
      * The test echos HTML, it is just a test, that is still running
      * @covers ezSQLcore::dumpvar
      */
-   // public function testDumpvar() {
-   //     $this->object->last_result = array('Test'=>'Test 3');   
-   //     $this->assertNotEmpty($this->object->dumpvar($this->object->last_result));
-   // } // testDumpvar
+    public function testDumpvar() {
+        $this->object->last_result = array('Test 1', 'Test 2');
+        $this->assertNotEmpty($this->object->dumpvar(''));
+    } // testDumpvar
 
     /**
      * @covers ezSQLcore::debug
@@ -218,7 +211,8 @@ class ezSQLcoreTest extends TestCase {
      */
     public function testTimer_elapsed() {
         $expected = 0;        
-        $this->object->timer_start('test_timer');        
+        $this->object->timer_start('test_timer');      
+		usleep( 5 );        
         $this->assertGreaterThanOrEqual($expected, $this->object->timer_elapsed('test_timer'));
     } // testTimer_elapsed
 
@@ -226,7 +220,8 @@ class ezSQLcoreTest extends TestCase {
      * @covers ezSQLcore::timer_update_global
      */
     public function testTimer_update_global() {
-        $this->object->timer_start('test_timer');   
+        $this->object->timer_start('test_timer');           
+		usleep( 5 );
         $this->object->timer_update_global('test_timer');
         $expected = $this->object->total_query_time;     
         $this->assertGreaterThanOrEqual($expected, $this->object->timer_elapsed('test_timer'));    
@@ -234,86 +229,77 @@ class ezSQLcoreTest extends TestCase {
 
     /**
      * @covers ezSQLcore::get_set
-     * @todo   Implement testGet_set().
      */
     public function testGet_set()
     {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-            'This test has not been implemented yet.'
-        );
+        $this->assertNull($this->object->get_set(''));   
     }
 
     /**
      * @covers ezSQLcore::count
-     * @todo   Implement testCount().
      */
     public function testCount()
     {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-            'This test has not been implemented yet.'
-        );
+        $this->assertEquals(0,$this->object->count());
+        $this->object->count(true,true);
+        $this->assertEquals(1,$this->object->count());
+        $this->assertEquals(2,$this->object->count(false,true));
     }
     
     /**
      * @covers ezSQLcore::delete
-     * @todo   Implement testDelete().
      */
     public function testDelete()
     {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-            'This test has not been implemented yet.'
-        );
+        $this->assertFalse($this->object->delete(''));
     }
        
     /**
-     * @covers ezSQLcore::showing
-     * @todo   Implement testShowing().
+     * @covers ezSQLcore::selecting
      */
-    public function testShowing()
+    public function testSelecting()
     {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-            'This test has not been implemented yet.'
-        );
+        $this->assertFalse($this->object->selecting('',''));
+    } 
+    
+    /**
+     * @covers ezSQLcore::create_select
+     */
+    public function testCreate_select()
+    {
+        $this->assertFalse($this->object->create_select('','',''));
+    }
+    
+    /**
+     * @covers ezSQLcore::insert_select
+     */
+    public function testInsert_select()
+    {
+        $this->assertFalse($this->object->insert_select('','',''));
     }
     
     /**
      * @covers ezSQLcore::insert
-     * @todo   Implement testInsert().
      */
     public function testInsert()
     {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-            'This test has not been implemented yet.'
-        );
+        $this->assertFalse($this->object->insert('',''));
     }
     
     /**
      * @covers ezSQLcore::update
-     * @todo   Implement testUpdate().
      */
     public function testUpdate()
     {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-            'This test has not been implemented yet.'
-        );
+        $this->assertFalse($this->object->update('',''));
     }
 	
     /**
      * @covers ezSQLcore::replace
-     * @todo   Implement testReplace().
      */
     public function testReplace()
     {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-            'This test has not been implemented yet.'
-        );
+        $this->assertFalse($this->object->replace('',''));
     }
 	
     /**
