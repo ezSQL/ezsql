@@ -181,7 +181,21 @@ class ezSQL_mysqliTest extends TestCase {
     public function testGetCharset() {
         $this->assertEquals(self::TEST_DB_CHARSET, $this->object->getCharset());
     } // testGetCharset
-
+    
+    /**
+     * @covers ezSQLcore::get_set
+     */
+    public function testGet_set()
+    {
+        $this->object->connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD);
+        $this->object->select(self::TEST_DB_NAME);
+        $this->assertContains('NOW()',$this->object->get_set(
+            array('test_unit'=>'NULL',
+            'test_unit2'=>'NOW()',
+            'test_unit3'=>'true',
+            'test_unit4'=>'false')));   
+    }
+    
     /**
      * @covers ezSQL_mysqli::set_query
      * @todo   Implement testSet_query().
