@@ -346,6 +346,11 @@ class ezSQL_mysqliTest extends TestCase {
         foreach ($result as $row) {
             $this->assertEquals('testing 3', $row->test_key);
         }
+        
+        $result = $this->object->selecting('unit_test', array ('test_key'), array( 'id'=>'3' ));
+        foreach ($result as $row) {
+            $this->assertEquals('testing 3', $row->test_key);
+        }
     }    
           
     /**
@@ -396,7 +401,7 @@ class ezSQL_mysqliTest extends TestCase {
         }
         $this->assertEquals($this->object->query('DROP TABLE IF EXISTS new_select_test'), 0);
     }    
- 
+	
     /**
      * @covers ezSQLcore::_where_clause
      */
@@ -417,6 +422,11 @@ class ezSQL_mysqliTest extends TestCase {
                 'test_between'=>'testing 2',
                 'test_null'=>'null'), 
             array('BETWEEN','bad','like'), 'or' ));
+        $this->assertFalse($this->object->_where_clause(
+            array('where_test'=>'testing 1',
+                'test_between'=>'testing 2',
+                'test_null'=>'null'), 
+            array('BETWEEN','!=','<>','like'), 'or' ));
         $this->assertContains('testing array different', $this->object->_where_clause(
             array('where_test'=>'testing 1',
                 'test_between'=>'testing array different',
@@ -432,7 +442,23 @@ class ezSQL_mysqliTest extends TestCase {
                 'test_between'=>'testing string',
                 'test_null'=>'null'), 
             '<>'));
-    }    
+        $this->assertContains('testing array', $this->object->_where_clause(
+            array('where_test'=>'testing 1',
+                'test_between'=>'testing array',
+                'test_null'=>'null'), 
+            '<>', array('or')));
+    } 
+    
+    /**
+     * @covers ezSQLcore::_query_insert_replace
+     */
+    public function test_Query_insert_replace() 
+    {
+        $this->object->connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD);
+        $this->object->select(self::TEST_DB_NAME);
+        $this->object->query('CREATE TABLE unit_test(id int(11) NOT NULL AUTO_INCREMENT, test_key varchar(50), PRIMARY KEY (ID))ENGINE=MyISAM  DEFAULT CHARSET=utf8');
+        $this->assertEquals($this->object->insert('unit_test', array('id'=>'2', 'test_key'=>'test 2' )), 2); 
+    } 
     
     /**
      * @covers ezSQL_mysqli::prepare

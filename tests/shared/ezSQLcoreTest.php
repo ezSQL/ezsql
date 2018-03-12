@@ -235,6 +235,12 @@ class ezSQLcoreTest extends TestCase {
     public function testGet_set()
     {
         $this->assertNull($this->object->get_set(''));   
+        $this->expectExceptionMessage('Call to undefined method ezSQLcore::escape()');
+        $this->assertContains('NOW()',$this->object->get_set(
+            array('test_unit'=>'NULL',
+            'test_unit2'=>'NOW()',
+            'test_unit3'=>'true',
+            'test_unit4'=>'false')));   
     }
 
     /**
@@ -254,6 +260,7 @@ class ezSQLcoreTest extends TestCase {
     public function testDelete()
     {
         $this->assertFalse($this->object->delete(''));
+        $this->assertFalse($this->object->delete('test_unit_delete',''));
     }
        
     /**
@@ -294,6 +301,7 @@ class ezSQLcoreTest extends TestCase {
     public function testUpdate()
     {
         $this->assertFalse($this->object->update('',''));
+        $this->assertFalse($this->object->update('test_unit_delete',array('test_unit_update'=>'date()'),''));
     }
 	
     /**

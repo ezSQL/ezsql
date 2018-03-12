@@ -737,14 +737,23 @@
            * returns: a result set - see docs for more details
 	*/
     function selecting($table='', $fields='*', $wherekey=array('1'), $operator='=', $combine='AND', $execute=true, $iscreate=false, $fromtable='') {            
-        if ( ! is_string( $fields ) || ! isset($table) || $table=='' ) {
+        if ( ! isset($table) || $table=='' ) {
             return false;
         }
         
+        if (is_array( $fields )){
+            $columns = '';
+            foreach($fields as $val) {
+                $columns .= $val.', ';
+            }
+            $columns = rtrim($columns, ', ');            
+        } else
+            $columns = $fields;
+        
 		if (isset($fromtable) && ($iscreate)) 
-			$sql="CREATE TABLE $table AS SELECT $fields FROM ".$fromtable;
+			$sql="CREATE TABLE $table AS SELECT $columns FROM ".$fromtable;
         else 
-			$sql="SELECT $fields FROM ".$table;
+			$sql="SELECT $columns FROM ".$table;
     
         $where = $this->_where_clause( $wherekey, $operator, $combine );
         if (is_string($where)) {
