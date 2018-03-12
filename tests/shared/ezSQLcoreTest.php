@@ -167,7 +167,8 @@ class ezSQLcoreTest extends TestCase {
      */
     public function testDumpvar() {
         $this->object->last_result = array('Test 1', 'Test 2');
-        $this->assertNotEmpty($this->object->dumpvar(''));
+        $this->expectOutputRegex('/[Last Function Call]/');
+        $this->object->dumpvar('');
     } // testDumpvar
 
     /**
@@ -177,7 +178,8 @@ class ezSQLcoreTest extends TestCase {
         $this->assertNotEmpty($this->object->debug(false));
         
         // In addition of getting a result, it fills the console
-        $this->assertNotEmpty($this->object->debug(true));
+        $this->expectOutputRegex('/[make a donation]/');
+        $this->object->debug(true);
     } // testDebug
 
     /**

@@ -24,6 +24,8 @@
                 <directory>./_docs</directory>
                 <directory>./tests</directory>
                 <directory>./vendor</directory>
+                <file>./shared/ez_sql_core_2.1_debughack_0.2alpha.php</file>
+                <file>./shared/ez_sql_core_202console.php</file>
             </exclude>
         </whitelist>
     </filter>

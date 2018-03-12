@@ -671,43 +671,49 @@
  	/**********************************************************************
            * desc: helper returns an WHERE sql clause string
 	*/        
-    function _where_clause( $wherekey, $condition, $combine ) {     
+    function _where_clause( $wherekey=array('1'), $condition='=', $combine='AND' ) {     
+        if (is_string($condition)) $operator[] = $condition;
+        else $operator = $condition;     
+        
+        if (is_string($combine)) $combiner[] = $combine;
+        else $combiner = $combine;
+        
+        if ( ! is_array( $wherekey ) || ! is_array( $operator ) || ! is_array( $combiner )) 
+            return false; 
+        
         $where='1';      
-        $joinconditions=false;
-        $combinewith=(in_array( strtoupper($combine), array( 'AND', 'OR', 'NOT', 'AND NOT' ))) ? strtoupper($combine) : 'AND' ;
-           
-        if (is_array($condition) && is_array($wherekey)) {
-            if ( count($condition) == count($wherekey) ) $joinconditions = true;
-            else return false;
-        } elseif ((! is_array( $wherekey )) && (strtolower($condition)!='raw')) {
+        $wc = count($wherekey);
+        $oc = count($operator);
+        $cc = count($combiner);
+        
+        if ( $wc > $oc ) {
+            $v = $operator[$oc - 1];
+            for ($oc; $oc<=$wc; $oc++) {
+                array_push($operator,$v);
+            }
+        } elseif ( $wc < $oc ) 
             return false;
-        } elseif ( ! in_array( strtolower($condition), array( '<', '>', '=', '!=', '>=', '<=', '<>', 'like', 'raw' )) ) {
-            return false;
+        
+        $v = $combiner[$cc - 1];
+        for ($cc; $cc<=$wc; $cc++) {
+            array_push($combiner,$v);
         }
  
-        if ($condition=='raw') {
-            $where=$this->escape($wherekey);        
-        } elseif ($wherekey!=array('1')) {
+        if ($wherekey!=array('1')) {
             $where='';
-            if ($joinconditions) {
-                $i=0;
-                $needtoskip=false;
-                foreach($wherekey as $key=>$val) {
-                    $iscondition = strtoupper($condition[$i]);
-                    if (! in_array( $iscondition, array( '<', '>', '=', '!=', '>=', '<=', '<>', 'LIKE', 'BETWEEN', 'NOT BETWEEN', 'IS NULL' ) )) {
-                        return false;
-                    } else {
-                        if ($needtoskip) $where.= "'".$this->escape($val)."' $combinewith ";
-                        elseif(strtolower($val)=='null') $where.= "$key IS NULL $combinewith ";
-                        else $where.= "$key ".$iscondition." '".$this->escape($val)."' $combinewith ";                            
-                        $needtoskip = (($iscondition=='BETWEEN') || ($iscondition=='NOT BETWEEN')) ? true : false;
-                        $i++;
-                    }
-                }
-            } else {
-                foreach($wherekey as $key=>$val) {
-                    if(strtolower($val)=='null') $where.= "$key IS NULL $combinewith ";
-                    else $where.= "$key".$condition."'".$this->escape($val)."' $combinewith ";
+            $i=0;
+            $needtoskip=false;
+            foreach($wherekey as $key=>$val) {
+                $iscondition = strtoupper($operator[$i]);
+                $combinewith =(in_array( strtoupper($combiner[$i]), array( 'AND', 'OR', 'NOT', 'AND NOT' ))) ? strtoupper($combiner[$i]) : 'AND' ;
+                if (! in_array( $iscondition, array( '<', '>', '=', '!=', '>=', '<=', '<>', 'LIKE', 'BETWEEN', 'NOT BETWEEN', 'IS NULL' ) )) {
+                    return false;
+                } else {
+                    if ($needtoskip) $where.= "'".$this->escape($val)."' $combinewith ";
+                    elseif(strtolower($val)=='null') $where.= "$key IS NULL $combinewith ";
+                    else $where.= "$key ".$iscondition." '".$this->escape($val)."' $combinewith ";                            
+                    $needtoskip = (($iscondition=='BETWEEN') || ($iscondition=='NOT BETWEEN')) ? true : false;
+                    $i++;
                 }
             }
             $where = rtrim($where, " $combinewith ");
@@ -724,7 +730,6 @@
            *        @wherekey, - where clause, assoc array key, value 
            *       Either: 
            *        @operator, - set the operator condition, either '<','>', '=', '!=', '>=', '<=', '<>', 'like'
-           *            or set to 'raw' conditions are directly in @wherekey
            *       Or:
            *        @operatorarray, - an array of operator conditions, either '<','>', '=', '!=', '>=', '<=', '<>', 'like', 'between', 'not between', 'is null'
            *            will be joined with @wherekey
@@ -774,7 +779,6 @@
            *		@wherekey, - where clause, assoc array key, value 
            *	Either: 
            *		@operator, - set the operator condition, either '<','>', '=', '!=', '>=', '<=', '<>', 'like'
-           *				or set to 'raw' operator conditions are directly in @wherekey
            *	Or:
            * 		@operatorarray, - an array of operator conditions, either '<','>', '=', '!=', '>=', '<=', '<>', 'like', 'between', 'not between', 'is null'
            *				will be joined with @wherekey

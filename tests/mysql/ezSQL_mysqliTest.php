@@ -383,6 +383,7 @@ class ezSQL_mysqliTest extends TestCase {
         $this->object->insert('unit_test', array('id'=>'2', 'test_key'=>'testing 2' ));
         $this->object->insert('unit_test', array('id'=>'3', 'test_key'=>'testing 3' ));
         
+        $this->assertEquals($this->object->query('DROP TABLE IF EXISTS new_select_test'), 0);
         $this->object->query('CREATE TABLE new_select_test(id int(11) NOT NULL AUTO_INCREMENT, test_key varchar(50), PRIMARY KEY (ID))ENGINE=MyISAM  DEFAULT CHARSET=utf8');
 		
 		$this->assertEquals($this->object->insert_select('new_select_test','*','unit_test'),3);
@@ -416,16 +417,21 @@ class ezSQL_mysqliTest extends TestCase {
                 'test_between'=>'testing 2',
                 'test_null'=>'null'), 
             array('BETWEEN','bad','like'), 'or' ));
-        $this->assertFalse($this->object->_where_clause(
+        $this->assertContains('testing array different', $this->object->_where_clause(
             array('where_test'=>'testing 1',
-                'test_between'=>'testing 2',
+                'test_between'=>'testing array different',
                 'test_null'=>'null'), 
             array('BETWEEN','like'), 'or' ));
-        $this->assertContains('testing 3', $this->object->_where_clause(
+        $this->assertContains('AND', $this->object->_where_clause(
             array('where_test'=>'testing 1',
                 'test_between'=>'testing 3',
                 'test_null'=>'null'), 
             array('BETWEEN','=','like'), 'BAD' ));
+        $this->assertContains('testing string', $this->object->_where_clause(
+            array('where_test'=>'testing 1',
+                'test_between'=>'testing string',
+                'test_null'=>'null'), 
+            '<>'));
     }    
     
     /**
