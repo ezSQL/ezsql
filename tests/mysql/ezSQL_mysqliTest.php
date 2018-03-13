@@ -195,24 +195,6 @@ class ezSQL_mysqliTest extends TestCase {
             'test_unit3'=>'true',
             'test_unit4'=>'false')));   
     }
-    
-    /**
-     * @covers ezSQL_mysqli::set_query
-     */	 
-    public function testSet_query()
-    { 
-        $this->object->connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD);
-        $this->object->select(self::TEST_DB_NAME);
-        $this->assertEquals($this->object->query('DROP TABLE IF EXISTS info'), 0);
-        $this->object->query('CREATE TABLE info (id int(11) NOT NULL AUTO_INCREMENT, first_name varchar(50), last_name varchar(50), PRIMARY KEY (ID))ENGINE=MyISAM  DEFAULT CHARSET=utf8');        
-        $this->object->set_query("INSERT INTO info (first_name, last_name) VALUES (:first_name, :last_name)");
-        $first_name = "test set";
-        $last_name = "test bind";
-		$this->object->bind_param(':first_name', $first_name);
-		$this->object->bind_param(':last_name', $last_name);
-        $this->object->execute();
-        $this->assertEquals(1, $this->object->insert_id);
-    }
 
     /**
      * @covers ezSQL_mysqli::disconnect

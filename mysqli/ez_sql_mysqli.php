@@ -328,66 +328,6 @@ class ezSQL_mysqli extends ezSQLcore
         return $return_val;
     } // query
 
-		/**********************************************************************
-		 * Variables
-		 */
-		 private $s_query = "";
-		 
-		 private $s_params;
-		/**********************************************************************
-		*  set query
-		*/
-		function set_query($query)
-		{
-			$this->s_query = $query;
-			$this->s_params = array();
-		}
-
-		/**********************************************************************
-		*  Special query to escape all parameters
-		*/
-		function bind_param($parameter, $value)
-		{
-			$value = $this->escape($value);
-			$this->s_params[$parameter] = $value;
-			return 1;
-		}
-
-		/**********************************************************************
-		*  Special query to escape all parameters
-		*/
-		function execute()
-		{
-			if($this->s_query != '')
-			{
-				$query = $this->s_query;
-
-				if(!empty($this->s_params))
-				{
-					foreach($this->s_params as $param => $value)
-					{
-						$count = 0;
-						$query = str_replace($param, $value, $query, $count);
-						if($count == 0)
-						{
-							$str = $query .' no parameter was changed';
-							$this->register_error($str .' in '.__FILE__.' on line '.__LINE__);
-							$this->show_errors ? trigger_error($str,E_USER_WARNING) : null;
-						}
-					}
-				}
-
-				$this->s_query = "";
-				$this->s_params = array();
-
-				return $this->query($query);
-			}
-			else
-			{
-				return NULL;
-			}
-		}
-
     /**
      * Close the database connection
      */
