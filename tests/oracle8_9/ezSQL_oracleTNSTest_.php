@@ -22,6 +22,24 @@ class ezSQL_oracleTNSTest extends TestCase {
      * @var ezSQL_oracleTNS
      */
     protected $object;
+    private $errors;
+ 
+    function errorHandler($errno, $errstr, $errfile, $errline, $errcontext) {
+        $this->errors[] = compact("errno", "errstr", "errfile",
+            "errline", "errcontext");
+    }
+
+    function assertError($errstr, $errno) {
+        foreach ($this->errors as $error) {
+            if ($error["errstr"] === $errstr
+                && $error["errno"] === $errno) {
+                return;
+            }
+        }
+        $this->fail("Error with level " . $errno .
+            " and message '" . $errstr . "' not found in ", 
+            var_export($this->errors, TRUE));
+    }   
 
     /**
      * The connection parameters for the Oracle DB connection
@@ -229,5 +247,16 @@ class ezSQL_oracleTNSTest extends TestCase {
 
         $this->assertFalse($this->object->isConnected());
     } // testDisconnect
-
+       
+    /**
+     * @covers ezSQL_oracleTNS::__construct
+     */
+    public function test__Construct() {            
+        $oracle = $this->getMockBuilder(ezSQL_oracleTNS::class)
+        ->setMethods(null)
+        ->disableOriginalConstructor()
+        ->getMock();
+        
+        $this->assertNull($oracle->__construct());  
+    } 
 } // ezSQL_oracleTNSTest

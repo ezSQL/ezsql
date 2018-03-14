@@ -49,6 +49,24 @@ class ezSQL_mysqlTest extends TestCase {
      * @var ezSQL_mysql
      */
     protected $object;
+    private $errors;
+ 
+    function errorHandler($errno, $errstr, $errfile, $errline, $errcontext) {
+        $this->errors[] = compact("errno", "errstr", "errfile",
+            "errline", "errcontext");
+    }
+
+    function assertError($errstr, $errno) {
+        foreach ($this->errors as $error) {
+            if ($error["errstr"] === $errstr
+                && $error["errno"] === $errno) {
+                return;
+            }
+        }
+        $this->fail("Error with level " . $errno .
+            " and message '" . $errstr . "' not found in ", 
+            var_export($this->errors, TRUE));
+    }   
 
     /**
      * Sets up the fixture, for example, opens a network connection.
@@ -92,7 +110,13 @@ class ezSQL_mysqlTest extends TestCase {
     /**
      * @covers ezSQL_mysql::connect
      */
-    public function testConnect() {
+    public function testConnect() {   
+        $this->errors = array();
+        set_error_handler(array($this, 'errorHandler'));
+        
+        $this->assertFalse($this->object->connect());  
+        $this->assertFalse($this->object->connect('self::TEST_DB_USER', 'self::TEST_DB_PASSWORD',' self::TEST_DB_NAME', 'self::TEST_DB_CHARSET'));  
+       
         $result = $this->object->connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD);
 
         $this->assertTrue($result);
@@ -203,5 +227,17 @@ class ezSQL_mysqlTest extends TestCase {
 
         $this->assertEquals($this->object->query('DROP TABLE unit_test'), 0);
     } // testInsertId
-
+       
+    /**
+     * @covers ezSQL_mysql::__construct
+     */
+    public function test__Construct() {   
+        $mysql = $this->getMockBuilder(ezSQL_mysql::class)
+        ->setMethods(null)
+        ->disableOriginalConstructor()
+        ->getMock();
+        
+        $this->assertNull($mysql->__construct());  
+        $this->assertNull($mysql->__construct('testuser','','','','utf8'));  
+    } 
 } // ezSQL_mysqlTest

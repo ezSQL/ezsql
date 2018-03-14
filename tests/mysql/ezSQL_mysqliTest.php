@@ -50,7 +50,25 @@ class ezSQL_mysqliTest extends TestCase {
      * @var ezSQL_mysqli
      */
     protected $object;
+    private $errors;
+ 
+    function errorHandler($errno, $errstr, $errfile, $errline, $errcontext) {
+        $this->errors[] = compact("errno", "errstr", "errfile",
+            "errline", "errcontext");
+    }
 
+    function assertError($errstr, $errno) {
+        foreach ($this->errors as $error) {
+            if ($error["errstr"] === $errstr
+                && $error["errno"] === $errno) {
+                return;
+            }
+        }
+        $this->fail("Error with level " . $errno .
+            " and message '" . $errstr . "' not found in ", 
+            var_export($this->errors, TRUE));
+    }   
+    
     /**
      * Sets up the fixture, for example, opens a network connection.
      * This method is called before a test is executed.
@@ -75,7 +93,7 @@ class ezSQL_mysqliTest extends TestCase {
         }
         $this->object = null;
     }
-
+       
     /**
      * @covers ezSQL_mysqli::quick_connect
      */
@@ -97,7 +115,12 @@ class ezSQL_mysqliTest extends TestCase {
     /**
      * @covers ezSQL_mysqli::connect
      */
-    public function testConnect() {
+    public function testConnect() {        
+        $this->errors = array();
+        set_error_handler(array($this, 'errorHandler')); 
+         
+        $this->assertFalse($this->object->connect('',''));  
+        $this->assertFalse($this->object->connect('self::TEST_DB_USER', 'self::TEST_DB_PASSWORD',' self::TEST_DB_NAME', 'self::TEST_DB_CHARSET'));  
         $result = $this->object->connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD);
 
         $this->assertTrue($result);
@@ -200,9 +223,10 @@ class ezSQL_mysqliTest extends TestCase {
      * @covers ezSQL_mysqli::disconnect
      */
     public function testDisconnect() {
+        $this->object->connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD);
+        $this->object->select(self::TEST_DB_NAME);
         $this->object->disconnect();
-
-        $this->assertTrue(true);
+        $this->assertFalse($this->object->isConnected());
     } // testDisconnect
 
     /**
@@ -454,5 +478,17 @@ class ezSQL_mysqliTest extends TestCase {
 
         $this->assertTrue($result->execute());
     } // testPrepare
-
+       
+    /**
+     * @covers ezSQL_mysqli::__construct
+     */
+    public function test__Construct() {         
+        $mysqli = $this->getMockBuilder(ezSQL_mysqli::class)
+        ->setMethods(null)
+        ->disableOriginalConstructor()
+        ->getMock();
+        
+        $this->assertNull($mysqli->__construct());  
+        $this->assertNull($mysqli->__construct('testuser','','','','utf8'));  
+    } 
 } // ezSQL_mysqliTest

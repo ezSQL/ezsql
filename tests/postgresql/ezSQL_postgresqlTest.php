@@ -48,6 +48,24 @@ class ezSQL_postgresqlTest extends TestCase {
      * @var ezSQL_postgresql
      */
     protected $object;
+    private $errors;
+ 
+    function errorHandler($errno, $errstr, $errfile, $errline, $errcontext) {
+        $this->errors[] = compact("errno", "errstr", "errfile",
+            "errline", "errcontext");
+    }
+
+    function assertError($errstr, $errno) {
+        foreach ($this->errors as $error) {
+            if ($error["errstr"] === $errstr
+                && $error["errno"] === $errno) {
+                return;
+            }
+        }
+        $this->fail("Error with level " . $errno .
+            " and message '" . $errstr . "' not found in ", 
+            var_export($this->errors, TRUE));
+    }   
 
     /**
      * Sets up the fixture, for example, opens a network connection.
@@ -81,7 +99,13 @@ class ezSQL_postgresqlTest extends TestCase {
      * @covers ezSQL_postgresql::connect
      * 
      */
-    public function testConnect() {
+    public function testConnect() {        
+        $this->errors = array();
+        set_error_handler(array($this, 'errorHandler')); 
+         
+        $this->assertFalse($this->object->connect('',''));  
+        $this->assertFalse($this->object->connect('self::TEST_DB_USER', 'self::TEST_DB_PASSWORD',' self::TEST_DB_NAME', 'self::TEST_DB_CHARSET'));  
+        
         $this->assertTrue($this->object->connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME, self::TEST_DB_HOST, self::TEST_DB_PORT));
     } // testConnect
 
@@ -243,5 +267,18 @@ class ezSQL_postgresqlTest extends TestCase {
         
         $this->assertEquals(self::TEST_DB_PORT, $this->object->getPort());
     } // testGetPort
+       
+    /**
+     * @covers ezSQL_postgresql::__construct
+     */
+    public function test__Construct() {     
+        $postgresql = $this->getMockBuilder(ezSQL_postgresql::class)
+        ->setMethods(null)
+        ->disableOriginalConstructor()
+        ->getMock();
+        
+        $this->assertNull($postgresql->__construct());  
+        $this->assertNull($postgresql->__construct('testuser','','','','utf8'));  
+    } 
 
 } // ezSQL_postgresqlTest

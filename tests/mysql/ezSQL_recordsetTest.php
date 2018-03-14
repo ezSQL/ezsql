@@ -51,7 +51,6 @@ class ezSQL_recordsetTest extends TestCase {
      * @var ezSQL_mysql
      */
     protected $ezSQL = null;
-    
 
     /**
      * Sets up the fixture, for example, opens a network connection.
@@ -190,5 +189,18 @@ class ezSQL_recordsetTest extends TestCase {
         
         $this->assertEquals(1, $result->id);
     } // testEzSQL_fetch_object
-
+ 
+    /**
+     * @covers ezSQL_recordset::__construct
+     */
+    public function test__Construct() {   
+        $recordset = $this->getMockBuilder(ezSQL_recordset::class)
+        ->setMethods(null)
+        ->disableOriginalConstructor()
+        ->getMock();
+        
+        $this->expectExceptionMessage('$ezSQL_queryresult is not valid.');
+        $this->assertNull($recordset->__construct('testuser'));  
+    } 
+    
 } // ezSQL_recordsetTest

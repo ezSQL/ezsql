@@ -65,6 +65,24 @@ class ezSQL_pdoTest extends TestCase {
      * @var ezSQL_pdo
      */
     protected $object;
+    private $errors;
+ 
+    function errorHandler($errno, $errstr, $errfile, $errline, $errcontext) {
+        $this->errors[] = compact("errno", "errstr", "errfile",
+            "errline", "errcontext");
+    }
+
+    function assertError($errstr, $errno) {
+        foreach ($this->errors as $error) {
+            if ($error["errstr"] === $errstr
+                && $error["errno"] === $errno) {
+                return;
+            }
+        }
+        $this->fail("Error with level " . $errno .
+            " and message '" . $errstr . "' not found in ", 
+            var_export($this->errors, TRUE));
+    }   
 
     /**
      * Sets up the fixture, for example, opens a network connection.
@@ -293,7 +311,11 @@ class ezSQL_pdoTest extends TestCase {
     /**
      * @covers ezSQL_pdo::connect
      */
-    public function testSQLiteConnect() {
+    public function testSQLiteConnect() { 
+        $this->errors = array();
+        set_error_handler(array($this, 'errorHandler'));        
+        $this->assertFalse($this->object->connect());
+        
         $this->assertTrue($this->object->connect('sqlite:' . self::TEST_SQLITE_DB, '', '', array(), true));
     } // testSQLiteConnect
 
@@ -376,5 +398,19 @@ class ezSQL_pdoTest extends TestCase {
 
         $this->assertequals($expected, $this->object->get_set($params));
     } // testSQLiteGet_set
+    /**
+     * @covers ezSQL_pdo::__construct
+     */
+    public function test__Construct() {         
+        $this->errors = array();
+        set_error_handler(array($this, 'errorHandler'));    
+        
+        $pdo = $this->getMockBuilder(ezSQL_pdo::class)
+        ->setMethods(null)
+        ->disableOriginalConstructor()
+        ->getMock();
+        
+        $this->assertNull($pdo->__construct());  
+    } 
      
 } // ezSQL_pdoTest

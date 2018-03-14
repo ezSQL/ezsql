@@ -25,6 +25,24 @@ class ezSQL_sqlsrvTest extends TestCase {
      * @var ezSQL_sqlsrv
      */
     protected $object;
+    private $errors;
+ 
+    function errorHandler($errno, $errstr, $errfile, $errline, $errcontext) {
+        $this->errors[] = compact("errno", "errstr", "errfile",
+            "errline", "errcontext");
+    }
+
+    function assertError($errstr, $errno) {
+        foreach ($this->errors as $error) {
+            if ($error["errstr"] === $errstr
+                && $error["errno"] === $errno) {
+                return;
+            }
+        }
+        $this->fail("Error with level " . $errno .
+            " and message '" . $errstr . "' not found in ", 
+            var_export($this->errors, TRUE));
+    }   
 
     /**
      * Sets up the fixture, for example, opens a network connection.
@@ -128,5 +146,19 @@ class ezSQL_sqlsrvTest extends TestCase {
                 'This test has not been implemented yet.'
         );
     } // testDisconnect
-
+      
+    /**
+     * @covers ezSQL_sqlsrv::__construct
+     */
+    public function test__Construct() {   
+        $this->errors = array();
+        set_error_handler(array($this, 'errorHandler'));    
+        
+        $sqlsrv = $this->getMockBuilder(ezSQL_sqlsrv::class)
+        ->setMethods(null)
+        ->disableOriginalConstructor()
+        ->getMock();
+        
+        $this->assertNull($sqlsrv->__construct());  
+    } 
 } // ezSQL_sqlsrvTest
