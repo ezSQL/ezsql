@@ -245,9 +245,12 @@ class ezSQLcoreTest extends TestCase {
     public function testGet_set()
     {
         $this->assertNull($this->object->get_set(''));   
+        $this->expectExceptionMessage('Call to undefined method ezSQLcore::escape()');
         $this->assertContains('NOW()',$this->object->get_set(
             array('test_unit'=>'NULL',
-            'test_unit2'=>'NOW()')));   
+            'test_unit2'=>'NOW()',
+            'test_unit3'=>'true',
+            'test_unit4'=>'false')));   
     }
 
     /**

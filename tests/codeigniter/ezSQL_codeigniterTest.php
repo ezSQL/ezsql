@@ -13,6 +13,24 @@ class ezSQL_codeigniterTest extends TestCase
      * @var ezSQL_codeigniter
      */
     protected $object;
+    private $errors;
+ 
+    function errorHandler($errno, $errstr, $errfile, $errline, $errcontext) {
+        $this->errors[] = compact("errno", "errstr", "errfile",
+            "errline", "errcontext");
+    }
+
+    function assertError($errstr, $errno) {
+        foreach ($this->errors as $error) {
+            if ($error["errstr"] === $errstr
+                && $error["errno"] === $errno) {
+                return;
+            }
+        }
+        $this->fail("Error with level " . $errno .
+            " and message '" . $errstr . "' not found in ", 
+            var_export($this->errors, TRUE));
+    }   
 
     /**
      * Sets up the fixture, for example, opens a network connection.
@@ -58,5 +76,20 @@ class ezSQL_codeigniterTest extends TestCase
         $this->markTestIncomplete(
             'This test has not been implemented yet.'
         );
-    }
+    }     
+    
+    /**
+     * @covers ezSQL_codeigniter::__construct
+     */
+    public function test__Construct() {   
+        $this->errors = array();
+        set_error_handler(array($this, 'errorHandler'));    
+        
+        $codeigniter = $this->getMockBuilder(ezSQL_codeigniter::class)
+        ->setMethods(null)
+        ->disableOriginalConstructor()
+        ->getMock();
+        
+        $this->assertNull($codeigniter->__construct());  
+    } 
 }

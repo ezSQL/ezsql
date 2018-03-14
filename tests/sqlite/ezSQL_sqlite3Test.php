@@ -13,6 +13,24 @@ class ezSQL_sqlite3Test extends TestCase
      * @var ezSQL_sqlite3
      */
     protected $object;
+    private $errors;
+ 
+    function errorHandler($errno, $errstr, $errfile, $errline, $errcontext) {
+        $this->errors[] = compact("errno", "errstr", "errfile",
+            "errline", "errcontext");
+    }
+
+    function assertError($errstr, $errno) {
+        foreach ($this->errors as $error) {
+            if ($error["errstr"] === $errstr
+                && $error["errno"] === $errno) {
+                return;
+            }
+        }
+        $this->fail("Error with level " . $errno .
+            " and message '" . $errstr . "' not found in ", 
+            var_export($this->errors, TRUE));
+    }   
 
     /**
      * Sets up the fixture, for example, opens a network connection.
@@ -106,5 +124,21 @@ class ezSQL_sqlite3Test extends TestCase
         $this->markTestIncomplete(
             'This test has not been implemented yet.'
         );
-    }
+    } 
+    
+    /**
+     * @covers ezSQL_sqlite3::__construct
+     */
+    public function test__Construct() {   
+        $this->errors = array();
+        set_error_handler(array($this, 'errorHandler'));    
+        
+        $sqlite3 = $this->getMockBuilder(ezSQL_sqlite3::class)
+        ->setMethods(null)
+        ->disableOriginalConstructor()
+        ->getMock();
+        
+        $this->assertNull($sqlite3->__construct());  
+    } 
+    
 }

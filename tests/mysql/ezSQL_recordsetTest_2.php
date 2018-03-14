@@ -190,5 +190,18 @@ class ezSQL_recordsetTest2 extends TestCase {
         
         $this->assertEquals(1, $result->id);
     } // testEzSQL_fetch_object
+ 
+    /**
+     * @covers ezSQL_recordset::__construct
+     */
+    public function test__Construct() {   
+        $recordset = $this->getMockBuilder(ezSQL_recordset::class)
+        ->setMethods(null)
+        ->disableOriginalConstructor()
+        ->getMock();
+        
+        $this->expectExceptionMessage('$ezSQL_queryresult is not valid.');
+        $this->assertNull($recordset->__construct('testuser'));  
+    } 
 
 } // ezSQL_recordsetTest
