@@ -841,7 +841,7 @@
             return false;
         }
         
-        if ( ! in_array( strtoupper( $type ), array( 'REPLACE', 'INSERT' )) || ! isset($table) ) {
+        if ( ! in_array( strtoupper( $type ), array( 'REPLACE', 'INSERT' ))) {
             return false;
         }
             
@@ -865,10 +865,13 @@
                 return false;
         } else {
             if (is_array($keyandvalue)) {
-                foreach($keyandvalue as $key) {
-                    $n.="$key, ";                
-                }
-                $sql .= " (". rtrim($n, ', ') .") ";                
+                if (array_keys($keyandvalue) === range(0, count($keyandvalue) - 1)) {
+                    foreach($keyandvalue as $key) {
+                        $n.="$key, ";                
+                    }
+                    $sql .= " (". rtrim($n, ', ') .") ";                         
+                } else 
+                    return false;           
             } 
             return $sql;
         }

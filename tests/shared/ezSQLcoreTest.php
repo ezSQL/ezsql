@@ -158,6 +158,9 @@ class ezSQLcoreTest extends TestCase {
         $this->object->debug_echo_is_on = false;
         $this->object->last_result = array('Test 1');
         $this->assertNotEmpty($this->object->vardump($this->object->last_result));
+        $this->object->debug_echo_is_on = true;
+        $this->expectOutputRegex('/[Last Function Call]/');
+        $this->object->vardump('');
         
     } // testVardump
 
@@ -179,6 +182,12 @@ class ezSQLcoreTest extends TestCase {
         
         // In addition of getting a result, it fills the console
         $this->expectOutputRegex('/[make a donation]/');
+        $this->object->debug(true);
+        $this->object->last_error = "test last";
+        $this->expectOutputRegex('/[test last]/');
+        $this->object->debug(true);
+        $this->object->from_disk_cache = true;
+        $this->expectOutputRegex('/[Results retrieved from disk cache]/');
         $this->object->debug(true);
     } // testDebug
 
@@ -224,6 +233,7 @@ class ezSQLcoreTest extends TestCase {
     public function testTimer_update_global() {
         $this->object->timer_start('test_timer');           
 		usleep( 5 );
+        $this->object->do_profile = true;
         $this->object->timer_update_global('test_timer');
         $expected = $this->object->total_query_time;     
         $this->assertGreaterThanOrEqual($expected, $this->object->timer_elapsed('test_timer'));    
@@ -258,6 +268,9 @@ class ezSQLcoreTest extends TestCase {
     {
         $this->assertFalse($this->object->delete(''));
         $this->assertFalse($this->object->delete('test_unit_delete',''));
+        $this->assertFalse($this->object->delete('test_unit_delete',
+            array('good'=>'null'),
+                      'bad'));
     }
        
     /**
@@ -308,7 +321,18 @@ class ezSQLcoreTest extends TestCase {
     {
         $this->assertFalse($this->object->replace('',''));
     }
-	
+    
+    /**
+     * @covers ezSQLcore::_query_insert_replace
+     */
+    public function test_Query_insert_replace() 
+    {        
+        $this->assertFalse($this->object->_query_insert_replace('', array('id'=>'2' ),'replace')); 
+        $this->assertFalse($this->object->_query_insert_replace('unit_table', array('id'=>'2' ),''));  
+        $this->assertContains('replace INTO unit_table',$this->object->_query_insert_replace('unit_table', 'id' ,'replace',false));   
+        $this->assertContains('(test, INSERT, INTO, SELECT)',$this->object->_query_insert_replace('unit_table', array('test','INSERT','INTO','SELECT') ,'insert',false)); 
+    }   
+    
     /**
      * @covers ezSQLcore::affectedRows
      */
