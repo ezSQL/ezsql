@@ -14,10 +14,12 @@ services:
   - mysql
   - postgresql
   
+before_install:
+  - if [[ ${TRAVIS_PHP_VERSION:0:3} == "5.6" ]]; then composer require --dev --no-update phpunit/phpunit 5.7.5; fi
+  
 # Commands to be run before your environment runs.
 before_script:
   - composer self-update
-  - composer install --prefer-source --no-interaction
   - composer require php-coveralls/php-coveralls
   - mysql -e 'CREATE DATABASE IF NOT EXISTS ez_test;'
   - mysql -e 'GRANT ALL PRIVILEGES ON ez_test.* TO ez_test@localhost;'
