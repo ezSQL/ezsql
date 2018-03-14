@@ -20,6 +20,24 @@ class ezSQLcoreTest extends TestCase {
      * @var ezSQLcore
      */
     protected $object;
+    private $errors;
+ 
+    function errorHandler($errno, $errstr, $errfile, $errline, $errcontext) {
+        $this->errors[] = compact("errno", "errstr", "errfile",
+            "errline", "errcontext");
+    }
+
+    function assertError($errstr, $errno) {
+        foreach ($this->errors as $error) {
+            if ($error["errstr"] === $errstr
+                && $error["errno"] === $errno) {
+                return;
+            }
+        }
+        $this->fail("Error with level " . $errno .
+            " and message '" . $errstr . "' not found in ", 
+            var_export($this->errors, TRUE));
+    }   
 	
     /**
      * Sets up the fixture, for example, opens a network connection.
@@ -244,13 +262,16 @@ class ezSQLcoreTest extends TestCase {
      */
     public function testGet_set()
     {
-        $this->assertNull($this->object->get_set(''));   
+        $this->assertNull($this->object->get_set(''));    
+ 
+        //$this->errors = array();
+        //set_error_handler(array($this, 'errorHandler')); 
         $this->expectExceptionMessage('Call to undefined method ezSQLcore::escape()');
-        $this->assertContains('NOW()',$this->object->get_set(
+        $this->object->get_set(
             array('test_unit'=>'NULL',
             'test_unit2'=>'NOW()',
             'test_unit3'=>'true',
-            'test_unit4'=>'false')));   
+            'test_unit4'=>'false'));   
     }
 
     /**
