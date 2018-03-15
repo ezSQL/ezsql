@@ -20,12 +20,12 @@
         <whitelist>
             <directory>./</directory>
             <exclude>
-                <directory>./_demo</directory>
-                <directory>./_docs</directory>
+                <directory>./build</directory>
+                <directory>./demo</directory>
+                <directory>./docs</directory>
                 <directory>./tests</directory>
                 <directory>./vendor</directory>
-                <file>./shared/ez_sql_core_2.1_debughack_0.2alpha.php</file>
-                <file>./shared/ez_sql_core_202console.php</file>
+                <file>./ez_sql_loader.php</file>
             </exclude>
         </whitelist>
     </filter>

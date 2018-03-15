@@ -13,21 +13,21 @@
     },
     "autoload": {
         "classmap": [
+            "lib/ez_sql_codeigniter.php",
             "lib/ez_sql_cubrid.php",
-            "lib/ez_sql_pdo.php",
-            "lib/ez_sql_postgresql.php",
+            "lib/ez_sql_mssql.php",
             "lib/ez_sql_mysql.php",
             "lib/ez_sql_mysqli.php",
-            "lib/ez_sql_sqlsrv.php",
             "lib/ez_sql_oracle8_9.php",
             "lib/ez_sql_oracleTNS.php",
+            "lib/ez_sql_pdo.php",
+            "lib/ez_sql_postgresql.php",
+            "lib/ez_sql_recordset.php",
             "lib/ez_sql_sqlite.php",
             "lib/ez_sql_sqlite3.php",
-            "shared/ez_sql_core.php",
-            "lib/ez_sql_recordset.php",
-            "lib/ez_sql_mssql.php",
+            "lib/ez_sql_sqlsrv.php",
             "lib/ez_sql_sybase.php",
-            "lib/ez_sql_codeigniter.php"
+            "shared/ez_sql_core.php"
         ]
     },
     "require-dev": {
