@@ -19,7 +19,33 @@
 	defined('OBJECT') or define('OBJECT', 'OBJECT');
 	defined('ARRAY_A') or define('ARRAY_A', 'ARRAY_A');
 	defined('ARRAY_N') or define('ARRAY_N', 'ARRAY_N');
-
+		
+    /*
+     * Operator boolean expressions.
+     */
+		const EQ  = '=';
+		const NEQ = '<>';
+		const NE  = '!=';
+		const LT  = '<';
+		const LTE = '<=';
+		const GT  = '>';
+		const GTE = '>=';
+    
+		const _LIKE = 'LIKE';
+		const _notLIKE  = 'NOT LIKE';
+		const _BETWEEN = 'BETWEEN';
+		const _notBETWEEN = 'NOT BETWEEN';
+		const _isNULL = 'IS NULL';
+		const _notNULL  = 'IS NOT NULL';
+    
+    /*
+     * Combine operators .
+     */    
+		const _AND = 'AND';
+		const _OR = 'OR';
+		const _NOT = 'NOT';
+		const _andNOT = 'AND NOT';
+		
 	/**********************************************************************
 	*  Core class containg common functions to manipulate query result
 	*  sets once returned
@@ -52,7 +78,7 @@
 		var $do_profile       = false;
 		var $profile_times    = array();
 		var $insert_id        = null;
-
+		
     /**
      * Whether the database connection is established, or not
      * @var boolean Default is false
@@ -667,6 +693,63 @@
 			return ($all) ? $this->num_queries : $this->conn_queries;
 		}
         
+ 	/**********************************************************************
+           * desc: helper returns an WHERE sql clause string 
+		   * formate: where( array(x, =, x, and, extra) );
+		   * example: where( array(key, operator, value, combine, extra) );
+		   * param: @array(key, - table column  
+           *        	operator, - set the operator condition, either '<','>', '=', '!=', '>=', '<=', '<>', 'like', 'between', 'not between', 'is null'
+		   *			value - will be escaped
+           *        	combine - combine additional where clauses with, either 'AND','OR', 'NOT', 'AND NOT' or 
+		   carry over of @value in the case the @operator is 'between' or 'not between'
+		   *			extra - carry over of @combine in the case the operator is 'between' or 'not between')
+           * returns: string - WHERE SQL statement	   
+	*/        
+    function where( array ...$wherekeys) {  
+		foreach ($wherekeys as $values){
+			$wherekey[ (isset($values[0])) ? $values[0] : '1' ] = (isset($values[2])) ? $values[2] : 'null' ;
+			$operator[] = (isset($values[1])) ? $values[1]: EQ;
+			$combiner[] = (isset($values[3])) ? $values[3]: _AND;
+			$extra[] = (isset($values[4])) ? $values[4]: null;
+		}
+        
+        if ( ! is_array( $wherekey ) || ! is_array( $operator ) || ! is_array( $combiner )) 
+            return false; 
+        
+        $where='1';    
+        if (! isset($wherekey['1'])) {
+            $where='';
+            $i=0;
+            $needtoskip=false;
+            foreach($wherekey as $key=>$val) {
+                $iscondition = strtoupper($operator[$i]);
+				$combine = $combiner[$i];
+				if ( in_array(strtoupper($combine), array( 'AND', 'OR', 'NOT', 'AND NOT' )) || isset($extra[$i])) 
+					$combinewith = (isset($extra[$i])) ? $combine : strtoupper($combine);
+				else 
+					return false;		
+                if (! in_array( $iscondition, array( '<', '>', '=', '!=', '>=', '<=', '<>', 'LIKE', 'NOT LIKE', 'BETWEEN', 'NOT BETWEEN', 'IS NULL', 'IS NOT NULL' ) )) {
+                    return false;
+                } else {
+                    if (($iscondition=='BETWEEN') || ($iscondition=='NOT BETWEEN')) {
+						$value = $this->escape($combinewith);
+						if (in_array(strtoupper($extra[$i]), array( 'AND', 'OR', 'NOT', 'AND NOT' ))) 
+							$combinewith = strtoupper($extra[$i]);
+						else 
+							return false;		
+						$where.= "$key ".$iscondition." '".$this->escape($val)."' '".$value."' $combinewith ";
+					} elseif(strtolower($val)=='null') $where.= "$key IS NULL $combinewith ";
+                    else $where.= "$key ".$iscondition." '".$this->escape($val)."' $combinewith ";
+                    $i++;
+                }
+            }
+            $where = rtrim($where, " $combinewith ");
+        }
+        
+        $where = ($where!='1') ? ' WHERE '.$where.' ' : ' ' ;
+        return $where;
+    }        
+	
  	/**********************************************************************
            * desc: helper returns an WHERE sql clause string
 	*/        

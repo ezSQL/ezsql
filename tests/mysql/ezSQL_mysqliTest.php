@@ -448,6 +448,26 @@ class ezSQL_mysqliTest extends TestCase {
                 'test_between'=>'testing array',
                 'test_null'=>'null'), 
             '<>', array('or')));
+    } 	
+    /**
+     * @covers ezSQLcore::where
+     */
+    public function testWhere()
+    {
+        $this->object->connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD);
+        $this->object->select(self::TEST_DB_NAME);
+        $expect = $this->object->where(
+            array('where_test',_BETWEEN,'testing 1','testing 2',_OR),
+			array('test_null',_LIKE,'null')
+			);
+        $this->assertContains('WHERE',$expect);
+        $this->assertContains('IS NULL',$expect);
+        $this->assertContains('BETWEEN',$expect);
+        $this->assertContains('OR',$expect);
+        $this->assertFalse($this->object->where(
+            array('where_test','BETWEEN','testing 1','testing 2','bad'),
+			array('test_null','like','null')
+			));
     } 
     
     /**
