@@ -27,7 +27,6 @@
 
 	class ezSQLcore
 	{
-
 		var $trace            = false;  // same as $debug_all
 		var $debug_all        = false;  // same as $trace
 		var $debug_called     = false;
@@ -706,7 +705,7 @@
             foreach($wherekey as $key=>$val) {
                 $iscondition = strtoupper($operator[$i]);
                 $combinewith =(in_array( strtoupper($combiner[$i]), array( 'AND', 'OR', 'NOT', 'AND NOT' ))) ? strtoupper($combiner[$i]) : 'AND' ;
-                if (! in_array( $iscondition, array( '<', '>', '=', '!=', '>=', '<=', '<>', 'LIKE', 'BETWEEN', 'NOT BETWEEN', 'IS NULL' ) )) {
+                if (! in_array( $iscondition, array( '<', '>', '=', '!=', '>=', '<=', '<>', 'LIKE', 'NOT LIKE', 'BETWEEN', 'NOT BETWEEN', 'IS NULL', 'IS NOT NULL' ) )) {
                     return false;
                 } else {
                     if ($needtoskip) $where.= "'".$this->escape($val)."' $combinewith ";
