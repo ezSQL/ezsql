@@ -306,14 +306,13 @@ class ezSQL_mysqliTest extends TestCase {
         $unit_test['id'] = '3';
         $unit_test['test_key'] = 'test 3';
         $this->object->insert('unit_test', $unit_test );
-        $where['id'] = '1';
-        $this->assertEquals($this->object->delete('unit_test', $where), 1);
-        $where['test_key'] = 'test 3';
-        $where['id'] = '3';
-        $this->assertEquals($this->object->delete('unit_test', $where), 1);
-        $where['test_key'] = 'test 2';
-        $this->assertEquals($this->object->delete('unit_test', $where), 0);
-        $where['id'] = '2';
+        $where='1';
+        $this->assertEquals($this->object->delete('unit_test', array('id','=','1')), 1);
+        $this->assertEquals($this->object->delete('unit_test', 
+            array('test_key','=',$unit_test['test_key'],'and'),
+            array('id','=','3')), 1);
+        $this->assertEquals($this->object->delete('unit_test', array('test_key','=',$where)), 0);
+        $where=array('id',EQ,'2');
         $this->assertEquals($this->object->delete('unit_test', $where), 1);
     }  
        

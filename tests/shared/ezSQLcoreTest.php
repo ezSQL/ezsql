@@ -289,10 +289,7 @@ class ezSQLcoreTest extends TestCase {
     public function testDelete()
     {
         $this->assertFalse($this->object->delete(''));
-        $this->assertFalse($this->object->delete('test_unit_delete',''));
-        $this->assertFalse($this->object->delete('test_unit_delete',
-            array('good'=>'null'),
-                      'bad'));
+        $this->assertFalse($this->object->delete('test_unit_delete',array('good','bad')));
     }
        
     /**

@@ -706,8 +706,8 @@
 	*/        
     function where( array ...$wherekeys) {  
 		foreach ($wherekeys as $values){
-			$wherekey[ (isset($values[0])) ? $values[0] : '1' ] = (isset($values[2])) ? $values[2] : 'null' ;
-			$operator[] = (isset($values[1])) ? $values[1]: EQ;
+			$wherekey[ (isset($values[0])) ? $values[0] : '1' ] = (isset($values[2])) ? $values[2] : '' ;
+			$operator[] = (isset($values[1])) ? $values[1]: '';
 			$combiner[] = (isset($values[3])) ? $values[3]: _AND;
 			$extra[] = (isset($values[4])) ? $values[4]: null;
 		}
@@ -899,14 +899,14 @@
 	/**********************************************************************
            * desc: helper does the actual insert or replace query with an array
 	*/
-    function delete($table='', $wherekey = array( '1' ), $operator = '=', $combine = 'AND') {            
+    function delete($table='', ...$wherekey) {            
         if ( ! is_array( $wherekey ) || ! isset($table) || $table=='' ) {
             return false;
         }
         
         $sql="DELETE FROM $table";
         
-        $where = $this->_where_clause( $wherekey, $operator, $combine );
+        $where = $this->where(...$wherekey);
         if (is_string($where)) {   
             $sql .= $where;
             return $this->query($sql);       
