@@ -875,11 +875,17 @@
            *		@combine - combine conditions with, either 'AND','OR', 'NOT', 'AND NOT'
            * returns: (query_id) for fetching results etc
 	*/
-    function update($table='', $keyandvalue, $wherekey = array( '1' ), $operator = '=', $combine = 'AND') {            
+    function update($table='', $keyandvalue, ...$wherekeys) {            
         if ( ! is_array( $keyandvalue ) || ! isset($table) || $table=='' ) {
             return false;
         }
         
+		if (is_string($wherekeys[0])) {
+			foreach ($wherekeys as $makearray) 
+				$wherekey[] = explode(' ',$makearray);	
+		} else 
+			$wherekey = $wherekeys;
+		
         $sql="UPDATE $table SET ";
         
         foreach($keyandvalue as $key=>$val) {
@@ -888,7 +894,7 @@
             else $sql.= "$key='".$this->escape($val)."', ";
         }
         
-        $where = $this->_where_clause( $wherekey, $operator, $combine );
+        $where = $this->where(...$wherekey);
         if (is_string($where)) {   
             $sql = rtrim($sql, ', ') . $where;
             return $this->query($sql);       
@@ -899,11 +905,17 @@
 	/**********************************************************************
            * desc: helper does the actual insert or replace query with an array
 	*/
-    function delete($table='', ...$wherekey) {            
-        if ( ! is_array( $wherekey ) || ! isset($table) || $table=='' ) {
+    function delete($table='', ...$wherekeys) {   
+        if ( ! isset($table) || $table=='' ) {
             return false;
         }
         
+		if (is_string($wherekeys[0])) {
+			foreach ($wherekeys as $makearray) 
+				$wherekey[] = explode(' ',$makearray);	
+		} else 
+			$wherekey = $wherekeys;
+		
         $sql="DELETE FROM $table";
         
         $where = $this->where(...$wherekey);

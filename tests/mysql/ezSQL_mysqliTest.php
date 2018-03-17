@@ -275,18 +275,16 @@ class ezSQL_mysqliTest extends TestCase {
         $this->object->select(self::TEST_DB_NAME);
         $this->object->query('CREATE TABLE unit_test(id int(11) NOT NULL AUTO_INCREMENT, test_key varchar(50), PRIMARY KEY (ID))ENGINE=MyISAM  DEFAULT CHARSET=utf8');
         $this->object->insert('unit_test', array('id'=>'1', 'test_key'=>'test 1' ));
-        $this->object->insert('unit_test', array('id'=>'2', 'test_key'=>'test 2' ));
+        $this->object->insert('unit_test', array('id'=>'2', 'test_key'=>'test_2' ));
         $this->object->insert('unit_test', array('id'=>'3', 'test_key'=>'test 3' ));
         $unit_test['test_key'] = 'testing';
-        $where['id'] = '1';
+        $where="id = 1";
         $this->assertEquals($this->object->update('unit_test', $unit_test, $where), 1);
-        $where['test_key'] = 'test 3';
-        $where['id'] = '3';
-        $this->assertEquals($this->object->update('unit_test', $unit_test, $where), 1);
-        $where['id'] = '2';
-        $this->assertEquals($this->object->update('unit_test', $unit_test, $where), 0);
-        $where['test_key'] = 'test 2';
-        $this->assertEquals($this->object->update('unit_test', $unit_test, $where), 1);
+        $this->assertEquals($this->object->update('unit_test', $unit_test, 
+			array('test_key',EQ,'test 3','and'),
+			array('id','=','3')), 1);
+        $this->assertEquals($this->object->update('unit_test', $unit_test, "id = 4"), 0);
+        $this->assertEquals($this->object->update('unit_test', $unit_test, "test_key = test_2 and", "id = 2"), 1);
     }
     
     /**
@@ -312,7 +310,7 @@ class ezSQL_mysqliTest extends TestCase {
             array('test_key','=',$unit_test['test_key'],'and'),
             array('id','=','3')), 1);
         $this->assertEquals($this->object->delete('unit_test', array('test_key','=',$where)), 0);
-        $where=array('id',EQ,'2');
+        $where="id = 2";
         $this->assertEquals($this->object->delete('unit_test', $where), 1);
     }  
        
