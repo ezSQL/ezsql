@@ -698,11 +698,10 @@
 		   * formate: where( array(x, =, x, and, extra) );
 		   * example: where( array(key, operator, value, combine, extra) );
 		   * param: @array(key, - table column  
-           *        	operator, - set the operator condition, either '<','>', '=', '!=', '>=', '<=', '<>', 'like', 'between', 'not between', 'is null'
-		   *			value - will be escaped
-           *        	combine - combine additional where clauses with, either 'AND','OR', 'NOT', 'AND NOT' or 
-		   carry over of @value in the case the @operator is 'between' or 'not between'
-		   *			extra - carry over of @combine in the case the operator is 'between' or 'not between')
+                        *        	operator, - set the operator condition, either '<','>', '=', '!=', '>=', '<=', '<>', 'like', 'between', 'not between', 'is null'
+		   *		value, - will be escaped
+                        *        	combine, - combine additional where clauses with, either 'AND','OR', 'NOT', 'AND NOT' or  carry over of @value in the case the @operator is 'between' or 'not between'
+		   *		extra - carry over of @combine in the case the operator is 'between' or 'not between')
            * returns: string - WHERE SQL statement	   
 	*/        
     function where( array ...$wherekeys) {  
@@ -727,7 +726,7 @@
 				if ( in_array(strtoupper($combine), array( 'AND', 'OR', 'NOT', 'AND NOT' )) || isset($extra[$i])) 
 					$combinewith = (isset($extra[$i])) ? $combine : strtoupper($combine);
 				else 
-					return false;		
+					$combinewith = _AND;
                 if (! in_array( $iscondition, array( '<', '>', '=', '!=', '>=', '<=', '<>', 'LIKE', 'NOT LIKE', 'BETWEEN', 'NOT BETWEEN', 'IS NULL', 'IS NOT NULL' ) )) {
                     return false;
                 } else {
@@ -736,8 +735,8 @@
 						if (in_array(strtoupper($extra[$i]), array( 'AND', 'OR', 'NOT', 'AND NOT' ))) 
 							$combinewith = strtoupper($extra[$i]);
 						else 
-							return false;		
-						$where.= "$key ".$iscondition." '".$this->escape($val)."' '".$value."' $combinewith ";
+                            $combinewith = _AND;
+						$where.= "$key ".$iscondition." '".$this->escape($val)."' AND '".$value."' $combinewith ";
 					} elseif(strtolower($val)=='null') $where.= "$key IS NULL $combinewith ";
                     else $where.= "$key ".$iscondition." '".$this->escape($val)."' $combinewith ";
                     $i++;
@@ -791,7 +790,7 @@
                 if (! in_array( $iscondition, array( '<', '>', '=', '!=', '>=', '<=', '<>', 'LIKE', 'NOT LIKE', 'BETWEEN', 'NOT BETWEEN', 'IS NULL', 'IS NOT NULL' ) )) {
                     return false;
                 } else {
-                    if ($needtoskip) $where.= "'".$this->escape($val)."' $combinewith ";
+                    if ($needtoskip) $where.= "AND '".$this->escape($val)."' $combinewith ";
                     elseif(strtolower($val)=='null') $where.= "$key IS NULL $combinewith ";
                     else $where.= "$key ".$iscondition." '".$this->escape($val)."' $combinewith ";                            
                     $needtoskip = (($iscondition=='BETWEEN') || ($iscondition=='NOT BETWEEN')) ? true : false;
