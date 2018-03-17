@@ -107,6 +107,9 @@
      * @var string
      */
     private $func_call;
+	
+	private $execute = true;
+	private $fromtable = null;
 
 		// == TJH == default now needed for echo of debug function
 		var $debug_echo_is_on = true;
@@ -695,16 +698,25 @@
         
  	/**********************************************************************
            * desc: helper returns an WHERE sql clause string 
-		   * formate: where( array(x, =, x, and, extra) );
-		   * example: where( array(key, operator, value, combine, extra) );
-		   * param: @array(key, - table column  
-                        *        	operator, - set the operator condition, either '<','>', '=', '!=', '>=', '<=', '<>', 'like', 'between', 'not between', 'is null'
+		   * formate: where( array(x, =, y, and, extra) ) or where( "x = y and extra" );
+		   * example: where( array(key, operator, value, combine, extra) ); or where( "key operator value combine extra" );
+		   * param: @array or @string "(key, - table column  
+           *        	operator, - set the operator condition, either '<','>', '=', '!=', '>=', '<=', '<>', 'like', 'between', 'not between', 'is null'
 		   *		value, - will be escaped
-                        *        	combine, - combine additional where clauses with, either 'AND','OR', 'NOT', 'AND NOT' or  carry over of @value in the case the @operator is 'between' or 'not between'
-		   *		extra - carry over of @combine in the case the operator is 'between' or 'not between')
+           *        	combine, - combine additional where clauses with, either 'AND','OR', 'NOT', 'AND NOT' or  carry over of @value in the case the @operator is 'between' or 'not between'
+		   *		extra - carry over of @combine in the case the operator is 'between' or 'not between')"
            * returns: string - WHERE SQL statement	   
 	*/        
-    function where( array ...$wherekeys) {  
+    function where( ...$getwherekeys) { 
+		if (!empty($getwherekeys)){
+			if (is_string($getwherekeys[0])) {
+				foreach ($getwherekeys as $makearray) 
+					$wherekeys[] = explode(' ',$makearray);	
+			} else 
+				$wherekeys = $getwherekeys;			
+		} else 
+			return '';
+		
 		foreach ($wherekeys as $values){
 			$wherekey[ (isset($values[0])) ? $values[0] : '1' ] = (isset($values[2])) ? $values[2] : '' ;
 			$operator[] = (isset($values[1])) ? $values[1]: '';
@@ -745,79 +757,24 @@
             $where = rtrim($where, " $combinewith ");
         }
         
-        $where = ($where!='1') ? ' WHERE '.$where.' ' : ' ' ;
-        return $where;
+        return ($where!='1') ? ' WHERE '.$where.' ' : ' ' ;
     }        
-	
- 	/**********************************************************************
-           * desc: helper returns an WHERE sql clause string
-	*/        
-    function _where_clause( $wherekey=array('1'), $condition='=', $combine='AND' ) {     
-        if (is_string($condition)) $operator[] = $condition;
-        else $operator = $condition;     
-        
-        if (is_string($combine)) $combiner[] = $combine;
-        else $combiner = $combine;
-        
-        if ( ! is_array( $wherekey ) || ! is_array( $operator ) || ! is_array( $combiner )) 
-            return false; 
-        
-        $where='1';      
-        $wc = count($wherekey);
-        $oc = count($operator);
-        $cc = count($combiner);
-        
-        if ( $wc > $oc ) {
-            $v = $operator[$oc - 1];
-            for ($oc; $oc<=$wc; $oc++) {
-                array_push($operator,$v);
-            }
-        } elseif ( $wc < $oc ) 
-            return false;
-        
-        $v = $combiner[$cc - 1];
-        for ($cc; $cc<=$wc; $cc++) {
-            array_push($combiner,$v);
-        }
- 
-        if ($wherekey!=array('1')) {
-            $where='';
-            $i=0;
-            $needtoskip=false;
-            foreach($wherekey as $key=>$val) {
-                $iscondition = strtoupper($operator[$i]);
-                $combinewith =(in_array( strtoupper($combiner[$i]), array( 'AND', 'OR', 'NOT', 'AND NOT' ))) ? strtoupper($combiner[$i]) : 'AND' ;
-                if (! in_array( $iscondition, array( '<', '>', '=', '!=', '>=', '<=', '<>', 'LIKE', 'NOT LIKE', 'BETWEEN', 'NOT BETWEEN', 'IS NULL', 'IS NOT NULL' ) )) {
-                    return false;
-                } else {
-                    if ($needtoskip) $where.= "AND '".$this->escape($val)."' $combinewith ";
-                    elseif(strtolower($val)=='null') $where.= "$key IS NULL $combinewith ";
-                    else $where.= "$key ".$iscondition." '".$this->escape($val)."' $combinewith ";                            
-                    $needtoskip = (($iscondition=='BETWEEN') || ($iscondition=='NOT BETWEEN')) ? true : false;
-                    $i++;
-                }
-            }
-            $where = rtrim($where, " $combinewith ");
-        }
-        
-        $where = ($where!='1') ? ' WHERE '.$where.';' : ' ;' ;
-        return $where;
-    }
     
 	/**********************************************************************
            * desc: returns an sql string or result set given the table, fields, by operator condition or conditional array
            * param: @table, - database table to access
            *        @fields, - table fields, string
-           *        @wherekey, - where clause, assoc array key, value 
-           *       Either: 
-           *        @operator, - set the operator condition, either '<','>', '=', '!=', '>=', '<=', '<>', 'like'
-           *       Or:
-           *        @operatorarray, - an array of operator conditions, either '<','>', '=', '!=', '>=', '<=', '<>', 'like', 'between', 'not between', 'is null'
-           *            will be joined with @wherekey
-           *        @combine - combine operator conditions with, either 'AND','OR', 'NOT', 'AND NOT'
-           * returns: a result set - see docs for more details
+           *        @wherekey, - where clause ( array(x, =, y, and, extra) ) or ( "x = y and extra" )
+		   *		example: where( array(key, operator, value, combine, extra) ); or where( "key operator value combine extra" );
+           * returns: a result set - see docs for more details 
 	*/
-    function selecting($table='', $fields='*', $wherekey=array('1'), $operator='=', $combine='AND', $execute=true, $iscreate=false, $fromtable='') {            
+    function selecting($table='', $fields='*', ...$wherekeys ) { 
+		$getfromtable = $this->fromtable;
+		$getexecute = $this->execute;
+		
+		$this->fromtable = null;
+		$this->execute = true;
+		
         if ( ! isset($table) || $table=='' ) {
             return false;
         }
@@ -831,15 +788,15 @@
         } else
             $columns = $fields;
         
-		if (isset($fromtable) && ($iscreate)) 
-			$sql="CREATE TABLE $table AS SELECT $columns FROM ".$fromtable;
+		if (isset($getfromtable)) 
+			$sql="CREATE TABLE $table AS SELECT $columns FROM ".$getfromtable;
         else 
 			$sql="SELECT $columns FROM ".$table;
     
-        $where = $this->_where_clause( $wherekey, $operator, $combine );
+        $where = $this->where( ...$wherekeys);
         if (is_string($where)) {
             $sql .= $where;
-            if ($execute) 
+            if ($getexecute) 
                 return $this->get_results($sql);     
             else 
                 return $sql;
@@ -852,10 +809,19 @@
            * param: @newtable, - new database table to be created 
            *		@fromcolumns - the columns from old database table
            *		@oldtable - old database table 
+           *        @wherekey, - where clause ( array(x, =, y, and, extra) ) or ( "x = y and extra" )
+		   *		example: where( array(key, operator, value, combine, extra) ); or where( "key operator value combine extra" );
            * returns: 
 	*/
-    function create_select($newtable, $fromcolumns, $oldtable, $fromwhere=array('1'), $comparewith='=', $combinehow='AND') {
-            $newtablefromtable = $this->selecting($newtable, $fromcolumns, $fromwhere, $comparewith, $combinehow, false, true, $oldtable);
+    function create_select($newtable, $fromcolumns, $oldtable=null, ...$fromwhere) {
+			$this->execute = false;
+			if (isset($oldtable))
+				$this->fromtable = $oldtable;
+			else 
+				return false;
+			
+            $newtablefromtable = $this->selecting($newtable, $fromcolumns, ...$fromwhere);
+			
             if (is_string($newtablefromtable))
                 return $this->query($newtablefromtable); 
             else
@@ -866,13 +832,8 @@
            * desc: does an update query with an array, by conditional operator array
            * param: @table, - database table to access
            *		@keyandvalue, - table fields, assoc array with key = value (doesn't need escaped)
-           *		@wherekey, - where clause, assoc array key, value 
-           *	Either: 
-           *		@operator, - set the operator condition, either '<','>', '=', '!=', '>=', '<=', '<>', 'like'
-           *	Or:
-           * 		@operatorarray, - an array of operator conditions, either '<','>', '=', '!=', '>=', '<=', '<>', 'like', 'between', 'not between', 'is null'
-           *				will be joined with @wherekey
-           *		@combine - combine conditions with, either 'AND','OR', 'NOT', 'AND NOT'
+           *        @wherekey, - where clause ( array(x, =, y, and, extra) ) or ( "x = y and extra" )
+		   *		example: where( array(key, operator, value, combine, extra) ); or where( "key operator value combine extra" );
            * returns: (query_id) for fetching results etc
 	*/
     function update($table='', $keyandvalue, ...$wherekeys) {            
@@ -880,12 +841,6 @@
             return false;
         }
         
-		if (is_string($wherekeys[0])) {
-			foreach ($wherekeys as $makearray) 
-				$wherekey[] = explode(' ',$makearray);	
-		} else 
-			$wherekey = $wherekeys;
-		
         $sql="UPDATE $table SET ";
         
         foreach($keyandvalue as $key=>$val) {
@@ -894,7 +849,7 @@
             else $sql.= "$key='".$this->escape($val)."', ";
         }
         
-        $where = $this->where(...$wherekey);
+        $where = $this->where(...$wherekeys);
         if (is_string($where)) {   
             $sql = rtrim($sql, ', ') . $where;
             return $this->query($sql);       
@@ -909,16 +864,11 @@
         if ( ! isset($table) || $table=='' ) {
             return false;
         }
-        
-		if (is_string($wherekeys[0])) {
-			foreach ($wherekeys as $makearray) 
-				$wherekey[] = explode(' ',$makearray);	
-		} else 
-			$wherekey = $wherekeys;
+
 		
         $sql="DELETE FROM $table";
         
-        $where = $this->where(...$wherekey);
+        $where = $this->where(...$wherekeys);
         if (is_string($where)) {   
             $sql .= $where;
             return $this->query($sql);       
@@ -994,11 +944,14 @@
            * desc: does an insert into select statement by calling insert method helper then selecting method
            * param: @totable, - database table to insert table into 
            *		@tocolumns - the receiving columns from other table columns, leave blank for all or array of column fields
+           *        @wherekey, - where clause ( array(x, =, y, and, extra) ) or ( "x = y and extra" )
+		   *		example: where( array(key, operator, value, combine, extra) ); or where( "key operator value combine extra" );
            * returns: 
 	*/
-    function insert_select($totable='', $tocolumns='*', $fromtable, $fromcolumns='*', $fromwhere=array('1'), $comparewith='=', $combinehow='AND') {
+    function insert_select($totable='', $tocolumns='*', $fromtable, $fromcolumns='*', ...$fromwhere) {
             $puttotable = $this->_query_insert_replace($totable, $tocolumns, 'INSERT', false);
-            $getfromtable = $this->selecting($fromtable, $fromcolumns, $fromwhere, $comparewith, $combinehow, false);
+			$this->execute = false;
+            $getfromtable = $this->selecting($fromtable, $fromcolumns, ...$fromwhere);
             if (is_string($puttotable) && is_string($getfromtable))
                 return $this->query($puttotable." ".$getfromtable); 
             else

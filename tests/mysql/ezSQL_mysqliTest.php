@@ -334,20 +334,20 @@ class ezSQL_mysqliTest extends TestCase {
             ++$i;
         }
         
-        $where['test_key'] = 'testing 2';
+        $where=array('test_key','=','testing 2');
         $result = $this->object->selecting('unit_test', 'id', $where);
         foreach ($result as $row) {
             $this->assertEquals(2, $row->id);
         }
         
-        $result = $this->object->selecting('unit_test', 'test_key', array( 'id'=>'3' ));
+        $result = $this->object->selecting('unit_test', 'test_key', array( 'id','=','3' ));
         foreach ($result as $row) {
             $this->assertEquals('testing 3', $row->test_key);
         }
         
-        $result = $this->object->selecting('unit_test', array ('test_key'), array( 'id'=>'3' ));
+        $result = $this->object->selecting('unit_test', array ('test_key'), "id = 1");
         foreach ($result as $row) {
-            $this->assertEquals('testing 3', $row->test_key);
+            $this->assertEquals('testing 1', $row->test_key);
         }
     }    
           
@@ -400,52 +400,6 @@ class ezSQL_mysqliTest extends TestCase {
         $this->assertEquals($this->object->query('DROP TABLE IF EXISTS new_select_test'), 0);
     }    
 	
-    /**
-     * @covers ezSQLcore::_where_clause
-     */
-    public function test_Where_clause()
-    {
-        $this->object->connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD);
-        $this->object->select(self::TEST_DB_NAME);
-        $expect = $this->object->_where_clause(
-            array('where_test'=>'testing 1',
-                'test_between'=>'testing 2',
-                'test_null'=>'null'), 
-            array('BETWEEN','>','like'), 'or' );
-        $this->assertContains('WHERE',$expect);
-        $this->assertContains('IS NULL',$expect);
-        $this->assertContains('BETWEEN',$expect);
-        $this->assertFalse($this->object->_where_clause(
-            array('where_test'=>'testing 1',
-                'test_between'=>'testing 2',
-                'test_null'=>'null'), 
-            array('BETWEEN','bad','like'), 'or' ));
-        $this->assertFalse($this->object->_where_clause(
-            array('where_test'=>'testing 1',
-                'test_between'=>'testing 2',
-                'test_null'=>'null'), 
-            array('BETWEEN','!=','<>','like'), 'or' ));
-        $this->assertContains('testing array different', $this->object->_where_clause(
-            array('where_test'=>'testing 1',
-                'test_between'=>'testing array different',
-                'test_null'=>'null'), 
-            array('BETWEEN','like'), 'or' ));
-        $this->assertContains('AND', $this->object->_where_clause(
-            array('where_test'=>'testing 1',
-                'test_between'=>'testing 3',
-                'test_null'=>'null'), 
-            array('BETWEEN','=','like'), 'BAD' ));
-        $this->assertContains('testing string', $this->object->_where_clause(
-            array('where_test'=>'testing 1',
-                'test_between'=>'testing string',
-                'test_null'=>'null'), 
-            '<>'));
-        $this->assertContains('testing array', $this->object->_where_clause(
-            array('where_test'=>'testing 1',
-                'test_between'=>'testing array',
-                'test_null'=>'null'), 
-            '<>', array('or')));
-    } 	
     /**
      * @covers ezSQLcore::where
      */
