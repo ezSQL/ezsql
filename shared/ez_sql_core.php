@@ -31,6 +31,7 @@
 		const GT  = '>';
 		const GTE = '>=';
     
+		const _IN = 'IN';
 		const _LIKE = 'LIKE';
 		const _notLIKE  = 'NOT LIKE';
 		const _BETWEEN = 'BETWEEN';
@@ -698,34 +699,40 @@
         
  	/**********************************************************************
            * desc: helper returns an WHERE sql clause string 
-		   * formate: where( array(x, =, y, and, extra) ) or where( "x = y and extra" );
+		   * formate: where( array(x, =, y, and, extra) ) or where( "x  =  y  and  extra" );
 		   * example: where( array(key, operator, value, combine, extra) ); or where( "key operator value combine extra" );
-		   * param: @array or @string "(key, - table column  
-           *        	operator, - set the operator condition, either '<','>', '=', '!=', '>=', '<=', '<>', 'like', 'between', 'not between', 'is null'
+		   * param: @array or @string double spaced "(key, - table column  
+           *        	operator, - set the operator condition, either '<','>', '=', '!=', '>=', '<=', '<>', 'in', 'like', 'between', 'not between', 'is null'
 		   *		value, - will be escaped
            *        	combine, - combine additional where clauses with, either 'AND','OR', 'NOT', 'AND NOT' or  carry over of @value in the case the @operator is 'between' or 'not between'
 		   *		extra - carry over of @combine in the case the operator is 'between' or 'not between')"
-           * returns: string - WHERE SQL statement	   
+           * returns: string - WHERE SQL statement or false on error
 	*/        
     function where( ...$getwherekeys) { 
 		if (!empty($getwherekeys)){
 			if (is_string($getwherekeys[0])) {
 				foreach ($getwherekeys as $makearray) 
-					$wherekeys[] = explode(' ',$makearray);	
+					$wherekeys[] = explode('  ',$makearray);	
 			} else 
 				$wherekeys = $getwherekeys;			
 		} else 
 			return '';
 		
-		foreach ($wherekeys as $values){
-			$wherekey[ (isset($values[0])) ? $values[0] : '1' ] = (isset($values[2])) ? $values[2] : '' ;
+		foreach ($wherekeys as $values) {
 			$operator[] = (isset($values[1])) ? $values[1]: '';
-			$combiner[] = (isset($values[3])) ? $values[3]: _AND;
-			$extra[] = (isset($values[4])) ? $values[4]: null;
+			if (!empty($values[1])){
+				if (strtoupper($values[1]) == 'IN') {
+					$wherekey[ $values[0] ] = array_slice($values,2);
+					$combiner[] = (isset($values[3])) ? $values[3]: _AND;
+					$extra[] = (isset($values[4])) ? $values[4]: null;				
+				} else {
+					$wherekey[ (isset($values[0])) ? $values[0] : '1' ] = (isset($values[2])) ? $values[2] : '' ;
+					$combiner[] = (isset($values[3])) ? $values[3]: _AND;
+					$extra[] = (isset($values[4])) ? $values[4]: null;
+				}				
+			} else
+				return false;
 		}
-        
-        if ( ! is_array( $wherekey ) || ! is_array( $operator ) || ! is_array( $combiner )) 
-            return false; 
         
         $where='1';    
         if (! isset($wherekey['1'])) {
@@ -739,7 +746,7 @@
 					$combinewith = (isset($extra[$i])) ? $combine : strtoupper($combine);
 				else 
 					$combinewith = _AND;
-                if (! in_array( $iscondition, array( '<', '>', '=', '!=', '>=', '<=', '<>', 'LIKE', 'NOT LIKE', 'BETWEEN', 'NOT BETWEEN', 'IS NULL', 'IS NOT NULL' ) )) {
+                if (! in_array( $iscondition, array( '<', '>', '=', '!=', '>=', '<=', '<>', 'IN', 'LIKE', 'NOT LIKE', 'BETWEEN', 'NOT BETWEEN', 'IS NULL', 'IS NOT NULL' ) )) {
                     return false;
                 } else {
                     if (($iscondition=='BETWEEN') || ($iscondition=='NOT BETWEEN')) {
@@ -749,6 +756,11 @@
 						else 
                             $combinewith = _AND;
 						$where.= "$key ".$iscondition." '".$this->escape($val)."' AND '".$value."' $combinewith ";
+					} elseif ($iscondition=='IN') {
+						$value = '';
+						foreach ($val as $invalues)
+							$value .= "'".$this->escape($invalues)."', ";							
+						$where.= "$key ".$iscondition." ( ".rtrim($value, ', ')." ) $combinewith ";
 					} elseif(strtolower($val)=='null') $where.= "$key IS NULL $combinewith ";
                     else $where.= "$key ".$iscondition." '".$this->escape($val)."' $combinewith ";
                     $i++;

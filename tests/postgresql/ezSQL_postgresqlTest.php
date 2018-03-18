@@ -203,19 +203,19 @@ class ezSQL_postgresqlTest extends TestCase {
     {
         $this->object->connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME, self::TEST_DB_HOST, self::TEST_DB_PORT);   
         $this->object->query('CREATE TABLE unit_test(id serial, test_key varchar(50), test_value varchar(50), PRIMARY KEY (ID))');
-        $this->object->insert('unit_test', array('test_key'=>'test_1', 'test_value'=>'testing string 1' ));
-        $this->object->insert('unit_test', array('test_key'=>'test_2', 'test_value'=>'testing string 2' ));
+        $this->object->insert('unit_test', array('test_key'=>'test 1', 'test_value'=>'testing string 1' ));
+        $this->object->insert('unit_test', array('test_key'=>'test 2', 'test_value'=>'testing string 2' ));
         $result = $this->object->insert('unit_test', array('test_key'=>'test 3', 'test_value'=>'testing string 3' ));
         $this->assertEquals($result, 3);
         $unit_test['test_key'] = 'the key string';
-        $where="test_key = test_1";
+        $where="test_key  =  test 1";
         $this->assertEquals(1, $this->object->update('unit_test', $unit_test, $where));
         $this->assertEquals(1, $this->object->update('unit_test', $unit_test, 
 			array('test_key',EQ,'test 3','and'),
 			array('test_value','=','testing string 3')));
         $where=array('test_value',EQ,'testing string 4');
         $this->assertEquals(0, $this->object->update('unit_test', $unit_test, $where));
-        $this->assertEquals(1, $this->object->update('unit_test', $unit_test, "test_key = test_2"));
+        $this->assertEquals(1, $this->object->update('unit_test', $unit_test, "test_key  =  test 2"));
         $this->assertEquals(0, $this->object->query('DROP TABLE unit_test'));
     }
     
@@ -227,7 +227,7 @@ class ezSQL_postgresqlTest extends TestCase {
         $this->object->connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME, self::TEST_DB_HOST, self::TEST_DB_PORT);
         $this->object->query('CREATE TABLE unit_test(id serial, test_key varchar(50), test_value varchar(50), PRIMARY KEY (ID))');
         $this->object->insert('unit_test', array('test_key'=>'test 1', 'test_value'=>'testing string 1' ));
-        $this->object->insert('unit_test', array('test_key'=>'test_2', 'test_value'=>'testing string 2' ));
+        $this->object->insert('unit_test', array('test_key'=>'test 2', 'test_value'=>'testing string 2' ));
         $this->object->insert('unit_test', array('test_key'=>'test 3', 'test_value'=>'testing string 3' ));   
 
         $where=array('test_key','=','test 1');
@@ -238,7 +238,7 @@ class ezSQL_postgresqlTest extends TestCase {
             array('test_value','=','testing string 3')), 1);
         $where=array('test_value','=','testing 2');
         $this->assertEquals(0, $this->object->delete('unit_test', $where));
-        $where="test_key = test_2";
+        $where="test_key  =  test 2";
         $this->assertEquals(1, $this->object->delete('unit_test', $where));
         $this->assertEquals(0, $this->object->query('DROP TABLE unit_test'));
     }  
