@@ -435,6 +435,14 @@ class ezSQL_mysqliTest extends TestCase {
         $this->assertContains('testing 2\'',$expect);
         $this->assertContains('testing 5',$expect);
         $this->assertContains(')',$expect);
+        $this->assertFalse($this->object->where(
+            array('where_test','=','testing 1','or'),
+			array('test_like','LIKE',':bad')
+			));
+        $this->assertContains('_good',$this->object->where(
+            array('where_test','=','testing 1','or'),
+			array('test_like',_LIKE,'_good')
+			));
     } 
     
     /**

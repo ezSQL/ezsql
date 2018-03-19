@@ -36,6 +36,7 @@
 		const _notLIKE  = 'NOT LIKE';
 		const _BETWEEN = 'BETWEEN';
 		const _notBETWEEN = 'NOT BETWEEN';
+        
 		const _isNULL = 'IS NULL';
 		const _notNULL  = 'IS NOT NULL';
     
@@ -746,7 +747,7 @@
 					$combinewith = (isset($extra[$i])) ? $combine : strtoupper($combine);
 				else 
 					$combinewith = _AND;
-                if (! in_array( $iscondition, array( '<', '>', '=', '!=', '>=', '<=', '<>', 'IN', 'LIKE', 'NOT LIKE', 'BETWEEN', 'NOT BETWEEN', 'IS NULL', 'IS NOT NULL' ) )) {
+                if (! in_array( $iscondition, array( '<', '>', '=', '!=', '>=', '<=', '<>', 'IN', 'LIKE', 'NOT LIKE', 'BETWEEN', 'NOT BETWEEN', 'IS', 'IS NOT' ) )) {
                     return false;
                 } else {
                     if (($iscondition=='BETWEEN') || ($iscondition=='NOT BETWEEN')) {
@@ -761,7 +762,10 @@
 						foreach ($val as $invalues)
 							$value .= "'".$this->escape($invalues)."', ";							
 						$where.= "$key ".$iscondition." ( ".rtrim($value, ', ')." ) $combinewith ";
-					} elseif(strtolower($val)=='null') $where.= "$key IS NULL $combinewith ";
+					} elseif(((strtolower($val)=='null') || ($iscondition=='IS') || ($iscondition=='IS NOT'))) {
+                        $iscondition = (($iscondition=='IS') || ($iscondition=='IS NOT')) ? $iscondition : 'IS';
+                        $where.= "$key ".$iscondition." NULL $combinewith ";
+                    } elseif((($iscondition=='LIKE') || ($iscondition=='NOT LIKE')) && ! preg_match('/[_%?]/',$val)) return false;
                     else $where.= "$key ".$iscondition." '".$this->escape($val)."' $combinewith ";
                     $i++;
                 }
