@@ -244,7 +244,7 @@ class ezSQL_mysqliTest extends TestCase {
     } // testInsertId
     
     /**
-     * @covers ezSQLcore::insert
+     * @covers ezQuery::insert
      */
     public function testInsert()
     {
@@ -255,7 +255,7 @@ class ezSQL_mysqliTest extends TestCase {
     }
         
     /**
-     * @covers ezSQLcore::replace
+     * @covers ezQuery::replace
      */
     public function testReplace()
     {
@@ -267,7 +267,7 @@ class ezSQL_mysqliTest extends TestCase {
     }
     
     /**
-     * @covers ezSQLcore::update
+     * @covers ezQuery::update
      */
     public function testUpdate()
     {
@@ -288,7 +288,7 @@ class ezSQL_mysqliTest extends TestCase {
     }
     
     /**
-     * @covers ezSQLcore::delete
+     * @covers ezQuery::delete
      */
     public function testDelete()
     {
@@ -315,7 +315,7 @@ class ezSQL_mysqliTest extends TestCase {
     }  
        
     /**
-     * @covers ezSQLcore::selecting
+     * @covers ezQuery::selecting
      */
     public function testSelecting()
     {
@@ -352,7 +352,7 @@ class ezSQL_mysqliTest extends TestCase {
     }    
           
     /**
-     * @covers ezSQLcore::create_select
+     * @covers ezQuery::create_select
      */
     public function testCreate_select()
     {
@@ -375,7 +375,7 @@ class ezSQL_mysqliTest extends TestCase {
     }    
               
     /**
-     * @covers ezSQLcore::insert_select
+     * @covers ezQuery::insert_select
      */
     public function testInsert_select()
     {
@@ -401,20 +401,18 @@ class ezSQL_mysqliTest extends TestCase {
     }    
 	
     /**
-     * @covers ezSQLcore::where
+     * @covers ezQuery::where
      */
     public function testWhere()
     {
         $this->object->connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD);
         $this->object->select(self::TEST_DB_NAME);
-        $expect = $this->object->where(
-            array('where_test',_BETWEEN,'testing 1','testing 2','bad'),
-			array('test_null',_LIKE,'null')
+        $expect = where(
+            between('where_test','testing 1','testing 2','bad'),
+			like('test_null','null')
 			);
-        $this->assertContains('WHERE',$expect);
-        $this->assertContains('IS NULL',$expect);
-        $this->assertContains('BETWEEN',$expect);
-        $this->assertContains('AND',$expect);
+
+        $this->assertContains('WHERE where_test BETWEEN \'testing 1\' AND \'testing 2\' AND test_null IS NULL',$expect);
         $this->assertFalse($this->object->where(
             array('where_test','bad','testing 1','or'),
 			array('test_null','like','null')
@@ -446,7 +444,7 @@ class ezSQL_mysqliTest extends TestCase {
     } 
     
     /**
-     * @covers ezSQLcore::_query_insert_replace
+     * @covers ezQuery::_query_insert_replace
      */
     public function test_Query_insert_replace() 
     {
