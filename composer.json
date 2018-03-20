@@ -27,7 +27,7 @@
             "lib/ez_sql_sqlite3.php",
             "lib/ez_sql_sqlsrv.php",
             "lib/ez_sql_sybase.php",
-            "shared/ez_sql_core.php"
+            "shared/ez_sql_core.php",
             "shared/ezQuery.php"
         ]
     },
