@@ -444,14 +444,15 @@ class ezQuery
     
 	/**********************************************************************
            * desc: returns an sql string or result set given the table, fields, by operator condition or conditional array
-           * <code>
-           *     $this->selecting('table', 
-           *                                  columns,
-           *                                  where(columns  =  values),
-           *                                  groupBy(columns),
-           *                                  having(columns  =  values),
-           *                                  orderBy(columns);
-           * </code>           
+           *<code>
+           *selecting('table', 
+           *        'columns',
+           *        where( eq( 'columns', values, _AND ), like( 'columns', _d ) ),
+           *        groupBy( 'columns' ),
+           *        having( between( 'columns', values1, values2 ) ),
+           *        orderBy( 'columns', 'desc' );
+           *</code>    
+           *
            * param: @table, - database table to access
            *        @fields, - table columns, string or array
            *        @wherekey, - where clause ( array(x, =, y, and, extra) ) or ( "x  =  y  and  extra" )
