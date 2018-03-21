@@ -407,13 +407,15 @@ class ezSQL_mysqliTest extends TestCase {
     {
         $this->object->connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD);
         $this->object->select(self::TEST_DB_NAME);
+        global $_ezMysqli, $_ezQuery;
+        $_ezQuery = $_ezMysqli;
         $expect = where(
             between('where_test','testing 1','testing 2','bad'),
 			like('test_null','null')
 			);
 
         $this->assertContains('WHERE where_test BETWEEN \'testing 1\' AND \'testing 2\' AND test_null IS NULL',$expect);
-        $this->assertFalse($this->object->where(
+        $this->assertFalse(where(
             array('where_test','bad','testing 1','or'),
 			array('test_null','like','null')
 			));

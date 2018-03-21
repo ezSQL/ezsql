@@ -117,7 +117,9 @@ class ezSQL_oracleTNS extends ezSQLcore
         $this->_characterSet = $characterSet;
         $this->setTNS();
         $this->_pooling = $pooling;
-
+        
+        global $_ezOracleTNS;
+        $_ezOracleTNS = $this;
     } // __construct
 
     /**

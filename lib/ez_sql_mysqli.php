@@ -105,6 +105,9 @@ class ezSQL_mysqli extends ezSQLcore
         if ( ! empty($charset) ) {
             $this->_charset = strtolower(str_replace('-', '', $charset));
         }
+        
+        global $_ezMysqli;
+        $_ezMysqli = $this;
     } // __construct
 
     /**

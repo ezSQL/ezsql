@@ -95,6 +95,9 @@ class ezSQL_pdo extends ezSQLcore
             print "<p>constructor: $dsn</p>";
             $this->connect($dsn, $user, $password, $options, $isFileBased);
         }
+        
+        global $_ezPdo;
+        $_ezPdo = $this;
     } // __construct
 
     /**

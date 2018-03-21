@@ -99,6 +99,9 @@
 			$this->_dbname = $dbname;
 			$this->_dbhost = $dbhost;
 			$this->_dbport = $dbport;
+            
+            global $_ezPostgresql;
+            $_ezPostgresql = $this;
 		} // __construct
 
 		/**

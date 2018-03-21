@@ -57,6 +57,9 @@
 			$this->dbname = $dbname;
 			$this->dbhost = $dbhost;
 			$this->convertMySqlTosybaseQuery = $convertMySqlTosybaseQuery;
+            
+            global $_ezSybase;
+            $_ezSybase = $this;
 		}
 
 		/**********************************************************************

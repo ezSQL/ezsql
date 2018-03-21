@@ -33,7 +33,7 @@
 
 		/**********************************************************************
 		*  Constructor - allow the user to perform a quick connect at the 
-		*  same time as initialising the ezSQL_sqlite3 class
+		*  same time as initializing the ezSQL_sqlite3 class
 		*/
 
 		function __construct($dbpath='', $dbname='')
@@ -45,6 +45,9 @@
 			{
 				$this->connect($dbpath, $dbname);
 			}
+            
+            global $_ezSqlite3;
+            $_ezSqlite3 = $this;
 		}
 
 		/**********************************************************************

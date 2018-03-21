@@ -62,6 +62,9 @@ class ezSQL_recordset implements Iterator
 
         $this->_recordset = $ezSQL_queryresult;
         $this->position = 0;
+        
+        global $_ezRecordset;
+        $_ezRecordset = $this;
     } // __construct
 
     /**

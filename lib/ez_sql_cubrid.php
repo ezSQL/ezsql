@@ -39,7 +39,7 @@
 
 		/**********************************************************************
 		*  Constructor - allow the user to perform a quick connect at the
-		*  same time as initialising the ezSQL_cubrid class
+		*  same time as initializing the ezSQL_cubrid class
 		*/
 
 		function __construct($dbuser='', $dbpassword='', $dbname='', $dbhost='localhost', $dbport=33000)
@@ -49,6 +49,9 @@
 			$this->dbname = $dbname;
 			$this->dbhost = $dbhost;
             $this->dbport = $dbport;
+            
+            global $_ezCubrid;
+            $_ezCubrid = $this;
 		}
 
 		/**********************************************************************

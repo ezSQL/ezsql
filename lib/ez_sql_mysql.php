@@ -98,7 +98,10 @@ class ezSQL_mysql extends ezSQLcore
         $this->_dbhost = $dbhost;
         if ( ! empty($charset) ) {
             $this->_charset = strtolower(str_replace('-', '', $charset));
-        }
+        }        
+        
+        global $_ezMysql;
+        $_ezMysql = $this;
     } // __construct
 
     /**

@@ -37,7 +37,7 @@
 
 		/**********************************************************************
 		*  Constructor - allow the user to perform a quick connect at the
-		*  same time as initialising the ezSQL_oracle8_9 class
+		*  same time as initializing the ezSQL_oracle8_9 class
 		*/
 
 		function __construct($dbuser='', $dbpassword='', $dbname='')
@@ -50,6 +50,8 @@
 			$this->dbpassword = $dbpassword;
 			$this->dbname = $dbname;
 
+            global $_ezOracle8_9;
+            $_ezOracle8_9 = $this;
 		}
 
 		/**********************************************************************
@@ -83,7 +85,7 @@
 
 				$this->conn_queries = 0;
 			}
-
+            
 			return $return_val;
 		}
 

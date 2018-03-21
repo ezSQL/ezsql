@@ -25,6 +25,7 @@
 	*  sets once returned
 	*/
 
+    require_once('ezFunctions.php');
     require_once('ezQuery.php');
 	class ezSQLcore extends ezQuery
 	{		
@@ -93,8 +94,6 @@
 
 		function __construct()
 		{
-            global $_ezQuery;
-            $_ezQuery = $this;
 		}
 
 		/**********************************************************************

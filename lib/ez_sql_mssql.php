@@ -46,7 +46,7 @@
 
 		/**********************************************************************
 		*  Constructor - allow the user to perform a quick connect at the
-		*  same time as initialising the ezSQL_mssql class
+		*  same time as initializing the ezSQL_mssql class
 		*/
 
 		function __construct($dbuser='', $dbpassword='', $dbname='', $dbhost='localhost', $convertMySqlToMSSqlQuery=true)
@@ -56,6 +56,9 @@
 			$this->dbname = $dbname;
 			$this->dbhost = $dbhost;
 			$this->convertMySqlToMSSqlQuery = $convertMySqlToMSSqlQuery;
+            
+            global $_ezMssql;
+            $_ezMssql = $this;
 		}
 
 		/**********************************************************************

@@ -22,6 +22,9 @@
 			global $db;
 			$db = $this;
 			$this->CI =& get_instance();
+            
+            global $_ezCodeigniter;
+            $_ezCodeigniter = $this;
 		}
 	    
 		function query($query)
