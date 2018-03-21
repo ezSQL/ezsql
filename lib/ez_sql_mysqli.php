@@ -176,10 +176,12 @@ class ezSQL_mysqli extends ezSQLcore
             // Must have a database name
             $this->register_error($this->ezsql_mysql_str[3] . ' in ' . __FILE__ . ' on line ' . __LINE__);
             $this->show_errors ? trigger_error($this->ezsql_mysql_str[3], E_USER_WARNING) : null;
+            return false;
         } else if ( ! $this->dbh ) {
             // Must have an active database connection
             $this->register_error($this->ezsql_mysql_str[4] . ' in ' . __FILE__ . ' on line ' . __LINE__);
             $this->show_errors ? trigger_error($this->ezsql_mysql_str[4], E_USER_WARNING) : null;
+            return false;
         } else if ( !mysqli_select_db($this->dbh, $dbname) ) {
             // Try to connect to the database
             // Try to get error supplied by mysql if not use our own
@@ -189,6 +191,7 @@ class ezSQL_mysqli extends ezSQLcore
 
             $this->register_error($str . ' in ' .__FILE__ . ' on line ' . __LINE__);
             $this->show_errors ? trigger_error($str, E_USER_WARNING) : null;
+            return false;
         } else {
             $this->_dbname = $dbname;
             if ( $charset == '') {
