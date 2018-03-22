@@ -272,7 +272,7 @@
 			// If there is no existing database connection then try to connect
 			if ( ! isset($this->dbh) || ! $this->dbh )
 			{	
-				$this->dbh = $this->connect($this->dbuser, $this->dbpassword, $this->dbname, $this->dbhost, $this->port);
+				$this->connect($this->dbuser, $this->dbpassword, $this->dbname, $this->dbhost, $this->port);
 			}
             
 			// Perform the query via std postgresql_query function..
