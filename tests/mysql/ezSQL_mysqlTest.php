@@ -207,9 +207,13 @@ class ezSQL_mysqlTest extends TestCase {
      * @covers ezSQL_mysql::disconnect
      */
     public function testDisconnect() {
+        $this->object->connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD);
+
+        $this->object->select(self::TEST_DB_NAME);
         $this->object->disconnect();
 
         $this->assertTrue(true);
+        $this->assertFalse($this->object->isConnected());
     } // testDisconnect
 
     /**

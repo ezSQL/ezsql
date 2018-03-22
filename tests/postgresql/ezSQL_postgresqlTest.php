@@ -182,6 +182,12 @@ class ezSQL_postgresqlTest extends TestCase {
         $this->assertEquals(0, $this->object->query('CREATE TABLE unit_test(id integer, test_key varchar(50), PRIMARY KEY (ID))'));
         
         $this->assertEquals(0, $this->object->query('DROP TABLE unit_test'));
+        
+        $this->assertEquals(0, $this->object->query('CREATE TABLE unit_test(id integer, test_key varchar(50), PRIMARY KEY (ID))'));        
+        $this->object->dbh = null;
+        $this->assertEquals(1,$this->object->insert('unit_test', array('test_key'=>'test 2', 'test_value'=>'testing string 2' )));
+        $this->object->disconnect();
+        $this->assertNull($this->object->insert('unit_test', array('test_key'=>'test 3', 'test_value'=>'testing string 3' )));   
     } // testQuery
     
     /**
@@ -247,6 +253,7 @@ class ezSQL_postgresqlTest extends TestCase {
      * @covers ezSQL_postgresql::disconnect
      */
     public function testDisconnect() {
+        $this->object->connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME, self::TEST_DB_HOST, self::TEST_DB_PORT);  
         $this->object->disconnect();
         
         $this->assertFalse($this->object->isConnected());
