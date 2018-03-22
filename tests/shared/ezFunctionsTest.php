@@ -31,7 +31,7 @@ class ezFunctionsTest extends TestCase {
 
  
     /**
-     * @covers ezQuery::eq 
+     * eq 
      */
     public function testeq()
     {
@@ -40,7 +40,7 @@ class ezFunctionsTest extends TestCase {
     }
 
     /**
-     * @covers ezQuery::neq
+     * neq
      */
     public function testneq()
     {
@@ -49,7 +49,7 @@ class ezFunctionsTest extends TestCase {
     }
 
     /**
-     * @covers ezQuery::ne
+     * ne
      */
     public function testne()
     {
@@ -58,7 +58,7 @@ class ezFunctionsTest extends TestCase {
     }
     
     /**
-     * @covers ezQuery::lt
+     * lt
      */
     public function testlt()
     {
@@ -67,7 +67,7 @@ class ezFunctionsTest extends TestCase {
     }
 
     /**
-     * @covers ezQuery::lte
+     * lte
      */
     public function testlte()
     {
@@ -76,7 +76,7 @@ class ezFunctionsTest extends TestCase {
     }
 
     /**
-     * @covers ezQuery::gt
+     * gt
      */
     public function testgt()
     {
@@ -85,7 +85,7 @@ class ezFunctionsTest extends TestCase {
     }
 
     /**
-     * @covers ezQuery::gte
+     * gte
      */
     public function testgte()
     {
@@ -94,7 +94,7 @@ class ezFunctionsTest extends TestCase {
     }
 
     /**
-     * @covers ezQuery::isNull
+     * isNull
      */
     public function testisNull()
     {
@@ -103,7 +103,7 @@ class ezFunctionsTest extends TestCase {
     }
 
     /**
-     * @covers ezQuery::isNotNull
+     * isNotNull
      */
     public function testisNotNull()
     {
@@ -112,7 +112,7 @@ class ezFunctionsTest extends TestCase {
     }
 
     /**
-     * @covers ezQuery::like
+     * like
      */
     public function testlike()
     {
@@ -121,7 +121,7 @@ class ezFunctionsTest extends TestCase {
     }
 
     /**
-     * @covers ezQuery::notLike
+     * notLike
      */
     public function testnotLike()
     {
@@ -130,7 +130,7 @@ class ezFunctionsTest extends TestCase {
     }
 
     /**
-     * @covers ezQuery::in
+     * in
      */
     public function testin()
     {
@@ -139,7 +139,7 @@ class ezFunctionsTest extends TestCase {
     }
 
     /**
-     * @covers ezQuery:: notIn
+     *  notIn
      */
     public function testnotIn()
     {
@@ -148,7 +148,7 @@ class ezFunctionsTest extends TestCase {
     }
 
     /**
-     * @covers ezQuery::between
+     * between
      */
     public function testbetween()
     {
@@ -157,7 +157,7 @@ class ezFunctionsTest extends TestCase {
     }
 
     /**
-     * @covers ezQuery::notBetween
+     * notBetween
      */
     public function testnotBetween()
     {
@@ -166,84 +166,84 @@ class ezFunctionsTest extends TestCase {
     }
 
     /**
-     * @covers ezQuery::select
+     * select
      */
     public function testselect() {
         $this->assertFalse(select(''));
     } 
 
     /**
-     * @covers ezQuery::select_into
+     * select_into
      */    
     public function testselect_into() {
         $this->assertFalse(select_into('field', 'data', 'data2'));
     } 
 
     /**
-     * @covers ezQuery::insert_select
+     * insert_select
      */    
     public function testinsert_select() {
         $this->assertFalse(insert_select('field', 'data', 'data2'));
     }     
 
     /**
-     * @covers ezQuery::create_select
+     * create_select
      */    
     public function testcreate_select() {
         $this->assertFalse(create_select('field', 'data', 'data2'));
     }  
 
     /**
-     * @covers ezQuery::where
+     * where
      */    
     public function testwhere() {
         $this->assertFalse(where('field', 'data', 'data2'));
     } 
 
     /**
-     * @covers ezQuery::groupBy
+     * groupBy
      */    
     public function testgroupBy() {
         $this->assertNotNull(groupBy('field'));
     } 
  
     /**
-     * @covers ezQuery::having
+     * having
      */   
     public function testhaving() {
         $this->assertFalse(having('field', 'data', 'data2'));
     }
 
     /**
-     * @covers ezQuery::orderBy
+     * orderBy
      */    
     public function testorderBy() {
         $this->assertNotNull(orderBy('field', 'data'));
     } 
 
     /**
-     * @covers ezQuery::insert
+     * insert
      */    
     public function testinsert() {
         $this->assertFalse(insert('field', 'data', 'data2'));
     } 
 
     /**
-     * @covers ezQuery::update
+     * update
      */    
     public function testupdate() {
         $this->assertFalse(update('field', 'data', 'data2'));
     } 
 
     /**
-     * @covers ezQuery::delete
+     * delete
      */    
     public function testdelete() {
         $this->assertFalse(delete('field', 'data', 'data2'));
     } 
 
     /**
-     * @covers ezQuery::replace
+     * replace
      */        
     public function testreplace() {
         $this->assertFalse(replace('field', 'data', 'data2'));
