@@ -142,6 +142,7 @@ class ezSQL_mysqliTest extends TestCase {
         $this->assertFalse($this->object->select(''));
         $this->assertFalse($this->object->select('test'));
         $this->object->disconnect();
+        $this->object->dbh = null;
         $this->assertFalse($this->object->select(self::TEST_DB_NAME));        
     } // testSelect
 
@@ -174,7 +175,9 @@ class ezSQL_mysqliTest extends TestCase {
         $this->assertEquals($this->object->query('INSERT INTO unit_test(id, test_key) VALUES(1, \'test 1\')'), 1);
         
         $this->object->dbh = null;
-        $this->assertEquals($this->object->query('INSERT INTO unit_test(id, test_key) VALUES(4, \'test 4\')'),1);
+        $this->assertEquals($this->object->query('INSERT INTO unit_test(id, test_key) VALUES(2, \'test 2\')'),1);
+        $this->object->disconnect();
+        $this->assertNull($this->object->query('INSERT INTO unit_test(id, test_key) VALUES(3, \'test 3\')'));        
     } // testQueryInsert
 
     /**
@@ -184,7 +187,8 @@ class ezSQL_mysqliTest extends TestCase {
         $this->object->connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD);
 
         $this->object->select(self::TEST_DB_NAME);
-
+        
+        $this->assertEquals($this->object->query('DROP TABLE IF EXISTS unit_test'), 0);   
         $this->assertEquals($this->object->query('CREATE TABLE unit_test(id integer, test_key varchar(50), PRIMARY KEY (ID))'), 0);
 
         $this->assertEquals($this->object->query('INSERT INTO unit_test(id, test_key) VALUES(1, \'test 1\')'), 1);

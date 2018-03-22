@@ -207,6 +207,11 @@ class ezSQLcoreTest extends TestCase {
         $this->object->from_disk_cache = true;
         $this->expectOutputRegex('/[Results retrieved from disk cache]/');
         $this->object->debug(true);
+        $this->object->col_info = array("just another test");        
+        $this->object->debug(false);   
+        $this->object->col_info = null;     
+        $this->object->last_result = array("just another test II");        
+        $this->object->debug(false);
     } // testDebug
 
     /**
@@ -282,80 +287,25 @@ class ezSQLcoreTest extends TestCase {
         $this->assertEquals(1,$this->object->count());
         $this->assertEquals(2,$this->object->count(false,true));
     }
-    
-    /**
-     * @covers ezSQLcore::delete
-     */
-    public function testDelete()
-    {
-        $this->assertFalse($this->object->delete(''));
-        $this->assertFalse($this->object->delete('test_unit_delete',array('good','bad')));
-    }
-       
-    /**
-     * @covers ezSQLcore::selecting
-     */
-    public function testSelecting()
-    {
-        $this->assertFalse($this->object->selecting('',''));
-    } 
-    
-    /**
-     * @covers ezSQLcore::create_select
-     */
-    public function testCreate_select()
-    {
-        $this->assertFalse($this->object->create_select('','',''));
-    }
-    
-    /**
-     * @covers ezSQLcore::insert_select
-     */
-    public function testInsert_select()
-    {
-        $this->assertFalse($this->object->insert_select('','',''));
-    }
-    
-    /**
-     * @covers ezSQLcore::insert
-     */
-    public function testInsert()
-    {
-        $this->assertFalse($this->object->insert('',''));
-    }
-    
-    /**
-     * @covers ezSQLcore::update
-     */
-    public function testUpdate()
-    {
-        $this->assertFalse($this->object->update('',''));
-        $this->assertFalse($this->object->update('test_unit_delete',array('test_unit_update'=>'date()'),''));
-    }
-	
-    /**
-     * @covers ezSQLcore::replace
-     */
-    public function testReplace()
-    {
-        $this->assertFalse($this->object->replace('',''));
-    }
-    
-    /**
-     * @covers ezSQLcore::_query_insert_replace
-     */
-    public function test_Query_insert_replace() 
-    {        
-        $this->assertFalse($this->object->_query_insert_replace('', array('id'=>'2' ),'replace')); 
-        $this->assertFalse($this->object->_query_insert_replace('unit_table', array('id'=>'2' ),''));  
-        $this->assertContains('replace INTO unit_table',$this->object->_query_insert_replace('unit_table', 'id' ,'replace',false));   
-        $this->assertContains('(test, INSERT, INTO, SELECT)',$this->object->_query_insert_replace('unit_table', array('test','INSERT','INTO','SELECT') ,'insert',false)); 
-    }   
-    
+   
     /**
      * @covers ezSQLcore::affectedRows
      */
     public function testAffectedRows() {
         $this->assertEquals(0, $this->object->affectedRows());
-    } // testAffectedRows
+    } // testAffectedRows   
+    
+    /**
+     * @covers ezSQLcore::isConnected
+     */
+    public function testIsConnected() {
+        $this->assertFalse($this->object->isConnected());
+    }  //testisConnected
+
+    /**
+     * @covers ezSQLcore::getShowErrors
+     */
+    public function testGetShowErrors() {
+        $this->assertNotEmpty($this->object->getShowErrors());
+    } // testgetShowErrors
 } //

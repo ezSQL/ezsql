@@ -160,20 +160,20 @@
     /**
      * Creates an IS NULL expression with the given arguments.
      */
-    function isNull($x, $y, $and=null, ...$args)
+    function isNull($x, $y='null', $and=null, ...$args)
     {
         $expression = array();
-        array_push($expression, $x, _isNULL, $y='null', $and, ...$args);
+        array_push($expression, $x, _isNULL, $y, $and, ...$args);
         return $expression;
     }
 
     /**
      * Creates an IS NOT NULL expression with the given arguments.
      */
-    function isNotNull($x, $y, $and=null, ...$args)
+    function isNotNull($x, $y='null', $and=null, ...$args)
     {
         $expression = array();
-        array_push($expression, $x, _notNULL, $y='null', $and, ...$args);
+        array_push($expression, $x, _notNULL, $y, $and, ...$args);
         return $expression;
     }
 
