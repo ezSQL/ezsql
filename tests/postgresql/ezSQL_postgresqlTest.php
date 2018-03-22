@@ -183,9 +183,12 @@ class ezSQL_postgresqlTest extends TestCase {
         
         $this->assertEquals(0, $this->object->query('DROP TABLE unit_test'));
         
-        $this->assertEquals(0, $this->object->query('CREATE TABLE unit_test(id integer, test_key varchar(50), PRIMARY KEY (ID))'));  
+        $this->assertEquals(0, $this->object->query('CREATE TABLE unit_test(id integer, test_key varchar(50), PRIMARY KEY (ID))'));        
+        $this->object->dbh = null;
+        $this->assertEquals(1,$this->object->insert('unit_test', array('test_key'=>'test 1', 'test_value'=>'testing string 1' )));
         $this->object->disconnect();
         $this->assertNull($this->object->insert('unit_test', array('test_key'=>'test 3', 'test_value'=>'testing string 3' )));   
+        $this->assertEquals(0, $this->object->query('DROP TABLE unit_test'));
     } // testQuery
     
     /**
