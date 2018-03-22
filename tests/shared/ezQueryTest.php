@@ -141,5 +141,16 @@ class ezQueryTest extends TestCase {
         $this->assertContains('replace INTO unit_table',$this->object->_query_insert_replace('unit_table', 'id' ,'replace',false));   
         $this->assertContains('(test, INSERT, INTO, SELECT)',$this->object->_query_insert_replace('unit_table', array('test','INSERT','INTO','SELECT') ,'insert',false)); 
     }   
-    
+        
+    /**
+     * @covers ezQuery::__construct
+     */
+    public function test__Construct() {         
+        $ezQuery = $this->getMockBuilder(ezQuery::class)
+        ->setMethods(null)
+        ->disableOriginalConstructor()
+        ->getMock();
+        
+        $this->assertNull($ezQuery->__construct());  
+    }
 } //

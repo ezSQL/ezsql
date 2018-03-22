@@ -114,7 +114,10 @@ class ezSQLcoreTest extends TestCase {
      * @covers ezSQLcore::get_var
      */
     public function testGet_var() {
+        $this->object->last_result = array('1');
         $this->assertNull($this->object->get_var());
+        $this->expectExceptionMessage('Call to undefined method ezSQLcore::query()');
+        $this->assertNull($this->object->get_var('1'));
     } // testGet_var
 
     /**
@@ -122,14 +125,22 @@ class ezSQLcoreTest extends TestCase {
      */
     public function testGet_row() {
         $this->assertNull($this->object->get_row());
+        $this->assertNull($this->object->get_row(null,ARRAY_A));
+        $this->assertNull($this->object->get_row(null,ARRAY_N));
+        $this->assertNull($this->object->get_row(null,'BAD'));
+        $this->expectExceptionMessage('Call to undefined method ezSQLcore::query()');
+        $this->assertNull($this->object->get_row('1'));
     } // testGet_row
 
     /**
      * @covers ezSQLcore::get_col
      */
     public function testGet_col() {
-        $this->object->last_result = array();
         $this->assertEmpty($this->object->get_col());
+        $this->object->last_result = array('1');
+        $this->assertNotNull($this->object->get_col());
+        $this->expectExceptionMessage('Call to undefined method ezSQLcore::query()');
+        $this->assertNull($this->object->get_col('1'));
     } // testGet_col
 
     /**
@@ -137,6 +148,9 @@ class ezSQLcoreTest extends TestCase {
      */
     public function testGet_results() {
         $this->assertNull($this->object->get_results());
+        $this->assertNotNull($this->object->get_results(null,ARRAY_A));
+        $this->expectExceptionMessage('Call to undefined method ezSQLcore::query()');
+        $this->assertNull($this->object->get_results('1'));
     } // testGet_results
 
     /**
@@ -144,6 +158,9 @@ class ezSQLcoreTest extends TestCase {
      */
     public function testGet_col_info() {
         $this->assertEmpty($this->object->get_col_info());
+        $this->object->col_info = true;
+        $this->assertNull($this->object->get_col_info());
+        $this->assertNull($this->object->get_col_info('name',1));
     } // testGet_col_info
 
     /**
@@ -307,5 +324,17 @@ class ezSQLcoreTest extends TestCase {
      */
     public function testGetShowErrors() {
         $this->assertNotEmpty($this->object->getShowErrors());
-    } // testgetShowErrors
+    } // testgetShowErrors       
+    
+    /**
+     * @covers ezSQLcore::__construct
+     */
+    public function test__Construct() {         
+        $ezSQLcore = $this->getMockBuilder(ezSQLcore::class)
+        ->setMethods(null)
+        ->disableOriginalConstructor()
+        ->getMock();
+        
+        $this->assertNull($ezSQLcore->__construct());  
+    }
 } //
