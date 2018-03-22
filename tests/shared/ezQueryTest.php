@@ -53,8 +53,24 @@ class ezQueryTest extends TestCase {
     protected function tearDown() {
         $this->object = null;
     } // tearDown
-
  
+    /**
+     * @covers ezQuery::to_string
+     */
+    public function testTo_string()
+    {
+        $this->assertContains(',',$this->object->to_string(array('test','test2')));
+    }
+     
+    /**
+     * @covers ezQuery::where
+     */
+    public function testWhere()
+    {
+        $this->assertFalse($this->object->where(''));
+        $this->assertEmpty($this->object->where());
+    }
+     
     /**
      * @covers ezQuery::delete
      */
@@ -70,6 +86,8 @@ class ezQueryTest extends TestCase {
     public function testSelecting()
     {
         $this->assertFalse($this->object->selecting('',''));
+        $this->object->do_getresults = false;
+        $this->assertNotNull($this->object->selecting('table','colums','WHERE','GROUP BY','HAVING','ORDER BY'));
     } 
     
     /**

@@ -204,6 +204,7 @@ class ezFunctionsTest extends TestCase {
      * groupBy
      */    
     public function testgroupBy() {
+        $this->assertFalse(groupBy(''));
         $this->assertNotNull(groupBy('field'));
     } 
  
@@ -218,6 +219,7 @@ class ezFunctionsTest extends TestCase {
      * orderBy
      */    
     public function testorderBy() {
+        $this->assertFalse(orderBy('', 'data'));
         $this->assertNotNull(orderBy('field', 'data'));
     } 
 

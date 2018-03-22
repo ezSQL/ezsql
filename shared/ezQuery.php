@@ -27,7 +27,8 @@
 
 class ezQuery
 { 		
-	private $execute = true;
+	public $do_getresults = true;
+    
 	private $fromtable = null;
     private $iswhere = true;    
     private $isinto = false;
@@ -209,16 +210,30 @@ class ezQuery
 	*/
     function selecting($table='', $fields='*', ...$get_args) {     
 		$getfromtable = $this->fromtable;
-		$getexecute = $this->execute;       
+		$getdo_getresults = $this->do_getresults;       
 		$getisinto = $this->isinto;
         
 		$this->fromtable = null;
-		$this->execute = true;	
+		$this->do_getresults = true;	
 		$this->isinto = false;	
         
         $skipwhere = false;
         $wherekeys = $get_args;
         $where = '';
+		
+        if ( ! isset($table) || $table=='' ) {
+            return false;
+        }
+        
+        $columns = $this->to_string($fields);
+        
+		if (isset($getfromtable) && ! $getisinto) 
+			$sql="CREATE TABLE $table AS SELECT $columns FROM ".$getfromtable;
+        elseif (isset($getfromtable) && $getisinto) 
+			$sql="SELECT $columns INTO $table FROM ".$getfromtable;
+        else 
+			$sql="SELECT $columns FROM ".$table;
+
         if (!empty($get_args)) {
 			if (is_string($get_args[0])) {
                 $args_by = '';
@@ -250,27 +265,14 @@ class ezQuery
 			}		
 		} else {
             $skipwhere = true;
-        }
-		
-        if ( ! isset($table) || $table=='' ) {
-            return false;
-        }
-        
-        $columns = $this->to_string($fields);
-        
-		if (isset($getfromtable) && ! $getisinto) 
-			$sql="CREATE TABLE $table AS SELECT $columns FROM ".$getfromtable;
-        elseif (isset($getfromtable) && $getisinto) 
-			$sql="SELECT $columns INTO $table FROM ".$getfromtable;
-        else 
-			$sql="SELECT $columns FROM ".$table;
+        }        
         
         if (! $skipwhere)
             $where = $this->where( ...$wherekeys);
         
         if (is_string($where)) {
             $sql .= $where;
-            if ($getexecute) 
+            if ($getdo_getresults) 
                 return $this->get_results($sql);     
             else 
                 return $sql;
@@ -288,7 +290,7 @@ class ezQuery
            * returns: 
 	*/
     function create_select($newtable, $fromcolumns, $oldtable=null, ...$fromwhere) {
-		$this->execute = false;
+		$this->do_getresults = false;
 		if (isset($oldtable))
 			$this->fromtable = $oldtable;
 		else 
@@ -311,7 +313,7 @@ class ezQuery
            * returns: 
 	*/
     function select_into($newtable, $fromcolumns, $oldtable=null, ...$fromwhere) {
-		$this->execute = false;
+		$this->do_getresults = false;
 		$this->isinto = true;        
 		if (isset($oldtable))
 			$this->fromtable = $oldtable;
@@ -447,7 +449,7 @@ class ezQuery
 	*/
     function insert_select($totable='', $tocolumns='*', $fromtable, $fromcolumns='*', ...$fromwhere) {
         $puttotable = $this->_query_insert_replace($totable, $tocolumns, 'INSERT', false);
-		$this->execute = false;
+		$this->do_getresults = false;
         $getfromtable = $this->selecting($fromtable, $fromcolumns, ...$fromwhere);
         if (is_string($puttotable) && is_string($getfromtable))
             return $this->query($puttotable." ".$getfromtable); 
