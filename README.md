@@ -1,8 +1,8 @@
 ezSQL
 =====
-[![Build Status](https://travis-ci.org/techno-express/ezSQL.svg?branch=master)](https://travis-ci.org/techno-express/ezSQL)
-[![Coverage Status](https://coveralls.io/repos/github/techno-express/ezSQL/badge.svg?branch=master)](https://coveralls.io/github/techno-express/ezSQL?branch=master)
-[![Maintainability](https://api.codeclimate.com/v1/badges/8db71512a019ab280a16/maintainability)](https://codeclimate.com/github/techno-express/ezSQL/maintainability)
+[![Build Status](https://travis-ci.org/ezSQL/ezSQL.svg?branch=master)](https://travis-ci.org/ezSQL/ezSQL)
+[![Coverage Status](https://coveralls.io/repos/github/ezSQL/ezSQL/badge.svg?branch=master)](https://coveralls.io/github/ezSQL/ezSQL?branch=master)
+[![Maintainability](https://api.codeclimate.com/v1/badges/8db71512a019ab280a16/maintainability)](https://codeclimate.com/github/ezSQL/ezSQL/maintainability)
 
 Author
 ------
@@ -21,13 +21,13 @@ Change Log
 Note: This change log isn't being used any more due to automated github tracking
 
 3.08 - Merged fork https://github.com/sjstoelting/ezSQL3 to be current with this repo. 
-* Added/Updated PHPunit tests, some marked as incomplete or not fully implemented, SQL drivers not loaded will be skipped. My projects are mySQLi based.
+* Added/Updated PHPunit tests, some marked as incomplete or not fully implemented, SQL drivers not loaded will be skipped.
 * Refactor class code to use `spl_autoload_register`. 
   Simply using `require_once "ez_sql_loader.php";` then `$database = new database_driver_class;`. 
   This will allow multi SQLdb to be loaded if need be. 
 * Added methods `create_select`, `insert_select`, `update`, `insert`, `replace`, `delete`, and `selecting` an alias for select.
   These are ezSQL Core class shortcut calls and should be able to handle most use cases as is.  
-  These new methods will create proper SQL statements, from supplied arguments variable or array, prevent injections, then execute guery, in case of `selecting` execute get_results. They have been fully PHPunit tested under mySQLi and postgresSQL. Currently, postgresSQL class fails to return results on SQL select statements.
+  These new methods will create proper SQL statements, from supplied arguments variables or array, prevent injections, then execute guery, in case of `selecting` execute get_results. They have been fully PHPunit tested under mySQLi and postgresSQL. Currently, postgresSQL needs class updating, fails to return results on SQL select statements.
 
 ```
 ezSQL3 - From Author: Stefanie Janine Stoelting - http://stefanie-stoelting.de
