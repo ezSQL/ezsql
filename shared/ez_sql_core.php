@@ -1,32 +1,35 @@
 <?php
-
 	/**********************************************************************
 	*  Author: Justin Vincent (jv@vip.ie)
+           * Author: Stefanie Janine Stoelting <mail@stefanie-stoelting.de>
+           * Contributor:  Lawrence Stubbs <technoexpressnet@gmail.com>
 	*  Web...: http://justinvincent.com
 	*  Name..: ezSQL
 	*  Desc..: ezSQL Core module - database abstraction library to make
 	*          it very easy to deal with databases. ezSQLcore can not be used by
 	*          itself (it is designed for use by database specific modules).
-	*
+           *
 	*/
 
 	/**********************************************************************
 	*  ezSQL Constants
 	*/
 
-	defined('EZSQL_VERSION') or define('EZSQL_VERSION', '2.17');
+	defined('EZSQL_VERSION') or define('EZSQL_VERSION', '3.08');
 	defined('OBJECT') or define('OBJECT', 'OBJECT');
 	defined('ARRAY_A') or define('ARRAY_A', 'ARRAY_A');
 	defined('ARRAY_N') or define('ARRAY_N', 'ARRAY_N');
 
 	/**********************************************************************
-	*  Core class containg common functions to manipulate query result
+	*  Core class containing common functions to manipulate query result
 	*  sets once returned
 	*/
 
-	class ezSQLcore
-	{
-
+    require_once('ezFunctions.php');
+    require_once('ezQuery.php');
+	class ezSQLcore extends ezQuery
+	{		
+    
 		var $trace            = false;  // same as $debug_all
 		var $debug_all        = false;  // same as $trace
 		var $debug_called     = false;
@@ -51,6 +54,36 @@
 		var $sql_log_file     = false;
 		var $do_profile       = false;
 		var $profile_times    = array();
+		var $insert_id        = null;
+		
+    /**
+     * Whether the database connection is established, or not
+     * @var boolean Default is false
+     */
+    protected $_connected = false;    
+    /**
+     * Contains the number of affected rows of a query
+     * @var int Default is 0
+     */
+    protected $_affectedRows = 0;
+
+    /**
+     * The last query result
+     * @var object Default is null
+     */
+    public $last_result = null;
+
+    /**
+     * Get data from disk cache
+     * @var boolean Default is false
+     */
+    public $from_disk_cache = false;
+
+    /**
+     * Function called
+     * @var string
+     */
+    private $func_call;
 
 		// == TJH == default now needed for echo of debug function
 		var $debug_echo_is_on = true;
@@ -61,6 +94,7 @@
 
 		function __construct()
 		{
+            parent::__construct();
 		}
 
 		/**********************************************************************
@@ -416,7 +450,7 @@
 
 		function dumpvar($mixed)
 		{
-			$this->vardump($mixed);
+			return $this->vardump($mixed);
 		}
 
 		/**********************************************************************
@@ -636,4 +670,32 @@
 
 			return ($all) ? $this->num_queries : $this->conn_queries;
 		}
-	}
+
+    /**
+     * Returns, whether a database connection is established, or not
+     *
+     * @return boolean
+     */
+    function isConnected() {
+        return $this->_connected;
+    } // isConnected
+
+    /**
+     * Returns the current show error state
+     *
+     * @return boolean
+     */
+    function getShowErrors() {
+        return $this->show_errors;
+    } // getShowErrors
+
+    /**
+     * Returns the affected rows of a query
+     * 
+     * @return int
+     */
+    function affectedRows() {
+        return $this->_affectedRows;
+    } // affectedRows
+    
+} // ezSQLcore

@@ -1,5 +1,8 @@
 ezSQL
 =====
+[![Build Status](https://travis-ci.org/techno-express/ezSQL.svg?branch=master)](https://travis-ci.org/techno-express/ezSQL)
+[![Coverage Status](https://coveralls.io/repos/github/techno-express/ezSQL/badge.svg?branch=master)](https://coveralls.io/github/techno-express/ezSQL?branch=master)
+[![Maintainability](https://api.codeclimate.com/v1/badges/8db71512a019ab280a16/maintainability)](https://codeclimate.com/github/techno-express/ezSQL/maintainability)
 
 Author
 ------
@@ -16,6 +19,30 @@ FREE / Donation (LGPL - You may do what you like with ezSQL - no exceptions.)
 Change Log
 ==========
 Note: This change log isn't being used any more due to automated github tracking
+
+3.08 - Merged fork https://github.com/sjstoelting/ezSQL3 to be current with this repo. 
+* Added/Updated PHPunit tests, some marked as incomplete or not fully implemented, SQL drivers not loaded will be skipped. My projects are mySQLi based.
+* Refactor class code to use `spl_autoload_register`. 
+  Simply using `require_once "ez_sql_loader.php";` then `$database = new database_driver_class;`. 
+  This will allow multi SQLdb to be loaded if need be. 
+* Added methods `create_select`, `insert_select`, `update`, `insert`, `replace`, `delete`, and `selecting` an alias for select.
+  These are ezSQL Core class shortcut calls and should be able to handle most use cases as is.  
+  These new methods will create proper SQL statements, from supplied arguments variable or array, prevent injections, then execute guery, in case of `selecting` execute get_results. They have been fully PHPunit tested under mySQLi and postgresSQL. Currently, postgresSQL class fails to return results on SQL select statements.
+
+```
+ezSQL3 - From Author: Stefanie Janine Stoelting - http://stefanie-stoelting.de
+
+News about ezSQL3 are available at http://stefanie-stoelting.de/ezsql3-news.html
+
+* 3.07 - Added the new class ezSQL_mysql to use mysqli. To update existing projects, just change the class you are using from ezSQL_mysql to ezSQL_mysqli. This class is downward compatible to ezSQL_mysql, but is able to use prepared statements.
+* 3.06 - Extended ezSQL_mysql method quick_connect with a charset parameter
+* 3.05 - Extended ez_sql_oracleTNS class, that does now support client site connection pooling
+* 3.04 - Added a new class for Oracle database connection to get rid of TNSNAMES.ORA configuration files
+* 3.03 - Changed error messages, wrong classname used in a messages
+* 3.02 - Improved ezSQL_recordset, array results of rows are faster
+* 3.01 - Added a class for query result handling. The ezSQL_recordset contains methods that behave like fetch_assoc, fetch_row, and fetch_object
+* 3.00 - Changed the code to PHP5, added PHPDoc tags, and added unit tests
+```
 
 2.17 - Updates to ezSQL_postgresql (thx Stefanie Janine Stoelting)
 

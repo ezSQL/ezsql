@@ -1,0 +1,1875 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+  <html xmlns="http://www.w3.org/1999/xhtml">
+		<head>
+			<!-- template designed by Marco Von Ballmoos -->
+			<title>Docs For Class ezSQLcore</title>
+			<link rel="stylesheet" href="../media/stylesheet.css" />
+			<meta http-equiv='Content-Type' content='text/html; charset=iso-8859-1'/>
+		</head>
+		<body>
+			<div class="page-body">			
+<h2 class="class-name">Class ezSQLcore</h2>
+
+<a name="sec-description"></a>
+<div class="info-box">
+	<div class="info-box-title">Description</div>
+	<div class="nav-bar">
+					<span class="disabled">Description</span> |
+							<a href="#sec-descendents">Descendents</a>
+			|											<a href="#sec-var-summary">Vars</a> (<a href="#sec-vars">details</a>)
+						|											<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+						
+											<a href="#sec-const-summary">Constants</a> (<a href="#sec-consts">details</a>)
+						
+			</div>
+	<div class="info-box-body">
+        		<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">ezSQL Core module - database abstraction library to make it very easy  to deal with databases. ezSQLcore can not be used by  itself  (it is designed for use by database specific modules).</p>
+	<ul class="tags">
+				<li><span class="field">author:</span> Justin Vincent (jv@vip.ie)</li>
+				<li><span class="field">author:</span> Stefanie Janine Stoelting &lt;<a href="mailto:mail@stefanie-stoelting.de">mail@stefanie-stoelting.de</a>&gt;</li>
+				<li><span class="field">link:</span> <a href="http://justinvincent.com">http://justinvincent.com</a></li>
+				<li><span class="field">name:</span> ezSQL</li>
+				<li><span class="field">license:</span> FREE</li>
+			</ul>
+		<p class="notes">
+			Located in <a class="field" href="_shared---ez_sql_core.php.html">/shared/ez_sql_core.php</a> (line <span class="field">14</span>)
+		</p>
+		
+				
+		<pre></pre>
+	
+			</div>
+</div>
+
+	<a name="sec-descendents"></a>
+	<div class="info-box">
+		<div class="info-box-title">Direct descendents</div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+			<span class="disabled">Descendents</span>
+			|												<a href="#sec-var-summary">Vars</a> (<a href="#sec-vars">details</a>)
+								|															<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+							
+															<a href="#sec-const-summary">Constants</a> (<a href="#sec-consts">details</a>)
+							
+					</div>
+		<div class="info-box-body">
+			<table cellpadding="2" cellspacing="0" class="class-table">
+				<tr>
+					<th class="class-table-header">Class</th>
+					<th class="class-table-header">Description</th>
+				</tr>
+								<tr>
+					<td style="padding-right: 2em"><a href="../ezSQL/ezSQL_postgresql.html">ezSQL_postgresql</a></td>
+					<td>
+											ezSQL Database specific class - PostgreSQL  Desc..: PostgreSQL component (part of ezSQL databse abstraction library)
+										</td>
+				</tr>
+								<tr>
+					<td style="padding-right: 2em"><a href="../ezSQL/ezSQL_codeigniter.html">ezSQL_codeigniter</a></td>
+					<td>
+											ezSQL Database specific class - codeigniter  Desc..: codeigniter component (part of ezSQL databse abstraction library)
+										</td>
+				</tr>
+								<tr>
+					<td style="padding-right: 2em"><a href="../ezSQL/ezSQL_mssql.html">ezSQL_mssql</a></td>
+					<td>
+											ezSQL Database specific class - mssql  Microsoft Sql Server component (part of ezSQL databse abstraction library) -  based on ezSql_mySql library class.
+										</td>
+				</tr>
+								<tr>
+					<td style="padding-right: 2em"><a href="../ezSQL/ezSQL_pdo.html">ezSQL_pdo</a></td>
+					<td>
+											ezSQL class - PDO  Desc..: PDO component (part of ezSQL databse abstraction library)
+										</td>
+				</tr>
+								<tr>
+					<td style="padding-right: 2em"><a href="../ezSQL/ezSQL_sybase.html">ezSQL_sybase</a></td>
+					<td>
+											ezSQL class - Sybase ASE  Desc..: Sybase ASE component (part of ezSQL database abstraction library) -  based on ezSql_mssql library class.
+										</td>
+				</tr>
+								<tr>
+					<td style="padding-right: 2em"><a href="../ezSQL/ezSQL_oracle8_9.html">ezSQL_oracle8_9</a></td>
+					<td>
+											ezSQL Database specific class - Oracle 8 and 9  Desc..: Oracle 8i/9i component (part of ezSQL databse abstraction library)
+										</td>
+				</tr>
+								<tr>
+					<td style="padding-right: 2em"><a href="../ezSQL/ezSQL_oracleTNS.html">ezSQL_oracleTNS</a></td>
+					<td>
+											ezSQL Database specific class with TNS connection  Desc..: Oracle TNS component (part of ezSQL databse abstraction library)
+										</td>
+				</tr>
+								<tr>
+					<td style="padding-right: 2em"><a href="../ezSQL/ezSQL_mysql.html">ezSQL_mysql</a></td>
+					<td>
+											ezSQL Database specific class - mySQL  Desc..: mySQL component (part of ezSQL databse abstraction library)
+										</td>
+				</tr>
+							</table>
+		</div>
+	</div>
+
+	<a name="sec-const-summary"></a>
+	<div class="info-box">
+		<div class="info-box-title">Class Constant Summary</span></div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+							<a href="#sec-descendents">Descendants</a> |
+						<span class="disabled">Constants</span> (<a href="#sec-consts">details</a>)
+												<a href="#sec-var-summary">Vars</a> (<a href="#sec-vars">details</a>)
+				 
+				|
+										| 
+									<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+							
+					</div>
+		<div class="info-box-body">
+			<div class="const-summary">
+								<div class="const-title">
+					<a href="#ARRAY_A" title="details" class="const-name">ARRAY_A</a> = 					<span class="var-type"> true</span>
+
+				</div>
+								<div class="const-title">
+					<a href="#ARRAY_N" title="details" class="const-name">ARRAY_N</a> = 					<span class="var-type"> true</span>
+
+				</div>
+								<div class="const-title">
+					<a href="#EZSQL_VERSION" title="details" class="const-name">EZSQL_VERSION</a> = 					<span class="var-type"> '3.05'</span>
+
+				</div>
+								<div class="const-title">
+					<a href="#OBJECT" title="details" class="const-name">OBJECT</a> = 					<span class="var-type"> true</span>
+
+				</div>
+							</div>
+		</div>
+	</div>
+
+	<a name="sec-var-summary"></a>
+	<div class="info-box">
+		<div class="info-box-title">Variable Summary</span></div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+							<a href="#sec-descendents">Descendents</a> |
+						<span class="disabled">Vars</span> (<a href="#sec-vars">details</a>)
+							| 
+									<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+							
+															<a href="#sec-const-summary">Constants</a> (<a href="#sec-consts">details</a>)
+							
+					</div>
+		<div class="info-box-body">
+			<div class="var-summary">
+																																																																																																																																																																																																																																																<div class="var-title">
+					<span class="var-type">int</span>
+					<a href="#$affectedRows" title="details" class="var-name">$affectedRows</a>
+				</div>
+																<div class="var-title">
+					<span class="var-type">boolean</span>
+					<a href="#$cache_dir" title="details" class="var-name">$cache_dir</a>
+				</div>
+																<div class="var-title">
+					<span class="var-type">boolean</span>
+					<a href="#$cache_inserts" title="details" class="var-name">$cache_inserts</a>
+				</div>
+																<div class="var-title">
+					<span class="var-type">boolean</span>
+					<a href="#$cache_queries" title="details" class="var-name">$cache_queries</a>
+				</div>
+																<div class="var-title">
+					<span class="var-type">integer</span>
+					<a href="#$cache_timeout" title="details" class="var-name">$cache_timeout</a>
+				</div>
+																<div class="var-title">
+					<span class="var-type">array</span>
+					<a href="#$captured_errors" title="details" class="var-name">$captured_errors</a>
+				</div>
+																<div class="var-title">
+					<span class="var-type">object Default</span>
+					<a href="#$col_info" title="details" class="var-name">$col_info</a>
+				</div>
+																<div class="var-title">
+					<span class="var-type">boolean</span>
+					<a href="#$connected" title="details" class="var-name">$connected</a>
+				</div>
+																<div class="var-title">
+					<span class="var-type">object Default</span>
+					<a href="#$dbh" title="details" class="var-name">$dbh</a>
+				</div>
+																<div class="var-title">
+					<span class="var-type">int</span>
+					<a href="#$db_connect_time" title="details" class="var-name">$db_connect_time</a>
+				</div>
+																<div class="var-title">
+					<span class="var-type">boolean</span>
+					<a href="#$debug_all" title="details" class="var-name">$debug_all</a>
+				</div>
+																<div class="var-title">
+					<span class="var-type">mixed</span>
+					<a href="#$debug_called" title="details" class="var-name">$debug_called</a>
+				</div>
+																<div class="var-title">
+					<span class="var-type">boolean</span>
+					<a href="#$debug_echo_is_on" title="details" class="var-name">$debug_echo_is_on</a>
+				</div>
+																<div class="var-title">
+					<span class="var-type">boolean</span>
+					<a href="#$do_profile" title="details" class="var-name">$do_profile</a>
+				</div>
+																<div class="var-title">
+					<span class="var-type">boolean</span>
+					<a href="#$from_disk_cache" title="details" class="var-name">$from_disk_cache</a>
+				</div>
+																<div class="var-title">
+					<span class="var-type">object Default</span>
+					<a href="#$last_error" title="details" class="var-name">$last_error</a>
+				</div>
+																<div class="var-title">
+					<span class="var-type">object Default</span>
+					<a href="#$last_query" title="details" class="var-name">$last_query</a>
+				</div>
+																<div class="var-title">
+					<span class="var-type">object Default</span>
+					<a href="#$last_result" title="details" class="var-name">$last_result</a>
+				</div>
+																<div class="var-title">
+					<span class="var-type">int</span>
+					<a href="#$num_queries" title="details" class="var-name">$num_queries</a>
+				</div>
+																<div class="var-title">
+					<span class="var-type">array</span>
+					<a href="#$profile_times" title="details" class="var-name">$profile_times</a>
+				</div>
+																<div class="var-title">
+					<span class="var-type">boolean</span>
+					<a href="#$sql_log_file" title="details" class="var-name">$sql_log_file</a>
+				</div>
+																<div class="var-title">
+					<span class="var-type">array</span>
+					<a href="#$timers" title="details" class="var-name">$timers</a>
+				</div>
+																<div class="var-title">
+					<span class="var-type">int</span>
+					<a href="#$total_query_time" title="details" class="var-name">$total_query_time</a>
+				</div>
+																<div class="var-title">
+					<span class="var-type">boolean</span>
+					<a href="#$trace" title="details" class="var-name">$trace</a>
+				</div>
+																<div class="var-title">
+					<span class="var-type">array</span>
+					<a href="#$trace_log" title="details" class="var-name">$trace_log</a>
+				</div>
+																<div class="var-title">
+					<span class="var-type">boolean</span>
+					<a href="#$use_disk_cache" title="details" class="var-name">$use_disk_cache</a>
+				</div>
+																<div class="var-title">
+					<span class="var-type">boolean</span>
+					<a href="#$use_trace_log" title="details" class="var-name">$use_trace_log</a>
+				</div>
+																<div class="var-title">
+					<span class="var-type">boolean</span>
+					<a href="#$vardump_called" title="details" class="var-name">$vardump_called</a>
+				</div>
+											</div>
+		</div>
+	</div>
+
+	<a name="sec-method-summary"></a>
+	<div class="info-box">
+		<div class="info-box-title">Method Summary</span></div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+							<a href="#sec-descendents">Descendents</a> |
+															<a href="#sec-const-summary">Constants</a> (<a href="#sec-consts">details</a>)
+							
+															<a href="#sec-var-summary">Vars</a> (<a href="#sec-vars">details</a>)
+				 
+				|
+						<span class="disabled">Methods</span> (<a href="#sec-methods">details</a>)
+		</div>
+		<div class="info-box-body">			
+			<div class="method-summary">
+																																																																																																																																																																																												
+												<div class="method-definition">
+											<span class="method-result">int</span>
+										<a href="#affectedRows" title="details" class="method-name">affectedRows</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">string</span>
+										<a href="#debug" title="details" class="method-name">debug</a>
+											([<span class="var-type">boolean</span>&nbsp;<span class="var-name">$print_to_screen</span> = <span class="var-default">true</span>])
+									</div>
+																<div class="method-definition">
+											<span class="method-result">string</span>
+										<a href="#donation" title="details" class="method-name">donation</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">string</span>
+										<a href="#dumpvar" title="details" class="method-name">dumpvar</a>
+											(<span class="var-type">variant</span>&nbsp;<span class="var-name">$mixed</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">ezSQLcore</span>
+										<a href="#__construct" title="details" class="method-name">__construct</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#flush" title="details" class="method-name">flush</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">boolean</span>
+										<a href="#getShowErrors" title="details" class="method-name">getShowErrors</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">object</span>
+										<a href="#get_cache" title="details" class="method-name">get_cache</a>
+											(<span class="var-type">object</span>&nbsp;<span class="var-name">$query</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">array</span>
+										<a href="#get_col" title="details" class="method-name">get_col</a>
+											([<span class="var-type">object</span>&nbsp;<span class="var-name">$query</span> = <span class="var-default">null</span>], [<span class="var-type">type</span>&nbsp;<span class="var-name">$x</span> = <span class="var-default">0</span>])
+									</div>
+																<div class="method-definition">
+											<span class="method-result">type</span>
+										<a href="#get_col_info" title="details" class="method-name">get_col_info</a>
+											([<span class="var-type">type</span>&nbsp;<span class="var-name">$info_type</span> = <span class="var-default">'name'</span>], [<span class="var-type">type</span>&nbsp;<span class="var-name">$col_offset</span> = <span class="var-default">-1</span>])
+									</div>
+																<div class="method-definition">
+											<span class="method-result">array</span>
+										<a href="#get_results" title="details" class="method-name">get_results</a>
+											([<span class="var-type">object</span>&nbsp;<span class="var-name">$query</span> = <span class="var-default">null</span>], [<span class="var-type">boolean</span>&nbsp;<span class="var-name">$output</span> = <span class="var-default">self::OBJECT</span>])
+									</div>
+																<div class="method-definition">
+											<span class="method-result">type</span>
+										<a href="#get_row" title="details" class="method-name">get_row</a>
+											([<span class="var-type">object</span>&nbsp;<span class="var-name">$query</span> = <span class="var-default">null</span>], [<span class="var-type">bolean</span>&nbsp;<span class="var-name">$output</span> = <span class="var-default">self::OBJECT</span>], [<span class="var-type">int</span>&nbsp;<span class="var-name">$y</span> = <span class="var-default">0</span>])
+									</div>
+																<div class="method-definition">
+											<span class="method-result">variant</span>
+										<a href="#get_var" title="details" class="method-name">get_var</a>
+											([<span class="var-type">$query</span>&nbsp;<span class="var-name">$query</span> = <span class="var-default">null</span>], [<span class="var-type">$x</span>&nbsp;<span class="var-name">$x</span> = <span class="var-default">0</span>], [<span class="var-type">$y</span>&nbsp;<span class="var-name">$y</span> = <span class="var-default">0</span>])
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#hide_errors" title="details" class="method-name">hide_errors</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">boolean</span>
+										<a href="#isConnected" title="details" class="method-name">isConnected</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#register_error" title="details" class="method-name">register_error</a>
+											(<span class="var-type">$err_str</span>&nbsp;<span class="var-name">$err_str</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#show_errors" title="details" class="method-name">show_errors</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#store_cache" title="details" class="method-name">store_cache</a>
+											(<span class="var-type">object</span>&nbsp;<span class="var-name">$query</span>, <span class="var-type">boolean</span>&nbsp;<span class="var-name">$is_insert</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">float</span>
+										<a href="#timer_elapsed" title="details" class="method-name">timer_elapsed</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$timer_name</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">float</span>
+										<a href="#timer_get_cur" title="details" class="method-name">timer_get_cur</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#timer_start" title="details" class="method-name">timer_start</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$timer_name</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#timer_update_global" title="details" class="method-name">timer_update_global</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$timer_name</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">string</span>
+										<a href="#vardump" title="details" class="method-name">vardump</a>
+											([<span class="var-type">variant</span>&nbsp;<span class="var-name">$mixed</span> = <span class="var-default">''</span>])
+									</div>
+								</div>
+		</div>
+	</div>		
+
+	<a name="sec-vars"></a>
+	<div class="info-box">
+		<div class="info-box-title">Variables</div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+							<a href="#sec-descendents">Descendents</a> |
+										<a href="#sec-var-summary">Vars</a> (<span class="disabled">details</span>)
+						
+			
+												<a href="#sec-const-summary">Constants</a> (<a href="#sec-consts">details</a>)
+							
+										| 
+									<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+							
+					</div>
+		<div class="info-box-body">
+			<a name="var$affectedRows" id="$affectedRows"><!-- --></A>
+<div class="evenrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">int</span>
+			<span class="var-name">$affectedRows</span>
+			 = <span class="var-default"> 0</span>			(line <span class="line-number">190</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Contains the number of affected rows of a query</p>
+	<ul class="tags">
+				<li><span class="field">var:</span> Default is 0</li>
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$cache_dir" id="$cache_dir"><!-- --></A>
+<div class="oddrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">boolean</span>
+			<span class="var-name">$cache_dir</span>
+			 = <span class="var-default"> false</span>			(line <span class="line-number">100</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Using the cache directory</p>
+	<ul class="tags">
+				<li><span class="field">var:</span> Default is false</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$cache_inserts" id="$cache_inserts"><!-- --></A>
+<div class="evenrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">boolean</span>
+			<span class="var-name">$cache_inserts</span>
+			 = <span class="var-default"> false</span>			(line <span class="line-number">112</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Insert queries into the cache</p>
+	<ul class="tags">
+				<li><span class="field">var:</span> Default is false</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$cache_queries" id="$cache_queries"><!-- --></A>
+<div class="oddrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">boolean</span>
+			<span class="var-name">$cache_queries</span>
+			 = <span class="var-default"> false</span>			(line <span class="line-number">106</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Caching queries</p>
+	<ul class="tags">
+				<li><span class="field">var:</span> Default is false</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$cache_timeout" id="$cache_timeout"><!-- --></A>
+<div class="evenrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">integer</span>
+			<span class="var-name">$cache_timeout</span>
+			 = <span class="var-default"> 24</span>			(line <span class="line-number">124</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">The cache timeout in hours</p>
+	<ul class="tags">
+				<li><span class="field">var:</span> Default is 24</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$captured_errors" id="$captured_errors"><!-- --></A>
+<div class="oddrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">array</span>
+			<span class="var-name">$captured_errors</span>
+			 = <span class="var-default">array()</span>			(line <span class="line-number">94</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Captured errors</p>
+	<ul class="tags">
+				<li><span class="field">var:</span> Default is empty array</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$col_info" id="$col_info"><!-- --></A>
+<div class="evenrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">object Default</span>
+			<span class="var-name">$col_info</span>
+			 = <span class="var-default"> null</span>			(line <span class="line-number">88</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">The last column info</p>
+	<ul class="tags">
+				<li><span class="field">var:</span> is null</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$connected" id="$connected"><!-- --></A>
+<div class="oddrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">boolean</span>
+			<span class="var-name">$connected</span>
+			 = <span class="var-default"> false</span>			(line <span class="line-number">184</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Whether the database connection is established, or not</p>
+	<ul class="tags">
+				<li><span class="field">var:</span> Default is false</li>
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$dbh" id="$dbh"><!-- --></A>
+<div class="evenrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">object Default</span>
+			<span class="var-name">$dbh</span>
+			 = <span class="var-default"> null</span>			(line <span class="line-number">178</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">The database connection object</p>
+	<ul class="tags">
+				<li><span class="field">var:</span> is null</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$db_connect_time" id="$db_connect_time"><!-- --></A>
+<div class="oddrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">int</span>
+			<span class="var-name">$db_connect_time</span>
+			 = <span class="var-default"> 0</span>			(line <span class="line-number">142</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">The time it took to establish a connection</p>
+	<ul class="tags">
+				<li><span class="field">var:</span> Default is 0</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$debug_all" id="$debug_all"><!-- --></A>
+<div class="evenrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">boolean</span>
+			<span class="var-name">$debug_all</span>
+			 = <span class="var-default"> false</span>			(line <span class="line-number">46</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">same as $trace</p>
+	<ul class="tags">
+				<li><span class="field">var:</span> Default is false</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$debug_called" id="$debug_called"><!-- --></A>
+<div class="oddrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">mixed</span>
+			<span class="var-name">$debug_called</span>
+			 = <span class="var-default"> false</span>			(line <span class="line-number">52</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Debug is called</p>
+	<ul class="tags">
+				<li><span class="field">public:</span> boolean Default is false</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$debug_echo_is_on" id="$debug_echo_is_on"><!-- --></A>
+<div class="evenrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">boolean</span>
+			<span class="var-name">$debug_echo_is_on</span>
+			 = <span class="var-default"> true</span>			(line <span class="line-number">198</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">== TJH == default now needed for echo of debug function</p>
+<p class="description"><p>The default for returning errors, turn it of, if you are not  interested in seeing your database errors</p></p>
+	<ul class="tags">
+				<li><span class="field">var:</span> Default is true</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$do_profile" id="$do_profile"><!-- --></A>
+<div class="oddrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">boolean</span>
+			<span class="var-name">$do_profile</span>
+			 = <span class="var-default"> false</span>			(line <span class="line-number">166</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Using profiling</p>
+	<ul class="tags">
+				<li><span class="field">var:</span> Default is false</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$from_disk_cache" id="$from_disk_cache"><!-- --></A>
+<div class="evenrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">boolean</span>
+			<span class="var-name">$from_disk_cache</span>
+			 = <span class="var-default"> false</span>			(line <span class="line-number">210</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Get data from disk cache</p>
+	<ul class="tags">
+				<li><span class="field">var:</span> Default is false</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$last_error" id="$last_error"><!-- --></A>
+<div class="oddrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">object Default</span>
+			<span class="var-name">$last_error</span>
+			 = <span class="var-default"> null</span>			(line <span class="line-number">82</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">The last error object</p>
+	<ul class="tags">
+				<li><span class="field">var:</span> is null</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$last_query" id="$last_query"><!-- --></A>
+<div class="evenrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">object Default</span>
+			<span class="var-name">$last_query</span>
+			 = <span class="var-default"> null</span>			(line <span class="line-number">76</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">The last query object</p>
+	<ul class="tags">
+				<li><span class="field">var:</span> is null</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$last_result" id="$last_result"><!-- --></A>
+<div class="oddrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">object Default</span>
+			<span class="var-name">$last_result</span>
+			 = <span class="var-default"> null</span>			(line <span class="line-number">204</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">The last query result</p>
+	<ul class="tags">
+				<li><span class="field">var:</span> is null</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$num_queries" id="$num_queries"><!-- --></A>
+<div class="evenrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">int</span>
+			<span class="var-name">$num_queries</span>
+			 = <span class="var-default"> 0</span>			(line <span class="line-number">70</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Number of queries</p>
+	<ul class="tags">
+				<li><span class="field">var:</span> Default is 0</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$profile_times" id="$profile_times"><!-- --></A>
+<div class="oddrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">array</span>
+			<span class="var-name">$profile_times</span>
+			 = <span class="var-default">array()</span>			(line <span class="line-number">172</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Array for storing profiling times</p>
+	<ul class="tags">
+				<li><span class="field">var:</span> Default is empty array</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$sql_log_file" id="$sql_log_file"><!-- --></A>
+<div class="evenrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">boolean</span>
+			<span class="var-name">$sql_log_file</span>
+			 = <span class="var-default"> false</span>			(line <span class="line-number">160</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Use a SQL log file</p>
+	<ul class="tags">
+				<li><span class="field">var:</span> Default is false</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$timers" id="$timers"><!-- --></A>
+<div class="oddrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">array</span>
+			<span class="var-name">$timers</span>
+			 = <span class="var-default">array()</span>			(line <span class="line-number">130</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Timers</p>
+	<ul class="tags">
+				<li><span class="field">var:</span> Default is empty array</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$total_query_time" id="$total_query_time"><!-- --></A>
+<div class="evenrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">int</span>
+			<span class="var-name">$total_query_time</span>
+			 = <span class="var-default"> 0</span>			(line <span class="line-number">136</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">The total query time</p>
+	<ul class="tags">
+				<li><span class="field">var:</span> Default is 0</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$trace" id="$trace"><!-- --></A>
+<div class="oddrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">boolean</span>
+			<span class="var-name">$trace</span>
+			 = <span class="var-default"> false</span>			(line <span class="line-number">40</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">same as $debug_all</p>
+	<ul class="tags">
+				<li><span class="field">var:</span> Default is false</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$trace_log" id="$trace_log"><!-- --></A>
+<div class="evenrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">array</span>
+			<span class="var-name">$trace_log</span>
+			 = <span class="var-default">array()</span>			(line <span class="line-number">148</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">The trace log</p>
+	<ul class="tags">
+				<li><span class="field">var:</span> Default is empty array</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$use_disk_cache" id="$use_disk_cache"><!-- --></A>
+<div class="oddrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">boolean</span>
+			<span class="var-name">$use_disk_cache</span>
+			 = <span class="var-default"> false</span>			(line <span class="line-number">118</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Using disk cache</p>
+	<ul class="tags">
+				<li><span class="field">var:</span> Default is false</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$use_trace_log" id="$use_trace_log"><!-- --></A>
+<div class="evenrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">boolean</span>
+			<span class="var-name">$use_trace_log</span>
+			 = <span class="var-default"> false</span>			(line <span class="line-number">154</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Use the trace log</p>
+	<ul class="tags">
+				<li><span class="field">var:</span> Default is false</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$vardump_called" id="$vardump_called"><!-- --></A>
+<div class="oddrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">boolean</span>
+			<span class="var-name">$vardump_called</span>
+			 = <span class="var-default"> false</span>			(line <span class="line-number">58</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Vardump called</p>
+	<ul class="tags">
+				<li><span class="field">var:</span> Default is false</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+						
+		</div>
+	</div>
+	
+	<a name="sec-methods"></a>
+	<div class="info-box">
+		<div class="info-box-title">Methods</div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+							<a href="#sec-descendents">Descendents</a> |
+															<a href="#sec-var-summary">Vars</a> (<a href="#sec-vars">details</a>)
+																			<a href="#sec-const-summary">Constants</a> (<a href="#sec-consts">details</a>)
+							
+										<a href="#sec-method-summary">Methods</a> (<span class="disabled">details</span>)
+						
+		</div>
+		<div class="info-box-body">
+			<A NAME='method_detail'></A>
+
+<a name="methodaffectedRows" id="affectedRows"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">affectedRows</span> (line <span class="line-number">717</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns the affected rows of a query</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">int</span>
+		<span class="method-name">
+			affectedRows
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methoddebug" id="debug"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">debug</span> (line <span class="line-number">545</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Displays the last query string that was sent to the database &amp; a table  listing results (if there were any).</p>
+<p class="description"><p>(Abstracted into a seperate files to save server overhead).</p></p>
+	<ul class="tags">
+				<li><span class="field">return:</span> The HTML result</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">string</span>
+		<span class="method-name">
+			debug
+		</span>
+					([<span class="var-type">boolean</span>&nbsp;<span class="var-name">$print_to_screen</span> = <span class="var-default">true</span>])
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">boolean</span>
+				<span class="var-name">$print_to_screen</span><span class="var-description">: Default is true</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methoddonation" id="donation"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">donation</span> (line <span class="line-number">635</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Naughty little function to ask for some remuniration!</p>
+	<ul class="tags">
+				<li><span class="field">return:</span> An HTML string with payment information</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">string</span>
+		<span class="method-name">
+			donation
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methoddumpvar" id="dumpvar"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">dumpvar</span> (line <span class="line-number">533</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">An alias for vardump method</p>
+	<ul class="tags">
+				<li><span class="field">return:</span> Returns HTML result</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">string</span>
+		<span class="method-name">
+			dumpvar
+		</span>
+					(<span class="var-type">variant</span>&nbsp;<span class="var-name">$mixed</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">variant</span>
+				<span class="var-name">$mixed</span><span class="var-description">: Default is empty String</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="method__construct" id="__construct"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">Constructor __construct</span> (line <span class="line-number">221</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Constructor of ezSQL</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">ezSQLcore</span>
+		<span class="method-name">
+			__construct
+		</span>
+				()
+			</div>
+	
+		
+			
+			<hr class="separator" />
+		<div class="notes">Redefined in descendants as:</div>
+		<ul class="redefinitions">
+					<li>
+				<a href="../ezSQL/ezSQL_postgresql.html#method__construct">ezSQL_postgresql::__construct()</a>
+								: Constructor - allow the user to perform a qucik connect at the same time  as initialising the ezSQL_postgresql class
+							</li>
+					<li>
+				<a href="../ezSQL/ezSQL_codeigniter.html#method__construct">ezSQL_codeigniter::__construct()</a>
+							</li>
+					<li>
+				<a href="../ezSQL/ezSQL_mssql.html#method__construct">ezSQL_mssql::__construct()</a>
+								: Constructor - allow the user to perform a qucik connect at the same time  as initialising the ezSQL_mssql class
+							</li>
+					<li>
+				<a href="../ezSQL/ezSQL_pdo.html#method__construct">ezSQL_pdo::__construct()</a>
+								: Constructor - allow the user to perform a qucik connect at the same time  as initialising the ezSQL_sqlite class
+							</li>
+					<li>
+				<a href="../ezSQL/ezSQL_sybase.html#method__construct">ezSQL_sybase::__construct()</a>
+							</li>
+					<li>
+				<a href="../ezSQL/ezSQL_oracle8_9.html#method__construct">ezSQL_oracle8_9::__construct()</a>
+								: Constructor - allow the user to perform a qucik connect at the same time  as initialising the ezSQL_oracle8_9 class
+							</li>
+					<li>
+				<a href="../ezSQL/ezSQL_oracleTNS.html#method__construct">ezSQL_oracleTNS::__construct()</a>
+								: Constructor - allow the user to perform a qucik connect at the same time  as initialising the ezSQL_oracleTNS class
+							</li>
+					<li>
+				<a href="../ezSQL/ezSQL_mysql.html#method__construct">ezSQL_mysql::__construct()</a>
+								: Constructor - allow the user to perform a qucik connect at the same time  as initialising the ezSQL_mysql class
+							</li>
+				</ul>
+	</div>
+<a name="methodflush" id="flush"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">flush</span> (line <span class="line-number">259</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Kill cached query results</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			flush
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodgetShowErrors" id="getShowErrors"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">getShowErrors</span> (line <span class="line-number">708</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns the current show error state</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">boolean</span>
+		<span class="method-name">
+			getShowErrors
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodget_cache" id="get_cache"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">get_cache</span> (line <span class="line-number">460</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Get the query cache of a query</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">object</span>
+		<span class="method-name">
+			get_cache
+		</span>
+					(<span class="var-type">object</span>&nbsp;<span class="var-name">$query</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">object</span>
+				<span class="var-name">$query</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodget_col" id="get_col"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">get_col</span> (line <span class="line-number">336</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Function to get 1 column from the cached result set based in  X index  see docs for usage and info</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">array</span>
+		<span class="method-name">
+			get_col
+		</span>
+					([<span class="var-type">object</span>&nbsp;<span class="var-name">$query</span> = <span class="var-default">null</span>], [<span class="var-type">type</span>&nbsp;<span class="var-name">$x</span> = <span class="var-default">0</span>])
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">object</span>
+				<span class="var-name">$query</span><span class="var-description">: Default is null</span>			</li>
+					<li>
+				<span class="var-type">type</span>
+				<span class="var-name">$x</span><span class="var-description">: Default is 0</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodget_col_info" id="get_col_info"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">get_col_info</span> (line <span class="line-number">406</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Function to get column meta data info pertaining to the last  query  See docs for more info and usage</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">type</span>
+		<span class="method-name">
+			get_col_info
+		</span>
+					([<span class="var-type">type</span>&nbsp;<span class="var-name">$info_type</span> = <span class="var-default">'name'</span>], [<span class="var-type">type</span>&nbsp;<span class="var-name">$col_offset</span> = <span class="var-default">-1</span>])
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">type</span>
+				<span class="var-name">$info_type</span>			</li>
+					<li>
+				<span class="var-type">type</span>
+				<span class="var-name">$col_offset</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodget_results" id="get_results"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">get_results</span> (line <span class="line-number">362</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Return the the query as a result set - see docs for more  details</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">array</span>
+		<span class="method-name">
+			get_results
+		</span>
+					([<span class="var-type">object</span>&nbsp;<span class="var-name">$query</span> = <span class="var-default">null</span>], [<span class="var-type">boolean</span>&nbsp;<span class="var-name">$output</span> = <span class="var-default">self::OBJECT</span>])
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">object</span>
+				<span class="var-name">$query</span><span class="var-description">: Default is null</span>			</li>
+					<li>
+				<span class="var-type">boolean</span>
+				<span class="var-name">$output</span><span class="var-description">: Default is the OBJECT constant</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodget_row" id="get_row"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">get_row</span> (line <span class="line-number">301</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Get one row from the DB - see docs for more detail</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">type</span>
+		<span class="method-name">
+			get_row
+		</span>
+					([<span class="var-type">object</span>&nbsp;<span class="var-name">$query</span> = <span class="var-default">null</span>], [<span class="var-type">bolean</span>&nbsp;<span class="var-name">$output</span> = <span class="var-default">self::OBJECT</span>], [<span class="var-type">int</span>&nbsp;<span class="var-name">$y</span> = <span class="var-default">0</span>])
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">object</span>
+				<span class="var-name">$query</span><span class="var-description">: Default is null</span>			</li>
+					<li>
+				<span class="var-type">bolean</span>
+				<span class="var-name">$output</span><span class="var-description">: Default is the OBJECT constant</span>			</li>
+					<li>
+				<span class="var-type">int</span>
+				<span class="var-name">$y</span><span class="var-description">: Default is 0</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodget_var" id="get_var"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">get_var</span> (line <span class="line-number">275</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Get one variable from the DB - see docs for more detail</p>
+	<ul class="tags">
+				<li><span class="field">return:</span> The value of a variable</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">variant</span>
+		<span class="method-name">
+			get_var
+		</span>
+					([<span class="var-type">$query</span>&nbsp;<span class="var-name">$query</span> = <span class="var-default">null</span>], [<span class="var-type">$x</span>&nbsp;<span class="var-name">$x</span> = <span class="var-default">0</span>], [<span class="var-type">$y</span>&nbsp;<span class="var-name">$y</span> = <span class="var-default">0</span>])
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">$query</span>
+				<span class="var-name">$query</span><span class="var-description">: object A query object, default is null</span>			</li>
+					<li>
+				<span class="var-type">$x</span>
+				<span class="var-name">$x</span><span class="var-description">: int Default is 0</span>			</li>
+					<li>
+				<span class="var-type">$y</span>
+				<span class="var-name">$y</span><span class="var-description">: int Default is 0</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodhide_errors" id="hide_errors"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">hide_errors</span> (line <span class="line-number">252</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Turn error handling off</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			hide_errors
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodisConnected" id="isConnected"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">isConnected</span> (line <span class="line-number">699</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns, whether a database connection is established, or not</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">boolean</span>
+		<span class="method-name">
+			isConnected
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodregister_error" id="register_error"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">register_error</span> (line <span class="line-number">230</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Print SQL/DB error - over-ridden by specific DB class</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			register_error
+		</span>
+					(<span class="var-type">$err_str</span>&nbsp;<span class="var-name">$err_str</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">$err_str</span>
+				<span class="var-name">$err_str</span><span class="var-description">: string</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodshow_errors" id="show_errors"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">show_errors</span> (line <span class="line-number">245</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Turn error handling on, by default error handling is on</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			show_errors
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodstore_cache" id="store_cache"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">store_cache</span> (line <span class="line-number">430</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Store the cache</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			store_cache
+		</span>
+					(<span class="var-type">object</span>&nbsp;<span class="var-name">$query</span>, <span class="var-type">boolean</span>&nbsp;<span class="var-name">$is_insert</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">object</span>
+				<span class="var-name">$query</span>			</li>
+					<li>
+				<span class="var-type">boolean</span>
+				<span class="var-name">$is_insert</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodtimer_elapsed" id="timer_elapsed"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">timer_elapsed</span> (line <span class="line-number">673</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns the elapsed time of the given timer by name</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">float</span>
+		<span class="method-name">
+			timer_elapsed
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$timer_name</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$timer_name</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodtimer_get_cur" id="timer_get_cur"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">timer_get_cur</span> (line <span class="line-number">653</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Get current time</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">float</span>
+		<span class="method-name">
+			timer_get_cur
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodtimer_start" id="timer_start"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">timer_start</span> (line <span class="line-number">663</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Start a timer by name</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			timer_start
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$timer_name</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$timer_name</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodtimer_update_global" id="timer_update_global"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">timer_update_global</span> (line <span class="line-number">682</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Update the global timer with an existing timer</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			timer_update_global
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$timer_name</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$timer_name</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodvardump" id="vardump"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">vardump</span> (line <span class="line-number">493</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Dumps the contents of any input variable to screen in a nicely formatted  and easy to understand way - any type: Object, public or Array</p>
+	<ul class="tags">
+				<li><span class="field">return:</span> Returns HTML result</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">string</span>
+		<span class="method-name">
+			vardump
+		</span>
+					([<span class="var-type">variant</span>&nbsp;<span class="var-name">$mixed</span> = <span class="var-default">''</span>])
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">variant</span>
+				<span class="var-name">$mixed</span><span class="var-description">: Default is empty String</span>			</li>
+				</ul>
+		
+			
+	</div>
+						
+		</div>
+	</div>
+
+	<a name="sec-consts"></a>
+	<div class="info-box">
+		<div class="info-box-title">Class Constants</div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+							<a href="#sec-descendents">Descendants</a> |
+										<a href="#sec-var-summary">Constants</a> (<span class="disabled">details</span>)
+						
+			
+												<a href="#sec-var-summary">Vars</a> (<a href="#sec-vars">details</a>)
+														| 
+									<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+							
+					</div>
+		<div class="info-box-body">
+			<a name="constARRAY_A" id="ARRAY_A"><!-- --></A>
+<div class="oddrow">
+
+	<div class="const-header">
+		<span class="const-title">
+			<span class="const-name">ARRAY_A</span>
+			 = <span class="const-default"> true</span>
+			(line <span class="line-number">29</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Constant boolean</p>
+	
+	
+</div>
+<a name="constARRAY_N" id="ARRAY_N"><!-- --></A>
+<div class="evenrow">
+
+	<div class="const-header">
+		<span class="const-title">
+			<span class="const-name">ARRAY_N</span>
+			 = <span class="const-default"> true</span>
+			(line <span class="line-number">34</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Constant boolean</p>
+	
+	
+</div>
+<a name="constEZSQL_VERSION" id="EZSQL_VERSION"><!-- --></A>
+<div class="oddrow">
+
+	<div class="const-header">
+		<span class="const-title">
+			<span class="const-name">EZSQL_VERSION</span>
+			 = <span class="const-default"> '3.05'</span>
+			(line <span class="line-number">19</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Constant string ezSQL version information</p>
+	
+	
+</div>
+<a name="constOBJECT" id="OBJECT"><!-- --></A>
+<div class="evenrow">
+
+	<div class="const-header">
+		<span class="const-title">
+			<span class="const-name">OBJECT</span>
+			 = <span class="const-default"> true</span>
+			(line <span class="line-number">24</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Constant boolean Object</p>
+	
+	
+</div>
+						
+		</div>
+	</div>
+
+	<p class="notes" id="credit">
+		Documentation generated on Mon, 26 Aug 2013 23:22:20 +0200 by <a href="http://www.phpdoc.org" target="_blank">phpDocumentor 1.4.4</a>
+	</p>
+	</div></body>
+</html>

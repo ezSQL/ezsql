@@ -1,3 +1,7 @@
-
-composer.lock
-vendor/
+/nbproject/private/
+/nbproject/
+~
+~*.*
+*.lock
+vendor
+build/logs/clover.xml
