@@ -5,3 +5,4 @@
 *.lock
 vendor
 build/logs/clover.xml
+*.sqlite

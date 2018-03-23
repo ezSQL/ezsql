@@ -140,9 +140,9 @@ class ezSQL_mysqliTest extends TestCase {
         $this->errors = array();
         set_error_handler(array($this, 'errorHandler')); 
         $this->assertFalse($this->object->select(''));
+        $this->object->dbh = null;
         $this->assertFalse($this->object->select('test'));
         $this->object->disconnect();
-        $this->object->dbh = null;
         $this->assertFalse($this->object->select(self::TEST_DB_NAME));        
     } // testSelect
 
