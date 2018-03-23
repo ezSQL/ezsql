@@ -300,7 +300,7 @@
 					//$this->insert_id = pg_last_oid($this->result);
 
 					// Thx. Rafael Bernal
-					$insert_query = pg_query($this->dbh, "SELECT lastval();");
+					$insert_query = pg_query("SELECT lastval();");
 					$insert_row = pg_fetch_row($insert_query);
 					$this->insert_id = $insert_row[0];
 				}
@@ -321,8 +321,8 @@
 			else
 			{ 
 				$num_rows=0;
-				//if ( $this->result )	//may be needed but my tests did not
-				//{	
+				if ( $this->result )	//may be needed but my tests did not
+				{	
 							
 				// =======================================================
 				// Take note of column info
@@ -349,7 +349,7 @@
 					}
 
 				@pg_free_result($this->result);
-				//}
+				}
 				// Log number of rows the query returned
 				$this->num_rows = $num_rows;
 
