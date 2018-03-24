@@ -1,0 +1,8 @@
+/nbproject/private/
+/nbproject/
+~
+~*.*
+*.lock
+vendor
+build/logs/clover.xml
+*.sqlite
