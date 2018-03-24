@@ -268,7 +268,45 @@ class ezSQL_postgresqlTest extends TestCase {
         
         $this->assertEquals(self::TEST_DB_PORT, $this->object->getPort());
     } // testGetPort
-       
+
+    /**
+     * @covers ezSQLcore::selecting
+     */
+    public function testSelecting()
+    {
+        $this->object->connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME, self::TEST_DB_HOST, self::TEST_DB_PORT);
+        $this->object->query('CREATE TABLE unit_test(id serial, test_key varchar(50), test_value varchar(50), PRIMARY KEY (ID))');
+        $this->object->insert('unit_test', array('test_key'=>'test 1', 'test_value'=>'testing string 1' ));
+        $this->object->insert('unit_test', array('test_key'=>'test 2', 'test_value'=>'testing string 2' ));
+        $this->object->insert('unit_test', array('test_key'=>'test 3', 'test_value'=>'testing string 3' ));   
+        
+        $result = $this->object->selecting('unit_test');        
+        $i = 1;
+        foreach ($result as $row) {
+            $this->assertEquals($i, $row->id);
+            $this->assertEquals('testing string ' . $i, $row->test_value);
+            $this->assertEquals('test ' . $i, $row->test_key);
+            ++$i;
+        }
+        
+        $where = eq('id','2');
+        $result = $this->object->selecting('unit_test', 'id', $this->object->where($where));
+        foreach ($result as $row) {
+            $this->assertEquals(2, $row->id);
+        }
+        
+        $where = [eq('test_value','testing string 3', _AND), eq('id','3')];
+        $result = $this->object->selecting('unit_test', 'test_key', $this->object->where($where));
+        foreach ($result as $row) {
+            $this->assertEquals('test 3', $row->test_key);
+        }      
+        
+        $result = $this->object->selecting('unit_test', 'test_value', $this->object->where(eq( 'test_key','test 1' )));
+        foreach ($result as $row) {
+            $this->assertEquals('testing string 1', $row->test_value);
+        }
+    } 
+    
     /**
      * @covers ezSQL_postgresql::__construct
      */
