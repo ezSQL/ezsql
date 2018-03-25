@@ -15,8 +15,6 @@ use PHPUnit\Framework\TestCase;
  *
  * @author  Stefanie Janine Stoelting <mail@stefanie-stoelting.de>
  * @name    ezSQL_postgresql_tear_up
- * @uses    postgresql_test_db_tear_up.sql
- * @uses    postgresql_test_db_tear_down.sql
  * @package ezSQL
  * @subpackage unitTests
  * @license FREE / Donation (LGPL - You may do what you like with ezSQL - no exceptions.)
