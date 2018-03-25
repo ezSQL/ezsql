@@ -22,10 +22,6 @@ use PHPUnit\Framework\TestCase;
  *
  * @author  Stefanie Janine Stoelting <mail@stefanie-stoelting.de>
  * @name    ezSQL_pdoTest
- * @uses    postgresql_test_db_tear_up.sql
- * @uses    postgresql_test_db_tear_down.sql
- * @uses    mysql_test_db_tear_up.sql
- * @uses    mysql_test_db_tear_down.sql
  * @uses    ez_test.sqlite
  * @package ezSQL
  * @subpackage unitTests
