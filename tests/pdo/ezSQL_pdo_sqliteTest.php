@@ -59,7 +59,7 @@ class ezSQL_pdo_sqliteTest extends TestCase {
     /**
      * constant string path and file name of the SQLite test database
      */
-    const TEST_SQLITE_DB = 'tests/pdo/ez_test.sqlite';
+    const TEST_SQLITE_DB = 'ez_test.sqlite';
 
     /**
      * @var ezSQL_pdo
@@ -171,7 +171,105 @@ class ezSQL_pdo_sqliteTest extends TestCase {
 
         $this->assertEquals(0, $this->object->query('DROP TABLE unit_test'));
     } // testSQLiteQuery
+    
+    /**
+     * @covers ezSQLcore::insert
+     */
+    public function testInsert()
+    {
+        $this->assertTrue($this->object->connect('sqlite:' . self::TEST_SQLITE_DB, '', '', array(), true));
+        $this->object->query('CREATE TABLE unit_test(id integer, test_key varchar(50), PRIMARY KEY (ID))');
 
+        $result = $this->object->insert('unit_test', array('test_key'=>'test 1' ));
+        $this->assertEquals(1, $result);
+        $this->assertEquals(1, $this->object->query('DROP TABLE unit_test'));
+    }
+       
+    /**
+     * @covers ezSQLcore::update
+     */
+    public function testUpdate()
+    {
+        $this->assertTrue($this->object->connect('sqlite:' . self::TEST_SQLITE_DB, '', '', array(), true));
+        $this->object->query('CREATE TABLE unit_test(id integer, test_key varchar(50), test_value varchar(50), PRIMARY KEY (ID))');
+        $this->object->insert('unit_test', array('test_key'=>'test 1', 'test_value'=>'testing string 1' ));
+        $this->object->insert('unit_test', array('test_key'=>'test 2', 'test_value'=>'testing string 2' ));
+        $result = $this->object->insert('unit_test', array('test_key'=>'test 3', 'test_value'=>'testing string 3' ));
+        $this->assertEquals($result, 3);
+        $unit_test['test_key'] = 'the key string';
+        $where="test_key  =  test 1";
+        $this->assertEquals(1, $this->object->update('unit_test', $unit_test, $where));
+        $this->assertEquals(1, $this->object->update('unit_test', $unit_test, eq('test_key','test 3', _AND),
+                                                                            eq('test_value','testing string 3')));
+        $where=eq('test_value','testing string 4');
+        $this->assertEquals(0, $this->object->update('unit_test', $unit_test, $where));
+        $this->assertEquals(1, $this->object->update('unit_test', $unit_test, "test_key  =  test 2"));
+        $this->assertEquals(1, $this->object->query('DROP TABLE unit_test'));
+    }
+    
+    /**
+     * @covers ezSQLcore::delete
+     */
+    public function testDelete()
+    {
+        $this->assertTrue($this->object->connect('sqlite:' . self::TEST_SQLITE_DB, '', '', array(), true));
+        $this->object->query('CREATE TABLE unit_test(id integer, test_key varchar(50), test_value varchar(50), PRIMARY KEY (ID))');
+        $this->object->insert('unit_test', array('test_key'=>'test 1', 'test_value'=>'testing string 1' ));
+        $this->object->insert('unit_test', array('test_key'=>'test 2', 'test_value'=>'testing string 2' ));
+        $this->object->insert('unit_test', array('test_key'=>'test 3', 'test_value'=>'testing string 3' ));   
+
+        $where=array('test_key','=','test 1');
+        $this->assertEquals($this->object->delete('unit_test', $where), 1);
+        
+        $this->assertEquals($this->object->delete('unit_test', 
+            array('test_key','=','test 3'),
+            array('test_value','=','testing string 3')), 1);
+        $where=array('test_value','=','testing 2');
+        $this->assertEquals(0, $this->object->delete('unit_test', $where));
+        $where="test_key  =  test 2";
+        $this->assertEquals(1, $this->object->delete('unit_test', $where));
+        $this->assertEquals(1, $this->object->query('DROP TABLE unit_test'));
+    }  
+
+    /**
+     * @covers ezSQLcore::selecting
+     */
+    public function testSelecting()
+    {
+        $this->assertTrue($this->object->connect('sqlite:' . self::TEST_SQLITE_DB, '', '', array(), true));
+        $this->object->query('CREATE TABLE unit_test(id integer, test_key varchar(50), test_value varchar(50), PRIMARY KEY (ID))');
+        $this->object->insert('unit_test', array('test_key'=>'test 1', 'test_value'=>'testing string 1' ));
+        $this->object->insert('unit_test', array('test_key'=>'test 2', 'test_value'=>'testing string 2' ));
+        $this->object->insert('unit_test', array('test_key'=>'test 3', 'test_value'=>'testing string 3' ));   
+        
+        $result = $this->object->selecting('unit_test');        
+        $i = 1;
+        foreach ($result as $row) {
+            $this->assertEquals($i, $row->id);
+            $this->assertEquals('testing string ' . $i, $row->test_value);
+            $this->assertEquals('test ' . $i, $row->test_key);
+            ++$i;
+        }
+        
+        $where = eq('id','2');
+        $result = $this->object->selecting('unit_test', 'id', $this->object->where($where));
+        foreach ($result as $row) {
+            $this->assertEquals(2, $row->id);
+        }
+        
+        $where = [eq('test_value','testing string 3', _AND), eq('id','3')];
+        $result = $this->object->selecting('unit_test', 'test_key', $this->object->where($where));
+        foreach ($result as $row) {
+            $this->assertEquals('test 3', $row->test_key);
+        }      
+        
+        $result = $this->object->selecting('unit_test', 'test_value', $this->object->where(eq( 'test_key','test 1' )));
+        foreach ($result as $row) {
+            $this->assertEquals('testing string 1', $row->test_value);
+        }
+        $this->assertEquals(1, $this->object->query('DROP TABLE unit_test'));
+    } 
+    
     /**
      * @covers ezSQL_pdo::disconnect
      */
@@ -180,7 +278,7 @@ class ezSQL_pdo_sqliteTest extends TestCase {
 
         $this->object->disconnect();
 
-        $this->assertTrue(true);
+        $this->assertFalse($this->object->isConnected());
     } // testSQLiteDisconnect
 
     /**
