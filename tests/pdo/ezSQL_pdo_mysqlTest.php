@@ -175,9 +175,10 @@ class ezSQL_pdo_mysqlTest extends TestCase {
     public function testInsert()
     {
         $this->assertTrue($this->object->connect('mysql:host=' . self::TEST_DB_HOST . ';dbname=' . self::TEST_DB_NAME . ';port=' . self::TEST_DB_PORT, self::TEST_DB_USER, self::TEST_DB_PASSWORD));
+        $this->assertEquals(0, $this->object->query('DROP TABLE IF EXIST unit_test'));
         $this->object->query('CREATE TABLE unit_test(id integer, test_key varchar(50), PRIMARY KEY (ID))');
-
-        $result = $this->object->insert('unit_test', array('id'=>'1', 'test_key'=>'test 1'));
+        
+        $result = $this->object->insert('unit_test', array('id'=>'1', 'test_key'=>'testing 1' ));
         $this->assertEquals(1, $result);
         $this->assertEquals(0, $this->object->query('DROP TABLE unit_test'));
     }
