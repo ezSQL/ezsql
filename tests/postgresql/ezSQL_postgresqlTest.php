@@ -305,6 +305,7 @@ class ezSQL_postgresqlTest extends TestCase {
         foreach ($result as $row) {
             $this->assertEquals('testing string 1', $row->test_value);
         }
+        $this->assertEquals(0, $this->object->query('DROP TABLE unit_test'));
     } 
     
     /**
