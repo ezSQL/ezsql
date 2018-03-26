@@ -177,7 +177,7 @@ class ezSQL_pdo_mysqlTest extends TestCase {
         $this->assertTrue($this->object->connect('mysql:host=' . self::TEST_DB_HOST . ';dbname=' . self::TEST_DB_NAME . ';port=' . self::TEST_DB_PORT, self::TEST_DB_USER, self::TEST_DB_PASSWORD));
         $this->object->query('CREATE TABLE unit_test(id integer, test_key varchar(50), PRIMARY KEY (ID))');
 
-        $result = $this->object->insert('unit_test', array('id'=>'1', array('test_key'=>'test 1' )));
+        $result = $this->object->insert('unit_test', array('id'=>'1', 'test_key'=>'test 1'));
         $this->assertEquals(1, $result);
         $this->assertEquals(0, $this->object->query('DROP TABLE unit_test'));
     }
@@ -195,9 +195,7 @@ class ezSQL_pdo_mysqlTest extends TestCase {
         $unit_test['test_key'] = 'testing';
         $where="id  =  1";
         $this->assertEquals($this->object->update('unit_test', $unit_test, $where), 1);
-        $this->assertEquals($this->object->update('unit_test', $unit_test, 
-			array('test_key',EQ,'test 3','and'),
-			array('id','=','3')), 1);
+        $this->assertEquals($this->object->update('unit_test', $unit_test, eq('test_key','test 3', _AND), eq('id','3')), 1);
         $this->assertEquals($this->object->update('unit_test', $unit_test, "id = 4"), 0);
         $this->assertEquals($this->object->update('unit_test', $unit_test, "test_key  =  test 2  and", "id  =  2"), 1);
         $this->assertEquals(0, $this->object->query('DROP TABLE unit_test'));
@@ -227,7 +225,7 @@ class ezSQL_pdo_mysqlTest extends TestCase {
         $this->assertEquals($this->object->delete('unit_test', array('test_key','=',$where)), 0);
         $where="id  =  2";
         $this->assertEquals($this->object->delete('unit_test', $where), 1);
-        $this->assertEquals(1, $this->object->query('DROP TABLE unit_test'));
+        $this->assertEquals(0, $this->object->query('DROP TABLE unit_test'));
     }  
 
     /**
