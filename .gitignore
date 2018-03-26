@@ -6,3 +6,4 @@
 vendor
 build/logs/clover.xml
 *.sqlite
+tests/pdo/ez_test.sqlite
