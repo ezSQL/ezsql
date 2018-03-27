@@ -150,7 +150,8 @@ class ezSQL_pdo_pgsqlTest extends TestCase {
     public function testPosgreSQLCatch_error() {
         $this->assertTrue($this->object->connect('pgsql:host=' . self::TEST_DB_HOST . ';dbname=' . self::TEST_DB_NAME . ';port=' . self::TEST_DB_PORT, self::TEST_DB_USER, self::TEST_DB_PASSWORD));
 
-        $this->assertNull($this->object->catch_error());
+        $this->object->query('DROP TABLE unit_test2');
+        $this->assertTrue($this->object->catch_error());
     } // testPosgreSQLCatch_error
 
     /**

@@ -157,6 +157,7 @@ class ezSQL_pdo extends ezSQLcore
         catch (PDOException $e) {
             $this->register_error($e->getMessage());
             $this->show_errors ? trigger_error($e->getMessage() . '- $dsn: ' . $dsn, E_USER_WARNING) : null;
+            return false;
         }
 
         $this->isConnected = $this->_connected;

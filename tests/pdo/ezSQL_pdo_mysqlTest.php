@@ -180,6 +180,7 @@ class ezSQL_pdo_mysqlTest extends TestCase {
         $this->object->query('CREATE TABLE unit_test(id integer, test_key varchar(50), PRIMARY KEY (ID))');
         
         $result = $this->object->insert('unit_test', array('id'=>'1', 'test_key'=>'test 1' ));
+        $this->assertNull($this->object->catch_error());
         $this->assertEquals(0, $result);
         $this->assertEquals(0, $this->object->query('DROP TABLE unit_test'));
     }
@@ -318,6 +319,7 @@ class ezSQL_pdo_mysqlTest extends TestCase {
         ->disableOriginalConstructor()
         ->getMock();
         
+        $this->expectOutputRegex('/[constructor:]/');
         $this->assertNull($pdo->__construct('mysql:host=' . self::TEST_DB_HOST . ';dbname=' . self::TEST_DB_NAME . ';port=' . self::TEST_DB_PORT, self::TEST_DB_USER, self::TEST_DB_PASSWORD));  
     } 
      
