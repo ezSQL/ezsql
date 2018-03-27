@@ -1,7 +1,7 @@
 ezSQL
 =====
-[![Build Status](https://travis-ci.org/ezSQL/ezSQL.svg?branch=v3)](https://travis-ci.org/ezSQL/ezSQL)
-[![Coverage Status](https://coveralls.io/repos/github/ezSQL/ezSQL/badge.svg)](https://coveralls.io/github/ezSQL/ezSQL)
+[![Build Status](https://travis-ci.org/techno-express/ezSQL.svg?branch=ezSQL3)](https://travis-ci.org/techno-express/ezSQL)
+[![Coverage Status](https://coveralls.io/repos/github/techno-express/ezSQL/badge.svg)](https://coveralls.io/github/techno-express/ezSQL)
 [![Maintainability](https://api.codeclimate.com/v1/badges/8db71512a019ab280a16/maintainability)](https://codeclimate.com/github/techno-express/ezSQL/maintainability)
 
 Author
