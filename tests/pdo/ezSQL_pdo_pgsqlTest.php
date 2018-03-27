@@ -274,9 +274,9 @@ class ezSQL_pdo_pgsqlTest extends TestCase {
     } // testPosgreSQLDisconnect
 
     /**
-     * @covers ezSQL_pdo::get_set
+     * @covers ezSQLcore::get_set
      */
-    public function testPostgreSQLGet_set() {
+    public function testGet_set() {
         $expected = "test_var1 = '1', test_var2 = 'ezSQL test', test_var3 = 'This is''nt escaped.'";
         
         $params = array(
@@ -287,9 +287,12 @@ class ezSQL_pdo_pgsqlTest extends TestCase {
         
         $this->assertTrue($this->object->connect('pgsql:host=' . self::TEST_DB_HOST . ';dbname=' . self::TEST_DB_NAME . ';port=' . self::TEST_DB_PORT, self::TEST_DB_USER, self::TEST_DB_PASSWORD));
 
-        $this->assertequals($expected, $this->object->get_set($params));
-    } // testPostgreSQLGet_set
-
+        $this->assertequals($expected, $this->object->get_set($params)); 
+        $this->assertContains('NOW()',$this->object->get_set(array('test_var1' => 1,'test_var2'=>'NOW()')));
+        $this->assertContains("test_var2 = 0", $this->object->get_set(array('test_var2'=>'false')));
+        $this->assertContains("test_var2 = '1'", $this->object->get_set(array('test_var2'=>'true')));
+    } // testSQLiteGet_set
+    
     /**
      * @covers ezSQL_pdo::__construct
      */
