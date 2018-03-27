@@ -115,7 +115,9 @@ class ezSQL_mysqlTest extends TestCase {
         set_error_handler(array($this, 'errorHandler'));
         
         $this->assertFalse($this->object->connect());  
-        $this->assertFalse($this->object->connect('self::TEST_DB_USER', 'self::TEST_DB_PASSWORD',' self::TEST_DB_NAME', 'self::TEST_DB_CHARSET'));  
+
+        $this->expectOutputRegex('/[constructor:]/');
+        $this->assertTrue($this->object->connect('self::TEST_DB_USER', 'self::TEST_DB_PASSWORD',' self::TEST_DB_NAME', 'self::TEST_DB_CHARSET'));  
        
         $result = $this->object->connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD);
 
