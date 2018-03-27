@@ -282,7 +282,7 @@ class ezSQL_pdo extends ezSQLcore
         // For reg expressions
         $query = str_replace("/[\n\r]/", '', trim($query));
 
-        // Initialise return
+        // Initialize return
         $return_val = 0;
 
         // Flush cached values..
@@ -366,7 +366,7 @@ class ezSQL_pdo extends ezSQLcore
             // Store Query Results
             $num_rows=0;
             while ( $row = @$sth->fetch(PDO::FETCH_ASSOC) ) {
-                // Store relults as an objects within main array
+                // Store results as an objects within main array
                 $this->last_result[$num_rows] = (object) $row;
                 $num_rows++;
             }
