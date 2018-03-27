@@ -305,7 +305,10 @@ class ezSQL_pdo_sqliteTest extends TestCase {
         
         $this->assertTrue($this->object->connect('sqlite:' . self::TEST_SQLITE_DB, '', '', array(), true));
 
-        $this->assertequals($expected, $this->object->get_set($params));
+        $this->assertequals($expected, $this->object->get_set($params)); 
+        $this->assertContains('NOW()',$this->object->get_set(array('test_var1' => 1,'test_var2'=>'NOW()')));
+        $this->assertEquals(0, $this->object->get_set(array('test_var2'=>'false')));
+        $this->assertContains('test_var3 = 1',$this->object->get_set(array('test_var1' => 1,'test_var3'=>true)));
     } // testSQLiteGet_set
     /**
      * @covers ezSQL_pdo::__construct

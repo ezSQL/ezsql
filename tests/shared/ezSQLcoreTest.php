@@ -292,6 +292,10 @@ class ezSQLcoreTest extends TestCase {
             'test_unit2'=>'NOW()',
             'test_unit3'=>'true',
             'test_unit4'=>'false')));
+        $this->assertContains(0,$this->object->get_set(
+            array('test_unit'=>'false')));
+        $this->assertContains(1,$this->object->get_set(
+            array('test_unit'=>'true')));
     }
 
     /**
