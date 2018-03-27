@@ -178,8 +178,15 @@ class ezSQL_postgresqlTest extends TestCase {
      */
     public function testQuery() {
         $this->assertTrue($this->object->connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME, self::TEST_DB_HOST, self::TEST_DB_PORT));
+        $this->assertEquals(0, $this->object->query('DROP TABLE unit_test'));
+            
+        $this->object->query('CREATE TABLE unit_test(id serial, test_key varchar(50), test_value varchar(50), PRIMARY KEY (ID))');
+        $this->assertEquals($this->object->query('INSERT INTO unit_test(test_key, test_value) VALUES(\'test 1\', \'testing string 1\')'), 1);
         
-        $this->assertEquals(0, $this->object->query('CREATE TABLE unit_test(id integer, test_key varchar(50), PRIMARY KEY (ID))'));
+        $this->object->dbh = null;
+        $this->assertNull($this->object->query('INSERT INTO unit_test(test_key, test_value) VALUES(\'test 2\', \'testing string 2\')'));
+        $this->object->disconnect();
+        $this->assertNull($this->object->query('INSERT INTO unit_test(test_key, test_value) VALUES(\'test 3\', \'testing string 3\')'));    
         
         $this->assertEquals(0, $this->object->query('DROP TABLE unit_test'));
     } // testQuery
@@ -189,7 +196,8 @@ class ezSQL_postgresqlTest extends TestCase {
      */
     public function testInsert()
     {
-        $this->object->connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME, self::TEST_DB_HOST, self::TEST_DB_PORT);        
+        $this->object->connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME, self::TEST_DB_HOST, self::TEST_DB_PORT);     
+        $this->assertEquals(0, $this->object->query('DROP TABLE unit_test'));   
         $this->object->query('CREATE TABLE unit_test(id serial, test_key varchar(50), test_value varchar(50), PRIMARY KEY (ID))');
         $result = $this->object->insert('unit_test', array('test_key'=>'test 1', 'test_value'=>'testing string 1' ));
         $this->assertEquals($result, 1);

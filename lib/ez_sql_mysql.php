@@ -234,7 +234,7 @@ class ezSQL_mysql extends ezSQLcore
      */
     public function query($query) {
 
-        // Initialise return
+        // Initialize return
         $return_val = 0;
 
         // Flush cached values..
@@ -284,7 +284,7 @@ class ezSQL_mysql extends ezSQLcore
                 $this->insert_id = @mysql_insert_id($this->dbh);
             }
 
-            // Return number fo rows affected
+            // Return number of rows affected
             $return_val = $this->_affectedRows;
         } else {
             // Query was a select
@@ -299,7 +299,7 @@ class ezSQL_mysql extends ezSQLcore
             // Store Query Results
             $num_rows=0;
             while ( $row = @mysql_fetch_object($this->result) ) {
-                // Store relults as an objects within main array
+                // Store results as an objects within main array
                 $this->last_result[$num_rows] = $row;
                 $num_rows++;
             }
@@ -353,7 +353,7 @@ class ezSQL_mysql extends ezSQLcore
     } // getCharset
 
     /**
-     * Returns the last inserted autoincrement
+     * Returns the last inserted auto-increment
      *
      * @return int
      */

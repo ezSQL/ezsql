@@ -365,7 +365,7 @@ class ezSQL_mysqli extends ezSQLcore
     } // getCharset
 
     /**
-     * Returns the last inserted autoincrement
+     * Returns the last inserted auto-increment
      *
      * @return int
      */
