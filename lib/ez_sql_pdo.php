@@ -410,40 +410,4 @@ class ezSQL_pdo extends ezSQLcore
         }
      } // disconnect
 
-    /**
-     * Creates a SET nvp sql string from an associative array (and escapes all values)
-     *
-     *     $db_data = array('login'=>'jv','email'=>'jv@vip.ie', 'user_id' => 1, 'created' => 'NOW()');
-     *
-     *     $db->query("INSERT INTO users SET ".$db->get_set($db_data));
-     *
-     *     ...OR...
-     *
-     *     $db->query("UPDATE users SET ".$db->get_set($db_data)." WHERE user_id = 1");
-     *
-     * Output:
-     *
-     *     login = 'jv', email = 'jv@vip.ie', user_id = 1, created = NOW()
-     *
-     * @param array $params
-     * @return string
-     */
-    public function get_set($params) {
-        $sql = '';
-
-        foreach ( $params as $field => $val ) {
-            if ( $val === 'true' ) {
-                $val = 1;
-            } elseif ( $val === 'false' ) {
-                $val = 0;
-            } elseif ( $val == 'NOW()' ) {
-                $sql .= "$field = " . $this->escape($val) . ', ';
-            } else {
-                $sql .= "$field = '".$this->escape($val).'\', ';
-            }
-        }
-
-        return substr($sql, 0, -2);
-    } // get_set
-
 } // ezSQL_pdo

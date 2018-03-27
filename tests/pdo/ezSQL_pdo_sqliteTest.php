@@ -115,8 +115,9 @@ class ezSQL_pdo_sqliteTest extends TestCase {
         
         $this->assertTrue($this->object->connect('sqlite:' . self::TEST_SQLITE_DB, '', '', array(), true));
         $this->assertFalse($this->object->connect(null, '', '',array(), false));
-        $this->assertTrue($this->object->connect(null, '', '',array(), true));
+        $this->assertFalse($this->object->connect('', '', '',array(), false));
         $this->assertFalse($this->object->connect('null:', '', '',array(), true));
+        $this->assertFalse($this->object->connect('', '', '',array(), true));
     } // testSQLiteConnect
 
     /**
@@ -174,10 +175,22 @@ class ezSQL_pdo_sqliteTest extends TestCase {
 
         $result = $this->object->query('INSERT INTO unit_test (id, test_key) VALUES (1, \'test 1\');' );
         $this->assertEquals(1, $result);
-
         $this->assertNull($this->object->catch_error());
+        
         $this->object->query('INSERT INTO unit_test (id, test_key2) VALUES (1, \'test 1\');' );
-        $this->assertTrue($this->object->catch_error());
+        $this->assertTrue($this->object->catch_error());   
+        
+        $this->object->disconnect();
+        $result = $this->object->query('INSERT INTO unit_test (id, test_key) VALUES (5, \'test 5\');' );
+        $this->assertEquals(1, $result);        
+        $this->assertNull($this->object->catch_error());   
+        
+        $this->object->use_trace_log = true;
+        $this->assertNotNull($this->object->query('SELECT * FROM unit_test ;')); 
+        $this->assertNotNull($this->object->trace_log);
+        
+        $this->assertFalse($this->object->query('SELECT id2 FROM unit_test ;'));   
+        $this->assertTrue($this->object->catch_error());  
         
         $this->assertEquals(1, $this->object->query('DROP TABLE unit_test'));
     } // testSQLiteQuery
@@ -292,9 +305,9 @@ class ezSQL_pdo_sqliteTest extends TestCase {
     } // testSQLiteDisconnect
 
     /**
-     * @covers ezSQL_pdo::get_set
+     * @covers ezSQLcore::get_set
      */
-    public function testSQLiteGet_set() {
+    public function testGet_set() {
         $expected = "test_var1 = '1', test_var2 = 'ezSQL test', test_var3 = 'This is''nt escaped.'";
         
         $params = array(
@@ -307,9 +320,10 @@ class ezSQL_pdo_sqliteTest extends TestCase {
 
         $this->assertequals($expected, $this->object->get_set($params)); 
         $this->assertContains('NOW()',$this->object->get_set(array('test_var1' => 1,'test_var2'=>'NOW()')));
-        $this->assertEquals(0, $this->object->get_set(array('test_var2'=>'false')));
-        $this->assertContains('test_var3 = 1',$this->object->get_set(array('test_var1' => 1,'test_var3'=>true)));
+        $this->assertContains("test_var2 = 0", $this->object->get_set(array('test_var2'=>'false')));
+        $this->assertContains("test_var2 = '1'", $this->object->get_set(array('test_var2'=>'true')));
     } // testSQLiteGet_set
+    
     /**
      * @covers ezSQL_pdo::__construct
      */
