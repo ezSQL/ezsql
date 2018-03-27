@@ -117,7 +117,8 @@ class ezSQL_pdo_sqliteTest extends TestCase {
         set_error_handler(array($this, 'errorHandler'));        
         $this->assertFalse($this->object->connect());
         
-        $this->assertTrue($this->object->connect('sqlite:' . self::TEST_SQLITE_DB, '', '', array(), true));
+        $this->assertTrue($this->object->connect('sqlite:' . self::TEST_SQLITE_DB, '', '', array(), true));     
+        $this->assertFalse($this->object->connect(null, '', array(), true));
     } // testSQLiteConnect
 
     /**
@@ -309,7 +310,7 @@ class ezSQL_pdo_sqliteTest extends TestCase {
         ->disableOriginalConstructor()
         ->getMock();
         
-        $this->assertNull($pdo->__construct());  
+        $this->assertNull($pdo->__construct('sqlite:' . self::TEST_SQLITE_DB, '', '', array(), true));  
     } 
      
 } // ezSQL_pdoTest
