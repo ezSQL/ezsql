@@ -98,7 +98,7 @@
 				$connectionOptions["UID"] = $dbuser;
 				$connectionOptions["PWD"] = $dbpassword;
 			}
-//			$connectionOptions = array("UID" => $dbuser, "PWD" => $dbpassword, "Database" => $dbname);
+			$connectionOptions = array("UID" => $dbuser, "PWD" => $dbpassword, "Database" => $dbname, "ReturnDatesAsStrings" => true);
 
 			if ( ( $this->dbh = @sqlsrv_connect($dbhost, $connectionOptions) ) === false )
 			{
