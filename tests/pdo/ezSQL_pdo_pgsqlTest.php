@@ -301,7 +301,8 @@ class ezSQL_pdo_pgsqlTest extends TestCase {
         ->disableOriginalConstructor()
         ->getMock();
         
-        $this->assertNull($pdo->__construct());  
+        $this->expectOutputRegex('/[constructor:]/');
+        $this->assertNull($pdo->__construct('pgsql:host=' . self::TEST_DB_HOST . ';dbname=' . self::TEST_DB_NAME . ';port=' . self::TEST_DB_PORT, self::TEST_DB_USER, self::TEST_DB_PASSWORD));  
     } 
      
 } // ezSQL_pdoTest

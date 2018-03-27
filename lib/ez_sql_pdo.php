@@ -133,11 +133,13 @@ class ezSQL_pdo extends ezSQLcore
             if ( empty($this->_dsn) || empty($this->_dbuser) || empty($this->_dbpassword) ) {
                 $this->register_error($this->_ezsql_pdo_str[1] . ' in ' . __FILE__ . ' on line ' . __LINE__);
                 $this->show_errors ? trigger_error($this->_ezsql_pdo_str[1], E_USER_WARNING) : null;
+                return false;
             }
         } elseif (empty($this->_dsn)) {
             // Must have a dsn
             $this->register_error($this->_ezsql_pdo_str[2] . ' in ' . __FILE__ . ' on line ' . __LINE__);
             $this->show_errors ? trigger_error($this->_ezsql_pdo_str[2], E_USER_WARNING) : null;
+            return false;
         
         }
         
