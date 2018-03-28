@@ -77,8 +77,8 @@ class ezSQL_mysqli extends ezSQLcore
     public $dbh;
 
     /**
-     * Constructor - allow the user to perform a qucik connect at the same time
-     * as initialising the ezSQL_mysql class
+     * Constructor - allow the user to perform a quick connect at the same time
+     * as initializing the ezSQL_mysql class
      *
      * @param string $dbuser The database user name
      * @param string $dbpassword The database users password
@@ -111,7 +111,7 @@ class ezSQL_mysqli extends ezSQLcore
     } // __construct
 
     /**
-     * Short hand way to connect to mssql database server and select a mssql
+     * Short hand way to connect to mysql database server and select a mysql
      * database at the same time
      *
      * @param string $dbuser The database user name
@@ -244,7 +244,7 @@ class ezSQL_mysqli extends ezSQLcore
     public function query($query) {
         // check for and replace tags created by ezSQLcore's insert, update, delete, replace, and showing methods
         $query = str_replace('__ezsql__','',$query);
-        // Initialise return
+        // Initialize return
         $return_val = 0;
 
         // Flush cached values..
@@ -294,7 +294,7 @@ class ezSQL_mysqli extends ezSQLcore
                 $this->insert_id = mysqli_insert_id($this->dbh);
             }
 
-            // Return number fo rows affected
+            // Return number of rows affected
             $return_val = $this->_affectedRows;
         } else {
             if ( !is_numeric($this->_result) && !is_bool($this->_result)) {
@@ -310,7 +310,7 @@ class ezSQL_mysqli extends ezSQLcore
                 // Store Query Results
                 $num_rows=0;
                 while ( $row = mysqli_fetch_object($this->_result) ) {
-                    // Store relults as an objects within main array
+                    // Store results as an objects within main array
                     $this->last_result[$num_rows] = $row;
                     $num_rows++;
                 }

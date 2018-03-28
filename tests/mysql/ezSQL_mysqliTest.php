@@ -289,15 +289,15 @@ class ezSQL_mysqliTest extends TestCase {
         $this->object->connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD);
         $this->object->select(self::TEST_DB_NAME);
         $this->object->query('CREATE TABLE unit_test(id int(11) NOT NULL AUTO_INCREMENT, test_key varchar(50), PRIMARY KEY (ID))ENGINE=MyISAM  DEFAULT CHARSET=utf8');
-        $this->object->insert('unit_test', array('id'=>'1', 'test_key'=>'test 1' ));
-        $this->object->insert('unit_test', array('id'=>'2', 'test_key'=>'test 2' ));
-        $this->object->insert('unit_test', array('id'=>'3', 'test_key'=>'test 3' ));
+        $this->object->insert('unit_test', array('id'=>1, 'test_key'=>'test 1' ));
+        $this->object->insert('unit_test', array('id'=>2, 'test_key'=>'test 2' ));
+        $this->object->insert('unit_test', array('id'=>3, 'test_key'=>'test 3' ));
         $unit_test['test_key'] = 'testing';
         $where="id  =  1";
         $this->assertEquals($this->object->update('unit_test', $unit_test, $where), 1);
         $this->assertEquals($this->object->update('unit_test', $unit_test, 
 			array('test_key',EQ,'test 3','and'),
-			array('id','=','3')), 1);
+			array('id','=',3)), 1);
         $this->assertEquals($this->object->update('unit_test', $unit_test, "id = 4"), 0);
         $this->assertEquals($this->object->update('unit_test', $unit_test, "test_key  =  test 2  and", "id  =  2"), 1);
     }
