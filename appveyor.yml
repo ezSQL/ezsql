@@ -106,9 +106,9 @@ build_script:
   - createdb ez_test
   - psql -c "CREATE USER ez_test WITH PASSWORD 'ezTest';"
   # mysql
-  - mysql -u root -p"Password12!" -e 'CREATE DATABASE ez_test;'
-  - mysql -u root -p"Password12!" -e 'GRANT ALL PRIVILEGES ON ez_test.* TO ez_test@localhost;'
-  - mysql -u root -p"Password12!" -e "SET PASSWORD FOR 'ez_test'@'localhost' = PASSWORD('ezTest')"
+  - mysql -e 'CREATE DATABASE ez_test;'
+  - mysql -e 'GRANT ALL PRIVILEGES ON ez_test.* TO ez_test@localhost;'
+  - mysql -e "SET PASSWORD FOR 'ez_test'@'localhost' = PASSWORD('ezTest')"
   # sqlserver
   - ps: ./appveyor-sqlserver.ps1 MSSQL2014
   - sqlcmd -S localhost,1433 -U sa -P Password12! -Q "CREATE DATABASE ez_test" -d "master"
