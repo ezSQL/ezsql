@@ -12,7 +12,27 @@ environment:
     php_ver_target: 7.1
   - dependencies: highest
     php_ver_target: 7.2
-    
+  DB_CLIENTS: mysql,postgresql,sqlserver,sqlite
+  # postgres
+  POSTGRES_PORT: tcp://localhost:5432
+  POSTGRES_ENV_POSTGRES_USER: postgres
+  POSTGRES_ENV_POSTGRES_PASSWORD: ezTest
+  POSTGRES_ENV_POSTGRES_DB: ez_test
+  PGUSER: postgres
+  PGPASSWORD: ezTest
+  # mysql
+  MYSQL_PORT: tcp://localhost:3306
+  MYSQL_ENV_MYSQL_USER: root
+  MYSQL_ENV_MYSQL_PASSWORD: ezTest
+  MYSQL_ENV_MYSQL_DATABASE: ez_test
+  MYSQL_PWD: ezTest
+  # sql server
+  SQLSERVER_ENV_SQLSERVER_HOST: localhost
+  SQLSERVER_ENV_SQLSERVER_PORT: 1433
+  SQLSERVER_ENV_SQLSERVER_USER: sa
+  SQLSERVER_ENV_SQLSERVER_PASSWORD: ezTest
+  SQLSERVER_ENV_SQLSERVER_DATABASE: ez_test
+
 services:
     - mssql2014
     - mysql
@@ -64,9 +84,6 @@ install:
     - composer require php-coveralls/php-coveralls
     - composer show
 
-after_success:
-    - appveyor-retry php vendor/bin/php-coveralls 
-  
 ## Run the actual test
 test_script:
     - cd c:\projects\php-project-workspace
