@@ -25,6 +25,13 @@
                 <directory>./docs</directory>
                 <directory>./tests</directory>
                 <directory>./vendor</directory>
+                <file>./ez_sql_codeigniter.php</file>
+                <file>./ez_sql_cubrid.php</file>
+                <file>./ez_sql_odbc.php</file>
+                <file>./ez_sql_oracle8_9.php</file>
+                <file>./ez_sql_oracleTNS.php</file>
+                <file>./ez_sql_sqlsrv.php</file>
+                <file>./ez_sql_sybase.php</file>
                 <file>./ez_sql_loader.php</file>
             </exclude>
         </whitelist>
