@@ -1,7 +1,3 @@
-dist: xenial
-
-sudo: required
-
 language: php
 
 # Versions of PHP you want your project run with.
@@ -20,8 +16,6 @@ services:
   
 # Commands to be run before your environment runs.
 before_script:
-  - chmod +x install_sql.sh
-  - ./install_sql.sh
   - composer self-update
   - composer require php-coveralls/php-coveralls
   - mysql -e 'CREATE DATABASE IF NOT EXISTS ez_test;'
