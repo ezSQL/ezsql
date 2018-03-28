@@ -66,15 +66,15 @@ install:
     - IF %PHP%==1 echo extension=php_openssl.dll >> php.ini
     - IF %PHP%==1 echo extension=php_mbstring.dll >> php.ini
     - IF %PHP%==1 echo extension=php_fileinfo.dll >> php.ini
-    - IF %PHP%==1 echo extension=mysqli >> php.ini
-    - IF %PHP%==1 echo extension=pdo_mysql >> php.ini
-    - IF %PHP%==1 echo extension=pdo_odbc >> php.ini
-    - IF %PHP%==1 echo extension=pdo_pgsql >> php.ini
-    - IF %PHP%==1 echo extension=pdo_sqlite >> php.ini
-    - IF %PHP%==1 echo extension=pgsql >> php.ini
-    - IF %PHP%==1 echo extension=sqlsrv >> php.ini
-    - IF %PHP%==1 echo extension=pdo_sqlsrv >> php.ini
-    - IF %PHP%==1 echo extension=sqlite3 >> php.ini
+    - IF %PHP%==1 echo extension=php_mysqli.dll >> php.ini
+    - IF %PHP%==1 echo extension=php_pdo_mysql.dll >> php.ini
+    - IF %PHP%==1 echo extension=php_pdo_odbc.dll >> php.ini
+    - IF %PHP%==1 echo extension=php_pdo_pgsql.dll >> php.ini
+    - IF %PHP%==1 echo extension=php_pdo_sqlite.dll >> php.ini
+    - IF %PHP%==1 echo extension=php_pgsql.dll >> php.ini
+    - IF %PHP%==1 echo extension=php_sqlsrv.dll >> php.ini
+    - IF %PHP%==1 echo extension=php_pdo_sqlsrv.dll >> php.ini
+    - IF %PHP%==1 echo extension=php_sqlite3.dll >> php.ini
     - IF %PHP%==1 echo @php %%~dp0composer.phar %%* > composer.bat
     - appveyor-retry appveyor DownloadFile https://getcomposer.org/composer.phar
     - cd c:\projects\php-project-workspace
@@ -83,7 +83,24 @@ install:
     - IF %dependencies%==highest appveyor-retry composer update --no-progress --profile -n
     - composer require php-coveralls/php-coveralls
     - composer show
-
+    
+build_script:
+  # postgres
+  - psql -c 'CREATE DATABASE ez_test;' -U postgres
+  - psql -c "CREATE USER ez_test WITH PASSWORD 'ezTest';" -U postgres
+  # mysql
+  - mysql -e 'CREATE DATABASE ez_test;'
+  - mysql -e 'GRANT ALL PRIVILEGES ON ez_test.* TO ez_test@localhost;'
+  - mysql -e "SET PASSWORD FOR 'ez_test'@'localhost' = PASSWORD('ezTest')"
+  # sqlserver
+  - ps: ./appveyor-sqlserver.ps1 MSSQL2014
+  - sqlcmd -S localhost,1433 -U sa -P ezTest -Q "CREATE DATABASE ez_test" -d "master"
+  - sqlcmd -S localhost,1433 -U sa -P ezTest -Q "CREATE LOGIN ez_test WITH PASSWORD=N'ezTest', DEFAULT_DATABASE=ez_test, CHECK_EXPIRATION=ON, CHECK_POLICY=ON; ALTER SERVER ROLE [sysadmin] ADD MEMBER ez_test" 
+  - sqlcmd -S localhost,1433 -U sa -P ezTest -Q "select table_name from information_schema.tables" -d "ez_test"
+     
+on_success:
+  - appveyor-retry php vendor/bin/php-coveralls
+  
 ## Run the actual test
 test_script:
     - cd c:\projects\php-project-workspace
