@@ -12,28 +12,6 @@ environment:
     php_ver_target: 7.1
   - dependencies: highest
     php_ver_target: 7.2
-  DB_CLIENTS: mysql,postgresql,sqlserver,sqlite
-  # postgres
-  POSTGRES_PORT: tcp://localhost:5432
-  POSTGRES_ENV_POSTGRES_USER: postgres
-  POSTGRES_ENV_POSTGRES_PASSWORD: ezTest
-  POSTGRES_ENV_POSTGRES_DB: ez_test
-  POSTGRES_PATH: C:\Program Files\PostgreSQL\9.4
-  PGUSER: postgres
-  PGPASSWORD: ezTest
-  # mysql
-  MYSQL_PORT: tcp://localhost:3306
-  MYSQL_ENV_MYSQL_USER: root
-  MYSQL_ENV_MYSQL_PASSWORD: ezTest
-  MYSQL_ENV_MYSQL_DATABASE: ez_test
-  MYSQL_PATH: C:\Program Files\MySql\MySQL Server 5.7
-  MYSQL_PWD: ezTest
-  # sql server
-  SQLSERVER_ENV_SQLSERVER_HOST: localhost
-  SQLSERVER_ENV_SQLSERVER_PORT: 1433
-  SQLSERVER_ENV_SQLSERVER_USER: sa
-  SQLSERVER_ENV_SQLSERVER_PASSWORD: ezTest
-  SQLSERVER_ENV_SQLSERVER_DATABASE: ez_test
 
 services:
     - mssql2014
@@ -123,17 +101,19 @@ install:
     
 build_script:
   # postgres
-  - psql -c 'CREATE DATABASE ez_test;' -U postgres
-  - psql -c "CREATE USER ez_test WITH PASSWORD 'ezTest';" -U postgres
+  - SET PGUSER=postgres
+  - SET PGPASSWORD=Password12!
+  - createdb ez_test
+  - psql -c "CREATE USER ez_test WITH PASSWORD 'ezTest';"
   # mysql
-  - mysql -e 'CREATE DATABASE ez_test;'
-  - mysql -e 'GRANT ALL PRIVILEGES ON ez_test.* TO ez_test@localhost;'
-  - mysql -e "SET PASSWORD FOR 'ez_test'@'localhost' = PASSWORD('ezTest')"
+  - mysql -u root -p"Password12!" -e 'CREATE DATABASE ez_test;'
+  - mysql -u root -p"Password12!" -e 'GRANT ALL PRIVILEGES ON ez_test.* TO ez_test@localhost;'
+  - mysql -u root -p"Password12!" -e "SET PASSWORD FOR 'ez_test'@'localhost' = PASSWORD('ezTest')"
   # sqlserver
   - ps: ./appveyor-sqlserver.ps1 MSSQL2014
-  - sqlcmd -S localhost,1433 -U sa -P ezTest -Q "CREATE DATABASE ez_test" -d "master"
-  - sqlcmd -S localhost,1433 -U sa -P ezTest -Q "CREATE LOGIN ez_test WITH PASSWORD=N'ezTest', DEFAULT_DATABASE=ez_test, CHECK_EXPIRATION=ON, CHECK_POLICY=ON; ALTER SERVER ROLE [sysadmin] ADD MEMBER ez_test" 
-  - sqlcmd -S localhost,1433 -U sa -P ezTest -Q "select table_name from information_schema.tables" -d "ez_test"
+  - sqlcmd -S localhost,1433 -U sa -P Password12! -Q "CREATE DATABASE ez_test" -d "master"
+  - sqlcmd -S localhost,1433 -U sa -P Password12! -Q "CREATE LOGIN ez_test WITH PASSWORD=N'ezTest', DEFAULT_DATABASE=ez_test, CHECK_EXPIRATION=ON, CHECK_POLICY=ON; ALTER SERVER ROLE [sysadmin] ADD MEMBER ez_test" 
+  - sqlcmd -S localhost,1433 -U sa -P Password12! -Q "select table_name from information_schema.tables" -d "ez_test"
      
 on_success:
   - appveyor-retry php vendor/bin/php-coveralls
