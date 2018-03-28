@@ -54,7 +54,7 @@ class ezSQL_pdo_mysqlTest extends TestCase {
     /**
      * constant string database port
      */
-    const TEST_DB_PORT = '5432';
+    const TEST_DB_PORT = '3306';
     
     /**
      * constant string path and file name of the SQLite test database

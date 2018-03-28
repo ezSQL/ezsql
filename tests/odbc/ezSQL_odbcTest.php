@@ -5,13 +5,14 @@ require 'vendor/autoload.php';
 use PHPUnit\Framework\TestCase;
 
 /**
- * Test class for ezSQL_mssql.
+ * Test class for ezSQL_odbc.
  * Desc..: MS SQL Server component (part of ezSQL databse abstraction library)
  * 
  * @author  Justin Vincent (jv@jvmultimedia.com)
  * @author  Stefanie Janine Stoelting <mail@stefanie-stoelting.de>
+ * @author  Lawrence Stubbs (technoexpressnet@gmail.com)
  * @link    http://twitter.com/justinvincent
- * @name    ezSQL_mssqlTest
+ * @name    ezSQL_odbcTest
  * @package ezSQL
  * @subpackage Tests
  * @license FREE / Donation (LGPL - You may do what you like with ezSQL - no exceptions.)
@@ -19,10 +20,10 @@ use PHPUnit\Framework\TestCase;
  *       be tests done for different versions of SQL Server
  *
  */
-class ezSQL_mssqlTest extends TestCase {
+class ezSQL_odbcTest extends TestCase {
 
     /**
-     * @var ezSQL_mssql
+     * @var ezSQL_odbc
      */
     protected $object;
     private $errors;
@@ -49,12 +50,12 @@ class ezSQL_mssqlTest extends TestCase {
      * This method is called before a test is executed.
      */
     protected function setUp() {
-        if (!extension_loaded('ntwdblib')) {
+        if (!extension_loaded('odbc')) {
             $this->markTestSkipped(
               'The MS-SQL extenstion is not available.'
             );
         }
-        $this->object = new ezSQL_mssql;
+        $this->object = new ezSQL_odbc;
     } // setUp
 
     /**
@@ -66,7 +67,7 @@ class ezSQL_mssqlTest extends TestCase {
     } // tearDown
 
     /**
-     * @covers ezSQL_mssql::quick_connect
+     * @covers ezSQL_odbc::quick_connect
      * @todo Implement testQuick_connect().
      */
     public function testQuick_connect() {
@@ -77,7 +78,7 @@ class ezSQL_mssqlTest extends TestCase {
     } // testQuick_connect
 
     /**
-     * @covers ezSQL_mssql::connect
+     * @covers ezSQL_odbc::connect
      * @todo Implement testConnect().
      */
     public function testConnect() {
@@ -88,7 +89,7 @@ class ezSQL_mssqlTest extends TestCase {
     } // testConnect
 
     /**
-     * @covers ezSQL_mssql::select
+     * @covers ezSQL_odbc::select
      * @todo Implement testSelect().
      */
     public function testSelect() {
@@ -99,7 +100,7 @@ class ezSQL_mssqlTest extends TestCase {
     } // testSelect
 
     /**
-     * @covers ezSQL_mssql::escape
+     * @covers ezSQL_odbc::escape
      */
     public function testEscape() {
         $result = $this->object->escape("This is'nt escaped.");
@@ -108,14 +109,14 @@ class ezSQL_mssqlTest extends TestCase {
     } // testEscape
 
     /**
-     * @covers ezSQL_mssql::sysdate
+     * @covers ezSQL_odbc::sysdate
      */
     public function testSysdate() {
-        $this->assertEquals('getDate()', $this->object->sysdate());
+        $this->assertEquals('GETDATE()', $this->object->sysdate());
     } // testSysdate
 
     /**
-     * @covers ezSQL_mssql::query
+     * @covers ezSQL_odbc::query
      * @todo Implement testQuery().
      */
     public function testQuery() {
@@ -126,10 +127,10 @@ class ezSQL_mssqlTest extends TestCase {
     } // testQuery
 
     /**
-     * @covers ezSQL_mssql::ConvertMySqlToMSSql
-     * @todo Implement testConvertMySqlToMSSql().
+     * @covers ezSQL_odbc::ConvertMySqlToodbc
+     * @todo Implement testConvertMySqlToodbc().
      */
-    public function testConvertMySqlToMSSql() {
+    public function testConvertMySqlToodbc() {
         // Remove the following lines when you implement this test.
         $this->markTestIncomplete(
                 'This test has not been implemented yet.'
@@ -137,7 +138,7 @@ class ezSQL_mssqlTest extends TestCase {
     } // testConvert
 
     /**
-     * @covers ezSQL_mssql::disconnect
+     * @covers ezSQL_odbc::disconnect
      * @todo Implement testDisconnect().
      */
     public function testDisconnect() {
@@ -148,7 +149,7 @@ class ezSQL_mssqlTest extends TestCase {
     } // testDisconnect
 
     /**
-     * @covers ezSQL_mssql::getDBHost
+     * @covers ezSQL_odbc::getDBHost
      * @todo Implement testGetDBHost().
      */
     public function testGetDBHost() {
@@ -159,18 +160,18 @@ class ezSQL_mssqlTest extends TestCase {
     } // testGetDBHost
     
     /**
-     * @covers ezSQL_mssql::__construct
+     * @covers ezSQL_odbc::__construct
      */
     public function test__Construct() {   
         $this->errors = array();
         set_error_handler(array($this, 'errorHandler'));    
         
-        $mssql = $this->getMockBuilder(ezSQL_mssql::class)
+        $odbc = $this->getMockBuilder(ezSQL_odbc::class)
         ->setMethods(null)
         ->disableOriginalConstructor()
         ->getMock();
         
-        $this->assertNull($mssql->__construct());  
+        $this->assertNull($odbc->__construct());  
     } 
     
-} // ezSQL_mssqlTest
+} // ezSQL_odbcTest

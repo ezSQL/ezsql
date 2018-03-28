@@ -49,7 +49,7 @@ class ezSQL_sqlsrvTest extends TestCase {
      * This method is called before a test is executed.
      */
     protected function setUp() {
-        if (!extension_loaded('ntwdblib')) {
+        if (!extension_loaded('sqlsrv')) {
             $this->markTestSkipped(
               'The sqlsrv Lib is not available.'
             );
@@ -102,16 +102,16 @@ class ezSQL_sqlsrvTest extends TestCase {
      * @covers ezSQL_sqlsrv::escape
      */
     public function testEscape() {
-        $result = $this->object->escape("This is'nt escaped.");
+        $result = $this->object->escape("'1 = 1");
 
-        $this->assertEquals("This is''nt escaped.", $result);
+        $this->assertEquals("''1 = 1", $result);
     } // testEscape
 
     /**
      * @covers ezSQL_sqlsrv::sysdate
      */
     public function testSysdate() {
-        $this->assertEquals('getDate()', $this->object->sysdate());
+        $this->assertEquals('GETDATE()', $this->object->sysdate());
     } // testSysdate
 
     /**
