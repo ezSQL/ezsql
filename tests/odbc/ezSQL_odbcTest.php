@@ -128,14 +128,13 @@ class ezSQL_odbcTest extends TestCase {
      */
     public function testGet_var() { 
         $this->object->quick_connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME);    
-        $this->object->select(self::TEST_DB_NAME);
         $current_time = $this->object->get_var("SELECT " . $this->object->sysdate());
         $this->assertNull($current_time);
         $this->assertEquals(0, $this->object->query('CREATE TABLE unit_test(id integer, test_key varchar(50), PRIMARY KEY (ID))'));
         
-        $this->assertEquals($this->object->query('INSERT INTO unit_test(id, test_key) VALUES(1, \'test 1\')'), 0);
-        $this->assertEquals($this->object->query('INSERT INTO unit_test(id, test_key) VALUES(2, \'test 2\')'), 0);
-        $this->assertEquals($this->object->query('INSERT INTO unit_test(id, test_key) VALUES(3, \'test 3\')'), 0);
+        $this->assertEquals(1, $this->object->query('INSERT INTO unit_test(id, test_key) VALUES(1, \'test 1\')'));
+        $this->assertEquals(1, $this->object->query('INSERT INTO unit_test(id, test_key) VALUES(2, \'test 2\')'));
+        $this->assertEquals(1, $this->object->query('INSERT INTO unit_test(id, test_key) VALUES(3, \'test 3\')'));
 
         $result = $this->object->query('SELECT * FROM unit_test');
 
@@ -153,7 +152,6 @@ class ezSQL_odbcTest extends TestCase {
      */
     public function testGet_results() {           
     $this->object->quick_connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME);    
-	$this->object->select(self::TEST_DB_NAME);
     
 	// Get list of tables from current database..
 	$my_tables = $this->object->get_results("select name from ".self::TEST_DB_NAME."..sysobjects where xtype = 'U'",ARRAY_N);

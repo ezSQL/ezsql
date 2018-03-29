@@ -125,7 +125,7 @@
 
 			return $return_val;
 		}
-
+                
         function sql_escape_string($data) {
             if ( !isset($data) ) return '';
             if ( is_numeric($data) ) return $data;

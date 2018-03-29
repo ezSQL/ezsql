@@ -126,40 +126,7 @@
 
 			return $return_val;
 		}
-        
-		/**********************************************************************
-		*  Try to select a odbc database
-		*/
-		function select($dbname='')
-		{
-			global $ezsql_odbc_str; $return_val = false;
-			// Must have a database name
-			if ( ! $dbname )
-			{
-				$this->register_error($ezsql_odbc_str[3].' in '.__FILE__.' on line '.__LINE__);
-				$this->show_errors ? trigger_error($ezsql_odbc_str[3],E_USER_WARNING) : null;
-			}
-			// Must have an active database connection
-			else if ( ! $this->dbh )
-			{
-				$this->register_error($ezsql_odbc_str[4].' in '.__FILE__.' on line '.__LINE__);
-				$this->show_errors ? trigger_error($ezsql_odbc_str[4],E_USER_WARNING) : null;
-			}
-			// Try to connect to the database
-			else if ( !@odbc_select_db($dbname,$this->dbh) )
-			{
-				$str = $ezsql_odbc_str[5];
-				$this->register_error($str.' in '.__FILE__.' on line '.__LINE__);
-				$this->show_errors ? trigger_error($str,E_USER_WARNING) : null;
-			}
-			else
-			{
-				$this->dbname = $dbname;
-				$return_val = true;
-			}
-			return $return_val;
-		}
-        
+                
         function odbc_escape_string($data) {
             if ( !isset($data) ) return '';
             if ( is_numeric($data) ) return $data;
@@ -234,7 +201,6 @@
 			if ( ! isset($this->dbh) || ! $this->dbh )
 			{
 				$this->connect($this->dbuser, $this->dbpassword, $this->dbhost);
-				$this->select($this->dbname);
 			}
 			// Perform the query via std odbc_query function..
 			$this->result = @odbc_exec($query, $this->dbh);

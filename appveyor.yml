@@ -61,7 +61,7 @@ install:
     - IF %PHP%==1 echo extension=php_pgsql.dll >> php.ini
     - IF %PHP%==1 echo extension=php_sqlite3.dll >> php.ini
     - IF %PHP%==1 echo [xdebug] >> php.ini
-    - IF %PHP%==1 echo zend_extension=c:\tools\php\ext\php_xdebug-2.6.0-7.2-vc15-x86_64.dll >> php.ini
+    - IF %PHP%==1 echo zend_extension=php_xdebug-2.6.0-7.2-vc15-x86_64.dll >> php.ini
     - IF %PHP%==1 echo zend.assertions=1 >> php.ini
     - IF %PHP%==1 echo assert.exception=On >> php.ini
     - IF %PHP%==1 echo xdebug.remote_enable=1 >> php.ini
@@ -75,41 +75,16 @@ install:
     - IF %dependencies%==highest appveyor-retry composer update --no-progress --profile -n
     # Get the MSSQL DLL's
     - ps: >-
-        If ($env:PHP -eq "1") {
-          If ($env:php_ver_target -eq "5.6") {
-            $source = "https://github.com/Microsoft/msphpsql/releases/download/v5.2.0/Windows-7.2.zip"
-            $destination = "c:\tools\php\php-sqlsrv.zip"
-            Invoke-WebRequest $source -OutFile $destination
-            #appveyor-retry appveyor DownloadFile https://github.com/Microsoft/msphpsql/releases/download/v5.2.0/Windows-7.2.zip
-            7z x php-sqlsrv.zip > $null
-            copy Windows-7.2\x64\php_sqlsrv_72_nts.dll ext\php_sqlsrv.dll
-            copy Windows-7.2\x64\php_pdo_sqlsrv_72_nts.dll ext\php_pdo_sqlsrv.dll
-            Remove-Item c:\tools\php\* -include .zip
-            } Else {
-            $DLLVersion = "4.3.0"
-            cd c:\tools\php\ext
-            $source = "http://windows.php.net/downloads/pecl/releases/sqlsrv/$($DLLVersion)/php_sqlsrv-$($DLLVersion)-$($env:php_ver_target)-nts-vc14-x64.zip"
-            $destination = "c:\tools\php\ext\php_sqlsrv-$($DLLVersion)-$($env:php_ver_target)-nts-vc14-x64.zip"
-            Invoke-WebRequest $source -OutFile $destination
-            #appveyor-retry appveyor DownloadFile http://windows.php.net/downloads/pecl/releases/sqlsrv/$($DLLVersion)/php_sqlsrv-$($DLLVersion)-$($env:php_ver_target)-nts-vc14-x64.zip
-            7z x -y php_sqlsrv-$($DLLVersion)-$($env:php_ver_target)-nts-vc14-x64.zip > $null
-            $source = "http://windows.php.net/downloads/pecl/releases/pdo_sqlsrv/$($DLLVersion)/php_pdo_sqlsrv-$($DLLVersion)-$($env:php_ver_target)-nts-vc14-x64.zip"
-            $destination = "c:\tools\php\ext\php_pdo_sqlsrv-$($DLLVersion)-$($env:php_ver_target)-nts-vc14-x64.zip"
-            Invoke-WebRequest $source -OutFile $destination
-            #appveyor-retry appveyor DownloadFile http://windows.php.net/downloads/pecl/releases/pdo_sqlsrv/$($DLLVersion)/php_pdo_sqlsrv-$($DLLVersion)-$($env:php_ver_target)-nts-vc14-x64.zip
-            7z x -y php_pdo_sqlsrv-$($DLLVersion)-$($env:php_ver_target)-nts-vc14-x64.zip > $null
-            Remove-Item c:\tools\php\ext* -include .zip
-            cd c:\tools\php}}
-    - ps: >-
-        If ($env:php_ver_target -eq "5.6") {
-          Add-Content php.ini "`nextension=php_sqlsrv_nts.dll"
-          Add-Content php.ini "`nextension=php_pdo_sqlsrv_nts.dll"
-          Add-Content php.ini "`n"
-        } Else {
-          Add-Content php.ini "`nextension=php_sqlsrv.dll"
-          Add-Content php.ini "`nextension=php_pdo_sqlsrv.dll"
-          Add-Content php.ini "`n"
-        }
+        $source = "https://github.com/Microsoft/msphpsql/releases/download/v5.2.0/Windows-7.2.zip"
+        $destination = "c:\tools\php\php-sqlsrv.zip"
+        Invoke-WebRequest $source -OutFile $destination
+        #appveyor-retry appveyor DownloadFile https://github.com/Microsoft/msphpsql/releases/download/v5.2.0/Windows-7.2.zip
+        7z x php-sqlsrv.zip > $null
+        copy Windows-7.2\x64\php_sqlsrv_72_nts.dll ext\php_sqlsrv.dll
+        copy Windows-7.2\x64\php_pdo_sqlsrv_72_nts.dll ext\php_pdo_sqlsrv.dll
+        Add-Content php.ini "`nextension=php_sqlsrv.dll"
+        Add-Content php.ini "`nextension=php_pdo_sqlsrv.dll"
+        Add-Content php.ini "`n"        
     - composer self-update
     - composer require php-coveralls/php-coveralls
     
