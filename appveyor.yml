@@ -111,16 +111,15 @@ build_script:
   - createdb ez_test
   - psql -c "CREATE USER ez_test WITH PASSWORD 'ezTest';"
   # sqlserver
-  - sqlcmd -S localhost,1433 -U sa -P Password12! -Q "CREATE DATABASE ez_test" -d "master"
-  - sqlcmd -S localhost,1433 -U sa -P Password12! -Q "CREATE LOGIN ez_test WITH PASSWORD=N'ezTest', DEFAULT_DATABASE=ez_test, CHECK_EXPIRATION=ON, CHECK_POLICY=ON; ALTER SERVER ROLE [sysadmin] ADD MEMBER ez_test" 
-  - sqlcmd -S localhost,1433 -U sa -P Password12! -Q "select table_name from information_schema.tables" -d "ez_test"
+  - sqlcmd -S localhost,1433 -U sa -P Password12! -Q "CREATE DATABASE ez_test"
+  - sqlcmd -S localhost,1433 -U sa -P Password12! -d ez_test -Q "CREATE LOGIN ez_test WITH PASSWORD=N'ezTest', DEFAULT_DATABASE=ez_test, CHECK_EXPIRATION=OFF, CHECK_POLICY=OFF; ALTER SERVER ROLE [sysadmin] ADD MEMBER ez_test" 
   
 before_test:
   - SET PATH=%MYSQL_PATH%\bin;%PATH%
   - mysqladmin --host=%MYSQL_HOST% --user=%MYSQL_USER% --password=%MYSQL_PASSWORD% create %MYSQL_DATABASE%    
   # mysql
-  - mysql -e "GRANT ALL PRIVILEGES ON ez_test.* TO ez_test@localhost;"
-  - mysql -e "SET PASSWORD FOR 'ez_test'@'localhost' = PASSWORD('ezTest')"
+  - mysql -u root -p"Password12!" -e "GRANT ALL PRIVILEGES ON ez_test.* TO ez_test@localhost;"
+  - mysql -u root -p"Password12!" -e "SET PASSWORD FOR 'ez_test'@'localhost' = PASSWORD('ezTest')"
     
 on_success:
   - appveyor-retry php vendor/bin/php-coveralls
