@@ -107,7 +107,7 @@
 			}
 			$connectionOptions = array("UID" => $dbuser, "PWD" => $dbpassword, "Database" => $dbname, "ReturnDatesAsStrings" => true);
 
-			if ( ( $this->dbh = @odbc_pconnect($dbhost, $connectionOptions) ) === false )
+			if ( ( $this->dbh = @odbc_connect($dbhost, $connectionOptions) ) === false )
 			{
 				$this->register_error($ezsql_odbc_str[2].' in '.__FILE__.' on line '.__LINE__);
 				$this->show_errors ? trigger_error($ezsql_odbc_str[2],E_USER_WARNING) : null;
