@@ -61,13 +61,13 @@ install:
     - IF %PHP%==1 echo extension=php_sqlite3.dll >> php.ini
     - IF %PHP%==1 echo @php %%~dp0composer.phar %%* > composer.bat
     - appveyor-retry appveyor DownloadFile https://getcomposer.org/composer.phar
-    - appveyor-retry appveyor DownloadFile https://xdebug.org/files/php_xdebug-2.6.0-7.2-vc15-x86_64.dll -FileName c:\tools\php\ext\php_xdebug-2.6.0-7.2-vc15-x86_64.dll
+    - appveyor-retry appveyor DownloadFile https://xdebug.org/files/php_xdebug-2.5.5-7.1-vc14.dll -FileName c:\tools\php\ext\php_xdebug-2.5.5-7.1-vc14.dll
     - IF %PHP%==1 echo [xdebug] >> php.ini
-    - IF %PHP%==1 echo zend_extension=php_xdebug-2.6.0-7.2-vc15-x86_64.dll >> php.ini
+    - IF %PHP%==1 echo zend_extension=c:\tools\php\ext\php_xdebug-2.5.5-7.1-vc14.dll >> php.ini
     - IF %PHP%==1 echo zend.assertions=1 >> php.ini
     - IF %PHP%==1 echo assert.exception=On >> php.ini
     - cd c:\projects\php-project-workspace
-    - IF %dependencies%==lowest appveyor-retry composer update --prefer-lowest --no-progress --profile -n
+    - IF %dependencies%==lowest appveyor-retry composer update --no-progress --profile -n
     - IF %dependencies%==current appveyor-retry composer install --no-progress --profile
     - IF %dependencies%==highest appveyor-retry composer update --no-progress --profile -n
     # Get the MSSQL DLL's
@@ -107,8 +107,6 @@ install:
           Add-Content php.ini "`nextension=php_pdo_sqlsrv.dll"
           Add-Content php.ini "`n"
         }
-    - cd c:\projects\php-project-workspace
-    - composer self-update
     - composer require php-coveralls/php-coveralls
     
 build_script:
