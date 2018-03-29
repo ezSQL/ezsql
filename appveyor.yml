@@ -119,10 +119,7 @@ before_test:
   - mysqladmin --host=%MYSQL_HOST% --user=%MYSQL_USER% --password=%MYSQL_PASSWORD% create %MYSQL_DATABASE%    
   # mysql
   - mysql -u root -p"Password12!" -e "CREATE DATABASE IF NOT EXISTS ez_test;"
-  - mysql -u root -p"Password12!" -e "FLUSH PRIVILEGES;"
-  - mysql -u root -p"Password12!" -e "GRANT ALL PRIVILEGES ON ez_test.* TO ez_test@localhost;"
-  - mysql -u root -p"Password12!" -e "FLUSH PRIVILEGES;"
-  - mysql -u root -p"Password12!" -e "SET PASSWORD FOR 'ez_test'@'localhost' = PASSWORD('ezTest')"
+  - mysql -u root -p"Password12!" -e "GRANT ALL PRIVILEGES ON ez_test.* TO ez_test@localhost IDENTIFIED BY 'ezTest'";
   - mysql -u root -p"Password12!" -e "FLUSH PRIVILEGES;"
     
 on_success:
