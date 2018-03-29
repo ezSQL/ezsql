@@ -71,8 +71,8 @@
 			$this->dbhost = $dbhost;
 			$this->convertMySqlToMSSqlQuery = $convertMySqlToMSSqlQuery;
             
-            global $_ezodbc;
-            $_ezodbc = $this;
+            global $_ezOdbc;
+            $_ezOdbc = $this;
 		}
 
 		/**********************************************************************

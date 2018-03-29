@@ -13,7 +13,6 @@
     },
     "autoload": {
         "classmap": [
-            "lib/ez_sql_codeigniter.php",
             "lib/ez_sql_cubrid.php",
             "lib/ez_sql_mysqli.php",
             "lib/ez_sql_odbc.php",
@@ -25,7 +24,6 @@
             "lib/ez_sql_sqlite.php",
             "lib/ez_sql_sqlite3.php",
             "lib/ez_sql_sqlsrv.php",
-            "lib/ez_sql_sybase.php",
             "shared/ez_sql_core.php",
             "shared/ezFunctions.php",
             "shared/ezQuery.php"

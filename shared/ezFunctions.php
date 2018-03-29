@@ -56,9 +56,8 @@
         
         // Global class instances, will be used to create and call methods directly.
         $_ezQuery = null;
-        $_ezCodeigniter = null;
         $_ezCubrid = null;
-        $_ezMssql = null;
+        $_ezOdbc = null;
         $_ezMysql = null;
         $_ezMysqli = null;
         $_ezOracle8_9 = null;
@@ -69,7 +68,6 @@
         $_ezSqlite = null;
         $_ezSqlite3 = null;
         $_ezSqlsrv = null;
-        $_ezSybase = null;
 
   /**********************************************************************
      * Creates an array from expressions in the following formate
