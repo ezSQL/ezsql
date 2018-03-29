@@ -12,7 +12,12 @@ environment:
     php_ver_target: 7.1
   - dependencies: highest
     php_ver_target: 7.2
-
+  MYSQL_DATABASE: ez_test
+  MYSQL_HOST: localhost
+  MYSQL_USER: root
+  MYSQL_PASSWORD: Password12!
+  MYSQL_PATH: C:\Program Files\MySQL\MySQL Server 5.7
+  
 services:
     - mssql2014
     - mysql
@@ -30,7 +35,7 @@ cache:
     
 ## Set up environment variables
 init:
-    - SET PATH=C:\Program Files\OpenSSL;c:\tools\php;C:\Program Files\PostgreSQL\9.4\bin\;C:\Program Files\MySql\MySQL Server 5.7\bin\;%PATH%
+    - SET PATH=C:\Program Files\OpenSSL;c:\tools\php;C:\Program Files\PostgreSQL\9.4\bin\;%PATH%
     - SET COMPOSER_NO_INTERACTION=1
     - SET PHP=1 # This var is connected to PHP install cache
     - SET ANSICON=121x90 (121x90)
@@ -105,19 +110,19 @@ build_script:
   - SET PGPASSWORD=Password12!
   - createdb ez_test
   - psql -c "CREATE USER ez_test WITH PASSWORD 'ezTest';"
-  # mysql
-  - >
-    "C:\Program Files\MySQL\MySQL Server 5.7\bin\mysql" -u root -p"Password12!" -e "CREATE DATABASE ez_test;"
-  - >
-    "C:\Program Files\MySQL\MySQL Server 5.7\bin\mysql" -u root -p"Password12!" -e "GRANT ALL PRIVILEGES ON ez_test.* TO ez_test@localhost;"
-  - >
-    "C:\Program Files\MySQL\MySQL Server 5.7\bin\mysql" -u root -p"Password12!" -e "SET PASSWORD FOR 'ez_test'@'localhost' = PASSWORD('ezTest')"
   # sqlserver
   - ps: ./appveyor-sqlserver.ps1 MSSQL2014
   - sqlcmd -S localhost,1433 -U sa -P Password12! -Q "CREATE DATABASE ez_test" -d "master"
   - sqlcmd -S localhost,1433 -U sa -P Password12! -Q "CREATE LOGIN ez_test WITH PASSWORD=N'ezTest', DEFAULT_DATABASE=ez_test, CHECK_EXPIRATION=ON, CHECK_POLICY=ON; ALTER SERVER ROLE [sysadmin] ADD MEMBER ez_test" 
   - sqlcmd -S localhost,1433 -U sa -P Password12! -Q "select table_name from information_schema.tables" -d "ez_test"
-     
+  
+before_test:
+  - SET PATH=%MYSQL_PATH%\bin;%PATH%
+  - mysqladmin --host=%MYSQL_HOST% --user=%MYSQL_USER% --password=%MYSQL_PASSWORD% create %MYSQL_DATABASE%    
+  # mysql
+  - mysql -e "GRANT ALL PRIVILEGES ON ez_test.* TO ez_test@localhost;"
+  - mysql -e "SET PASSWORD FOR 'ez_test'@'localhost' = PASSWORD('ezTest')"
+    
 on_success:
   - appveyor-retry php vendor/bin/php-coveralls
   
