@@ -25,7 +25,7 @@
 	);
 	
 	/**********************************************************************
-	*  ezSQL non duplicating data type id's; converting dtype ids to str
+	*  ezSQL non duplicating data type id's; converting type ids to str
 	*/
 	
 	$ezsql_sqlsrv_type2str_non_dup = array
@@ -75,8 +75,8 @@
 		}
 
 		/**********************************************************************
-		*  Short hand way to connect to mssql database server
-		*  and select a mssql database at the same time
+		*  Short hand way to connect to sqlsrv database server
+		*  and select a sqlsrv database at the same time
 		*/
 
 		function quick_connect($dbuser='', $dbpassword='', $dbname='', $dbhost='localhost')
@@ -90,7 +90,7 @@
 		}
 
 		/**********************************************************************
-		*  Try to connect to mssql database server
+		*  Try to connect to sqlsrv database server
 		*/
 
 		function connect($dbuser='', $dbpassword='', $dbname='', $dbhost='localhost')
@@ -110,6 +110,7 @@
 			{
 				$this->register_error($ezsql_sqlsrv_str[2].' in '.__FILE__.' on line '.__LINE__);
 				$this->show_errors ? trigger_error($ezsql_sqlsrv_str[2],E_USER_WARNING) : null;
+                return false;
 			}
 			else
 			{
@@ -145,7 +146,7 @@
         }
 
 		/**********************************************************************
-		*  Format a mssql string correctly for safe mssql insert
+		*  Format a sqlsrv string correctly for safe sqlsrv insert
 		*  (no mater if magic quotes are on or not)
 		*/
 
@@ -156,8 +157,8 @@
 
 
 		/**********************************************************************
-		*  Return mssql specific system date syntax
-		*  i.e. Oracle: SYSDATE mssql: NOW(), MS-SQL : getDate()
+		*  Return sqlsrv specific system date syntax
+		*  i.e. Oracle: SYSDATE sqlsrv: NOW(), MS-SQL : getDate()
 		*
 		*  The SQLSRV drivers pull back the data into a Date class.  Converted
 		*   it to a string inside of SQL in order to prevent this from ocurring
@@ -170,7 +171,7 @@
 		}
 
 		/**********************************************************************
-		*  Perform mssql query and try to detirmin result value
+		*  Perform sqlsrv query and try to detirmin result value
 		*/
 
 		function query($query)
@@ -178,8 +179,8 @@
 
 			//if flag to convert query from MySql syntax to MS-Sql syntax is true
 			//convert the query
-			if($this->convertMySqlToMSSqlQuery == true)
-				$query = $this->ConvertMySqlToMSSql($query);
+			if($this->convertMySqlTosqlsrvQuery == true)
+				$query = $this->ConvertMySqlTosqlsrv($query);
 
 
 			// Initialise return
@@ -214,7 +215,7 @@
 				$this->connect($this->dbuser, $this->dbpassword, $this->dbname, $this->dbhost);
 			}
 
-			// Perform the query via std mssql_query function..
+			// Perform the query via std sqlsrv_query function..
 
 			$this->result = @sqlsrv_query($this->dbh, $query);
 
@@ -325,7 +326,7 @@
 		   		There is no such restriction in MySql.
 		*/
 
-		function ConvertMySqlToMSSql($query)
+		function ConvertMySqlTosqlsrv($query)
 		{
 
 			//replace the '`' character used for MySql queries, but not

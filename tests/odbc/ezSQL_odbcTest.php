@@ -23,6 +23,26 @@ use PHPUnit\Framework\TestCase;
 class ezSQL_odbcTest extends TestCase {
 
     /**
+     * constant string user name
+     */
+    const TEST_DB_USER = 'ez_test';
+
+    /**
+     * constant string password
+     */
+    const TEST_DB_PASSWORD = 'ezTest';
+
+    /**
+     * constant database name
+     */
+    const TEST_DB_NAME = 'ez_test';
+
+    /**
+     * constant database host
+     */
+    const TEST_DB_HOST = 'localhost';
+
+    /**
      * @var ezSQL_odbc
      */
     protected $object;
@@ -68,13 +88,10 @@ class ezSQL_odbcTest extends TestCase {
 
     /**
      * @covers ezSQL_odbc::quick_connect
-     * @todo Implement testQuick_connect().
      */
     public function testQuick_connect() {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-                'This test has not been implemented yet.'
-        );
+        $result = $this->object->quick_connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME);
+        $this->assertTrue($result);
     } // testQuick_connect
 
     /**
@@ -82,10 +99,8 @@ class ezSQL_odbcTest extends TestCase {
      * @todo Implement testConnect().
      */
     public function testConnect() {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-                'This test has not been implemented yet.'
-        );
+        $result = $this->object->connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD);
+        $this->assertTrue($result);
     } // testConnect
 
     /**

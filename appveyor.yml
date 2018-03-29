@@ -8,13 +8,10 @@ environment:
   matrix:
   - dependencies: lowest
     php_ver_target: 7.0
-    XDEBUG_VERSION: '2.5.1-7.0'
   - dependencies: current
     php_ver_target: 7.1
-    XDEBUG_VERSION: '2.6.0-7.2'
   - dependencies: highest
     php_ver_target: 7.2
-    XDEBUG_VERSION: '2.6.0-7.2'
   MYSQL_DATABASE: ez_test
   MYSQL_HOST: localhost
   MYSQL_USER: root
@@ -66,8 +63,8 @@ install:
     - IF %PHP%==1 echo assert.exception=On >> php.ini
     - IF %PHP%==1 echo @php %%~dp0composer.phar %%* > composer.bat
     - appveyor-retry appveyor DownloadFile https://getcomposer.org/composer.phar
-    - appveyor-retry appveyor DownloadFile https://xdebug.org/files/php_xdebug-%XDEBUG_VERSION%-vc14.dll -FileName c:\tools\php\ext\php_xdebug-%XDEBUG_VERSION%-vc14.dll
-    - IF %PHP%==1 echo zend_extension=php_xdebug-%XDEBUG_VERSION%-vc14.dll >> php.ini
+    - appveyor-retry appveyor DownloadFile https://xdebug.org/files/php_xdebug-2.6.0-7.2-vc15-x86_64.dll -FileName c:\tools\php\ext\php_xdebug-2.6.0-7.2-vc15-x86_64.dll
+    - IF %PHP%==1 echo zend_extension=php_xdebug-2.6.0-7.2-vc15-x86_64.dll >> php.ini
     - cd c:\projects\php-project-workspace
     - IF %dependencies%==lowest appveyor-retry composer update --prefer-lowest --no-progress --profile -n
     - IF %dependencies%==current appveyor-retry composer install --no-progress --profile
