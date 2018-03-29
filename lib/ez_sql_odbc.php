@@ -76,8 +76,8 @@
 		}
 
 		/**********************************************************************
-		*  Short hand way to connect to mssql database server
-		*  and select a mssql database at the same time
+		*  Short hand way to connect to odbc database server
+		*  and select a odbc database at the same time
 		*/
 
 		function quick_connect($dbuser='', $dbpassword='', $dbname='', $dbhost='localhost')
@@ -91,7 +91,7 @@
 		}
 
 		/**********************************************************************
-		*  Try to connect to mssql database server
+		*  Try to connect to odbc database server
 		*/
 
 		function connect($dbuser='', $dbpassword='', $dbname='', $dbhost='localhost')
@@ -107,10 +107,11 @@
 			}
 			$connectionOptions = array("UID" => $dbuser, "PWD" => $dbpassword, "Database" => $dbname, "ReturnDatesAsStrings" => true);
 
-			if ( ( $this->dbh = @odbc_connect($dbhost, $connectionOptions) ) === false )
+			if ( ( $this->dbh = @odbc_pconnect($dbhost, $connectionOptions) ) === false )
 			{
 				$this->register_error($ezsql_odbc_str[2].' in '.__FILE__.' on line '.__LINE__);
 				$this->show_errors ? trigger_error($ezsql_odbc_str[2],E_USER_WARNING) : null;
+				return false;
 			}
 			else
 			{
@@ -125,7 +126,40 @@
 
 			return $return_val;
 		}
-
+        
+		/**********************************************************************
+		*  Try to select a odbc database
+		*/
+		function select($dbname='')
+		{
+			global $ezsql_odbc_str; $return_val = false;
+			// Must have a database name
+			if ( ! $dbname )
+			{
+				$this->register_error($ezsql_odbc_str[3].' in '.__FILE__.' on line '.__LINE__);
+				$this->show_errors ? trigger_error($ezsql_odbc_str[3],E_USER_WARNING) : null;
+			}
+			// Must have an active database connection
+			else if ( ! $this->dbh )
+			{
+				$this->register_error($ezsql_odbc_str[4].' in '.__FILE__.' on line '.__LINE__);
+				$this->show_errors ? trigger_error($ezsql_odbc_str[4],E_USER_WARNING) : null;
+			}
+			// Try to connect to the database
+			else if ( !@odbc_select_db($dbname,$this->dbh) )
+			{
+				$str = $ezsql_odbc_str[5];
+				$this->register_error($str.' in '.__FILE__.' on line '.__LINE__);
+				$this->show_errors ? trigger_error($str,E_USER_WARNING) : null;
+			}
+			else
+			{
+				$this->dbname = $dbname;
+				$return_val = true;
+			}
+			return $return_val;
+		}
+        
         function odbc_escape_string($data) {
             if ( !isset($data) ) return '';
             if ( is_numeric($data) ) return $data;
@@ -146,7 +180,7 @@
         }
 
 		/**********************************************************************
-		*  Format a mssql string correctly for safe mssql insert
+		*  Format a odbc string correctly for safe odbc insert
 		*  (no mater if magic quotes are on or not)
 		*/
 
@@ -156,8 +190,8 @@
 		}
         
 		/**********************************************************************
-		*  Return mssql specific system date syntax
-		*  i.e. Oracle: SYSDATE mssql: NOW(), MS-SQL : getDate()
+		*  Return odbc specific system date syntax
+		*  i.e. Oracle: SYSDATE odbc: NOW(), MS-SQL : getDate()
 		*
 		*  The odbc drivers pull back the data into a Date class.  Converted
 		*   it to a string inside of SQL in order to prevent this from ocurring
@@ -166,149 +200,112 @@
 
 		function sysdate()
 		{
-			return "GETDATE()";
+			return 'GETDATE()';
 		}
 
 		/**********************************************************************
-		*  Perform mssql query and try to detirmin result value
+		*  Perform odbc query and try to detirmin result value
 		*/
 
 		function query($query)
 		{
-
 			//if flag to convert query from MySql syntax to MS-Sql syntax is true
 			//convert the query
 			if($this->convertMySqlToMSSqlQuery == true)
 				$query = $this->ConvertMySqlToMSSql($query);
-
-
-			// Initialise return
+			// Initialize return
 			$return_val = 0;
-
-
 			// Flush cached values..
 			$this->flush();
-
 			// For reg expressions
 			$query = trim($query);
-
 			// Log how the function was called
 			$this->func_call = "\$db->query(\"$query\")";
-
 			// Keep track of the last query for debug..
 			$this->last_query = $query;
-
 			// Count how many queries there have been
 			$this->count(true, true);
-
 			// Use core file cache function
 			if ( $cache = $this->get_cache($query) )
 			{
 				return $cache;
 			}
-
-
 			// If there is no existing database connection then try to connect
 			if ( ! isset($this->dbh) || ! $this->dbh )
 			{
-				$this->connect($this->dbuser, $this->dbpassword, $this->dbname, $this->dbhost);
+				$this->connect($this->dbuser, $this->dbpassword, $this->dbhost);
+				$this->select($this->dbname);
 			}
-
-			// Perform the query via std mssql_query function..
-
-			$this->result = @odbc_query($this->dbh, $query);
-
+			// Perform the query via std odbc_query function..
+			$this->result = @odbc_exec($query, $this->dbh);
 			// If there is an error then take note of it..
-			if ($this->result === false )
+			if ($this->result == false )
 			{
-				$errors = odbc_errors();
-				if (!empty($errors)) {
-					foreach ($errors as $error) {
-						$sqlError = "ErrorCode: ".$error['code']." ### State: ".$error['SQLSTATE']." ### Error Message: ".$error['message']." ### Query: ".$query;
-						$this->register_error($sqlError);
-						$this->show_errors ? trigger_error($sqlError ,E_USER_WARNING) : null;
-					}
+				$get_errorcodeSql = "SELECT @@ERROR as errorcode";
+				$error_res = @odbc_exec($get_errorcodeSql, $this->dbh);
+				$errorCode = @odbc_result($error_res, 0, "errorcode");
+				$get_errorMessageSql = "SELECT severity as errorSeverity, text as errorText FROM sys.messages  WHERE message_id = ".$errorCode  ;
+				$errormessage_res =  @odbc_exec($get_errorMessageSql, $this->dbh);
+				if($errormessage_res)
+				{
+					$errorMessage_Row = @odbc_fetch_row($errormessage_res);
+					$errorSeverity = $errorMessage_Row[0];
+					$errorMessage = $errorMessage_Row[1];
 				}
-
+				$sqlError = "ErrorCode: ".$errorCode." ### Error Severity: ".$errorSeverity." ### Error Message: ".$errorMessage." ### Query: ".$query;
+				$this->register_error($sqlError);
+				$this->show_errors ? trigger_error($sqlError ,E_USER_WARNING) : null;
 				return false;
 			}
-
 			// Query was an insert, delete, update, replace
-			$is_insert = false;
 			if ( preg_match("/^(insert|delete|update|replace)\s+/i",$query) )
 			{
 				$is_insert = true;
-				$this->rows_affected = @odbc_rows_affected($this->result);
-
+				$this->rows_affected = @odbc_rows_affected($this->dbh);
 				// Take note of the insert_id
 				if ( preg_match("/^(insert|replace)\s+/i",$query) )
 				{
-
-					$identityresultset = @odbc_query($this->dbh, "select SCOPE_IDENTITY()");
-
+					$identityresultset = @odbc_query("select SCOPE_IDENTITY()");
 					if ($identityresultset != false )
 					{
-						$identityrow = @odbc_fetch($identityresultset);
+						$identityrow = @odbc_fetch_row($identityresultset);
 						$this->insert_id = $identityrow[0];
 					}
-
 				}
-
 				// Return number of rows affected
 				$return_val = $this->rows_affected;
 			}
 			// Query was a select
 			else
 			{
-
+				$is_insert = false;
 				// Take note of column info
 				$i=0;
-				foreach ( @odbc_field_metadata( $this->result) as $field ) {
-					foreach ($field as $name => $value) {
-						$name = strtolower($name);
-						if ($name == "size") $name = "max_length";
-						else if ($name == "type") $name = "typeid";
-						//DEFINED FOR E_STRICT
-						$col = new StdClass();
-						$col->{$name} = $value;
-					}
-
-					$col->type = $this->get_datatype($col);
-					$this->col_info[$i++] = $col;
-					unset($col);
+				while ($i < @odbc_num_fields($this->result))
+				{
+					$this->col_info[$i] = @odbc_fetch_field($this->result);
+					$i++;
 				}
-
 				// Store Query Results
 				$num_rows=0;
-
 				while ( $row = @odbc_fetch_object($this->result) )
 				{
-
 					// Store relults as an objects within main array
 					$this->last_result[$num_rows] = $row;
 					$num_rows++;
 				}
-
-				@odbc_free_stmt($this->result);
-
+				@odbc_free_result($this->result);
 				// Log number of rows the query returned
 				$this->num_rows = $num_rows;
-
 				// Return number of rows selected
 				$return_val = $this->num_rows;
 			}
-
 			// disk caching of queries
 			$this->store_cache($query,$is_insert);
-
 			// If debug ALL queries
 			$this->trace || $this->debug_all ? $this->debug() : null ;
-
 			return $return_val;
-
 		}
-
-
 
 		/**********************************************************************
 		*  Convert a Query From MySql Syntax to MS-Sql syntax
