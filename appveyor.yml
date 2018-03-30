@@ -12,6 +12,7 @@ environment:
   MYSQL_USER: root
   MYSQL_PASSWORD: Password12!
   MYSQL_PATH: C:\Program Files\MySQL\MySQL Server 5.7
+  COVERALLS_REPO_TOKEN=AnLoDQiYpy5cJ3nVnKH4HJLZoYzHP1EhN CI=true
   
 services:
     - mssql2014
