@@ -57,8 +57,6 @@
         // Global class instances, will be used to create and call methods directly.
         $_ezQuery = null;
         $_ezCubrid = null;
-        $_ezOdbc = null;
-        $_ezMysql = null;
         $_ezMysqli = null;
         $_ezOracle8_9 = null;
         $_ezOracleTNS = null;

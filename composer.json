@@ -15,7 +15,6 @@
         "classmap": [
             "lib/ez_sql_cubrid.php",
             "lib/ez_sql_mysqli.php",
-            "lib/ez_sql_odbc.php",
             "lib/ez_sql_oracle8_9.php",
             "lib/ez_sql_oracleTNS.php",
             "lib/ez_sql_pdo.php",
