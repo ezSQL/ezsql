@@ -45,11 +45,12 @@ install:
     - IF EXIST c:\tools\php (SET PHP=0) # Checks for the PHP install being cached
     - ps: appveyor-retry cinst --params '""/InstallDir:C:\tools\php""' --ignore-checksums -y php --version ((choco search php --exact --all-versions -r | select-string -pattern $env:php_ver_target | sort { [version]($_ -split '\|' | select -last 1) } -Descending | Select-Object -first 1) -replace '[php|]','')
     - cd c:\tools\php\ext
-    - appveyor-retry appveyor DownloadFile https://xdebug.org/files/php_xdebug-2.5.5-7.0-vc14-nts-x86_64.dll
-    - appveyor-retry appveyor DownloadFile https://windows.php.net/downloads/pecl/releases/sqlsrv/4.3.0/php_sqlsrv-4.3.0-7.1-nts-vc14-x64.zip
-    - appveyor-retry appveyor DownloadFile https://windows.php.net/downloads/pecl/releases/pdo_sqlsrv/4.3.0/php_pdo_sqlsrv-4.3.0-7.1-nts-vc14-x64.zip
-    - IF %PHP%==1 7z x -y php_sqlsrv-4.3.0-7.1-nts-vc14-x64.zip > $null
-    - IF %PHP%==1 7z x -y php_pdo_sqlsrv-4.3.0-7.1-nts-vc14-x64.zip > $null
+    - appveyor-retry appveyor DownloadFile https://xdebug.org/files/php_xdebug-2.5.5-7.0-vc14-nts-x86_64.dll -FileName c:\tools\php\ext\php_xdebug-2.5.5-7.0-vc14-nts-x86_64.dll
+    - appveyor-retry appveyor DownloadFile https://windows.php.net/downloads/pecl/releases/sqlsrv/4.3.0/php_sqlsrv-4.3.0-7.1-nts-vc14-x64.zip -FileName c:\tools\php\ext\php_sqlsrv.zip
+    - appveyor-retry appveyor DownloadFile https://windows.php.net/downloads/pecl/releases/pdo_sqlsrv/4.3.0/php_pdo_sqlsrv-4.3.0-7.1-nts-vc14-x64.zip -FileName c:\tools\php\ext\php_pdo_sqlsrv.zip
+    - IF %PHP%==1 7z x -y php_sqlsrv.zip
+    - IF %PHP%==1 7z x -y php_pdo_sqlsrv.zip
+    - dir
     - cd c:\tools\php
     - IF %PHP%==1 copy php.ini-production php.ini /Y
     - IF %PHP%==1 echo date.timezone="UTC" >> php.ini
@@ -82,6 +83,7 @@ install:
     - IF %dependencies%==highest appveyor-retry composer update --no-progress --profile -n
     - composer self-update
     - composer require php-coveralls/php-coveralls
+    - composer show
     
 build_script:
   # postgres
