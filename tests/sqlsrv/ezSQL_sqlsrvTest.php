@@ -146,7 +146,7 @@ class ezSQL_sqlsrvTest extends TestCase {
         $i = 1;
         foreach ($this->object->get_results() as $row) {
             $this->assertEquals($i, $row->id);
-            $this->assertEquals('test 1' . $i, $row->test_key);
+            $this->assertEquals('test ' . $i, $row->test_key);
             ++$i;
         }
 
@@ -167,8 +167,6 @@ class ezSQL_sqlsrvTest extends TestCase {
         {
             // Get results of DESC table..
             $this->assertNotNull($this->object->query("EXEC SP_COLUMNS '".$table[0]."'"));
-            // Print out last query and results..
-            $this->assertNotNull($this->object->debug());
         }
     } // testGet_results
     
