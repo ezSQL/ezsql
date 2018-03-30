@@ -141,9 +141,9 @@ class ezSQL_mysqliTest extends TestCase {
         set_error_handler(array($this, 'errorHandler')); 
         $this->assertFalse($this->object->select(''));
         $this->object->disconnect();
-        $this->assertFalse($this->object->select('test'));
+        $this->assertFalse($this->object->select('notest'));
         $this->object->connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD);
-        $this->assertFalse($this->object->select('test'));
+        $this->assertFalse($this->object->select('notest'));
         $this->assertTrue($this->object->select(self::TEST_DB_NAME));        
     } // testSelect
 
