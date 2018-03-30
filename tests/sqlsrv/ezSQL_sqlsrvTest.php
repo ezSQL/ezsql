@@ -89,7 +89,7 @@ class ezSQL_sqlsrvTest extends TestCase {
      * @covers ezSQL_sqlsrv::quick_connect
      */
     public function testQuick_connect() {
-        $result = $this->object->quick_connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME,'192.168.0.10');
+        $result = $this->object->quick_connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME);
         $this->assertTrue($result);
     } // testQuick_connect
 
@@ -97,7 +97,7 @@ class ezSQL_sqlsrvTest extends TestCase {
      * @covers ezSQL_sqlsrv::connect
      */
     public function testConnect() {
-        $result = $this->object->connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME,'192.168.0.10');
+        $result = $this->object->connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME);
         $this->assertTrue($result);
     } // testConnect
 
