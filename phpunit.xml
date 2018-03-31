@@ -21,13 +21,10 @@
             <directory>./</directory>
             <exclude>
                 <file>./ez_sql_loader.php</file>
-                <file>./ez_sql_codeigniter.php</file>
                 <file>./ez_sql_cubrid.php</file>
-                <file>./ez_sql_odbc.php</file>
                 <file>./ez_sql_oracle8_9.php</file>
                 <file>./ez_sql_oracleTNS.php</file>
                 <file>./ez_sql_sqlsrv.php</file>
-                <file>./ez_sql_sybase.php</file>
                 <directory>./build</directory>
                 <directory>./demo</directory>
                 <directory>./docs</directory>
@@ -36,6 +33,10 @@
             </exclude>
         </whitelist>
     </filter>
+    
+    <logging>
+        <log type="coverage-clover" target="clover.xml"/>
+    </logging>
     
     <php>
         <var name="DB_DSN" value="mysql:dbname=ez_test;host=localhost" />

@@ -12,7 +12,8 @@ environment:
   MYSQL_USER: root
   MYSQL_PASSWORD: Password12!
   MYSQL_PATH: C:\Program Files\MySQL\MySQL Server 5.7
-  COVERALLS_REPO_TOKEN: AnLoDQiYpy5cJ3nVnKH4HJLZoYzHP1EhN
+  COVERALLS_REPO_TOKEN:
+    secure: +EO6Xl2kOtMO95++ZdAkI0CQQkWkVTd9xfH8Cd/QtnCm+0qwE5QLTMevfzoP39Zm
   CI: true
   
 services:
@@ -131,7 +132,11 @@ before_test:
     
 on_success:
   - appveyor-retry php vendor/bin/php-coveralls
-  
+  - ps: |
+      $env:PATH = 'C:\msys64\usr\bin;' + $env:PATH
+      Invoke-WebRequest -Uri 'https://codecov.io/bash' -OutFile codecov.sh
+      bash codecov.sh -f "coverage.xml"
+      
 ## Run the actual test
 test_script:
     - cd c:\projects\php-project-workspace

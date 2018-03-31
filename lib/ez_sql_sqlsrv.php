@@ -171,7 +171,7 @@
 		}
 
 		/**********************************************************************
-		*  Perform sqlsrv query and try to detirmin result value
+		*  Perform sqlsrv query and try to determine result value
 		*/
 
 		function query($query)
@@ -183,7 +183,7 @@
 				$query = $this->ConvertMySqlTosqlsrv($query);
 
 
-			// Initialise return
+			// Initialize return
 			$return_val = 0;
 
 
@@ -230,7 +230,6 @@
 						$this->show_errors ? trigger_error($sqlError ,E_USER_WARNING) : null;
 					}
 				}
-
 				return false;
 			}
 
@@ -285,7 +284,7 @@
 				while ( $row = @sqlsrv_fetch_object($this->result) )
 				{
 
-					// Store relults as an objects within main array
+					// Store results as an objects within main array
 					$this->last_result[$num_rows] = $row;
 					$num_rows++;
 				}
@@ -318,7 +317,7 @@
 		   2. FROM_UNIXTIME method is not supported. The Function is removed.It is replaced with
 		      getDate(). Warning: This logic may not be right.
 		   3. unix_timestamp function is removed.
-		   4. LIMIT keyowrd is replaced with TOP keyword. Warning: Logic not fully tested.
+		   4. LIMIT keyword is replaced with TOP keyword. Warning: Logic not fully tested.
 
 		   Note: This method is only a small attempt to convert the syntax. There are many aspects which are not covered here.
 		   		This method doesn't at all guarantee complete conversion. Certain queries will still
@@ -401,7 +400,7 @@
 		{
 			$this->conn_queries = 0;
 			@sqlsrv_close($this->dbh);
-            $this->_connected = true;
+			$this->_connected = false;
 		}
 
 

@@ -82,6 +82,7 @@ class ezSQL_sqlsrvTest extends TestCase {
      * This method is called after a test is executed.
      */
     protected function tearDown() {
+        $this->object->query('DROP TABLE unit_test');
         $this->object = null;
     } // tearDown
 
@@ -100,17 +101,6 @@ class ezSQL_sqlsrvTest extends TestCase {
         $result = $this->object->connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME);
         $this->assertTrue($result);
     } // testConnect
-
-    /**
-     * @covers ezSQL_sqlsrv::select
-     * @todo Implement testSelect().
-     */
-    public function testSelect() {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-                'This test has not been implemented yet.'
-        );
-    } // testSelect
 
     /**
      * @covers ezSQL_sqlsrv::escape
@@ -172,35 +162,36 @@ class ezSQL_sqlsrvTest extends TestCase {
     
     /**
      * @covers ezSQL_sqlsrv::query
-     * @todo Implement testQuery().
      */
     public function testQuery() {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-                'This test has not been implemented yet.'
-        );
+        $this->object->quick_connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME);    
+        $this->assertEquals($this->object->query('CREATE TABLE unit_test(id integer, test_key varchar(50), PRIMARY KEY (ID))'), 0);
+        $this->assertEquals($this->object->query('INSERT INTO unit_test(id, test_key) VALUES(1, \'test 1\')'), 1);
+        
+        $this->object->dbh = null;
+        $this->assertEquals($this->object->query('INSERT INTO unit_test(id, test_key) VALUES(2, \'test 2\')'),1);
+        $this->object->disconnect();
+        $this->assertFalse($this->object->query('INSERT INTO unit_test(id, test_key) VALUES(3, \'test 3\')'));    
     } // testQuery
 
     /**
-     * @covers ezSQL_sqlsrv::ConvertMySqlTosybase
-     * @todo Implement testConvertMySqlTosybase().
+     * @covers ezSQL_sqlsrv::ConvertMySqlTosqlsrv
+     * @todo Implement testConvertMySqlTosqlsrv().
      */
-    public function testConvertMySqlTosybase() {
+    public function testConvertMySqlTosqlsrv() {
         // Remove the following lines when you implement this test.
         $this->markTestIncomplete(
                 'This test has not been implemented yet.'
         );
-    } // testConvertMySqlTosybase
+    } // testConvertMySqlTosqlsrv
 
     /**
      * @covers ezSQL_sqlsrv::disconnect
-     * @todo Implement testDisconnect().
      */
     public function testDisconnect() {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-                'This test has not been implemented yet.'
-        );
+        $this->object->quick_connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME);    
+        $this->object->disconnect();
+        $this->assertFalse($this->object->isConnected());
     } // testDisconnect
       
     /**
