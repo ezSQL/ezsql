@@ -128,15 +128,13 @@ before_test:
   - mysql -u root -p"Password12!" -e "FLUSH PRIVILEGES;"
     
 on_success:
-  - appveyor-retry php vendor/bin/php-coveralls
   - ps: |
       $env:PATH = 'C:\msys64\usr\bin;' + $env:PATH
       Invoke-WebRequest -Uri 'https://codecov.io/bash' -OutFile codecov.sh
-      bash codecov.sh -f "clover.xml"
+      bash codecov.sh -f "coverage.xml"
       
 ## Run the actual test
 test_script:
     - cd c:\projects\php-project-workspace
-    - mkdir build\logs
-    - vendor/bin/phpunit --coverage-clover build\logs\clover.xml
+    - vendor/bin/phpunit --coverage-clover=coverage.xml
     
