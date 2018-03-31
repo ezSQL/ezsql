@@ -82,6 +82,7 @@ class ezSQL_sqlsrvTest extends TestCase {
      * This method is called after a test is executed.
      */
     protected function tearDown() {
+        $this->object->query('DROP TABLE unit_test');
         $this->object = null;
     } // tearDown
 
@@ -100,17 +101,6 @@ class ezSQL_sqlsrvTest extends TestCase {
         $result = $this->object->connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME);
         $this->assertTrue($result);
     } // testConnect
-
-    /**
-     * @covers ezSQL_sqlsrv::select
-     * @todo Implement testSelect().
-     */
-    public function testSelect() {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-                'This test has not been implemented yet.'
-        );
-    } // testSelect
 
     /**
      * @covers ezSQL_sqlsrv::escape
@@ -133,23 +123,8 @@ class ezSQL_sqlsrvTest extends TestCase {
      */
     public function testGet_var() { 
         $this->object->quick_connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME);    
-        $current_time = $this->object->get_var("SELECT " . $this->object->sysdate());
-        $this->assertNull($current_time);
-        $this->assertEquals(0, $this->object->query('CREATE TABLE unit_test(id integer, test_key varchar(50), PRIMARY KEY (ID))'));
-        
-        $this->assertEquals(1, $this->object->query('INSERT INTO unit_test(id, test_key) VALUES(1, \'test 1\')'));
-        $this->assertEquals(1, $this->object->query('INSERT INTO unit_test(id, test_key) VALUES(2, \'test 2\')'));
-        $this->assertEquals(1, $this->object->query('INSERT INTO unit_test(id, test_key) VALUES(3, \'test 3\')'));
-
-        $result = $this->object->query('SELECT * FROM unit_test');
-
-        $i = 1;
-        foreach ($this->object->get_results() as $row) {
-            $this->assertEquals($i, $row->id);
-            $this->assertEquals('test ' . $i, $row->test_key);
-            ++$i;
-        }
-
+        $current_time = $this->object->get_var("SELECT " . $this->object->sysdate() . " AS 'GetDate()'");
+        $this->assertNotNull($current_time);
     } // testGet_var
 
     /**
@@ -172,35 +147,129 @@ class ezSQL_sqlsrvTest extends TestCase {
     
     /**
      * @covers ezSQL_sqlsrv::query
-     * @todo Implement testQuery().
      */
     public function testQuery() {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-                'This test has not been implemented yet.'
-        );
+        $this->object->quick_connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME);    
+        $this->assertEquals($this->object->query('CREATE TABLE unit_test(id integer, test_key varchar(50), PRIMARY KEY (ID))'), 0);
+        $this->assertEquals($this->object->query('INSERT INTO unit_test(id, test_key) VALUES(1, \'test 1\')'), 1);
+        
+        $this->object->dbh = null;
+        $this->assertEquals($this->object->query('INSERT INTO unit_test(id, test_key) VALUES(2, \'test 2\')'),1);
+        $this->object->disconnect();
+        $this->assertFalse($this->object->query('INSERT INTO unit_test(id, test_key) VALUES(3, \'test 3\')'));    
     } // testQuery
 
     /**
-     * @covers ezSQL_sqlsrv::ConvertMySqlTosybase
-     * @todo Implement testConvertMySqlTosybase().
+     * @covers ezSQL_sqlsrv::ConvertMySqlTosqlsrv
+     * @todo Implement testConvertMySqlTosqlsrv().
      */
-    public function testConvertMySqlTosybase() {
+    public function testConvertMySqlTosqlsrv() {
         // Remove the following lines when you implement this test.
         $this->markTestIncomplete(
                 'This test has not been implemented yet.'
         );
-    } // testConvertMySqlTosybase
+    } // testConvertMySqlTosqlsrv
+    
+    /**
+     * @covers ezSQLcore::insert
+     */
+    public function testInsert()
+    {
+        $this->object->quick_connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME);    
+        $this->object->query('CREATE TABLE unit_test(id integer, test_key varchar(50), PRIMARY KEY (ID))');
+        
+        $result = $this->object->insert('unit_test', array('id'=>'1', 'test_key'=>'test 1' ));
+        $this->assertEquals(0, $result);
+    }
+       
+    /**
+     * @covers ezSQLcore::update
+     */
+    public function testUpdate()
+    {
+        $this->object->quick_connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME);    
+        $this->object->query('CREATE TABLE unit_test(id integer, test_key varchar(50), PRIMARY KEY (ID))');
+        $this->object->insert('unit_test', array('id'=>'1', 'test_key'=>'test 1' ));
+        $this->object->insert('unit_test', array('id'=>'2', 'test_key'=>'test 2' ));
+        $this->object->insert('unit_test', array('id'=>'3', 'test_key'=>'test 3' ));
+        $unit_test['test_key'] = 'testing';
+        $where="id  =  1";
+        $this->assertEquals($this->object->update('unit_test', $unit_test, $where), 1);
+        $this->assertEquals($this->object->update('unit_test', $unit_test, eq('test_key','test 3', _AND), eq('id','3')), 1);
+        $this->assertEquals($this->object->update('unit_test', $unit_test, "id = 4"), 0);
+        $this->assertEquals($this->object->update('unit_test', $unit_test, "test_key  =  test 2  and", "id  =  2"), 1);
+    }
+    
+    /**
+     * @covers ezSQLcore::delete
+     */
+    public function testDelete()
+    {
+        $this->object->quick_connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME);    
+        $this->object->query('CREATE TABLE unit_test(id integer, test_key varchar(50), PRIMARY KEY (ID))');
+        $unit_test['id'] = '1';
+        $unit_test['test_key'] = 'test 1';
+        $this->object->insert('unit_test', $unit_test );
+        $unit_test['id'] = '2';
+        $unit_test['test_key'] = 'test 2';
+        $this->object->insert('unit_test', $unit_test );
+        $unit_test['id'] = '3';
+        $unit_test['test_key'] = 'test 3';
+        $this->object->insert('unit_test', $unit_test );
+        $where='1';
+        $this->assertEquals($this->object->delete('unit_test', array('id','=','1')), 1);
+        $this->assertEquals($this->object->delete('unit_test', 
+            array('test_key','=',$unit_test['test_key'],'and'),
+            array('id','=','3')), 1);
+        $this->assertEquals($this->object->delete('unit_test', array('test_key','=',$where)), 0);
+        $where="id  =  2";
+        $this->assertEquals($this->object->delete('unit_test', $where), 1);
+        $this->assertEquals(0, $this->object->query('DROP TABLE unit_test'));
+    }  
 
     /**
+     * @covers ezSQLcore::selecting
+     */
+    public function testSelecting()
+    {
+        $this->object->quick_connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME);    
+        $this->object->query('CREATE TABLE unit_test(id integer, test_key varchar(50), PRIMARY KEY (ID))');
+        $this->object->insert('unit_test', array('id'=>'1', 'test_key'=>'testing 1' ));
+        $this->object->insert('unit_test', array('id'=>'2', 'test_key'=>'testing 2' ));
+        $this->object->insert('unit_test', array('id'=>'3', 'test_key'=>'testing 3' ));
+        
+        $result = $this->object->selecting('unit_test');
+        $i = 1;
+        foreach ($result as $row) {
+            $this->assertEquals($i, $row->id);
+            $this->assertEquals('testing ' . $i, $row->test_key);
+            ++$i;
+        }
+        
+        $where=eq('test_key','testing 2');
+        $result = $this->object->selecting('unit_test', 'id', $where);
+        foreach ($result as $row) {
+            $this->assertEquals(2, $row->id);
+        }
+        
+        $result = $this->object->selecting('unit_test', 'test_key', eq( 'id','3' ));
+        foreach ($result as $row) {
+            $this->assertEquals('testing 3', $row->test_key);
+        }
+        
+        $result = $this->object->selecting('unit_test', array ('test_key'), "id  =  1");
+        foreach ($result as $row) {
+            $this->assertEquals('testing 1', $row->test_key);
+        }
+    } 
+	
+    /**
      * @covers ezSQL_sqlsrv::disconnect
-     * @todo Implement testDisconnect().
      */
     public function testDisconnect() {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-                'This test has not been implemented yet.'
-        );
+        $this->object->quick_connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME);    
+        $this->object->disconnect();
+        $this->assertFalse($this->object->isConnected());
     } // testDisconnect
       
     /**
