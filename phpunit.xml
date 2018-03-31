@@ -20,16 +20,12 @@
         <whitelist>
             <directory>./</directory>
             <exclude>
-                <file>./ez_sql_loader.php</file>
-                <file>./ez_sql_cubrid.php</file>
-                <file>./ez_sql_oracle8_9.php</file>
-                <file>./ez_sql_oracleTNS.php</file>
-                <file>./ez_sql_sqlsrv.php</file>
                 <directory>./build</directory>
                 <directory>./demo</directory>
                 <directory>./docs</directory>
                 <directory>./tests</directory>
                 <directory>./vendor</directory>
+                <file>./ez_sql_loader.php</file>
             </exclude>
         </whitelist>
     </filter>
