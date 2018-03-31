@@ -123,7 +123,7 @@ class ezSQL_sqlsrvTest extends TestCase {
      */
     public function testGet_var() { 
         $this->object->quick_connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME);    
-        $current_time = $this->object->get_var("SELECT " . $db->sysdate() . " AS 'GetDate()'");
+        $current_time = $this->object->get_var("SELECT " . $this->object->sysdate() . " AS 'GetDate()'");
         $this->assertNotNull($current_time);
     } // testGet_var
 
@@ -179,9 +179,7 @@ class ezSQL_sqlsrvTest extends TestCase {
         $this->object->query('CREATE TABLE unit_test(id integer, test_key varchar(50), PRIMARY KEY (ID))');
         
         $result = $this->object->insert('unit_test', array('id'=>'1', 'test_key'=>'test 1' ));
-        $this->assertNull($this->object->catch_error());
         $this->assertEquals(0, $result);
-        $this->assertEquals(0, $this->object->query('DROP TABLE unit_test'));
     }
        
     /**
@@ -200,7 +198,6 @@ class ezSQL_sqlsrvTest extends TestCase {
         $this->assertEquals($this->object->update('unit_test', $unit_test, eq('test_key','test 3', _AND), eq('id','3')), 1);
         $this->assertEquals($this->object->update('unit_test', $unit_test, "id = 4"), 0);
         $this->assertEquals($this->object->update('unit_test', $unit_test, "test_key  =  test 2  and", "id  =  2"), 1);
-        $this->assertEquals(0, $this->object->query('DROP TABLE unit_test'));
     }
     
     /**
