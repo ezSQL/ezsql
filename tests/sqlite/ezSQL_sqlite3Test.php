@@ -10,6 +10,11 @@ use PHPUnit\Framework\TestCase;
 class ezSQL_sqlite3Test extends TestCase
 {
     /**
+     * constant string path and file name of the SQLite test database
+     */
+    const TEST_SQLITE_DB = 'ez_test.sqlite3';
+    
+    /**
      * @var ezSQL_sqlite3
      */
     protected $object;
@@ -43,7 +48,7 @@ class ezSQL_sqlite3Test extends TestCase
               'The sqlite3 Lib is not available.'
             );
         }
-        $this->object = new ezSQL_sqlite3;
+        $this->object = new ezSQL_sqlite3('./',self::TEST_SQLITE_DB); 
     }
 
     /**
@@ -52,79 +57,72 @@ class ezSQL_sqlite3Test extends TestCase
      */
     protected function tearDown()
     {
+        $this->object = null;
     }
 
     /**
      * @covers ezSQL_sqlite3::connect
-     * @todo   Implement testConnect().
      */
-    public function testConnect()
-    {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-            'This test has not been implemented yet.'
-        );
-    }
+    public function testConnect() { 
+        //$this->errors = array();
+        //set_error_handler(array($this, 'errorHandler'));        
+        $this->assertFalse($this->object->connect());
+        
+        $this->assertFalse($this->object->connect('null:', ''));
+        
+        $this->assertTrue($this->object->connect('./',self::TEST_SQLITE_DB));
+    } // testSQLiteConnect
 
     /**
      * @covers ezSQL_sqlite3::quick_connect
-     * @todo   Implement testQuick_connect().
      */
-    public function testQuick_connect()
-    {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-            'This test has not been implemented yet.'
-        );
-    }
-
-    /**
-     * @covers ezSQL_sqlite3::select
-     * @todo   Implement testSelect().
-     */
-    public function testSelect()
-    {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-            'This test has not been implemented yet.'
-        );
-    }
-
+    public function testQuick_connect() {
+        $this->assertNotNull($this->object->quick_connect('./',self::TEST_SQLITE_DB));
+    } // testSQLiteQuick_connect
+    
     /**
      * @covers ezSQL_sqlite3::escape
-     * @todo   Implement testEscape().
      */
-    public function testEscape()
-    {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-            'This test has not been implemented yet.'
-        );
-    }
+    public function testSQLite3Escape() {
 
+        $result = $this->object->escape("This is'nt escaped.");
+        $this->assertEquals("This is''nt escaped.", $result);         
+    } // testSQLiteEscape
+    
     /**
      * @covers ezSQL_sqlite3::sysdate
-     * @todo   Implement testSysdate().
      */
-    public function testSysdate()
-    {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-            'This test has not been implemented yet.'
-        );
+    public function testSysdate() {
+        $this->assertEquals('now', $this->object->sysdate());
     }
 
     /**
      * @covers ezSQL_sqlite3::query
-     * @todo   Implement testQuery().
      */
     public function testQuery()
     {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-            'This test has not been implemented yet.'
-        );
-    } 
+        // Create a table..
+        $this->assertEquals(0, $this->object->query("DROP TABLE test_table;"));
+        $this->assertEquals(0,$this->object->query("CREATE TABLE test_table ( MyColumnA INTEGER PRIMARY KEY, MyColumnB TEXT(32) );"));
+
+        // Insert test data
+        for($i=0;$i<3;++$i)
+        {
+            $this->assertEquals(1, $this->object->query('INSERT INTO test_table (MyColumnB) VALUES ("'.md5(microtime()).'");'));
+        }
+	
+        // Get list of tables from current database..
+        $my_tables = $this->object->get_results("SELECT * FROM sqlite_master WHERE sql NOTNULL;");
+        
+        // Loop through each row of results..
+        foreach ( $my_tables as $table )
+        {
+            // Get results of DESC table..
+            $this->assertNotNull($this->object->get_results("SELECT * FROM $table->name;"));
+        }
+
+        // Get rid of the table we created..
+    }   
     
     /**
      * @covers ezSQL_sqlite3::__construct

@@ -8,3 +8,4 @@ build/logs/clover.xml
 *.sqlite
 tests/pdo/ez_test.sqlite
 clover.xml
+*.sqlite3

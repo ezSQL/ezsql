@@ -63,12 +63,14 @@
 			{
 				$this->register_error($ezsql_sqlite_str[1].' in '.__FILE__.' on line '.__LINE__);
 				$this->show_errors ? trigger_error($ezsql_sqlite_str[1],E_USER_WARNING) : null;
+				return false;
 			}
 			// Try to establish the server database handle
 			else if ( ! $this->dbh = @sqlite_open($dbpath.$dbname) )
 			{
 				$this->register_error($php_errormsg);
 				$this->show_errors ? trigger_error($php_errormsg,E_USER_WARNING) : null;
+				return false;
 			}
 			else
 			{
@@ -86,16 +88,6 @@
 		*/
 
 		function quick_connect($dbpath='', $dbname='')
-		{
-			return $this->connect($dbpath, $dbname);
-		}
-
-		/**********************************************************************
-		*  No real equivalent of mySQL select in SQLite 
-		*  once again, function included for the sake of consistency
-		*/
-
-		function select($dbpath='', $dbname='')
 		{
 			return $this->connect($dbpath, $dbname);
 		}

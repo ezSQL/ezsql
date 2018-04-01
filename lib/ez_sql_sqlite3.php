@@ -56,7 +56,8 @@
 
 		function connect($dbpath='', $dbname='')
 		{
-			global $ezsql_sqlite3_str; $return_val = false;
+			global $ezsql_sqlite3_str; 
+            $return_val = false;
             $this->_connected = false;
 			
 			// Must have a user and a password
@@ -64,12 +65,14 @@
 			{
 				$this->register_error($ezsql_sqlite3_str[1].' in '.__FILE__.' on line '.__LINE__);
 				$this->show_errors ? trigger_error($ezsql_sqlite3_str[1],E_USER_WARNING) : null;
+				return false;
 			}
 			// Try to establish the server database handle
 			else if ( ! $this->dbh = @new SQLite3($dbpath.$dbname) )
 			{
 				$this->register_error($php_errormsg);
 				$this->show_errors ? trigger_error($php_errormsg,E_USER_WARNING) : null;
+				return false;
 			}
 			else
 			{
@@ -88,16 +91,6 @@
 		*/
 
 		function quick_connect($dbpath='', $dbname='')
-		{
-			return $this->connect($dbpath, $dbname);
-		}
-
-		/**********************************************************************
-		*  No real equivalent of mySQL select in SQLite 
-		*  once again, function included for the sake of consistency
-		*/
-
-		function select($dbpath='', $dbname='')
 		{
 			return $this->connect($dbpath, $dbname);
 		}
@@ -123,7 +116,7 @@
 		}
 
 		/**********************************************************************
-		*  Perform SQLite query and try to detirmin result value
+		*  Perform SQLite query and try to determine result value
 		*/
 
 		// ==================================================================
@@ -135,7 +128,7 @@
 			// For reg expressions
 			$query = str_replace("/[\n\r]/",'',trim($query)); 
 
-			// initialise return
+			// initialize return
 			$return_val = 0;
 
 			// Flush cached values..

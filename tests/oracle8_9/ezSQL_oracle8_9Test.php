@@ -186,7 +186,36 @@ class ezSQL_oracle8_9Test extends TestCase {
                 'This test has not been implemented yet.'
         );
     } // testGetDBName
-  
+    
+    /**
+     * @covers ezSQLcore::get_var
+     */
+    public function testGet_var() { 
+        $this->object->quick_connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME); 
+        // Demo of getting a single variable from the db
+        // (and using abstracted function sysdate)   
+        $current_time = $this->object->get_var("SELECT " . $this->object->sysdate() . " FROM DUAL");
+        $this->assertNotNull($current_time);
+    } // testGet_var
+
+    /**
+     * @covers ezSQLcore::get_results
+     */
+    public function testGet_results() {           
+    $this->object->quick_connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME);    
+    
+	// Get list of tables from current database..
+	$my_tables = $this->object->get_results("SELECT TABLE_NAME FROM USER_TABLES",ARRAY_N);
+    $this->assertNotNull($my_tables);
+    
+	// Loop through each row of results..
+	foreach ( $my_tables as $table )
+        {
+            // Get results of DESC table..
+            $this->assertNotNull($this->object->get_results("SELECT COLUMN_NAME, DATA_TYPE, DATA_LENGTH, DATA_PRECISION FROM USER_TAB_COLUMNS WHERE TABLE_NAME = '$table[0]'"));
+        }
+    } // testGet_results
+    
     /**
      * @covers ezSQL_oracle8_9::__construct
      */

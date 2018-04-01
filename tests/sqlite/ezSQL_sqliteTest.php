@@ -10,6 +10,11 @@ use PHPUnit\Framework\TestCase;
 class ezSQL_sqliteTest extends TestCase
 {
     /**
+     * constant string path and file name of the SQLite test database
+     */
+    const TEST_SQLITE_DB = 'ez_test.sqlite';
+    
+    /**
      * @var ezSQL_sqlite
      */
     protected $object;
@@ -43,7 +48,7 @@ class ezSQL_sqliteTest extends TestCase
               'The sqlite Lib is not available.'
             );
         }
-        $this->object = new ezSQL_sqlite;
+        $this->object = new ezSQL_sqlite('./',self::TEST_SQLITE_DB); 
     }
 
     /**
@@ -116,14 +121,31 @@ class ezSQL_sqliteTest extends TestCase
 
     /**
      * @covers ezSQL_sqlite::query
-     * @todo   Implement testQuery().
      */
     public function testQuery()
     {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-            'This test has not been implemented yet.'
-        );
+        // Create a table..
+        $this->assertEquals(0, $this->object->query("DROP TABLE test_table;"));
+        $this->assertEquals(0,$this->object->query("CREATE TABLE test_table ( MyColumnA INTEGER PRIMARY KEY, MyColumnB TEXT(32) );"));
+
+        // Insert test data
+        for($i=0;$i<3;++$i)
+        {
+            $this->assertEquals(1, $this->object->query('INSERT INTO test_table (MyColumnB) VALUES ("'.md5(microtime()).'");'));
+        }
+	
+        // Get list of tables from current database..
+        $my_tables = $this->object->get_results("SELECT * FROM sqlite_master WHERE sql NOTNULL;");
+        
+        // Loop through each row of results..
+        foreach ( $my_tables as $table )
+        {
+            // Get results of DESC table..
+            $this->assertNotNull($this->object->get_results("SELECT * FROM $table->name;"));
+        }
+
+        // Get rid of the table we created..
+        $this->assertEquals(0, $this->object->query("DROP TABLE test_table;"));
     }   
     
     /**

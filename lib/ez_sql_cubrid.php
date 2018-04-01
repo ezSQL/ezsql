@@ -70,7 +70,8 @@
 
 		function connect($dbuser='', $dbpassword='', $dbname='', $dbhost='localhost', $dbport=33000)
 		{
-			global $ezSQL_cubrid_str; $return_val = false;
+			global $ezSQL_cubrid_str; 
+            $return_val = false;
             $this->_connected = false;
 			
 			// Keep track of how long the DB takes to connect
@@ -81,12 +82,14 @@
 			{
 				$this->register_error($ezSQL_cubrid_str[1].' in '.__FILE__.' on line '.__LINE__);
 				$this->show_errors ? trigger_error($ezSQL_cubrid_str[1],E_USER_WARNING) : null;
+				return false;
 			}
 			// Try to establish the server database handle
 			else if ( ! $this->dbh = @cubrid_connect($dbhost,$dbport,$dbname,$dbuser,$dbpassword) )
 			{
 				$this->register_error($ezSQL_cubrid_str[2].' in '.__FILE__.' on line '.__LINE__);
 				$this->show_errors ? trigger_error($ezSQL_cubrid_str[2],E_USER_WARNING) : null;
+				return false;
 			}
 			else
 			{
@@ -102,16 +105,6 @@
 			}
 
 			return $return_val;
-		}
-
-		/**********************************************************************
-		*  No real equivalent of mySQL select in CUBRID
-		*  once again, function included for the sake of consistency
-		*/
-
-		function select($dbuser='', $dbpassword='', $dbname='', $dbhost='localhost', $dbport=33000)
-		{
-			return $this->connect($dbuser='', $dbpassword='', $dbname='', $dbhost='localhost', $dbport=33000);
 		}
 
 		/**********************************************************************
@@ -146,14 +139,7 @@
 
 		function query($query)
 		{
-			// This keeps the connection alive for very long running scripts
-			if ( $this->count(false) >= 500 )
-			{
-				$this->disconnect();
-				$this->connect($this->dbuser,$this->dbpassword,$this->dbname,$this->dbhost,$this->dbport);
-			}
-
-			// Initialise return
+			// Initialize return
 			$return_val = 0;
 
 			// Flush cached values..
@@ -218,7 +204,7 @@
 					$this->insert_id = @cubrid_insert_id($this->dbh);
 				}
 
-				// Return number fo rows affected
+				// Return number of rows affected
 				$return_val = $this->rows_affected;
 			}
 			// Query was a select
@@ -238,7 +224,7 @@
 				$num_rows=0;
 				while ( $row = @cubrid_fetch_object($this->result) )
 				{
-					// Store relults as an objects within main array
+					// Store result as an objects within main array
 					$this->last_result[$num_rows] = $row;
 					$num_rows++;
 				}
@@ -279,6 +265,7 @@
 		{
 			$this->conn_queries = 0;
 			@cubrid_close($this->dbh);
+			$this->_connected = false;
 		}
 
 	}
