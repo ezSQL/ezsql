@@ -13,6 +13,7 @@ class ezSQL_sqlite3Test extends TestCase
      * constant string path and file name of the SQLite test database
      */
     const TEST_SQLITE_DB = 'ez_test.sqlite3';
+    const TEST_SQLITE_DB_DIR = './tests/sqlite/';
     
     /**
      * @var ezSQL_sqlite3
@@ -48,7 +49,7 @@ class ezSQL_sqlite3Test extends TestCase
               'The sqlite3 Lib is not available.'
             );
         }
-        $this->object = new ezSQL_sqlite3('./',self::TEST_SQLITE_DB); 
+        $this->object = new ezSQL_sqlite3(self::TEST_SQLITE_DB_DIR, self::TEST_SQLITE_DB); 
     }
 
     /**
@@ -70,14 +71,14 @@ class ezSQL_sqlite3Test extends TestCase
         
         $this->assertFalse($this->object->connect('null:', ''));
         
-        $this->assertTrue($this->object->connect('./',self::TEST_SQLITE_DB));
+        $this->assertTrue($this->object->connect(self::TEST_SQLITE_DB_DIR, self::TEST_SQLITE_DB));
     } // testSQLiteConnect
 
     /**
      * @covers ezSQL_sqlite3::quick_connect
      */
     public function testQuick_connect() {
-        $this->assertNotNull($this->object->quick_connect('./',self::TEST_SQLITE_DB));
+        $this->assertNotNull($this->object->quick_connect(self::TEST_SQLITE_DB_DIR, self::TEST_SQLITE_DB));
     } // testSQLiteQuick_connect
     
     /**

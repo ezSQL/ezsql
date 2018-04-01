@@ -55,7 +55,7 @@ class ezSQL_pdo_sqliteTest extends TestCase {
     /**
      * constant string path and file name of the SQLite test database
      */
-    const TEST_SQLITE_DB = 'ez_test.sqlite';
+    const TEST_SQLITE_DB = './tests/pdo/ez_test.sqlite';
 
     /**
      * @var ezSQL_pdo
