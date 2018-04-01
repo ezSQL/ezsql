@@ -161,13 +161,10 @@ class ezSQL_sqlsrvTest extends TestCase {
 
     /**
      * @covers ezSQL_sqlsrv::ConvertMySqlTosqlsrv
-     * @todo Implement testConvertMySqlTosqlsrv().
      */
     public function testConvertMySqlTosqlsrv() {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-                'This test has not been implemented yet.'
-        );
+        $result = $this->object->ConvertMySqlTosqlsrv("SELECT `test` FROM `unit_test`;");
+        $this->assertEquals("SELECT test FROM unit_test;", $result);
     } // testConvertMySqlTosqlsrv
     
     /**
