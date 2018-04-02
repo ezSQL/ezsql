@@ -20,7 +20,6 @@
             "lib/ez_sql_pdo.php",
             "lib/ez_sql_postgresql.php",
             "lib/ez_sql_recordset.php",
-            "lib/ez_sql_sqlite.php",
             "lib/ez_sql_sqlite3.php",
             "lib/ez_sql_sqlsrv.php",
             "shared/ez_sql_core.php",
