@@ -117,7 +117,6 @@ install:
     - appveyor-retry appveyor DownloadFile https://getcomposer.org/composer.phar
     - cd c:\projects\php-project-workspace
     - composer self-update
-    - composer require php-coveralls/php-coveralls
     
 build_script:
   # postgres
@@ -130,7 +129,8 @@ build_script:
   - sqlcmd -S localhost,1433 -U sa -P Password12! -d ez_test -Q "CREATE LOGIN ez_test WITH PASSWORD=N'ezTest', DEFAULT_DATABASE=ez_test, CHECK_EXPIRATION=OFF, CHECK_POLICY=OFF; ALTER SERVER ROLE [sysadmin] ADD MEMBER ez_test" 
   - mkdir c:\CUBRID\database
   - cd c:\CUBRID\database
-  - cubrid createdb --db-volume-size=20M --db-page-size=4K --log-volume-size=20M ez_test en_US
+  - cubrid service start
+  - cubrid createdb --db-volume-size=64M --db-page-size=8K --log-volume-size=64M ez_test en_US
   - cubrid server start ez_test
   - csql ez_test -u dba -c "CREATE USER ez_test PASSWORD 'ezTest' MEMBERS dba"
   
