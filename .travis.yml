@@ -17,11 +17,10 @@ services:
 before_install:
   - sudo add-apt-repository ppa:cubrid/cubrid -y
   - sudo apt-get update -q
-  - sudo apt-get install cubrid -y
+  - sudo apt-get install cubrid php7-cubrid -y
 
 # Commands to be run before your environment runs.
 before_script:
-  - cubrid service start
   - cubrid createdb --db-volume-size=128M --db-page-size=16K --log-volume-size=128M ez_test en_US
   - cubrid server start ez_test
   - csql ez_test -u dba -c "CREATE USER ez_test PASSWORD 'ezTest' MEMBERS dba" 
