@@ -6,7 +6,7 @@ clone_folder: c:\projects\php-project-workspace
 ## Build matrix for lowest and highest possible targets
 environment:
   matrix:
-  - php_ver_target: 7.1
+  - php_ver_target: 7.0
   MYSQL_DATABASE: ez_test
   MYSQL_HOST: localhost
   MYSQL_USER: root
@@ -94,9 +94,9 @@ install:
     - IF %PHP%==1 echo extension=php_pdo_sqlite.dll >> php.ini
     - IF %PHP%==1 echo extension=php_mysqli.dll >> php.ini
     - IF %PHP%==1 echo extension=php_pdo_mysql.dll >> php.ini
-    - IF %PHP%==1 appveyor-retry appveyor DownloadFile https://xdebug.org/files/php_xdebug-2.6.0-7.1-vc14-nts-x86_64.dll -FileName c:\tools\php\ext\php_xdebug-2.6.0-7.1-vc14-nts-x86_64.dll
+    - IF %PHP%==1 appveyor-retry appveyor DownloadFile https://xdebug.org/files/php_xdebug-2.5.5-7.0-vc14-nts-x86_64.dll -FileName c:\tools\php\ext\php_xdebug-2.5.5-7.0-vc14-nts-x86_64.dll
     - IF %PHP%==1 echo [xdebug] >> php.ini
-    - IF %PHP%==1 echo zend_extension=php_xdebug-2.6.0-7.1-vc14-nts-x86_64.dll >> php.ini
+    - IF %PHP%==1 echo zend_extension=php_xdebug-2.5.5-7.0-vc14-nts-x86_64.dll >> php.ini
     - IF %PHP%==1 echo zend.assertions=1 >> php.ini
     - IF %PHP%==1 echo assert.exception=On >> php.ini
     - IF %PHP%==1 echo xdebug.remote_enable=1 >> php.ini
@@ -118,9 +118,9 @@ build_script:
   - sqlcmd -S localhost,1433 -U sa -P Password12! -d ez_test -Q "CREATE LOGIN ez_test WITH PASSWORD=N'ezTest', DEFAULT_DATABASE=ez_test, CHECK_EXPIRATION=OFF, CHECK_POLICY=OFF; ALTER SERVER ROLE [sysadmin] ADD MEMBER ez_test" 
   
 before_test:
-  # mysql
   - SET PATH=%MYSQL_PATH%\bin;%PATH%
   - mysqladmin --host=%MYSQL_HOST% --user=%MYSQL_USER% --password=%MYSQL_PASSWORD% create %MYSQL_DATABASE%    
+  # mysql
   - mysql -u root -p"Password12!" -e "CREATE DATABASE IF NOT EXISTS ez_test;"
   - mysql -u root -p"Password12!" -e "GRANT ALL PRIVILEGES ON ez_test.* TO ez_test@localhost IDENTIFIED BY 'ezTest'";
   - mysql -u root -p"Password12!" -e "FLUSH PRIVILEGES;"
