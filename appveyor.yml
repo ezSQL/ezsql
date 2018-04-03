@@ -20,7 +20,6 @@ services:
     
 ## Cache composer, chocolatey and php bits
 cache:
-    - '%LOCALAPPDATA%\Composer\files -> composer.lock'
     - composer.phar
     # Cache chocolatey packages
     - C:\ProgramData\chocolatey\bin -> .appveyor.yml
@@ -91,10 +90,10 @@ install:
         }
     - IF %PHP%==1 echo extension=php_pgsql.dll >> php.ini
     - IF %PHP%==1 echo extension=php_pdo_pgsql.dll >> php.ini
-    - IF %PHP%==1 echo extension=php_pdo_sqlite.dll >> php.ini
     - IF %PHP%==1 echo extension=php_sqlite3.dll >> php.ini
-    - IF %PHP%==1 echo extension=php_pdo_mysql.dll >> php.ini
+    - IF %PHP%==1 echo extension=php_pdo_sqlite.dll >> php.ini
     - IF %PHP%==1 echo extension=php_mysqli.dll >> php.ini
+    - IF %PHP%==1 echo extension=php_pdo_mysql.dll >> php.ini
     - IF %PHP%==1 appveyor-retry appveyor DownloadFile https://xdebug.org/files/php_xdebug-2.5.5-7.0-vc14-nts-x86_64.dll -FileName c:\tools\php\ext\php_xdebug-2.5.5-7.0-vc14-nts-x86_64.dll
     - IF %PHP%==1 echo [xdebug] >> php.ini
     - IF %PHP%==1 echo zend_extension=php_xdebug-2.5.5-7.0-vc14-nts-x86_64.dll >> php.ini
