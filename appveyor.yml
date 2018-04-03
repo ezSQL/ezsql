@@ -45,8 +45,8 @@ install:
           appveyor-retry cinst --params '""/InstallDir:C:\tools\php""' --ignore-checksums -y php --version ((choco search php --exact --all-versions -r | select-string -pattern $env:php_ver_target | sort { [version]($_ -split '\|' | select -last 1) } -Descending | Select-Object -first 1) -replace '[php|]','')
         }
     - appveyor-retry cinst -y sqlite
-    #- appveyor-retry cinst -y jre8
-    - appveyor-retry cinst -y jdk8
+    - appveyor-retry cinst -y jre8
+    #- appveyor-retry cinst -y jdk8
     - cd c:\tools\php\ext
     - IF %PHP%==1 appveyor-retry appveyor DownloadFile http://ftp.cubrid.org/CUBRID_Drivers/PHP_Driver/10.1.0/Windows/CUBRID-PHP-7.1-WIN64-VC14_NTS-10.1.0.0003.zip
     - IF %PHP%==1 7z x -y CUBRID-PHP-7.1-WIN64-VC14_NTS-10.1.0.0003.zip > $null
@@ -54,6 +54,7 @@ install:
     - IF %PHP%==1 7z x -y CUBRID-PDO-7.1-WIN64-VC14-NTS-10.1.0.0003.bin.zip > $null
     - cd c:\tools
     - IF %PHP%==1 appveyor-retry appveyor DownloadFile http://ftp.cubrid.org/CUBRID_Engine/10.1_latest/CUBRID-Windows-x64-10.1-latest.msi
+    - IF %PHP%==1 REG ADD "HKCU\Software\Microsoft\Windows NT\CurrentVersion\AppCompatFlags\Layers" /V %cd%\CUBRID-Windows-x64-10.1-latest.msi /T REG_SZ /D WIN7RTM /F
     - IF %PHP%==1 msiexec /i CUBRID-Windows-x64-10.1-latest.msi /q
     - cd c:\tools\php
     # Get the MSSQL DLL's
@@ -134,7 +135,6 @@ before_test:
   # cubrid
   - mkdir c:\CUBRID\database
   - cd c:\CUBRID\database
-  - cubrid service stop
   - cubrid service start
   - cubrid createdb --db-volume-size=128M --db-page-size=16K --log-volume-size=128M ez_test en_US
   - cubrid server start ez_test
