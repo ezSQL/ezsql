@@ -68,7 +68,7 @@ class ezSQL_cubridTest extends TestCase
               'The cubrid Lib is not available.'
             );
         }
-        $this->object = new ezSQL_cubrid;
+        $this->object = new ezSQL_cubrid(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME);
     }
 
     /**
@@ -77,7 +77,7 @@ class ezSQL_cubridTest extends TestCase
      */
     protected function tearDown()
     {
-        $this->object->query('DROP TABLE unit_test');
+        $this->object->query('DROP TABLE IF EXISTS unit_test');
         $this->object = null;
     }
 
@@ -85,7 +85,7 @@ class ezSQL_cubridTest extends TestCase
      * @covers ezSQL_cubrid::quick_connect
      */
     public function testQuick_connect() {
-        $this->assertTrue($this->object->quick_connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME, self::TEST_DB_HOST, self::TEST_DB_PORT));
+        $this->assertTrue($this->object->quick_connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME));
     } // testQuick_connect
 
     /**
@@ -97,7 +97,7 @@ class ezSQL_cubridTest extends TestCase
         set_error_handler(array($this, 'errorHandler')); 
          
         $this->assertFalse($this->object->connect('',''));  
-        $this->assertFalse($this->object->connect('self::TEST_DB_USER', 'self::TEST_DB_PASSWORD',' self::TEST_DB_NAME', 'self::TEST_DB_CHARSET'));  
+        $this->assertFalse($this->object->connect('self::TEST_DB_USER', 'self::TEST_DB_PASSWORD',' self::TEST_DB_NAME'));  
         
         $this->assertTrue($this->object->connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME, self::TEST_DB_HOST, self::TEST_DB_PORT));
     } // testConnect
@@ -106,6 +106,7 @@ class ezSQL_cubridTest extends TestCase
      * @covers ezSQL_cubrid::escape
      */
     public function testEscape() {
+        $this->object->quick_connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME);
         $result = $this->object->escape("This is'nt escaped.");
 
         $this->assertEquals("This is''nt escaped.", $result);
@@ -151,8 +152,8 @@ class ezSQL_cubridTest extends TestCase
      * @covers ezSQL_cubrid::query
      */
     public function testQuery() {
-        $this->object->quick_connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME);    
-        $this->assertEquals($this->object->query('CREATE TABLE unit_test(id integer, test_key varchar(50), PRIMARY KEY (ID))'), 0);
+        $this->object->quick_connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME); 
+        $this->assertNotFalse($this->object->query('CREATE TABLE unit_test(id int, test_key varchar(50), PRIMARY KEY (ID))'));
         $this->assertEquals($this->object->query('INSERT INTO unit_test(id, test_key) VALUES(1, \'test 1\')'), 1);
         
         $this->object->dbh = null;
@@ -166,8 +167,9 @@ class ezSQL_cubridTest extends TestCase
      */
     public function testInsert()
     {
-        $this->object->quick_connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME);    
-        $this->object->query('CREATE TABLE unit_test(id integer, test_key varchar(50), PRIMARY KEY (ID))');
+        $this->object->quick_connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME);  
+        $this->object->query('DROP TABLE IF EXISTS unit_test');  
+        $this->object->query('CREATE TABLE unit_test(id int, test_key varchar(50), PRIMARY KEY (ID))');
         
         $result = $this->object->insert('unit_test', array('id'=>'1', 'test_key'=>'test 1' ));
         $this->assertEquals(0, $result);
@@ -179,7 +181,7 @@ class ezSQL_cubridTest extends TestCase
     public function testUpdate()
     {
         $this->object->quick_connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME);    
-        $this->object->query('CREATE TABLE unit_test(id integer, test_key varchar(50), PRIMARY KEY (ID))');
+        $this->object->query('CREATE TABLE unit_test(id int, test_key varchar(50), PRIMARY KEY (ID))');
         $this->object->insert('unit_test', array('id'=>'1', 'test_key'=>'test 1' ));
         $this->object->insert('unit_test', array('id'=>'2', 'test_key'=>'test 2' ));
         $this->object->insert('unit_test', array('id'=>'3', 'test_key'=>'test 3' ));
@@ -197,7 +199,7 @@ class ezSQL_cubridTest extends TestCase
     public function testDelete()
     {
         $this->object->quick_connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME);    
-        $this->object->query('CREATE TABLE unit_test(id integer, test_key varchar(50), PRIMARY KEY (ID))');
+        $this->object->query('CREATE TABLE unit_test(id int, test_key varchar(50), PRIMARY KEY (ID))');
         $unit_test['id'] = '1';
         $unit_test['test_key'] = 'test 1';
         $this->object->insert('unit_test', $unit_test );
@@ -223,7 +225,7 @@ class ezSQL_cubridTest extends TestCase
     public function testSelecting()
     {
         $this->object->quick_connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME);    
-        $this->object->query('CREATE TABLE unit_test(id integer, test_key varchar(50), PRIMARY KEY (ID))');
+        $this->object->query('CREATE TABLE unit_test(id int, test_key varchar(50), PRIMARY KEY (ID))');
         $this->object->insert('unit_test', array('id'=>'1', 'test_key'=>'testing 1' ));
         $this->object->insert('unit_test', array('id'=>'2', 'test_key'=>'testing 2' ));
         $this->object->insert('unit_test', array('id'=>'3', 'test_key'=>'testing 3' ));

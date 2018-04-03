@@ -243,7 +243,7 @@ class ezSQL_mysqli extends ezSQLcore
      */
     public function query($query) {
         // check for and replace tags created by ezSQLcore's insert, update, delete, replace, and showing methods
-        $query = str_replace('__ezsql__','',$query);
+        //$query = str_replace('__ezsql__','',$query);
         // Initialize return
         $return_val = 0;
 

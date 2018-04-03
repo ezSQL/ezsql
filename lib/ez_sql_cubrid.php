@@ -61,7 +61,7 @@
 		*/
 		function quick_connect($dbuser='', $dbpassword='', $dbname='', $dbhost='localhost', $dbport=33000)
 		{
-			return $this->connect($dbuser='', $dbpassword='', $dbname='', $dbhost='localhost', $dbport=33000);
+			return $this->connect($dbuser, $dbpassword, $dbname, $dbhost, $dbport);
 		}
         
 		/**********************************************************************
