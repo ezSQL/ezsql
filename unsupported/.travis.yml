@@ -1,0 +1,50 @@
+language: php
+
+# Versions of PHP you want your project run with.
+php:
+  - 5.6
+  - 7.0
+  - 7.1
+  - 7.2
+
+env:
+  - MYSQL_HOST=127.0.0.1 MYSQL_USER=root
+
+services:
+  - mysql
+  - postgresql
+
+-before_install:
+  - sudo add-apt-repository ppa:cubrid/cubrid -y
+  - sudo apt-get update -q
+  - sudo apt-get install cubrid php7-cubrid -y
+
+# Commands to be run before your environment runs.
+before_script:
+  - composer self-update
+  - composer require php-coveralls/php-coveralls
+  - mysql -e 'CREATE DATABASE IF NOT EXISTS ez_test;'
+  - mysql -e 'GRANT ALL PRIVILEGES ON ez_test.* TO ez_test@localhost;'
+  - mysql -e "SET PASSWORD FOR 'ez_test'@'localhost' = PASSWORD('ezTest')"
+  - psql -c 'CREATE DATABASE ez_test;' -U postgres
+  - psql -c "CREATE USER ez_test WITH PASSWORD 'ezTest';" -U postgres
+  - cubrid service start
+  - cubrid createdb --db-volume-size=128M --db-page-size=16K --log-volume-size=128M ez_test en_US
+  - cubrid server start ez_test
+  - csql ez_test -u dba -c "CREATE USER ez_test PASSWORD 'ezTest' MEMBERS dba"   
+  
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
+
+# Commands you want to run that will verify your build.
+script: 
+  - phpunit --coverage-clover=coverage.xml
+
+# allow_failures: Allow this build to fail under the specified environments.
+# fast_finish: If your build fails do not continue trying to build, just stop.
+matrix:
+  allow_failures:
+  - php: 5.6
+  - php: 7.2
+    env: KEY=VALUE  
+  fast_finish: true
