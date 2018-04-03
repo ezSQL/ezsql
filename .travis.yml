@@ -14,16 +14,8 @@ services:
   - mysql
   - postgresql
   
-before_install:
-  - sudo add-apt-repository ppa:cubrid/cubrid -y
-  - sudo apt-get update -q
-  - sudo apt-get install cubrid php7-cubrid -y
-
 # Commands to be run before your environment runs.
 before_script:
-  - cubrid createdb --db-volume-size=128M --db-page-size=16K --log-volume-size=128M ez_test en_US
-  - cubrid server start ez_test
-  - csql ez_test -u dba -c "CREATE USER ez_test PASSWORD 'ezTest' MEMBERS dba" 
   - composer self-update
   - mysql -e 'CREATE DATABASE IF NOT EXISTS ez_test;'
   - mysql -e 'GRANT ALL PRIVILEGES ON ez_test.* TO ez_test@localhost;'
