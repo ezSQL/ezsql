@@ -17,7 +17,7 @@ services:
 before_install:
   - sudo add-apt-repository ppa:cubrid/cubrid -y
   - sudo apt-get update -q
-  - sudo apt-get install cubrid php-cubrid -y
+  - sudo apt-get install cubrid -y
 
 # Commands to be run before your environment runs.
 before_script:

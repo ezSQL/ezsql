@@ -106,6 +106,7 @@ install:
     - appveyor-retry appveyor DownloadFile https://getcomposer.org/composer.phar
     - cd c:\projects\php-project-workspace
     - composer self-update
+    - composer require php-coveralls/php-coveralls
     
 build_script:
   # postgres
