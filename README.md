@@ -2,7 +2,7 @@ ezSQL
 =====
 [![Build Status](https://travis-ci.org/ezSQL/ezSQL.svg?branch=v3)](https://travis-ci.org/ezSQL/ezSQL)
 [![Build status](https://ci.appveyor.com/api/projects/status/6s8oqnoxa2i5k04f/branch/v3?svg=true)](https://ci.appveyor.com/project/jv2222/ezsql/branch/v3)
-[![codecov](https://codecov.io/gh/ezSQL/ezSQL/branch/master/graph/badge.svg)](https://codecov.io/gh/ezSQL/ezSQL)
+[![codecov](https://codecov.io/gh/ezSQL/ezSQL/branch/v3/graph/badge.svg)](https://codecov.io/gh/ezSQL/ezSQL)
 [![Maintainability](https://api.codeclimate.com/v1/badges/8db71512a019ab280a16/maintainability)](https://codeclimate.com/github/techno-express/ezSQL/maintainability)
 
 Author
