@@ -14,11 +14,13 @@ services:
   - mysql
   - postgresql
   
+before_install:
+  - sudo add-apt-repository ppa:cubrid/cubrid -y
+  - sudo apt-get update -q
+  - sudo apt-get install cubrid php5-cubrid -y
+
 # Commands to be run before your environment runs.
 before_script:
-  - sudo add-apt-repository ppa:cubrid/cubrid
-  - sudo apt-get update
-  - sudo apt-get install cubrid php5-cubrid -y
   - cubrid service start
   - cubrid createdb --db-volume-size=128M --db-page-size=16K --log-volume-size=128M ez_test en_US
   - cubrid server start ez_test
