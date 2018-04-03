@@ -45,6 +45,8 @@ install:
           appveyor-retry cinst --params '""/InstallDir:C:\tools\php""' --ignore-checksums -y php --version ((choco search php --exact --all-versions -r | select-string -pattern $env:php_ver_target | sort { [version]($_ -split '\|' | select -last 1) } -Descending | Select-Object -first 1) -replace '[php|]','')
         }
     - appveyor-retry cinst -y sqlite
+    - appveyor-retry cinst -y jre8
+    - appveyor-retry cinst -y jdk8
     - cd c:\tools\php\ext
     - IF %PHP%==1 appveyor-retry appveyor DownloadFile http://ftp.cubrid.org/CUBRID_Drivers/PHP_Driver/10.1.0/Windows/CUBRID-PHP-7.1-WIN64-VC14_NTS-10.1.0.0003.zip
     - IF %PHP%==1 7z x -y CUBRID-PHP-7.1-WIN64-VC14_NTS-10.1.0.0003.zip > $null
@@ -127,17 +129,18 @@ build_script:
   # sqlserver
   - sqlcmd -S localhost,1433 -U sa -P Password12! -Q "CREATE DATABASE ez_test"
   - sqlcmd -S localhost,1433 -U sa -P Password12! -d ez_test -Q "CREATE LOGIN ez_test WITH PASSWORD=N'ezTest', DEFAULT_DATABASE=ez_test, CHECK_EXPIRATION=OFF, CHECK_POLICY=OFF; ALTER SERVER ROLE [sysadmin] ADD MEMBER ez_test" 
-  - mkdir c:\CUBRID\database
-  - cd c:\CUBRID\database
-  #- cubrid service start
-  - cubrid createdb --db-volume-size=64M --db-page-size=8K --log-volume-size=64M ez_test en_US
-  #- cubrid server start ez_test
-  - csql ez_test -u dba -c "CREATE USER ez_test PASSWORD 'ezTest' MEMBERS dba"
   
 before_test:
+  # cubrid
+  - mkdir c:\CUBRID\database
+  - cd c:\CUBRID\database
+  - cubrid service start
+  - cubrid createdb --db-volume-size=128M --db-page-size=16K --log-volume-size=128M ez_test en_US
+  - cubrid server start ez_test
+  - csql ez_test -u dba -c "CREATE USER ez_test PASSWORD 'ezTest' MEMBERS dba"  
+  # mysql
   - SET PATH=%MYSQL_PATH%\bin;%PATH%
   - mysqladmin --host=%MYSQL_HOST% --user=%MYSQL_USER% --password=%MYSQL_PASSWORD% create %MYSQL_DATABASE%    
-  # mysql
   - mysql -u root -p"Password12!" -e "CREATE DATABASE IF NOT EXISTS ez_test;"
   - mysql -u root -p"Password12!" -e "GRANT ALL PRIVILEGES ON ez_test.* TO ez_test@localhost IDENTIFIED BY 'ezTest'";
   - mysql -u root -p"Password12!" -e "FLUSH PRIVILEGES;"
