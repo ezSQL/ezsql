@@ -19,7 +19,7 @@ class ezFunctionsTest extends TestCase {
      * Sets up the fixture, for example, opens a network connection.
      * This method is called before a test is executed.
      */
-    protected function setUp() {        
+    protected function setUp() {
     } // setUp
 
     /**
@@ -163,6 +163,13 @@ class ezFunctionsTest extends TestCase {
     {
         $this->assertInternalType('array',notBetween('field', 'data', 'data2'));
         $this->assertArraySubset([3 => 'data2'], notBetween('field', 'data', 'data2'));
+    }
+
+    /**
+     * setQuery
+     */
+    public function testsetQuery() {
+        $this->assertFalse(setQuery());
     }
 
     /**
