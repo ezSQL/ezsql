@@ -63,7 +63,6 @@
         $_ezPdo = null;
         $_ezPostgresql = null;
         $_ezRecordset = null;
-        $_ezSqlite = null;
         $_ezSqlite3 = null;
         $_ezSqlsrv = null;
 
@@ -232,6 +231,51 @@
         array_push($expression, $x, _notBETWEEN, $y, $y2, ...$args);
         return $expression;
     }
+    
+    /**
+       * desc: Using global class instances, setup functions to call class methods directly.
+       * param: @ezSQL - string, representing class  'cubrid', 'mysqli', 'oracle8_9', 'oracletns', 'pdo', 'postgresql', 'recordset', 'sqlite3', 'sqlsrv'
+       * returns: boolean - true, or false for error
+       */
+    function setQuery($ezSQL='') {
+        global $_ezQuery, $_ezCubrid, $_ezMysqli, $_ezOracle8_9, $_ezOracleTNS;
+        global $_ezPdo, $_ezPostgresql, $_ezRecordset, $_ezSqlite3, $_ezSqlsrv;
+        if (in_array(strtolower($ezSQL), array( 'cubrid', 'mysqli', 'oracle8_9', 'oracletns', 'pdo', 'postgresql', 'recordset', 'sqlite3', 'sqlsrv' ))) {
+            switch(strtolower($ezSQL)) {
+                case 'cubrid':
+                    $_ezQuery = $_ezCubrid;
+                    break;
+                case 'mysqli':
+                    $_ezQuery = $_ezMysqli;
+                    break;
+                case 'oracle8_9':
+                    $_ezQuery = $_ezOracle8_9;
+                    break;
+                case 'oracletns':
+                    $_ezQuery = $_ezOracleTNS;
+                    break;
+                case 'pdo':
+                    $_ezQuery = $_ezPdo;
+                    break;
+                case 'postgresql':
+                    $_ezQuery = $_ezPostgresql;
+                    break;
+                case 'recordset':
+                    $_ezQuery = $_ezRecordset;
+                    break;
+                case 'sqlite3':
+                    $_ezQuery = $_ezSqlite3;
+                    break;
+                case 'sqlsrv':
+                    $_ezQuery = $_ezSqlsrv;
+                    break;                    
+            }
+            return true;            
+        } else {
+            unset($_ezQuery);
+            return false;            
+        }
+    }     
     
     function select($table='', $columns='*', ...$args) {
         global $_ezQuery;
