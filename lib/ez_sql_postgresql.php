@@ -232,19 +232,30 @@
 		} // showDatabases
 
 		/**
-		* Perform PostgreSQL query and try to detirmin result value
+		* Perform PostgreSQL query and try to determine result value
 		*
 		* @param string $query
 		* @return boolean
 		*/
 		/**********************************************************************
-		*  Perform PostgreSQL query and try to detirmin result value
+		*  Perform PostgreSQL query and try to determine result value
 		*/
 
 		function query($query, $param=null)
 		{
-            // check for and replace tags created by ezSQLcore's insert, update, delete, replace, and showing methods
-            //$query = str_replace('__ezsql__', '', $query);
+			// check for parametrize tag and replace tags with proper tag that created by ezSQLcore's insert, update, delete, replace, where, select_insert and selecting methods
+			if (($param) && is_array($param) && ($this->hasprepare))
+			{
+				foreach ($param as $i => $value); {
+					$parametrize = $i + 1;
+					//$from = '/'.preg_quote('_ez_', '/').'/';
+					//$query = preg_replace($from, '$'.$parametrize, $query, 1);
+					$needle = '_ez_';
+					$pos = strpos($query, $needle);
+					if ($pos !== false) 
+						$query = substr_replace($query, '$'.$parametrize, $pos, strlen($needle));
+				}
+			}				
 
 			// Initialize return
 			$return_val = 0;

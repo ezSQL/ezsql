@@ -177,6 +177,8 @@
 
 		function query($query, $param=null)
 		{
+			// check for parametrize tag and replace tags with proper tag that created by ezSQLcore's insert, update, delete, replace, where, select_insert and selecting methods
+			$query = str_replace('_ez_', '?', $query);
 
 			//if flag to convert query from MySql syntax to MS-Sql syntax is true
 			//convert the query
