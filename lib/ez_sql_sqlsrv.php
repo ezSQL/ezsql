@@ -52,6 +52,7 @@
 		var $dbname = false;
 		var $dbhost = false;
 		var $rows_affected = false;
+		var $hasprepare = true;
 
 		//if we want to convert Queries in MySql syntax to MS-SQL syntax. Yes, there
 		//are some differences in query syntax.
@@ -174,7 +175,7 @@
 		*  Perform sqlsrv query and try to determine result value
 		*/
 
-		function query($query)
+		function query($query, $param=null)
 		{
 
 			//if flag to convert query from MySql syntax to MS-Sql syntax is true
@@ -216,8 +217,10 @@
 			}
 
 			// Perform the query via std sqlsrv_query function..
-
-			$this->result = @sqlsrv_query($this->dbh, $query);
+			if (($param) && is_array($param) && ($this->hasprepare))
+				$this->result = @sqlsrv_query($this->dbh, $query, $param);
+			else 
+				$this->result = @sqlsrv_query($this->dbh, $query);
 
 			// If there is an error then take note of it..
 			if ($this->result === false )

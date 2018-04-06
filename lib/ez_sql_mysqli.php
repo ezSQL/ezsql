@@ -75,7 +75,8 @@ class ezSQL_mysqli extends ezSQLcore
      * @var resource
      */
     public $dbh;
-
+	var $hasprepare = true;
+	
     /**
      * Constructor - allow the user to perform a quick connect at the same time
      * as initializing the ezSQL_mysql class
@@ -241,7 +242,7 @@ class ezSQL_mysqli extends ezSQLcore
      * @param type $query
      * @return boolean
      */
-    public function query($query) {
+    public function query($query, $param=null) {
         // check for and replace tags created by ezSQLcore's insert, update, delete, replace, and showing methods
         //$query = str_replace('__ezsql__','',$query);
         // Initialize return
@@ -274,7 +275,10 @@ class ezSQL_mysqli extends ezSQLcore
         }
 
         // Perform the query via std mysql_query function..
-        $this->_result = mysqli_query($this->dbh, $query);
+		if (($param) && is_array($param) && ($this->hasprepare))
+			$this->_result = $this->query_prepared($query, $param);
+		else 
+			$this->_result = mysqli_query($this->dbh, $query);
 
         // If there is an error then take note of it..
         if ( $str = mysqli_error($this->dbh) ) {
@@ -333,7 +337,37 @@ class ezSQL_mysqli extends ezSQLcore
 
         return $return_val;
     } // query
+	
+	/**
+     * Creates a prepared query, binds the given parameters and returns the result of the executed
+     * {@link \mysqli_stmt}.
+     * @param string $query
+     * @param array $args
+     * @return bool|\mysqli_result
+     */
+    public function query_prepared($query, array $args)
+    {
+        $stmt   = $this->prepare($query);
+        $params = [];
+        $types  = array_reduce($args, function ($string, &$arg) use (&$params) {
+            $params[] = &$arg;
+            if (is_float($arg))         $string .= 'd';
+            elseif (is_integer($arg))   $string .= 'i';
+            elseif (is_string($arg))    $string .= 's';
+            else                        $string .= 'b';
+            return $string;
+        }, '');
+        array_unshift($params, $types);
 
+        call_user_func_array([$stmt, 'bind_param'], $params);
+
+        $result = $stmt->execute() ? $stmt->get_result() : false;
+
+        $stmt->close();
+
+        return $result;
+    }
+	
     /**
      * Close the database connection
      */

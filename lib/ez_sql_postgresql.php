@@ -71,6 +71,7 @@
 		var $result;
         
 		var $rows_affected = false;
+		var $hasprepare = true;
 
 		/**
 		* Constructor - allow the user to perform a qucik connect at the same time
@@ -240,12 +241,12 @@
 		*  Perform PostgreSQL query and try to detirmin result value
 		*/
 
-		function query($query)
+		function query($query, $param=null)
 		{
             // check for and replace tags created by ezSQLcore's insert, update, delete, replace, and showing methods
-            $query = str_replace('__ezsql__', '', $query);
+            //$query = str_replace('__ezsql__', '', $query);
 
-			// Initialise return
+			// Initialize return
 			$return_val = 0;
 
 			// Flush cached values..
@@ -276,7 +277,10 @@
 			}
             
 			// Perform the query via std postgresql_query function..
-			$this->result = @pg_query($this->dbh, $query);
+			if (($param) && is_array($param) && ($this->hasprepare))
+				$this->result = @pg_query_params($this->dbh, $query, $param);
+			else 
+				$this->result = @pg_query($this->dbh, $query);
 
 
 			// If there is an error then take note of it..

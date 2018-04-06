@@ -55,6 +55,7 @@
 		var $do_profile       = false;
 		var $profile_times    = array();
 		var $insert_id        = null;
+		var $hasprepare 	  = false;
 		
     /**
      * Whether the database connection is established, or not
@@ -247,56 +248,57 @@
 			return $new_array;
 		}
 
-
 		/**********************************************************************
 		*  Return the the query as a result set - see docs for more details
 		*/
-
-		function get_results($query=null, $output = OBJECT)
-		{
-
+		function get_results($query=null, $output = OBJECT) {
 			// Log how the function was called
 			$this->func_call = "\$db->get_results(\"$query\", $output)";
 
 			// If there is a query then perform it if not then use cached results..
-			if ( $query )
-			{
+			if ( $query ) {
 				$this->query($query);
 			}
 
-			// Send back array of objects. Each row is an object
-			if ( $output == OBJECT )
-			{
-				return $this->last_result;
+			return $this->get_results_output($output);
+		}
+
+		/**********************************************************************
+		*  Return the parameterized query as a result set - see docs for more details
+		*/
+		function get_results_prepared($query=null, $param=null, $output = OBJECT) {
+			// Log how the function was called
+			$this->func_call = "\$db->get_results_prepared(\"$query, $param\", $output)";
+			
+			// If there is a query then perform it if not then use cached results..
+			if (( $query ) && is_array( $param )) {
+				$this->query($query, $param);
 			}
-			elseif ( $output == ARRAY_A || $output == ARRAY_N )
-			{
-				if ( $this->last_result )
-				{
+			
+			return $this->get_results_output($output);
+		}		
+				
+		// helper for get_results Send back array of objects. Each row is an object				
+		function get_results_output($output = OBJECT) {	
+			if ( $output == OBJECT ) {
+				return $this->last_result;
+			} elseif ( $output == ARRAY_A || $output == ARRAY_N ) {
+				if ( $this->last_result ) {
 					$i=0;
-					foreach( $this->last_result as $row )
-					{
-
+					foreach( $this->last_result as $row ) {
 						$new_array[$i] = get_object_vars($row);
-
-						if ( $output == ARRAY_N )
-						{
+						if ( $output == ARRAY_N ) {
 							$new_array[$i] = array_values($new_array[$i]);
 						}
-
 						$i++;
 					}
-
 					return $new_array;
-				}
-				else
-				{
+				} else {
 					return array();
 				}
 			}
 		}
-
-
+		
 		/**********************************************************************
 		*  Function to get column meta data info pertaining to the last query
 		* see docs for more info and usage
