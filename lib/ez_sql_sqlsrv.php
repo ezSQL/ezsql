@@ -3,6 +3,7 @@
 
 	/**********************************************************************
 	*  Author: davisjw (davisjw@gmail.com)
+           * Contributor:  Lawrence Stubbs <technoexpressnet@gmail.com>
 	*  Web...: http://twitter.com/justinvincent
 	*  Name..: ezSQL_sqlsrv
 	*  Desc..: Microsoft Sql Server component (MS drivers) (part of ezSQL databse abstraction library) - based on ezSql_msSql library class.
@@ -52,6 +53,7 @@
 		var $dbname = false;
 		var $dbhost = false;
 		var $rows_affected = false;
+        
 		var $hasprepare = true;
 
 		//if we want to convert Queries in MySql syntax to MS-SQL syntax. Yes, there
@@ -177,7 +179,7 @@
 
 		function query($query, $param=null)
 		{
-			// check for parametrize tag and replace tags with proper tag that created by ezSQLcore's insert, update, delete, replace, where, select_insert and selecting methods
+			// check for parametrize tag and replace tags with proper tag that was created by ezQuery methods
 			$query = str_replace('_ez_', '?', $query);
 
 			//if flag to convert query from MySql syntax to MS-Sql syntax is true

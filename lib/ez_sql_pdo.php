@@ -5,6 +5,7 @@
  *
  * @author  Justin Vincent (jv@jvmultimedia.com)
  * @author  Stefanie Janine Stoelting <mail@stefanie-stoelting.de>
+ * Contributor:  Lawrence Stubbs <technoexpressnet@gmail.com>
  * @link    http://twitter.com/justinvincent
  * @name    ezSQL_pdo
  * @package ezSQL
@@ -48,7 +49,7 @@ class ezSQL_pdo extends ezSQLcore
     private $_options;
     
     /**
-     * Whether it is a file based datbase connection, for example to a SQLite
+     * Whether it is a file based database connection, for example to a SQLite
      * database file, or not
      * @var boolean Default is false
      */
@@ -59,6 +60,8 @@ class ezSQL_pdo extends ezSQLcore
      * @var boolean Default is true
      */
     public $show_errors = true;
+    
+	var $hasprepare = true;
 
     /**
      * Constructor - allow the user to perform a qucik connect at the same time
@@ -274,14 +277,36 @@ class ezSQL_pdo extends ezSQLcore
         }
 
     } // catch_error
-
+    
+    
+    /**
+      * Creates a prepared query, binds the given parameters and returns the result of the executed
+      * @param string $query
+      * @param array $param
+      * @return bool \PDOStatement 
+      */
+    public function query_prepared($query, $param=null, $isselect=false)
+    { 
+        $stmt = $this->dbh->prepare($query);
+        $result = false;
+        if( $stmt && $stmt->execute($param) ) {
+            $result = $stmt->rowCount();
+            while( $stmt->fetch(PDO::FETCH_ASSOC) ) {
+            }
+        }
+        return ($isselect) ? $stmt : $result; 
+    }
+        
     /**
      * Basic Query	- see docs for more detail
      *
      * @param type $query
      * @return object
      */
-    public function query($query) {
+    public function query($query, $param=null) {
+		// check for parametrize tag and replace tags with proper tag that was created by ezQuery methods
+		$query = str_replace('_ez_', '?', $query);
+            
         // For reg expressions
         $query = str_replace("/[\n\r]/", '', trim($query));
 
@@ -324,7 +349,11 @@ class ezSQL_pdo extends ezSQLcore
         if ( preg_match("/^(insert|delete|update|replace|drop|create)\s+/i", $query) ) {
 
             // Perform the query and log number of affected rows
-            $this->_affectedRows = $this->dbh->exec($query);
+            // Perform the query via std PDO query or PDO prepare function..
+            if (($param) && is_array($param) && ($this->hasprepare)) {
+                $this->_affectedRows = $this->query_prepared($query, $param, false);
+            } else
+                $this->_affectedRows = $this->dbh->exec($query);
 
             // If there is an error then take note of it..
             if ( $this->catch_error() ) {
@@ -338,14 +367,18 @@ class ezSQL_pdo extends ezSQLcore
                 $this->insert_id = @$this->dbh->lastInsertId();
             }
 
-            // Return number fo rows affected
+            // Return number of rows affected
             $return_val = $this->_affectedRows;
 
         } else {
             // Query was an select
 
             // Perform the query and log number of affected rows
-            $sth = $this->dbh->query($query);
+            // Perform the query via std PDO query or PDO prepare function..
+            if (($param) && is_array($param) && ($this->hasprepare)) {
+                $sth = $this->query_prepared($query, $param, true);
+            } else
+                $sth = $this->dbh->query($query);
 
             // If there is an error then take note of it..
             if ( $this->catch_error() ) return false;

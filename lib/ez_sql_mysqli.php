@@ -5,6 +5,7 @@
  *
  * @author  Justin Vincent (jv@jvmultimedia.com)
  * @author  Stefanie Janine Stoelting <mail@stefanie-stoelting.de>
+ * Contributor:  Lawrence Stubbs <technoexpressnet@gmail.com>
  * @link    http://twitter.com/justinvincent
  * @name    ezSQL_mysql
  * @package ezSQL
@@ -75,6 +76,7 @@ class ezSQL_mysqli extends ezSQLcore
      * @var resource
      */
     public $dbh;
+    
 	var $hasprepare = true;
 	
     /**
@@ -235,7 +237,43 @@ class ezSQL_mysqli extends ezSQLcore
     public function sysdate() {
         return 'NOW()';
     } // sysdate
+	
+	/**
+     * Creates a prepared query, binds the given parameters and returns the result of the executed
+     * {@link \mysqli_stmt}.
+     * @param string $query
+     * @param array $args
+     * @return bool|\mysqli_result
+     */
+    public function query_prepared($query, array $args)
+    {
+        $stmt   = $this->prepare($query);
+        $params = [];
+        $types  = array_reduce($args, 
+                    function ($string, &$arg) use (&$params) {
+                        $params[] = &$arg;
+                        if (is_float($arg))
+                            $string .= 'd';
+                        elseif (is_integer($arg))
+                            $string .= 'i';
+                        elseif (is_string($arg))
+                            $string .= 's';
+                        else    
+                            $string .= 'b';
+                        return $string;
+                    }, '');
+        
+        array_unshift($params, $types);
 
+        call_user_func_array([$stmt, 'bind_param'], $params);
+
+        $result = $stmt->execute() ? $stmt->get_result() : false;
+
+        $stmt->close();
+
+        return $result;
+    }
+    
     /**
      * Perform mySQL query and try to determine result value
      *
@@ -243,7 +281,7 @@ class ezSQL_mysqli extends ezSQLcore
      * @return boolean
      */
     public function query($query, $param=null) {
-		// check for parametrize tag and replace tags with proper tag that created by ezSQLcore's insert, update, delete, replace, where, select_insert and selecting methods
+		// check for parametrize tag and replace tags with proper tag that was created by ezQuery methods
 		$query = str_replace('_ez_', '?', $query);
 		
         // Initialize return
@@ -338,36 +376,6 @@ class ezSQL_mysqli extends ezSQLcore
 
         return $return_val;
     } // query
-	
-	/**
-     * Creates a prepared query, binds the given parameters and returns the result of the executed
-     * {@link \mysqli_stmt}.
-     * @param string $query
-     * @param array $args
-     * @return bool|\mysqli_result
-     */
-    public function query_prepared($query, array $args)
-    {
-        $stmt   = $this->prepare($query);
-        $params = [];
-        $types  = array_reduce($args, function ($string, &$arg) use (&$params) {
-            $params[] = &$arg;
-            if (is_float($arg))         $string .= 'd';
-            elseif (is_integer($arg))   $string .= 'i';
-            elseif (is_string($arg))    $string .= 's';
-            else                        $string .= 'b';
-            return $string;
-        }, '');
-        array_unshift($params, $types);
-
-        call_user_func_array([$stmt, 'bind_param'], $params);
-
-        $result = $stmt->execute() ? $stmt->get_result() : false;
-
-        $stmt->close();
-
-        return $result;
-    }
 	
     /**
      * Close the database connection

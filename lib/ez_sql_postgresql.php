@@ -6,6 +6,7 @@
           *
           * @author  Justin Vincent (jv@jvmultimedia.com)
           * @author  Stefanie Janine Stoelting <mail@stefanie-stoelting.de>
+          * Contributor:  Lawrence Stubbs <technoexpressnet@gmail.com>
           * @link	   http://twitter.com/justinvincent
           * @name	   ezSQL_postgresql
           * @package ezSQL
@@ -71,6 +72,7 @@
 		var $result;
         
 		var $rows_affected = false;
+        
 		var $hasprepare = true;
 
 		/**
@@ -243,7 +245,7 @@
 
 		function query($query, $param=null)
 		{
-			// check for parametrize tag and replace tags with proper tag that created by ezSQLcore's insert, update, delete, replace, where, select_insert and selecting methods
+			// check for parametrize tag and replace tags with proper tag that was created by ezQuery methods
 			if (($param) && is_array($param) && ($this->hasprepare))
 			{
 				foreach ($param as $i => $value); {
