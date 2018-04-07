@@ -77,7 +77,8 @@ class ezSQL_mysqli extends ezSQLcore
      */
     public $dbh;
     
-	var $hasprepare = true;
+	public $hasprepare = true;
+	public $preparedvalues = array();
 	
     /**
      * Constructor - allow the user to perform a quick connect at the same time
@@ -269,8 +270,6 @@ class ezSQL_mysqli extends ezSQLcore
 
         $result = $stmt->execute() ? $stmt->get_result() : false;
 
-        $stmt->close();
-
         return $result;
     }
     
@@ -281,8 +280,8 @@ class ezSQL_mysqli extends ezSQLcore
      * @return boolean
      */
     public function query($query, $param=null) {
-		// check for parametrize tag and replace tags with proper tag that was created by ezQuery methods
-		$query = str_replace('_ez_', '?', $query);
+		// check for ezQuery placeholder tag and replace tags with proper prepare tag
+		$query = str_replace(_TAG, '?', $query);
 		
         // Initialize return
         $return_val = 0;
@@ -314,9 +313,13 @@ class ezSQL_mysqli extends ezSQLcore
         }
 
         // Perform the query via std mysql_query function..
-		if (($param) && is_array($param) && ($this->hasprepare))
+		if (($param) && is_array($param) && ($this->hasprepare)) {			
 			$this->_result = $this->query_prepared($query, $param);
-		else 
+			echo var_dump($this->_result);
+			echo var_dump($query);
+			echo var_dump($param);		
+			$this->preparedvalues = null;
+		} else 
 			$this->_result = mysqli_query($this->dbh, $query);
 
         // If there is an error then take note of it..

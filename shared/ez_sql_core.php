@@ -30,64 +30,64 @@
 	class ezSQLcore extends ezQuery
 	{		
     
-		var $trace            = false;  // same as $debug_all
-		var $debug_all        = false;  // same as $trace
-		var $debug_called     = false;
-		var $vardump_called   = false;
-		var $show_errors      = true;
-		var $num_queries      = 0;
-		var $conn_queries     = 0;
-		var $last_query       = null;
-		var $last_error       = null;
-		var $col_info         = null;
-		var $captured_errors  = array();
-		var $cache_dir        = false;
-		var $cache_queries    = false;
-		var $cache_inserts    = false;
-		var $use_disk_cache   = false;
-		var $cache_timeout    = 24; // hours
-		var $timers           = array();
-		var $total_query_time = 0;
-		var $db_connect_time  = 0;
-		var $trace_log        = array();
-		var $use_trace_log    = false;
-		var $sql_log_file     = false;
-		var $do_profile       = false;
-		var $profile_times    = array();
-		var $insert_id        = null;
-		var $hasprepare 	  = false;
+		public $trace            = false;  // same as $debug_all
+		public $debug_all        = false;  // same as $trace
+		public $debug_called     = false;
+		public $vardump_called   = false;
+		public $show_errors      = true;
+		public $num_queries      = 0;
+		public $conn_queries     = 0;
+		public $last_query       = null;
+		public $last_error       = null;
+		public $col_info         = null;
+		public $captured_errors  = array();
+		public $cache_dir        = false;
+		public $cache_queries    = false;
+		public $cache_inserts    = false;
+		public $use_disk_cache   = false;
+		public $cache_timeout    = 24; // hours
+		public $timers           = array();
+		public $total_query_time = 0;
+		public $db_connect_time  = 0;
+		public $trace_log        = array();
+		public $use_trace_log    = false;
+		public $sql_log_file     = false;
+		public $do_profile       = false;
+		public $profile_times    = array();
+		public $insert_id        = null;
+		public $hasprepare 	 	 = false;
 		
     /**
      * Whether the database connection is established, or not
-     * @var boolean Default is false
+     * @public boolean Default is false
      */
     protected $_connected = false;    
     /**
      * Contains the number of affected rows of a query
-     * @var int Default is 0
+     * @public int Default is 0
      */
     protected $_affectedRows = 0;
 
     /**
      * The last query result
-     * @var object Default is null
+     * @public object Default is null
      */
     public $last_result = null;
 
     /**
      * Get data from disk cache
-     * @var boolean Default is false
+     * @public boolean Default is false
      */
     public $from_disk_cache = false;
 
     /**
      * Function called
-     * @var string
+     * @public string
      */
     private $func_call;
 
 		// == TJH == default now needed for echo of debug function
-		var $debug_echo_is_on = true;
+		public $debug_echo_is_on = true;
 
 		/**********************************************************************
 		*  Constructor
@@ -173,7 +173,7 @@
 				$this->query($query);
 			}
 
-			// Extract var out of cached results based x,y vals
+			// Extract public out of cached results based x,y vals
 			if ( $this->last_result[$y] )
 			{
 				$values = array_values(get_object_vars($this->last_result[$y]));
@@ -404,7 +404,7 @@
 
 		/**********************************************************************
 		*  Dumps the contents of any input variable to screen in a nicely
-		*  formatted and easy to understand way - any type: Object, Var or Array
+		*  formatted and easy to understand way - any type: Object, public or Array
 		*/
 
 		function vardump($mixed='')

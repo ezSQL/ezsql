@@ -48,17 +48,18 @@
 	class ezSQL_sqlsrv extends ezSQLcore
 	{
 
-		var $dbuser = false;
-		var $dbpassword = false;
-		var $dbname = false;
-		var $dbhost = false;
-		var $rows_affected = false;
+		private $dbuser = false;
+		private $dbpassword = false;
+		private $dbname = false;
+		private $dbhost = false;
+		private $rows_affected = false;
         
-		var $hasprepare = true;
+		public $hasprepare = true;
+		public $preparedvalues = array();
 
 		//if we want to convert Queries in MySql syntax to MS-SQL syntax. Yes, there
 		//are some differences in query syntax.
-		var $convertMySqlToMSSqlQuery = TRUE;
+		private $convertMySqlToMSSqlQuery = TRUE;
 
 		/**********************************************************************
 		*  Constructor - allow the user to perform a quick connect at the
@@ -179,8 +180,8 @@
 
 		function query($query, $param=null)
 		{
-			// check for parametrize tag and replace tags with proper tag that was created by ezQuery methods
-			$query = str_replace('_ez_', '?', $query);
+			// check for ezQuery placeholder tag and replace tags with proper prepare tag
+			$query = str_replace(_TAG, '?', $query);
 
 			//if flag to convert query from MySql syntax to MS-Sql syntax is true
 			//convert the query
@@ -221,9 +222,10 @@
 			}
 
 			// Perform the query via std sqlsrv_query function..
-			if (($param) && is_array($param) && ($this->hasprepare))
+			if (($param) && is_array($param) && ($this->hasprepare)) {
 				$this->result = @sqlsrv_query($this->dbh, $query, $param);
-			else 
+				$this->preparedvalues = array();
+			} else 
 				$this->result = @sqlsrv_query($this->dbh, $query);
 
 			// If there is an error then take note of it..

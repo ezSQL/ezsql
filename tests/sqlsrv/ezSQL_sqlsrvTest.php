@@ -75,6 +75,7 @@ class ezSQL_sqlsrvTest extends TestCase {
             );
         }
         $this->object = new ezSQL_sqlsrv;
+		$this->object->hasprepare = false;
     } // setUp
 
     /**

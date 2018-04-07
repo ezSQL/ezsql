@@ -61,7 +61,8 @@ class ezSQL_pdo extends ezSQLcore
      */
     public $show_errors = true;
     
-	var $hasprepare = true;
+	public $hasprepare = true;
+	public $preparedvalues = array();
 
     /**
      * Constructor - allow the user to perform a qucik connect at the same time
@@ -304,8 +305,8 @@ class ezSQL_pdo extends ezSQLcore
      * @return object
      */
     public function query($query, $param=null) {
-		// check for parametrize tag and replace tags with proper tag that was created by ezQuery methods
-		$query = str_replace('_ez_', '?', $query);
+		// check for ezQuery placeholder tag and replace tags with proper prepare tag
+		$query = str_replace(_TAG, '?', $query);
             
         // For reg expressions
         $query = str_replace("/[\n\r]/", '', trim($query));
@@ -351,7 +352,8 @@ class ezSQL_pdo extends ezSQLcore
             // Perform the query and log number of affected rows
             // Perform the query via std PDO query or PDO prepare function..
             if (($param) && is_array($param) && ($this->hasprepare)) {
-                $this->_affectedRows = $this->query_prepared($query, $param, false);
+                $this->_affectedRows = $this->query_prepared($query, $param, false);		
+				$this->preparedvalues = array();
             } else
                 $this->_affectedRows = $this->dbh->exec($query);
 
@@ -376,7 +378,8 @@ class ezSQL_pdo extends ezSQLcore
             // Perform the query and log number of affected rows
             // Perform the query via std PDO query or PDO prepare function..
             if (($param) && is_array($param) && ($this->hasprepare)) {
-                $sth = $this->query_prepared($query, $param, true);
+                $sth = $this->query_prepared($query, $param, true);		
+				$this->preparedvalues = array();
             } else
                 $sth = $this->dbh->query($query);
 

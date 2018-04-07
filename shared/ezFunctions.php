@@ -25,6 +25,9 @@
  * and is licensed under the MIT license.
  */
  
+	// ezQuery prepare placeholder/positional tag
+		const _TAG = '__ez__';
+ 
     /*
      * Operator boolean expressions.
      */
@@ -66,14 +69,14 @@
         $_ezSqlite3 = null;
         $_ezSqlsrv = null;
 
-  /**********************************************************************
+	/**********************************************************************
      * Creates an array from expressions in the following formate
      * param:  strings @x,        The left expression.
-     *                           @operator, One of '<', '>', '=', '!=', '>=', '<=', '<>', 'IN',, 'NOT IN', 'LIKE', 
-     *                                                      'NOT LIKE', 'BETWEEN', 'NOT BETWEEN', 'IS', 'IS NOT', or  the constants above.
-     *                           @y,        The right expression.
-     *                           @and,        combine additional expressions with,  'AND','OR', 'NOT', 'AND NOT'.
-     *                           @args          for any extras
+     *                 @operator, One of '<', '>', '=', '!=', '>=', '<=', '<>', 'IN',, 'NOT IN', 'LIKE', 
+     *                              'NOT LIKE', 'BETWEEN', 'NOT BETWEEN', 'IS', 'IS NOT', or  the constants above.
+     *                 @y,        The right expression.
+     *                 @and,        combine additional expressions with,  'AND','OR', 'NOT', 'AND NOT'.
+     *                 @args          for any extras
      *
      * function comparison($x, $operator, $y, $and=null, ...$args)
      *  {

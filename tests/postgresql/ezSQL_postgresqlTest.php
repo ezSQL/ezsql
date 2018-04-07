@@ -78,6 +78,7 @@ class ezSQL_postgresqlTest extends TestCase {
             );
         }
         $this->object = new ezSQL_postgresql;
+		$this->object->hasprepare = false;
     } // setUp
 
     /**

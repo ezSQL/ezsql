@@ -50,18 +50,19 @@ class ezQuery
     }
             
     /**
-           * desc: specifies a grouping over the results of the query.
-           * <code>
-           *     $this->selecting('table', 
-           *                                  columns,
-           *                                  where(columns  =  values),
-           *                                  groupBy(columns),
-           *                                  having(columns  =  values),
-           *                                  orderBy(order);
-           * </code>
-           * param: mixed @groupBy The grouping expression.           *
-           * returns: string - GROUP BY SQL statement, or false on error
-           */
+    * desc: specifies a grouping over the results of the query.
+    * <code>
+    *     $this->selecting('table', 
+    *                   columns,
+    *                   where(columns  =  values),
+    *                   groupBy(columns),
+    *                   having(columns  =  values),
+    *                   orderBy(order);
+    * </code>
+    * param: mixed @groupBy The grouping expression.  
+	*
+    * returns: string - GROUP BY SQL statement, or false on error
+    */
     function groupBy($groupBy)
     {
         if (empty($groupBy)) {
@@ -74,16 +75,16 @@ class ezQuery
     }
 
     /**
-           * desc: specifies a restriction over the groups of the query. 
+    * desc: specifies a restriction over the groups of the query. 
 	* formate: having( array(x, =, y, and, extra) ) or having( "x  =  y  and  extra" );
 	* example: having( array(key, operator, value, combine, extra) ); or having( "key operator value combine extra" );
-           * param: mixed @array or @string double spaced "(key, - table column  
-           *        	operator, - set the operator condition, either '<','>', '=', '!=', '>=', '<=', '<>', 'in', 'like', 'between', 'not between', 'is null', 'is not null'
+    * param: mixed @array or @string double spaced "(key, - table column  
+    *        	operator, - set the operator condition, either '<','>', '=', '!=', '>=', '<=', '<>', 'in', 'like', 'between', 'not between', 'is null', 'is not null'
 	*		value, - will be escaped
-           *        	combine, - combine additional where clauses with, either 'AND','OR', 'NOT', 'AND NOT' or  carry over of @value in the case the @operator is 'between' or 'not between'
+    *        	combine, - combine additional where clauses with, either 'AND','OR', 'NOT', 'AND NOT' or  carry over of @value in the case the @operator is 'between' or 'not between'
 	*		extra - carry over of @combine in the case the operator is 'between' or 'not between')"
-           * @returns: string - HAVING SQL statement, or false on error
-           */
+    * @returns: string - HAVING SQL statement, or false on error
+    */
     function having(...$having)
     {
         $this->iswhere = false;
@@ -91,10 +92,10 @@ class ezQuery
     }
  
     /**
-           * desc: specifies an ordering for the query results.  
-           * param:  @order The ordering direction. 
-           * returns: string - ORDER BY SQL statement, or false on error
-           */
+    * desc: specifies an ordering for the query results.  
+    * param:  @order The ordering direction. 
+    * returns: string - ORDER BY SQL statement, or false on error
+    */
     function orderBy($orderBy, $order)
     {
         if (empty($orderBy)) {
@@ -109,17 +110,17 @@ class ezQuery
     }
    
  	/**********************************************************************
-           * desc: helper returns an WHERE sql clause string 
+    * desc: helper returns an WHERE sql clause string 
 	* formate: where( array(x, =, y, and, extra) ) or where( "x  =  y  and  extra" );
 	* example: where( array(key, operator, value, combine, extra) ); or where( "key operator value combine extra" );
 	* param: mixed @array or @string double spaced "(key, - table column  
-           *        	operator, - set the operator condition, either '<','>', '=', '!=', '>=', '<=', '<>', 'in', 'like', 'not like', 'between', 'not between', 'is null', 'is not null'
+    *        	operator, - set the operator condition, either '<','>', '=', '!=', '>=', '<=', '<>', 'in', 'like', 'not like', 'between', 'not between', 'is null', 'is not null'
 	*		value, - will be escaped
-           *        	combine, - combine additional where clauses with, either 'AND','OR', 'NOT', 'AND NOT' or  carry over of @value in the case the @operator is 'between' or 'not between'
+    *        	combine, - combine additional where clauses with, either 'AND','OR', 'NOT', 'AND NOT' or  carry over of @value in the case the @operator is 'between' or 'not between'
 	*		extra - carry over of @combine in the case the operator is 'between' or 'not between')"
-           * returns: string - WHERE SQL statement, or false on error
+    * returns: string - WHERE SQL statement, or false on error
 	*/        
-    function where( ...$getwherekeys) {
+    function where( ...$getwherekeys) {      
         $whereorhaving = ($this->iswhere) ? 'WHERE' : 'HAVING';
         $this->iswhere = true;
         
@@ -166,49 +167,70 @@ class ezQuery
                     if (($iscondition=='BETWEEN') || ($iscondition=='NOT BETWEEN')) {
 						$value = $this->escape($combinewith);
 						if (in_array(strtoupper($extra[$i]), array( 'AND', 'OR', 'NOT', 'AND NOT' ))) 
-							$combinewith = strtoupper($extra[$i]);
+							$mycombinewith = strtoupper($extra[$i]);
 						else 
-                            $combinewith = _AND;
-						$where.= "$key ".$iscondition." '".$this->escape($val)."' AND '".$value."' $combinewith ";
+                            $mycombinewith = _AND;
+						if ($this->hasprepare) {
+							$where.= "$key ".$iscondition.' '._TAG." AND "._TAG." $mycombinewith ";
+							$parameters[] = $val;
+							$parameters[] = $combinewith;
+						} else 
+							$where.= "$key ".$iscondition." '".$this->escape($val)."' AND '".$value."' $mycombinewith ";
+						$combinewith = $mycombinewith;
 					} elseif ($iscondition=='IN') {
 						$value = '';
-						foreach ($val as $invalues)
-							$value .= "'".$this->escape($invalues)."', ";							
+						foreach ($val as $invalues) {
+							if ($this->hasprepare) {
+								$value .= _TAG.', ';
+								$parameters[] = $invalues;
+							} else 
+								$value .= "'".$this->escape($invalues)."', ";
+						}													
 						$where.= "$key ".$iscondition." ( ".rtrim($value, ', ')." ) $combinewith ";
 					} elseif(((strtolower($val)=='null') || ($iscondition=='IS') || ($iscondition=='IS NOT'))) {
                         $iscondition = (($iscondition=='IS') || ($iscondition=='IS NOT')) ? $iscondition : 'IS';
                         $where.= "$key ".$iscondition." NULL $combinewith ";
                     } elseif((($iscondition=='LIKE') || ($iscondition=='NOT LIKE')) && ! preg_match('/[_%?]/',$val)) return false;
-                    else $where.= "$key ".$iscondition." '".$this->escape($val)."' $combinewith ";
+                    else {
+						if ($this->hasprepare) {
+							$where.= "$key ".$iscondition.' '._TAG." $combinewith ";
+							$parameters[] = $val;
+						} else 
+							$where.= "$key ".$iscondition." '".$this->escape($val)."' $combinewith ";
+					}
                     $i++;
                 }
             }
             $where = rtrim($where, " $combinewith ");
         }
-        
-        return ($where!='1') ? " $whereorhaving ".$where.' ' : ' ' ;
+		
+        if (($this->hasprepare) && ($parameters) && ($where!='1')) {
+			array_push($this->preparedvalues, $parameters);	
+			return " $whereorhaving ".$where.' ';
+		} else
+			return ($where!='1') ? " $whereorhaving ".$where.' ' : ' ' ;
     }        
     
 	/**********************************************************************
-           * desc: returns an sql string or result set given the table, fields, by operator condition or conditional array
-           *<code>
-           *selecting('table', 
-           *        'columns',
-           *        where( eq( 'columns', values, _AND ), like( 'columns', _d ) ),
-           *        groupBy( 'columns' ),
-           *        having( between( 'columns', values1, values2 ) ),
-           *        orderBy( 'columns', 'desc' );
-           *</code>    
-           *
-           * param: @table, - database table to access
-           *        @fields, - table columns, string or array
-           *        @wherekey, - where clause ( array(x, =, y, and, extra) ) or ( "x  =  y  and  extra" )
-           *        @groupby, - 
-           *        @having, - having clause ( array(x, =, y, and, extra) ) or ( "x  =  y  and  extra" )
-           *        @orderby - 	*   
-           * returns: a result set - see docs for more details, or false for error
+    * desc: returns an sql string or result set given the table, fields, by operator condition or conditional array
+    *<code>
+    *selecting('table', 
+    *        'columns',
+    *        where( eq( 'columns', values, _AND ), like( 'columns', _d ) ),
+    *        groupBy( 'columns' ),
+    *        having( between( 'columns', values1, values2 ) ),
+    *        orderBy( 'columns', 'desc' );
+    *</code>    
+    *
+    * param: @table, - database table to access
+    *        @fields, - table columns, string or array
+    *        @wherekey, - where clause ( array(x, =, y, and, extra) ) or ( "x  =  y  and  extra" )
+    *        @groupby, - 
+    *        @having, - having clause ( array(x, =, y, and, extra) ) or ( "x  =  y  and  extra" )
+    *        @orderby - 	*   
+    * returns: a result set - see docs for more details, or false for error
 	*/
-    function selecting($table='', $fields='*', ...$get_args) {     
+    function selecting($table='', $fields='*', ...$get_args) {    
 		$getfromtable = $this->fromtable;
 		$getdo_getresults = $this->do_getresults;       
 		$getisinto = $this->isinto;
@@ -273,7 +295,7 @@ class ezQuery
         if (is_string($where)) {
             $sql .= $where;
             if ($getdo_getresults) 
-                return $this->get_results($sql);     
+                return (($this->hasprepare) && ($this->preparedvalues)) ? $this->get_results_prepared($sql, $this->preparedvalues) : $this->get_results($sql);     
             else 
                 return $sql;
         } else 
@@ -281,13 +303,13 @@ class ezQuery
     }
 		
 	/**********************************************************************
-           * desc: does an create select statement by calling selecting method
-           * param: @newtable, - new database table to be created 
-           *	@fromcolumns - the columns from old database table
-           *	@oldtable - old database table 
-           *        @wherekey, - where clause ( array(x, =, y, and, extra) ) or ( "x  =  y  and  extra" )
+    * desc: does an create select statement by calling selecting method
+    * param: @newtable, - new database table to be created 
+    *	@fromcolumns - the columns from old database table
+    *	@oldtable - old database table 
+    *        @wherekey, - where clause ( array(x, =, y, and, extra) ) or ( "x  =  y  and  extra" )
 	*   example: where( array(key, operator, value, combine, extra) ); or where( "key operator value combine extra" );
-           * returns: 
+    * returns: 
 	*/
     function create_select($newtable, $fromcolumns, $oldtable=null, ...$fromwhere) {
 		$this->do_getresults = false;
@@ -298,94 +320,113 @@ class ezQuery
 			
         $newtablefromtable = $this->selecting($newtable, $fromcolumns, ...$fromwhere);			
         if (is_string($newtablefromtable))
-            return $this->query($newtablefromtable); 
+            return (($this->hasprepare) && ($this->preparedvalues)) ? $this->query($newtablefromtable, $this->preparedvalues) : $this->query($newtablefromtable); 
         else
             return false;    		
     }
     
     /**********************************************************************
-           * desc: does an select into statement by calling selecting method
-           * param: @newtable, - new database table to be created 
-           *	@fromcolumns - the columns from old database table
-           *	@oldtable - old database table 
-           *        @wherekey, - where clause ( array(x, =, y, and, extra) ) or ( "x  =  y  and  extra" )
+    * desc: does an select into statement by calling selecting method
+    * param: @newtable, - new database table to be created 
+    *	@fromcolumns - the columns from old database table
+    *	@oldtable - old database table 
+    *        @wherekey, - where clause ( array(x, =, y, and, extra) ) or ( "x  =  y  and  extra" )
 	*   example: where( array(key, operator, value, combine, extra) ); or where( "key operator value combine extra" );
-           * returns: 
+    * returns: 
 	*/
     function select_into($newtable, $fromcolumns, $oldtable=null, ...$fromwhere) {
 		$this->do_getresults = false;
 		$this->isinto = true;        
 		if (isset($oldtable))
 			$this->fromtable = $oldtable;
-		else 
-			return false;
+		else {
+			$this->preparedvalues = null;
+            return false;          			
+		}  
 			
         $newtablefromtable = $this->selecting($newtable, $fromcolumns, ...$fromwhere);
         if (is_string($newtablefromtable))
-            return $this->query($newtablefromtable); 
-        else
-            return false;                
+            return (($this->hasprepare) && ($this->preparedvalues)) ? $this->query($newtablefromtable, $this->preparedvalues) : $this->query($newtablefromtable); 
+        else {
+			$this->preparedvalues = null;
+            return false;          			
+		}  
     }
 		
 	/**********************************************************************
-           * desc: does an update query with an array, by conditional operator array
-           * param: @table, - database table to access
-           *	@keyandvalue, - table fields, assoc array with key = value (doesn't need escaped)
-           *        @wherekey, - where clause ( array(x, =, y, and, extra) ) or ( "x  =  y  and  extra" )
+	* desc: does an update query with an array, by conditional operator array
+	* param: @table, - database table to access
+	*	@keyandvalue, - table fields, assoc array with key = value (doesn't need escaped)
+	*   @wherekey, - where clause ( array(x, =, y, and, extra) ) or ( "x  =  y  and  extra" )
 	*		example: where( array(key, operator, value, combine, extra) ); or where( "key operator value combine extra" );
-           * returns: (query_id) for fetching results etc, or false for error
+	* returns: (query_id) for fetching results etc, or false for error
 	*/
-    function update($table='', $keyandvalue, ...$wherekeys) {            
+    function update($table='', $keyandvalue, ...$wherekeys) {        
         if ( ! is_array( $keyandvalue ) || ! isset($table) || $table=='' ) {
+			$this->preparedvalues = null;
             return false;
         }
         
         $sql="UPDATE $table SET ";
         
         foreach($keyandvalue as $key=>$val) {
-            if(strtolower($val)=='null') $sql.= "$key = NULL, ";
-            elseif(in_array(strtolower($val), array( 'current_timestamp()', 'date()', 'now()' ))) $sql.= "$key = CURRENT_TIMESTAMP(), ";
-            else $sql.= "$key='".$this->escape($val)."', ";
+            if(strtolower($val)=='null') {
+				$sql.= "$key = NULL, ";
+            } elseif(in_array(strtolower($val), array( 'current_timestamp()', 'date()', 'now()' ))) {
+				$sql.= "$key = CURRENT_TIMESTAMP(), ";
+			} else {
+				if ($this->hasprepare) {
+					$sql.= "$key = "._TAG.", ";
+					array_push($this->preparedvalues, $val);
+				} else 
+					$sql.= "$key = '".$this->escape($val)."', ";
+			}
         }
         
         $where = $this->where(...$wherekeys);
         if (is_string($where)) {   
             $sql = rtrim($sql, ', ') . $where;
-            return $this->query($sql);       
-        } else 
+            return (($this->hasprepare) && ($this->preparedvalues)) ? $this->query($sql, $this->preparedvalues) : $this->query($sql) ;       
+        } else {
+			$this->preparedvalues = null;
             return false;
+		}
     }   
          
 	/**********************************************************************
-           * desc: helper does the actual insert or replace query with an array
+    * desc: helper does the actual insert or replace query with an array
 	*/
     function delete($table='', ...$wherekeys) {   
         if ( ! isset($table) || $table=='' ) {
-            return false;
-        }
-
+			$this->preparedvalues = null;
+            return false;          			
+		}  
 		
         $sql="DELETE FROM $table";
         
         $where = $this->where(...$wherekeys);
         if (is_string($where)) {   
-            $sql .= $where;
-            return $this->query($sql);       
-        } else 
-            return false;
+            $sql .= $where;						
+            return (($this->hasprepare) && ($this->preparedvalues)) ? $this->query($sql, $this->preparedvalues) : $this->query($sql) ;  
+        } else {
+			$this->preparedvalues = null;
+            return false;          			
+		}  
     }
     
 	/**********************************************************************
-           * desc: helper does the actual insert or replace query with an array
+    * desc: helper does the actual insert or replace query with an array
 	*/
     function _query_insert_replace($table='', $keyandvalue, $type, $execute=true) {  
         if ((! is_array($keyandvalue)) && $execute || $table=='' ) {
-            return false;
-        }
+			$this->preparedvalues = null;
+            return false;          			
+		}  
         
         if ( ! in_array( strtoupper( $type ), array( 'REPLACE', 'INSERT' ))) {
-            return false;
-        }
+			$this->preparedvalues = null;
+            return false;          			
+		}  
             
         $sql="$type INTO $table";
         $v=''; $n='';
@@ -395,16 +436,28 @@ class ezQuery
                 $n.="$key, ";
                 if(strtolower($val)=='null') $v.="NULL, ";
                 elseif(in_array(strtolower($val), array( 'current_timestamp()', 'date()', 'now()' ))) $v.="CURRENT_TIMESTAMP(), ";
-                else $v.= "'".$this->escape($val)."', ";                
+                else  {
+					if ($this->hasprepare) {
+						$v.= _TAG.", ";
+						array_push($this->preparedvalues, $val);
+					} else 
+						$v.= "'".$this->escape($val)."', ";
+				}               
             }
             
             $sql .= "(". rtrim($n, ', ') .") VALUES (". rtrim($v, ', ') .");";
-            //$sql .= "(". rtrim($n, ', ') .") VALUES (". rtrim($v, ', ') .")__ezsql__;";
 
-            if ($this->query($sql))
+			if (($this->preparedvalues) && ($this->hasprepare)) 
+				$ok = $this->query($sql, $this->preparedvalues);
+			else 
+				$ok = $this->query($sql);
+				
+            if ($ok)
                 return $this->insert_id;
-            else 
-                return false;
+            else {
+				$this->preparedvalues = null;
+				return false;          			
+			}  
         } else {
             if (is_array($keyandvalue)) {
                 if (array_keys($keyandvalue) === range(0, count($keyandvalue) - 1)) {
@@ -417,44 +470,46 @@ class ezQuery
             } 
             return $sql;
         }
-    }
+	}
         
 	/**********************************************************************
-           * desc: does an replace query with an array
-           * param: @table, - database table to access
-           *		@keyandvalue - table fields, assoc array with key = value (doesn't need escaped)
-           * returns: id of replaced record, or false for error
+    * desc: does an replace query with an array
+    * param: @table, - database table to access
+    *		@keyandvalue - table fields, assoc array with key = value (doesn't need escaped)
+    * returns: id of replaced record, or false for error
 	*/
     function replace($table='', $keyandvalue) {
             return $this->_query_insert_replace($table, $keyandvalue, 'REPLACE');
         }
 
 	/**********************************************************************
-           * desc: does an insert query with an array
-           * param: @table, - database table to access
-           * 		@keyandvalue - table fields, assoc array with key = value (doesn't need escaped)
-           * returns: id of inserted record, or false for error
+    * desc: does an insert query with an array
+    * param: @table, - database table to access
+    * 		@keyandvalue - table fields, assoc array with key = value (doesn't need escaped)
+    * returns: id of inserted record, or false for error
 	*/
     function insert($table='', $keyandvalue) {
         return $this->_query_insert_replace($table, $keyandvalue, 'INSERT');
     }
     
 	/**********************************************************************
-           * desc: does an insert into select statement by calling insert method helper then selecting method
-           * param: @totable, - database table to insert table into 
-           *		@tocolumns - the receiving columns from other table columns, leave blank for all or array of column fields
-           *        @wherekey, - where clause ( array(x, =, y, and, extra) ) or ( "x = y and extra" )
+    * desc: does an insert into select statement by calling insert method helper then selecting method
+    * param: @totable, - database table to insert table into 
+    *		@tocolumns - the receiving columns from other table columns, leave blank for all or array of column fields
+    *        @wherekey, - where clause ( array(x, =, y, and, extra) ) or ( "x = y and extra" )
 	*		example: where( array(key, operator, value, combine, extra) ); or where( "key operator value combine extra" );
-           * returns: 
+    * returns: 
 	*/
     function insert_select($totable='', $tocolumns='*', $fromtable, $fromcolumns='*', ...$fromwhere) {
         $puttotable = $this->_query_insert_replace($totable, $tocolumns, 'INSERT', false);
 		$this->do_getresults = false;
         $getfromtable = $this->selecting($fromtable, $fromcolumns, ...$fromwhere);
         if (is_string($puttotable) && is_string($getfromtable))
-            return $this->query($puttotable." ".$getfromtable); 
-        else
-            return false;                
+            return (($this->hasprepare) && ($this->preparedvalues)) ? $this->query($puttotable." ".$getfromtable, $this->preparedvalues) : $this->query($puttotable." ".$getfromtable) ;
+        else {
+			$this->preparedvalues = null;
+            return false;          			
+		}                 
     }    
     
 }

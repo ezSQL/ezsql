@@ -2,7 +2,7 @@
 
 	/**********************************************************************
 	*  Author: Justin Vincent (jv@jvmultimedia.com) / Silvio Wanka 
-           * Contributor:  Lawrence Stubbs <technoexpressnet@gmail.com>
+	* Contributor:  Lawrence Stubbs <technoexpressnet@gmail.com>
 	*  Web...: http://twitter.com/justinvincent
 	*  Name..: ezSQL_sqlite3
 	*  Desc..: SQLite3 component (part of ezSQL databse abstraction library)
@@ -32,7 +32,8 @@
 
 		var $rows_affected = false;
         
-		var $hasprepare = true;
+		public $hasprepare = true;
+		public $preparedvalues = array();
 
 		/**********************************************************************
 		*  Constructor - allow the user to perform a quick connect at the 
@@ -136,11 +137,11 @@
         }
         
         /**
-                    * Creates a prepared query, binds the given parameters and returns the result of the executed
-                    * @param string $query
-                    * @param array $param
-                    * @return bool \SQLite3Result 
-                    */
+		* Creates a prepared query, binds the given parameters and returns the result of the executed
+		* @param string $query
+		* @param array $param
+		* @return bool \SQLite3Result 
+		*/
         function query_prepared($query, $param=null)
         { 
             $stmt = $this->dbh->prepare($query);
@@ -172,8 +173,8 @@
 	
 		function query($query, $param=null)
 		{
-			// check for parametrize tag and replace tags with proper tag that was created by ezQuery methods
-			$query = str_replace('_ez_', '?', $query);
+			// check for ezQuery placeholder tag and replace tags with proper prepare tag
+			$query = str_replace(_TAG, '?', $query);
             
 			// For reg expressions
 			$query = str_replace("/[\n\r]/",'',trim($query)); 
@@ -192,7 +193,8 @@
 
 			// Perform the query via std SQLite3 query or SQLite3 prepare function..
             if (($param) && is_array($param) && ($this->hasprepare)) {
-                $this->result = $this->query_prepared($query, $param);
+                $this->result = $this->query_prepared($query, $param);		
+				$this->preparedvalues = array();
             } else 
                 $this->result = $this->dbh->query($query);
 			$this->count(true, true);

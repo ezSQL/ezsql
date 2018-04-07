@@ -69,11 +69,12 @@
 		* @var resource
 		*/
 		public $dbh;
-		var $result;
+		private $result;
         
-		var $rows_affected = false;
+		private $rows_affected = false;
         
-		var $hasprepare = true;
+		public $hasprepare = true;
+		public $preparedvalues = array();
 
 		/**
 		* Constructor - allow the user to perform a qucik connect at the same time
@@ -245,14 +246,14 @@
 
 		function query($query, $param=null)
 		{
-			// check for parametrize tag and replace tags with proper tag that was created by ezQuery methods
-			if (($param) && is_array($param) && ($this->hasprepare))
+			// check for ezQuery placeholder tag and replace tags with proper prepare tag
+			if (($param) && is_array($param) && ($this->hasprepare) && (strpos($query, _TAG) !== false))
 			{
 				foreach ($param as $i => $value); {
 					$parametrize = $i + 1;
 					//$from = '/'.preg_quote('_ez_', '/').'/';
 					//$query = preg_replace($from, '$'.$parametrize, $query, 1);
-					$needle = '_ez_';
+					$needle = _TAG;
 					$pos = strpos($query, $needle);
 					if ($pos !== false) 
 						$query = substr_replace($query, '$'.$parametrize, $pos, strlen($needle));
@@ -290,9 +291,10 @@
 			}
             
 			// Perform the query via std postgresql_query function..
-			if (($param) && is_array($param) && ($this->hasprepare))
-				$this->result = @pg_query_params($this->dbh, $query, $param);
-			else 
+			if (($param) && is_array($param) && ($this->hasprepare)){
+				$this->result = @pg_query_params($this->dbh, $query, $param);		
+				$this->preparedvalues = array();				
+			} else 
 				$this->result = @pg_query($this->dbh, $query);
 
 
