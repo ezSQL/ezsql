@@ -301,7 +301,7 @@ class ezQuery
         if (is_string($where)) {
             $sql .= $where;
             if ($getdo_getresults) 
-                return (($this->hasprepare) && !empty($this->preparedvalues)) ? $this->get_results_prepared($sql) : $this->get_results($sql);     
+                return (($this->hasprepare) && !empty($this->preparedvalues)) ? $this->get_results($sql, OBJECT, true) : $this->get_results($sql);     
             else 
                 return $sql;
         } else {
@@ -477,8 +477,10 @@ class ezQuery
                         $n.="$key, ";                
                     }
                     $sql .= " (". rtrim($n, ', ') .") ";                         
-                } else 
-                    return false;           
+                } else {
+					//$this->preparedvalues = array();
+					return false;          			
+				}          
             } 
             return $sql;
         }

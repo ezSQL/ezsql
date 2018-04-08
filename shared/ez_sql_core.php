@@ -249,37 +249,17 @@
 		}
 
 		/**********************************************************************
-		*  Return the the query as a result set - see docs for more details
+		*  Return the the query as a result set, will use prepare statements if setup - see docs for more details
 		*/
-		function get_results($query=null, $output = OBJECT) {
+		function get_results($query=null, $output = OBJECT, $isprepare=false) {
 			// Log how the function was called
 			$this->func_call = "\$db->get_results(\"$query\", $output)";
 
 			// If there is a query then perform it if not then use cached results..
 			if ( $query ) {
-				$this->query($query);
+				$this->query($query, $isprepare);
 			}
 
-			return $this->get_results_output($output);
-		}
-
-		/**********************************************************************
-		*  Return the parameterized query as a result set - see docs for more details
-		*/
-		function get_results_prepared($query=null, $output = OBJECT) {
-			// Log how the function was called
-			$this->func_call = "\$db->get_results_prepared(\"$query, $param\", $output)";
-			
-			// If there is a query then perform it if not then use cached results..
-			if ( $query ) {
-				$this->query($query, true);
-			}
-			
-			return $this->get_results_output($output);
-		}		
-				
-		// helper for get_results Send back array of objects. Each row is an object				
-		function get_results_output($output = OBJECT) {	
 			if ( $output == OBJECT ) {
 				return $this->last_result;
 			} elseif ( $output == ARRAY_A || $output == ARRAY_N ) {
@@ -297,6 +277,10 @@
 					return array();
 				}
 			}
+		}
+			
+		// helper for get_results Send back array of objects. Each row is an object				
+		function get_results_output($output = OBJECT) {	
 		}
 		
 		/**********************************************************************
@@ -699,5 +683,10 @@
     function affectedRows() {
         return $this->_affectedRows;
     } // affectedRows
-    
+	
+	// query call template
+    function query($query, $doprepare=false) {
+		return false;
+	}
+		
 } // ezSQLcore
