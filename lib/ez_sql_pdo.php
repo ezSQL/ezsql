@@ -304,7 +304,10 @@ class ezSQL_pdo extends ezSQLcore
      * @param type $query
      * @return object
      */
-    public function query($query, $param=null) {
+    public function query($query, $doprepare=false) {
+        if ($doprepare)
+            $param = $this->preparedvalues;
+        
 		// check for ezQuery placeholder tag and replace tags with proper prepare tag
 		$query = str_replace(_TAG, '?', $query);
             
@@ -351,7 +354,7 @@ class ezSQL_pdo extends ezSQLcore
 
             // Perform the query and log number of affected rows
             // Perform the query via std PDO query or PDO prepare function..
-            if (($param) && is_array($param) && ($this->hasprepare)) {
+            if (!empty($param) && is_array($param) && ($this->hasprepare)) {
                 $this->_affectedRows = $this->query_prepared($query, $param, false);		
 				$this->preparedvalues = array();
             } else
@@ -377,7 +380,7 @@ class ezSQL_pdo extends ezSQLcore
 
             // Perform the query and log number of affected rows
             // Perform the query via std PDO query or PDO prepare function..
-            if (($param) && is_array($param) && ($this->hasprepare)) {
+            if (!empty($param) && is_array($param) && ($this->hasprepare)) {
                 $sth = $this->query_prepared($query, $param, true);		
 				$this->preparedvalues = array();
             } else

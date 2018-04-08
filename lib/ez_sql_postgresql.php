@@ -244,15 +244,16 @@
 		*  Perform PostgreSQL query and try to determine result value
 		*/
 
-		function query($query, $param=null)
+		function query($query, $doprepare=false)
 		{
+            if ($doprepare)
+                $param = $this->preparedvalues;
+            
 			// check for ezQuery placeholder tag and replace tags with proper prepare tag
-			if (($param) && is_array($param) && ($this->hasprepare) && (strpos($query, _TAG) !== false))
+			if (!empty($param) && is_array($param) && ($this->hasprepare) && (strpos($query, _TAG) !== false))
 			{
-				foreach ($param as $i => $value); {
+				foreach ($param as $i => $value) {
 					$parametrize = $i + 1;
-					//$from = '/'.preg_quote('_ez_', '/').'/';
-					//$query = preg_replace($from, '$'.$parametrize, $query, 1);
 					$needle = _TAG;
 					$pos = strpos($query, $needle);
 					if ($pos !== false) 
@@ -291,7 +292,7 @@
 			}
             
 			// Perform the query via std postgresql_query function..
-			if (($param) && is_array($param) && ($this->hasprepare)){
+			if (!empty($param) && is_array($param) && ($this->hasprepare)){
 				$this->result = @pg_query_params($this->dbh, $query, $param);		
 				$this->preparedvalues = array();				
 			} else 

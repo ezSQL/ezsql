@@ -266,13 +266,13 @@
 		/**********************************************************************
 		*  Return the parameterized query as a result set - see docs for more details
 		*/
-		function get_results_prepared($query=null, $param=null, $output = OBJECT) {
+		function get_results_prepared($query=null, $output = OBJECT) {
 			// Log how the function was called
 			$this->func_call = "\$db->get_results_prepared(\"$query, $param\", $output)";
 			
 			// If there is a query then perform it if not then use cached results..
-			if (( $query ) && is_array( $param )) {
-				$this->query($query, $param);
+			if ( $query ) {
+				$this->query($query, true);
 			}
 			
 			return $this->get_results_output($output);

@@ -171,8 +171,11 @@
 		// ==================================================================
 		//	Basic Query	- see docs for more detail
 	
-		function query($query, $param=null)
-		{
+		function query($query, $doprepare=false)
+        {
+            if ($doprepare)
+                $param = $this->preparedvalues;
+            
 			// check for ezQuery placeholder tag and replace tags with proper prepare tag
 			$query = str_replace(_TAG, '?', $query);
             

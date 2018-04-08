@@ -279,7 +279,10 @@ class ezSQL_mysqli extends ezSQLcore
      * @param type $query
      * @return boolean
      */
-    public function query($query, $param=null) {
+    public function query($query, $doprepare=false) {
+        if ($doprepare)
+            $param = $this->preparedvalues;
+        
 		// check for ezQuery placeholder tag and replace tags with proper prepare tag
 		$query = str_replace(_TAG, '?', $query);
 		
@@ -313,12 +316,9 @@ class ezSQL_mysqli extends ezSQLcore
         }
 
         // Perform the query via std mysql_query function..
-		if (($param) && is_array($param) && ($this->hasprepare)) {			
+		if (!empty($param) && is_array($param) && ($this->hasprepare)) {			
 			$this->_result = $this->query_prepared($query, $param);
-			echo var_dump($this->_result);
-			echo var_dump($query);
-			echo var_dump($param);		
-			$this->preparedvalues = null;
+			$this->preparedvalues = array();
 		} else 
 			$this->_result = mysqli_query($this->dbh, $query);
 

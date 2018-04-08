@@ -145,8 +145,10 @@ class ezQuery
 					$combiner[] = (isset($values[3])) ? $values[3]: _AND;
 					$extra[] = (isset($values[4])) ? $values[4]: null;
 				}				
-			} else
+			} else {
+                $this->preparedvalues = array();
 				return false;
+            }                
 		}
         
         $where='1';    
@@ -162,6 +164,7 @@ class ezQuery
 				else 
 					$combinewith = _AND;
                 if (! in_array( $iscondition, array( '<', '>', '=', '!=', '>=', '<=', '<>', 'IN', 'LIKE', 'NOT LIKE', 'BETWEEN', 'NOT BETWEEN', 'IS', 'IS NOT' ) )) {
+                    $this->preparedvalues = array();
                     return false;
                 } else {
                     if (($iscondition=='BETWEEN') || ($iscondition=='NOT BETWEEN')) {
@@ -204,7 +207,7 @@ class ezQuery
             $where = rtrim($where, " $combinewith ");
         }
 		
-        if (($this->hasprepare) && ($parameters) && ($where!='1')) {
+        if (($this->hasprepare) && !empty($parameters) && ($where!='1')) {
 			array_push($this->preparedvalues, $parameters);	
 			return " $whereorhaving ".$where.' ';
 		} else
@@ -244,6 +247,7 @@ class ezQuery
         $where = '';
 		
         if ( ! isset($table) || $table=='' ) {
+            $this->preparedvalues = array();
             return false;
         }
         
@@ -273,8 +277,10 @@ class ezQuery
                         if ($groupbyset) {
                             $args_by .= ' '.$where_groupby_having_orderby;
                             $havingset = true;
-                        } else
+                        } else {
+                            $this->preparedvalues = array();
                             return false;
+                        }
                     } elseif (strpos($where_groupby_having_orderby,'ORDER BY')!==false ) {
                         $args_by .= ' '.$where_groupby_having_orderby;    
                         $orderbyset = true;
@@ -295,11 +301,13 @@ class ezQuery
         if (is_string($where)) {
             $sql .= $where;
             if ($getdo_getresults) 
-                return (($this->hasprepare) && ($this->preparedvalues)) ? $this->get_results_prepared($sql, $this->preparedvalues) : $this->get_results($sql);     
+                return (($this->hasprepare) && !empty($this->preparedvalues)) ? $this->get_results_prepared($sql) : $this->get_results($sql);     
             else 
                 return $sql;
-        } else 
+        } else {
+            $this->preparedvalues = array();
             return false;
+        }             
     }
 		
 	/**********************************************************************
@@ -315,14 +323,18 @@ class ezQuery
 		$this->do_getresults = false;
 		if (isset($oldtable))
 			$this->fromtable = $oldtable;
-		else 
-			return false;
+		else {
+            $this->preparedvalues = array();
+			return false;            
+        }
 			
         $newtablefromtable = $this->selecting($newtable, $fromcolumns, ...$fromwhere);			
         if (is_string($newtablefromtable))
-            return (($this->hasprepare) && ($this->preparedvalues)) ? $this->query($newtablefromtable, $this->preparedvalues) : $this->query($newtablefromtable); 
-        else
+            return (($this->hasprepare) && !empty($this->preparedvalues)) ? $this->query($newtablefromtable, true) : $this->query($newtablefromtable); 
+        else {
+            $this->preparedvalues = array();
             return false;    		
+        }
     }
     
     /**********************************************************************
@@ -340,15 +352,15 @@ class ezQuery
 		if (isset($oldtable))
 			$this->fromtable = $oldtable;
 		else {
-			$this->preparedvalues = null;
+			$this->preparedvalues = array();
             return false;          			
 		}  
 			
         $newtablefromtable = $this->selecting($newtable, $fromcolumns, ...$fromwhere);
         if (is_string($newtablefromtable))
-            return (($this->hasprepare) && ($this->preparedvalues)) ? $this->query($newtablefromtable, $this->preparedvalues) : $this->query($newtablefromtable); 
+            return (($this->hasprepare) && !empty($this->preparedvalues)) ? $this->query($newtablefromtable, true) : $this->query($newtablefromtable); 
         else {
-			$this->preparedvalues = null;
+			$this->preparedvalues = array();
             return false;          			
 		}  
     }
@@ -363,7 +375,7 @@ class ezQuery
 	*/
     function update($table='', $keyandvalue, ...$wherekeys) {        
         if ( ! is_array( $keyandvalue ) || ! isset($table) || $table=='' ) {
-			$this->preparedvalues = null;
+			$this->preparedvalues = array();
             return false;
         }
         
@@ -386,9 +398,9 @@ class ezQuery
         $where = $this->where(...$wherekeys);
         if (is_string($where)) {   
             $sql = rtrim($sql, ', ') . $where;
-            return (($this->hasprepare) && ($this->preparedvalues)) ? $this->query($sql, $this->preparedvalues) : $this->query($sql) ;       
+            return (($this->hasprepare) && !empty($this->preparedvalues)) ? $this->query($sql, true) : $this->query($sql) ;       
         } else {
-			$this->preparedvalues = null;
+			$this->preparedvalues = array();
             return false;
 		}
     }   
@@ -398,7 +410,7 @@ class ezQuery
 	*/
     function delete($table='', ...$wherekeys) {   
         if ( ! isset($table) || $table=='' ) {
-			$this->preparedvalues = null;
+			$this->preparedvalues = array();
             return false;          			
 		}  
 		
@@ -407,9 +419,9 @@ class ezQuery
         $where = $this->where(...$wherekeys);
         if (is_string($where)) {   
             $sql .= $where;						
-            return (($this->hasprepare) && ($this->preparedvalues)) ? $this->query($sql, $this->preparedvalues) : $this->query($sql) ;  
+            return (($this->hasprepare) && !empty($this->preparedvalues)) ? $this->query($sql, true) : $this->query($sql) ;  
         } else {
-			$this->preparedvalues = null;
+			$this->preparedvalues = array();
             return false;          			
 		}  
     }
@@ -419,12 +431,12 @@ class ezQuery
 	*/
     function _query_insert_replace($table='', $keyandvalue, $type, $execute=true) {  
         if ((! is_array($keyandvalue)) && $execute || $table=='' ) {
-			$this->preparedvalues = null;
+			$this->preparedvalues = array();
             return false;          			
 		}  
         
         if ( ! in_array( strtoupper( $type ), array( 'REPLACE', 'INSERT' ))) {
-			$this->preparedvalues = null;
+			$this->preparedvalues = array();
             return false;          			
 		}  
             
@@ -447,15 +459,15 @@ class ezQuery
             
             $sql .= "(". rtrim($n, ', ') .") VALUES (". rtrim($v, ', ') .");";
 
-			if (($this->preparedvalues) && ($this->hasprepare)) 
-				$ok = $this->query($sql, $this->preparedvalues);
+			if (($this->preparedvalues) && !empty($this->preparedvalues)) 
+				$ok = $this->query($sql, true);
 			else 
 				$ok = $this->query($sql);
 				
             if ($ok)
                 return $this->insert_id;
             else {
-				$this->preparedvalues = null;
+				$this->preparedvalues = array();
 				return false;          			
 			}  
         } else {
@@ -505,9 +517,9 @@ class ezQuery
 		$this->do_getresults = false;
         $getfromtable = $this->selecting($fromtable, $fromcolumns, ...$fromwhere);
         if (is_string($puttotable) && is_string($getfromtable))
-            return (($this->hasprepare) && ($this->preparedvalues)) ? $this->query($puttotable." ".$getfromtable, $this->preparedvalues) : $this->query($puttotable." ".$getfromtable) ;
+            return (($this->hasprepare) && !empty($this->preparedvalues)) ? $this->query($puttotable." ".$getfromtable, true) : $this->query($puttotable." ".$getfromtable) ;
         else {
-			$this->preparedvalues = null;
+			$this->preparedvalues = array();
             return false;          			
 		}                 
     }    

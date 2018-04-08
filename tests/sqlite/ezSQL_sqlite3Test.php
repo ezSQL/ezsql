@@ -50,7 +50,6 @@ class ezSQL_sqlite3Test extends TestCase
             );
         }
         $this->object = new ezSQL_sqlite3(self::TEST_SQLITE_DB_DIR, self::TEST_SQLITE_DB); 
-		$this->object->hasprepare = false;
     }
 
     /**

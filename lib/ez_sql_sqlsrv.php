@@ -178,8 +178,11 @@
 		*  Perform sqlsrv query and try to determine result value
 		*/
 
-		function query($query, $param=null)
+		function query($query, $doprepare=false)
 		{
+            if ($doprepare) 
+                $param = $this->preparedvalues;
+            
 			// check for ezQuery placeholder tag and replace tags with proper prepare tag
 			$query = str_replace(_TAG, '?', $query);
 
@@ -222,10 +225,9 @@
 			}
 
 			// Perform the query via std sqlsrv_query function..
-			if (($param) && is_array($param) && ($this->hasprepare)) {
+			if (!empty($param) && is_array($param) && ($this->hasprepare))
 				$this->result = @sqlsrv_query($this->dbh, $query, $param);
-				$this->preparedvalues = array();
-			} else 
+			else 
 				$this->result = @sqlsrv_query($this->dbh, $query);
 
 			// If there is an error then take note of it..
@@ -236,7 +238,8 @@
 					foreach ($errors as $error) {
 						$sqlError = "ErrorCode: ".$error['code']." ### State: ".$error['SQLSTATE']." ### Error Message: ".$error['message']." ### Query: ".$query;
 						$this->register_error($sqlError);
-						$this->show_errors ? trigger_error($sqlError ,E_USER_WARNING) : null;
+						$this->show_errors ? trigger_error($sqlError ,E_USER_WARNING) : null;               
+                    //print_r( sqlsrv_errors());
 					}
 				}
 				return false;
