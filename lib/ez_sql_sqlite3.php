@@ -32,8 +32,7 @@
 
 		var $rows_affected = false;
         
-		public $hasprepare = true;
-		public $preparedvalues = array();
+		protected $preparedvalues = array();
 
 		/**********************************************************************
 		*  Constructor - allow the user to perform a quick connect at the 
@@ -171,9 +170,9 @@
 		// ==================================================================
 		//	Basic Query	- see docs for more detail
 	
-		function query($query, $doprepare=false)
+		function query($query, $use_prepare=false)
         {
-            if ($doprepare)
+            if ($use_prepare)
                 $param = $this->preparedvalues;
             
 			// check for ezQuery placeholder tag and replace tags with proper prepare tag
@@ -195,7 +194,7 @@
 			$this->last_query = $query;
 
 			// Perform the query via std SQLite3 query or SQLite3 prepare function..
-            if (($param) && is_array($param) && ($this->hasprepare)) {
+            if (($param) && is_array($param) && ($this->prepareActive)) {
                 $this->result = $this->query_prepared($query, $param);		
 				$this->preparedvalues = array();
             } else 
@@ -261,7 +260,7 @@
 			
 			}
             
-            if (($param) && is_array($param) && ($this->hasprepare))
+            if (($param) && is_array($param) && ($this->prepareActive))
                 $this->result->finalize(); 
 
 			// If debug ALL queries

@@ -54,8 +54,7 @@
 		private $dbhost = false;
 		private $rows_affected = false;
         
-		public $hasprepare = true;
-		public $preparedvalues = array();
+		protected $preparedvalues = array();
 
 		//if we want to convert Queries in MySql syntax to MS-SQL syntax. Yes, there
 		//are some differences in query syntax.
@@ -68,6 +67,8 @@
 
 		function __construct($dbuser='', $dbpassword='', $dbname='', $dbhost='localhost', $convertMySqlToMSSqlQuery=true)
 		{
+            parent::__construct();
+            
 			$this->dbuser = $dbuser;
 			$this->dbpassword = $dbpassword;
 			$this->dbname = $dbname;
@@ -75,7 +76,7 @@
 			$this->convertMySqlToMSSqlQuery = $convertMySqlToMSSqlQuery;
             
             global $_ezSqlsrv;
-            $_ezSqlsrv = $this;
+            $_ezSqlsrv = $this;        
 		}
 
 		/**********************************************************************
@@ -178,9 +179,9 @@
 		*  Perform sqlsrv query and try to determine result value
 		*/
 
-		function query($query, $doprepare=false)
+		function query($query, $use_prepare=false)
 		{
-            if ($doprepare) 
+            if ($use_prepare) 
                 $param = $this->preparedvalues;
             
 			// check for ezQuery placeholder tag and replace tags with proper prepare tag
@@ -225,8 +226,10 @@
 			}
 
 			// Perform the query via std sqlsrv_query function..
-			if (!empty($param) && is_array($param) && ($this->hasprepare))
+			if (!empty($param) && is_array($param) && ($this->prepareActive)) {
 				$this->result = @sqlsrv_query($this->dbh, $query, $param);
+                $this->preparedvalues = array();                
+            }
 			else 
 				$this->result = @sqlsrv_query($this->dbh, $query);
 
@@ -238,8 +241,7 @@
 					foreach ($errors as $error) {
 						$sqlError = "ErrorCode: ".$error['code']." ### State: ".$error['SQLSTATE']." ### Error Message: ".$error['message']." ### Query: ".$query;
 						$this->register_error($sqlError);
-						$this->show_errors ? trigger_error($sqlError ,E_USER_WARNING) : null;               
-                    //print_r( sqlsrv_errors());
+						$this->show_errors ? trigger_error($sqlError ,E_USER_WARNING) : null;  
 					}
 				}
 				return false;

@@ -74,8 +74,8 @@ class ezSQL_sqlsrvTest extends TestCase {
               'The sqlsrv Lib is not available.'
             );
         }
-        $this->object = new ezSQL_sqlsrv;
-		$this->object->hasprepare = false;
+        $this->object = new ezSQL_sqlsrv;        
+        $this->object->setprepare();
     } // setUp
 
     /**
@@ -174,8 +174,7 @@ class ezSQL_sqlsrvTest extends TestCase {
      */
     public function testInsert()
     {
-        $this->object->quick_connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME); 
-        $this->object->query('TRUNCATE TABLE unit_test'); 
+        $this->object->quick_connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME);
         $this->object->query('CREATE TABLE unit_test(id integer, test_key varchar(50), PRIMARY KEY (ID))');        
         $this->assertNotFalse($this->object->insert('unit_test', ['id'=>7, 'test_key'=>'testInsert() 1' ]));
     }
@@ -205,19 +204,23 @@ class ezSQL_sqlsrvTest extends TestCase {
     {
         $this->object->quick_connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME);    
         $this->object->query('CREATE TABLE unit_test(id integer, test_key varchar(50), PRIMARY KEY (ID))');
+        
         $unit_test['id'] = 1;
         $unit_test['test_key'] = 'testDelete() 1';
         $this->object->insert('unit_test', $unit_test );
+        
         $unit_test['id'] = 2;
         $unit_test['test_key'] = 'testDelete() 2';
         $this->object->insert('unit_test', $unit_test );
+        
         $unit_test['id'] = 3;
         $unit_test['test_key'] = 'testDelete() 3';
         $this->object->insert('unit_test', $unit_test );
-        $where=1;
-        $this->assertEquals($this->object->delete('unit_test', array('id','=',1)), 1);
+        
+        $this->assertEquals($this->object->delete('unit_test', ['id','=',1]), 1);
         $this->assertEquals($this->object->delete('unit_test', eq('id', 3, _AND), eq('test_key', 'testDelete() 3') ), 1);
-        $this->assertEquals($this->object->delete('unit_test', array('test_key','=',$where)), 0);
+        $where=1;
+        $this->assertFalse($this->object->delete('unit_test', array('test_key','=',$where)));
         $where="id  =  2";
         $this->assertEquals($this->object->delete('unit_test', $where), 1);
     }  

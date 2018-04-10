@@ -55,7 +55,6 @@
 		public $do_profile       = false;
 		public $profile_times    = array();
 		public $insert_id        = null;
-		public $hasprepare 	 	 = false;
 		
     /**
      * Whether the database connection is established, or not
@@ -161,16 +160,16 @@
 		*  Get one variable from the DB - see docs for more detail
 		*/
 
-		function get_var($query=null,$x=0,$y=0)
+		function get_var($query=null,$x=0,$y=0, $use_prepare=false)
 		{
 
 			// Log how the function was called
 			$this->func_call = "\$db->get_var(\"$query\",$x,$y)";
 
 			// If there is a query then perform it if not then use cached results..
-			if ( $query )
+			if ( $query)
 			{
-				$this->query($query);
+				$this->query($query, $use_prepare);
 			}
 
 			// Extract public out of cached results based x,y vals
@@ -187,7 +186,7 @@
 		*  Get one row from the DB - see docs for more detail
 		*/
 
-		function get_row($query=null,$output=OBJECT,$y=0)
+		function get_row($query=null,$output=OBJECT,$y=0, $use_prepare=false)
 		{
 
 			// Log how the function was called
@@ -196,7 +195,7 @@
 			// If there is a query then perform it if not then use cached results..
 			if ( $query )
 			{
-				$this->query($query);
+				$this->query($query, $use_prepare);
 			}
 
 			// If the output is an object then return object using the row offset..
@@ -227,7 +226,7 @@
 		*  see docs for usage and info
 		*/
 
-		function get_col($query=null,$x=0)
+		function get_col($query=null,$x=0, $use_prepare=false)
 		{
 
 			$new_array = array();
@@ -235,7 +234,7 @@
 			// If there is a query then perform it if not then use cached results..
 			if ( $query )
 			{
-				$this->query($query);
+				$this->query($query, $use_prepare);
 			}
 
 			// Extract the column values
@@ -251,17 +250,19 @@
 		/**********************************************************************
 		*  Return the the query as a result set, will use prepare statements if setup - see docs for more details
 		*/
-		function get_results($query=null, $output = OBJECT, $isprepare=false) {
+		function get_results($query=null, $output = OBJECT, $use_prepare=false) {
 			// Log how the function was called
-			$this->func_call = "\$db->get_results(\"$query\", $output)";
+			$this->func_call = "\$db->get_results(\"$query\", $output, $use_prepare)";
 
 			// If there is a query then perform it if not then use cached results..
 			if ( $query ) {
-				$this->query($query, $isprepare);
+				$this->query($query, $use_prepare);
 			}
 
 			if ( $output == OBJECT ) {
 				return $this->last_result;
+			} elseif ( $output == _JSON ) { 
+				return json_encode($this->last_result); // return as json output
 			} elseif ( $output == ARRAY_A || $output == ARRAY_N ) {
 				if ( $this->last_result ) {
 					$i=0;
@@ -278,11 +279,7 @@
 				}
 			}
 		}
-			
-		// helper for get_results Send back array of objects. Each row is an object				
-		function get_results_output($output = OBJECT) {	
-		}
-		
+					
 		/**********************************************************************
 		*  Function to get column meta data info pertaining to the last query
 		* see docs for more info and usage
@@ -685,8 +682,8 @@
     } // affectedRows
 	
 	// query call template
-    function query($query, $doprepare=false) {
+    function query($query, $use_prepare=false) {
 		return false;
-	}
+	}    
 		
 } // ezSQLcore

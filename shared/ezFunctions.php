@@ -27,6 +27,8 @@
  
 	// ezQuery prepare placeholder/positional tag
 		const _TAG = '__ez__';
+    // Use to set get_result output as json 
+        const _JSON = 'json';
  
     /*
      * Operator boolean expressions.
@@ -56,7 +58,7 @@
 		const _OR = 'OR';
 		const _NOT = 'NOT';
 		const _andNOT = 'AND NOT'; 
-        
+                
         // Global class instances, will be used to create and call methods directly.
         $_ezQuery = null;
         $_ezCubrid = null;

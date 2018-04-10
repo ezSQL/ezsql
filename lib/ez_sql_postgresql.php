@@ -73,8 +73,7 @@
         
 		private $rows_affected = false;
         
-		public $hasprepare = true;
-		public $preparedvalues = array();
+		protected $preparedvalues = array();
 
 		/**
 		* Constructor - allow the user to perform a qucik connect at the same time
@@ -244,13 +243,13 @@
 		*  Perform PostgreSQL query and try to determine result value
 		*/
 
-		function query($query, $doprepare=false)
+		function query($query, $use_prepare=false)
 		{
-            if ($doprepare)
+            if ($use_prepare)
                 $param = $this->preparedvalues;
             
 			// check for ezQuery placeholder tag and replace tags with proper prepare tag
-			if (!empty($param) && is_array($param) && ($this->hasprepare) && (strpos($query, _TAG) !== false))
+			if (!empty($param) && is_array($param) && ($this->prepareActive) && (strpos($query, _TAG) !== false))
 			{
 				foreach ($param as $i => $value) {
 					$parametrize = $i + 1;
@@ -292,7 +291,7 @@
 			}
             
 			// Perform the query via std postgresql_query function..
-			if (!empty($param) && is_array($param) && ($this->hasprepare)){
+			if (!empty($param) && is_array($param) && ($this->prepareActive)){
 				$this->result = @pg_query_params($this->dbh, $query, $param);		
 				$this->preparedvalues = array();				
 			} else 

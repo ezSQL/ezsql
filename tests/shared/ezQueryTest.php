@@ -86,8 +86,15 @@ class ezQueryTest extends TestCase {
     public function testSelecting()
     {
         $this->assertFalse($this->object->selecting('',''));
-        $this->object->do_getresults = false;
-        $this->assertNotNull($this->object->selecting('table','colums','WHERE','GROUP BY','HAVING','ORDER BY'));
+        $this->assertNotNull($this->object->select_sql('table','colums','WHERE','GROUP BY','HAVING','ORDER BY'));
+    }
+
+    /**
+     * @covers ezQuery::select_sql
+     */
+    public function testSelect_sql()
+    {
+        $this->assertNotNull($this->object->select_sql('table','colums','WHERE','GROUP BY','HAVING','ORDER BY'));
     } 
     
     /**
