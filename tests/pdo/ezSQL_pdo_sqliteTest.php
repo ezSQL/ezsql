@@ -91,6 +91,7 @@ class ezSQL_pdo_sqliteTest extends TestCase {
             );
         }
         $this->object = new ezSQL_pdo();
+		$this->object->hasprepare = false;
     } // setUp
 
     /**

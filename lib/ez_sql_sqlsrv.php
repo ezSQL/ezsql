@@ -3,6 +3,7 @@
 
 	/**********************************************************************
 	*  Author: davisjw (davisjw@gmail.com)
+           * Contributor:  Lawrence Stubbs <technoexpressnet@gmail.com>
 	*  Web...: http://twitter.com/justinvincent
 	*  Name..: ezSQL_sqlsrv
 	*  Desc..: Microsoft Sql Server component (MS drivers) (part of ezSQL databse abstraction library) - based on ezSql_msSql library class.
@@ -47,15 +48,17 @@
 	class ezSQL_sqlsrv extends ezSQLcore
 	{
 
-		var $dbuser = false;
-		var $dbpassword = false;
-		var $dbname = false;
-		var $dbhost = false;
-		var $rows_affected = false;
+		private $dbuser = false;
+		private $dbpassword = false;
+		private $dbname = false;
+		private $dbhost = false;
+		private $rows_affected = false;
+        
+		protected $preparedvalues = array();
 
 		//if we want to convert Queries in MySql syntax to MS-SQL syntax. Yes, there
 		//are some differences in query syntax.
-		var $convertMySqlToMSSqlQuery = TRUE;
+		private $convertMySqlToMSSqlQuery = TRUE;
 
 		/**********************************************************************
 		*  Constructor - allow the user to perform a quick connect at the
@@ -64,6 +67,8 @@
 
 		function __construct($dbuser='', $dbpassword='', $dbname='', $dbhost='localhost', $convertMySqlToMSSqlQuery=true)
 		{
+            parent::__construct();
+            
 			$this->dbuser = $dbuser;
 			$this->dbpassword = $dbpassword;
 			$this->dbname = $dbname;
@@ -71,7 +76,7 @@
 			$this->convertMySqlToMSSqlQuery = $convertMySqlToMSSqlQuery;
             
             global $_ezSqlsrv;
-            $_ezSqlsrv = $this;
+            $_ezSqlsrv = $this;        
 		}
 
 		/**********************************************************************
@@ -174,8 +179,13 @@
 		*  Perform sqlsrv query and try to determine result value
 		*/
 
-		function query($query)
+		function query($query, $use_prepare=false)
 		{
+            if ($use_prepare) 
+                $param = $this->preparedvalues;
+            
+			// check for ezQuery placeholder tag and replace tags with proper prepare tag
+			$query = str_replace(_TAG, '?', $query);
 
 			//if flag to convert query from MySql syntax to MS-Sql syntax is true
 			//convert the query
@@ -216,8 +226,12 @@
 			}
 
 			// Perform the query via std sqlsrv_query function..
-
-			$this->result = @sqlsrv_query($this->dbh, $query);
+			if (!empty($param) && is_array($param) && ($this->prepareActive)) {
+				$this->result = @sqlsrv_query($this->dbh, $query, $param);
+                $this->preparedvalues = array();                
+            }
+			else 
+				$this->result = @sqlsrv_query($this->dbh, $query);
 
 			// If there is an error then take note of it..
 			if ($this->result === false )
@@ -227,7 +241,7 @@
 					foreach ($errors as $error) {
 						$sqlError = "ErrorCode: ".$error['code']." ### State: ".$error['SQLSTATE']." ### Error Message: ".$error['message']." ### Query: ".$query;
 						$this->register_error($sqlError);
-						$this->show_errors ? trigger_error($sqlError ,E_USER_WARNING) : null;
+						$this->show_errors ? trigger_error($sqlError ,E_USER_WARNING) : null;  
 					}
 				}
 				return false;

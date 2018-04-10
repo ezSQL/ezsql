@@ -6,6 +6,7 @@
           *
           * @author  Justin Vincent (jv@jvmultimedia.com)
           * @author  Stefanie Janine Stoelting <mail@stefanie-stoelting.de>
+          * Contributor:  Lawrence Stubbs <technoexpressnet@gmail.com>
           * @link	   http://twitter.com/justinvincent
           * @name	   ezSQL_postgresql
           * @package ezSQL
@@ -68,9 +69,11 @@
 		* @var resource
 		*/
 		public $dbh;
-		var $result;
+		private $result;
         
-		var $rows_affected = false;
+		private $rows_affected = false;
+        
+		protected $preparedvalues = array();
 
 		/**
 		* Constructor - allow the user to perform a qucik connect at the same time
@@ -231,21 +234,33 @@
 		} // showDatabases
 
 		/**
-		* Perform PostgreSQL query and try to detirmin result value
+		* Perform PostgreSQL query and try to determine result value
 		*
 		* @param string $query
 		* @return boolean
 		*/
 		/**********************************************************************
-		*  Perform PostgreSQL query and try to detirmin result value
+		*  Perform PostgreSQL query and try to determine result value
 		*/
 
-		function query($query)
+		function query($query, $use_prepare=false)
 		{
-            // check for and replace tags created by ezSQLcore's insert, update, delete, replace, and showing methods
-            $query = str_replace('__ezsql__', '', $query);
+            if ($use_prepare)
+                $param = $this->preparedvalues;
+            
+			// check for ezQuery placeholder tag and replace tags with proper prepare tag
+			if (!empty($param) && is_array($param) && ($this->prepareActive) && (strpos($query, _TAG) !== false))
+			{
+				foreach ($param as $i => $value) {
+					$parametrize = $i + 1;
+					$needle = _TAG;
+					$pos = strpos($query, $needle);
+					if ($pos !== false) 
+						$query = substr_replace($query, '$'.$parametrize, $pos, strlen($needle));
+				}
+			}				
 
-			// Initialise return
+			// Initialize return
 			$return_val = 0;
 
 			// Flush cached values..
@@ -276,7 +291,11 @@
 			}
             
 			// Perform the query via std postgresql_query function..
-			$this->result = @pg_query($this->dbh, $query);
+			if (!empty($param) && is_array($param) && ($this->prepareActive)){
+				$this->result = @pg_query_params($this->dbh, $query, $param);		
+				$this->preparedvalues = array();				
+			} else 
+				$this->result = @pg_query($this->dbh, $query);
 
 
 			// If there is an error then take note of it..

@@ -74,7 +74,8 @@ class ezSQL_sqlsrvTest extends TestCase {
               'The sqlsrv Lib is not available.'
             );
         }
-        $this->object = new ezSQL_sqlsrv;
+        $this->object = new ezSQL_sqlsrv;        
+        $this->object->setprepare();
     } // setUp
 
     /**
@@ -83,6 +84,7 @@ class ezSQL_sqlsrvTest extends TestCase {
      */
     protected function tearDown() {
         $this->object->query('DROP TABLE unit_test');
+        $this->object->query('TRUNCATE TABLE unit_test');
         $this->object = null;
     } // tearDown
 
@@ -172,11 +174,9 @@ class ezSQL_sqlsrvTest extends TestCase {
      */
     public function testInsert()
     {
-        $this->object->quick_connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME);    
-        $this->object->query('CREATE TABLE unit_test(id integer, test_key varchar(50), PRIMARY KEY (ID))');
-        
-        $result = $this->object->insert('unit_test', array('id'=>'1', 'test_key'=>'test 1' ));
-        $this->assertEquals(0, $result);
+        $this->object->quick_connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME);
+        $this->object->query('CREATE TABLE unit_test(id integer, test_key varchar(50), PRIMARY KEY (ID))');        
+        $this->assertNotFalse($this->object->insert('unit_test', ['id'=>7, 'test_key'=>'testInsert() 1' ]));
     }
        
     /**
@@ -184,17 +184,17 @@ class ezSQL_sqlsrvTest extends TestCase {
      */
     public function testUpdate()
     {
-        $this->object->quick_connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME);    
-        $this->object->query('CREATE TABLE unit_test(id integer, test_key varchar(50), PRIMARY KEY (ID))');
-        $this->object->insert('unit_test', array('id'=>'1', 'test_key'=>'test 1' ));
-        $this->object->insert('unit_test', array('id'=>'2', 'test_key'=>'test 2' ));
-        $this->object->insert('unit_test', array('id'=>'3', 'test_key'=>'test 3' ));
+        $this->object->quick_connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME);  
+        $this->object->query('CREATE TABLE unit_test(id integer, test_key varchar(50), PRIMARY KEY (ID))');  
+        $this->assertNotFalse($this->object->insert('unit_test', array('id'=>1, 'test_key'=>'testUpdate() 1' )));
+        $this->object->insert('unit_test', array('id'=>2, 'test_key'=>'testUpdate() 2' ));
+        $this->object->insert('unit_test', array('id'=>3, 'test_key'=>'testUpdate() 3' ));
         $unit_test['test_key'] = 'testing';
         $where="id  =  1";
         $this->assertEquals($this->object->update('unit_test', $unit_test, $where), 1);
-        $this->assertEquals($this->object->update('unit_test', $unit_test, eq('test_key','test 3', _AND), eq('id','3')), 1);
+        $this->assertEquals($this->object->update('unit_test', $unit_test, eq('id', 3, _AND), eq('test_key', 'testUpdate() 3')), 1);
         $this->assertEquals($this->object->update('unit_test', $unit_test, "id = 4"), 0);
-        $this->assertEquals($this->object->update('unit_test', $unit_test, "test_key  =  test 2  and", "id  =  2"), 1);
+        $this->assertEquals($this->object->update('unit_test', $unit_test, "test_key  =  testUpdate() 2  and", "id  =  2"), 1);
     }
     
     /**
@@ -204,24 +204,25 @@ class ezSQL_sqlsrvTest extends TestCase {
     {
         $this->object->quick_connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME);    
         $this->object->query('CREATE TABLE unit_test(id integer, test_key varchar(50), PRIMARY KEY (ID))');
-        $unit_test['id'] = '1';
-        $unit_test['test_key'] = 'test 1';
+        
+        $unit_test['id'] = 1;
+        $unit_test['test_key'] = 'testDelete() 1';
         $this->object->insert('unit_test', $unit_test );
-        $unit_test['id'] = '2';
-        $unit_test['test_key'] = 'test 2';
+        
+        $unit_test['id'] = 2;
+        $unit_test['test_key'] = 'testDelete() 2';
         $this->object->insert('unit_test', $unit_test );
-        $unit_test['id'] = '3';
-        $unit_test['test_key'] = 'test 3';
+        
+        $unit_test['id'] = 3;
+        $unit_test['test_key'] = 'testDelete() 3';
         $this->object->insert('unit_test', $unit_test );
-        $where='1';
-        $this->assertEquals($this->object->delete('unit_test', array('id','=','1')), 1);
-        $this->assertEquals($this->object->delete('unit_test', 
-            array('test_key','=',$unit_test['test_key'],'and'),
-            array('id','=','3')), 1);
-        $this->assertEquals($this->object->delete('unit_test', array('test_key','=',$where)), 0);
+        
+        $this->assertEquals($this->object->delete('unit_test', ['id','=',1]), 1);
+        $this->assertEquals($this->object->delete('unit_test', eq('id', 3, _AND), eq('test_key', 'testDelete() 3') ), 1);
+        $where=1;
+        $this->assertFalse($this->object->delete('unit_test', array('test_key','=',$where)));
         $where="id  =  2";
         $this->assertEquals($this->object->delete('unit_test', $where), 1);
-        $this->assertEquals(0, $this->object->query('DROP TABLE unit_test'));
     }  
 
     /**
@@ -229,34 +230,35 @@ class ezSQL_sqlsrvTest extends TestCase {
      */
     public function testSelecting()
     {
-        $this->object->quick_connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME);    
+        $this->object->quick_connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME);   
+        $this->assertEquals(0, $this->object->query('DROP TABLE IF EXITS unit_test')); 
         $this->object->query('CREATE TABLE unit_test(id integer, test_key varchar(50), PRIMARY KEY (ID))');
-        $this->object->insert('unit_test', array('id'=>'1', 'test_key'=>'testing 1' ));
-        $this->object->insert('unit_test', array('id'=>'2', 'test_key'=>'testing 2' ));
-        $this->object->insert('unit_test', array('id'=>'3', 'test_key'=>'testing 3' ));
+        $this->object->insert('unit_test', array('id'=>8, 'test_key'=>'testing 8' ));
+        $this->object->insert('unit_test', array('id'=>9, 'test_key'=>'testing 9' ));
+        $this->object->insert('unit_test', array('id'=>10, 'test_key'=>'testing 10' ));
         
         $result = $this->object->selecting('unit_test');
-        $i = 1;
+        $i = 8;
         foreach ($result as $row) {
             $this->assertEquals($i, $row->id);
             $this->assertEquals('testing ' . $i, $row->test_key);
             ++$i;
         }
         
-        $where=eq('test_key','testing 2');
+        $where=eq('test_key','testing 10');
         $result = $this->object->selecting('unit_test', 'id', $where);
         foreach ($result as $row) {
-            $this->assertEquals(2, $row->id);
+            $this->assertEquals(10, $row->id);
         }
         
-        $result = $this->object->selecting('unit_test', 'test_key', eq( 'id','3' ));
+        $result = $this->object->selecting('unit_test', 'test_key', eq( 'id',9 ));
         foreach ($result as $row) {
-            $this->assertEquals('testing 3', $row->test_key);
+            $this->assertEquals('testing 9', $row->test_key);
         }
         
-        $result = $this->object->selecting('unit_test', array ('test_key'), "id  =  1");
+        $result = $this->object->selecting('unit_test', array ('test_key'), "id  =  8");
         foreach ($result as $row) {
-            $this->assertEquals('testing 1', $row->test_key);
+            $this->assertEquals('testing 8', $row->test_key);
         }
     } 
 	

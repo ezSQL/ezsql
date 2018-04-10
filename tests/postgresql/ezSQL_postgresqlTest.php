@@ -77,6 +77,7 @@ class ezSQL_postgresqlTest extends TestCase {
               'The PostgreSQL Lib is not available.'
             );
         }
+		$this->object->prepareActive = false;
         $this->object = new ezSQL_postgresql;
     } // setUp
 

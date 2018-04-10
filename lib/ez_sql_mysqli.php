@@ -5,6 +5,7 @@
  *
  * @author  Justin Vincent (jv@jvmultimedia.com)
  * @author  Stefanie Janine Stoelting <mail@stefanie-stoelting.de>
+ * Contributor:  Lawrence Stubbs <technoexpressnet@gmail.com>
  * @link    http://twitter.com/justinvincent
  * @name    ezSQL_mysql
  * @package ezSQL
@@ -75,7 +76,9 @@ class ezSQL_mysqli extends ezSQLcore
      * @var resource
      */
     public $dbh;
-
+    
+	protected $preparedvalues = array();
+	
     /**
      * Constructor - allow the user to perform a quick connect at the same time
      * as initializing the ezSQL_mysql class
@@ -234,16 +237,54 @@ class ezSQL_mysqli extends ezSQLcore
     public function sysdate() {
         return 'NOW()';
     } // sysdate
+	
+	/**
+     * Creates a prepared query, binds the given parameters and returns the result of the executed
+     * {@link \mysqli_stmt}.
+     * @param string $query
+     * @param array $args
+     * @return bool|\mysqli_result
+     */
+    public function query_prepared($query, array $args)
+    {
+        $stmt   = $this->prepare($query);
+        $params = [];
+        $types  = array_reduce($args, 
+                    function ($string, &$arg) use (&$params) {
+                        $params[] = &$arg;
+                        if (is_float($arg))
+                            $string .= 'd';
+                        elseif (is_integer($arg))
+                            $string .= 'i';
+                        elseif (is_string($arg))
+                            $string .= 's';
+                        else    
+                            $string .= 'b';
+                        return $string;
+                    }, '');
+        
+        array_unshift($params, $types);
 
+        call_user_func_array([$stmt, 'bind_param'], $params);
+
+        $result = $stmt->execute() ? $stmt->get_result() : false;
+
+        return $result;
+    }
+    
     /**
      * Perform mySQL query and try to determine result value
      *
      * @param type $query
      * @return boolean
      */
-    public function query($query) {
-        // check for and replace tags created by ezSQLcore's insert, update, delete, replace, and showing methods
-        //$query = str_replace('__ezsql__','',$query);
+    public function query($query, $use_prepare=false) {
+        if ($use_prepare)
+            $param = $this->preparedvalues;
+        
+		// check for ezQuery placeholder tag and replace tags with proper prepare tag
+		$query = str_replace(_TAG, '?', $query);
+		
         // Initialize return
         $return_val = 0;
 
@@ -274,7 +315,11 @@ class ezSQL_mysqli extends ezSQLcore
         }
 
         // Perform the query via std mysql_query function..
-        $this->_result = mysqli_query($this->dbh, $query);
+		if (!empty($param) && is_array($param) && ($this->prepareActive)) {			
+			$this->_result = $this->query_prepared($query, $param);
+			$this->preparedvalues = array();
+		} else 
+			$this->_result = mysqli_query($this->dbh, $query);
 
         // If there is an error then take note of it..
         if ( $str = mysqli_error($this->dbh) ) {
@@ -333,7 +378,7 @@ class ezSQL_mysqli extends ezSQLcore
 
         return $return_val;
     } // query
-
+	
     /**
      * Close the database connection
      */

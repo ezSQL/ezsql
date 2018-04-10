@@ -116,7 +116,7 @@ class ezSQLcoreTest extends TestCase {
     public function testGet_var() {
         $this->object->last_result = array('1');
         $this->assertNull($this->object->get_var());
-        $this->expectExceptionMessage('Call to undefined method ezSQLcore::query()');
+        //$this->expectExceptionMessage('Call to undefined method ezSQLcore::query()');
         $this->assertNull($this->object->get_var('1'));
     } // testGet_var
 
@@ -128,7 +128,7 @@ class ezSQLcoreTest extends TestCase {
         $this->assertNull($this->object->get_row(null,ARRAY_A));
         $this->assertNull($this->object->get_row(null,ARRAY_N));
         $this->assertNull($this->object->get_row(null,'BAD'));
-        $this->expectExceptionMessage('Call to undefined method ezSQLcore::query()');
+       // $this->expectExceptionMessage('Call to undefined method ezSQLcore::query()');
         $this->assertNull($this->object->get_row('1'));
     } // testGet_row
 
@@ -139,8 +139,8 @@ class ezSQLcoreTest extends TestCase {
         $this->assertEmpty($this->object->get_col());
         $this->object->last_result = array('1');
         $this->assertNotNull($this->object->get_col());
-        $this->expectExceptionMessage('Call to undefined method ezSQLcore::query()');
-        $this->assertNull($this->object->get_col('1'));
+        //$this->expectExceptionMessage('Call to undefined method ezSQLcore::query()');
+        $this->assertNotFalse($this->object->get_col('1'));
     } // testGet_col
 
     /**
@@ -149,7 +149,7 @@ class ezSQLcoreTest extends TestCase {
     public function testGet_results() {
         $this->assertNull($this->object->get_results());
         $this->assertNotNull($this->object->get_results(null,ARRAY_A));
-        $this->expectExceptionMessage('Call to undefined method ezSQLcore::query()');
+       // $this->expectExceptionMessage('Call to undefined method ezSQLcore::query()');
         $this->assertNull($this->object->get_results('1'));
     } // testGet_results
 

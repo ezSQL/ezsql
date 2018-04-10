@@ -2,6 +2,7 @@
 
 	/**********************************************************************
 	*  Author: Justin Vincent (jv@jvmultimedia.com) / Silvio Wanka 
+	* Contributor:  Lawrence Stubbs <technoexpressnet@gmail.com>
 	*  Web...: http://twitter.com/justinvincent
 	*  Name..: ezSQL_sqlite3
 	*  Desc..: SQLite3 component (part of ezSQL databse abstraction library)
@@ -30,6 +31,8 @@
 	{
 
 		var $rows_affected = false;
+        
+		protected $preparedvalues = array();
 
 		/**********************************************************************
 		*  Constructor - allow the user to perform a quick connect at the 
@@ -114,7 +117,52 @@
 		{
 			return 'now';			
 		}
-
+        
+        // Get the data type of the value to bind. 
+        function getArgType($arg) {
+            switch (gettype($arg)) {
+                case 'double':  return SQLITE3_FLOAT;
+                case 'integer': return SQLITE3_INTEGER;
+                case 'boolean': return SQLITE3_INTEGER;
+                case 'NULL':    return SQLITE3_NULL;
+                case 'string':  return SQLITE3_TEXT;
+                case 'string':  return SQLITE3_TEXT;
+                default: 
+                    $type_error = 'Argument is of invalid type '.gettype($arg);
+                    $this->register_error($type_error);
+                    $this->show_errors ? trigger_error($type_error,E_USER_WARNING) : null;
+                    return false;
+            }
+        }
+        
+        /**
+		* Creates a prepared query, binds the given parameters and returns the result of the executed
+		* @param string $query
+		* @param array $param
+		* @return bool \SQLite3Result 
+		*/
+        function query_prepared($query, $param=null)
+        { 
+            $stmt = $this->dbh->prepare($query);
+            foreach ($param as $index => $val) {
+                // indexing start from 1 in Sqlite3 statement
+                if (is_array($val)) {
+                    $ok = $stmt->bindParam($index + 1, $val);
+                } else {
+                    $ok = $stmt->bindValue($index + 1, $val, getArgType($val));
+                }
+               
+                if (!$ok) {
+                    $type_error = "Unable to bind param: $val";
+                    $this->register_error($type_error);
+                    $this->show_errors ? trigger_error($type_error,E_USER_WARNING) : null;
+                    return false;
+                }
+            }
+            
+            return $stmt->execute();
+        }
+    
 		/**********************************************************************
 		*  Perform SQLite query and try to determine result value
 		*/
@@ -122,9 +170,14 @@
 		// ==================================================================
 		//	Basic Query	- see docs for more detail
 	
-		function query($query)
-		{
-
+		function query($query, $use_prepare=false)
+        {
+            if ($use_prepare)
+                $param = $this->preparedvalues;
+            
+			// check for ezQuery placeholder tag and replace tags with proper prepare tag
+			$query = str_replace(_TAG, '?', $query);
+            
 			// For reg expressions
 			$query = str_replace("/[\n\r]/",'',trim($query)); 
 
@@ -140,8 +193,12 @@
 			// Keep track of the last query for debug..
 			$this->last_query = $query;
 
-			// Perform the query via std mysql_query function..
-			$this->result = $this->dbh->query($query);
+			// Perform the query via std SQLite3 query or SQLite3 prepare function..
+            if (($param) && is_array($param) && ($this->prepareActive)) {
+                $this->result = $this->query_prepared($query, $param);		
+				$this->preparedvalues = array();
+            } else 
+                $this->result = $this->dbh->query($query);
 			$this->count(true, true);
 
 			// If there is an error then take note of it..
@@ -164,7 +221,7 @@
 					$this->insert_id = @$this->dbh->lastInsertRowID();	
 				}
 				
-				// Return number fo rows affected
+				// Return number of rows affected
 				$return_val = $this->rows_affected;
 	
 			}
@@ -188,11 +245,12 @@
 				$num_rows=0;
 				while ($row =  @$this->result->fetchArray(SQLITE3_ASSOC))
 				{
-					// Store relults as an objects within main array
+					// Store result as an objects within main array
 					$obj= (object) $row; //convert to object
 					$this->last_result[$num_rows] = $obj;
 					$num_rows++;
 				}
+                
 
 				// Log number of rows the query returned
 				$this->num_rows = $num_rows;
@@ -201,6 +259,9 @@
 				$return_val = $this->num_rows;
 			
 			}
+            
+            if (($param) && is_array($param) && ($this->prepareActive))
+                $this->result->finalize(); 
 
 			// If debug ALL queries
 			$this->trace||$this->debug_all ? $this->debug() : null ;

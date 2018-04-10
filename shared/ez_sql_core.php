@@ -30,63 +30,63 @@
 	class ezSQLcore extends ezQuery
 	{		
     
-		var $trace            = false;  // same as $debug_all
-		var $debug_all        = false;  // same as $trace
-		var $debug_called     = false;
-		var $vardump_called   = false;
-		var $show_errors      = true;
-		var $num_queries      = 0;
-		var $conn_queries     = 0;
-		var $last_query       = null;
-		var $last_error       = null;
-		var $col_info         = null;
-		var $captured_errors  = array();
-		var $cache_dir        = false;
-		var $cache_queries    = false;
-		var $cache_inserts    = false;
-		var $use_disk_cache   = false;
-		var $cache_timeout    = 24; // hours
-		var $timers           = array();
-		var $total_query_time = 0;
-		var $db_connect_time  = 0;
-		var $trace_log        = array();
-		var $use_trace_log    = false;
-		var $sql_log_file     = false;
-		var $do_profile       = false;
-		var $profile_times    = array();
-		var $insert_id        = null;
+		public $trace            = false;  // same as $debug_all
+		public $debug_all        = false;  // same as $trace
+		public $debug_called     = false;
+		public $vardump_called   = false;
+		public $show_errors      = true;
+		public $num_queries      = 0;
+		public $conn_queries     = 0;
+		public $last_query       = null;
+		public $last_error       = null;
+		public $col_info         = null;
+		public $captured_errors  = array();
+		public $cache_dir        = false;
+		public $cache_queries    = false;
+		public $cache_inserts    = false;
+		public $use_disk_cache   = false;
+		public $cache_timeout    = 24; // hours
+		public $timers           = array();
+		public $total_query_time = 0;
+		public $db_connect_time  = 0;
+		public $trace_log        = array();
+		public $use_trace_log    = false;
+		public $sql_log_file     = false;
+		public $do_profile       = false;
+		public $profile_times    = array();
+		public $insert_id        = null;
 		
     /**
      * Whether the database connection is established, or not
-     * @var boolean Default is false
+     * @public boolean Default is false
      */
     protected $_connected = false;    
     /**
      * Contains the number of affected rows of a query
-     * @var int Default is 0
+     * @public int Default is 0
      */
     protected $_affectedRows = 0;
 
     /**
      * The last query result
-     * @var object Default is null
+     * @public object Default is null
      */
     public $last_result = null;
 
     /**
      * Get data from disk cache
-     * @var boolean Default is false
+     * @public boolean Default is false
      */
     public $from_disk_cache = false;
 
     /**
      * Function called
-     * @var string
+     * @public string
      */
     private $func_call;
 
 		// == TJH == default now needed for echo of debug function
-		var $debug_echo_is_on = true;
+		public $debug_echo_is_on = true;
 
 		/**********************************************************************
 		*  Constructor
@@ -160,19 +160,19 @@
 		*  Get one variable from the DB - see docs for more detail
 		*/
 
-		function get_var($query=null,$x=0,$y=0)
+		function get_var($query=null,$x=0,$y=0, $use_prepare=false)
 		{
 
 			// Log how the function was called
 			$this->func_call = "\$db->get_var(\"$query\",$x,$y)";
 
 			// If there is a query then perform it if not then use cached results..
-			if ( $query )
+			if ( $query)
 			{
-				$this->query($query);
+				$this->query($query, $use_prepare);
 			}
 
-			// Extract var out of cached results based x,y vals
+			// Extract public out of cached results based x,y vals
 			if ( $this->last_result[$y] )
 			{
 				$values = array_values(get_object_vars($this->last_result[$y]));
@@ -186,7 +186,7 @@
 		*  Get one row from the DB - see docs for more detail
 		*/
 
-		function get_row($query=null,$output=OBJECT,$y=0)
+		function get_row($query=null,$output=OBJECT,$y=0, $use_prepare=false)
 		{
 
 			// Log how the function was called
@@ -195,7 +195,7 @@
 			// If there is a query then perform it if not then use cached results..
 			if ( $query )
 			{
-				$this->query($query);
+				$this->query($query, $use_prepare);
 			}
 
 			// If the output is an object then return object using the row offset..
@@ -226,7 +226,7 @@
 		*  see docs for usage and info
 		*/
 
-		function get_col($query=null,$x=0)
+		function get_col($query=null,$x=0, $use_prepare=false)
 		{
 
 			$new_array = array();
@@ -234,7 +234,7 @@
 			// If there is a query then perform it if not then use cached results..
 			if ( $query )
 			{
-				$this->query($query);
+				$this->query($query, $use_prepare);
 			}
 
 			// Extract the column values
@@ -247,56 +247,39 @@
 			return $new_array;
 		}
 
-
 		/**********************************************************************
-		*  Return the the query as a result set - see docs for more details
+		*  Return the the query as a result set, will use prepare statements if setup - see docs for more details
 		*/
-
-		function get_results($query=null, $output = OBJECT)
-		{
-
+		function get_results($query=null, $output = OBJECT, $use_prepare=false) {
 			// Log how the function was called
-			$this->func_call = "\$db->get_results(\"$query\", $output)";
+			$this->func_call = "\$db->get_results(\"$query\", $output, $use_prepare)";
 
 			// If there is a query then perform it if not then use cached results..
-			if ( $query )
-			{
-				$this->query($query);
+			if ( $query ) {
+				$this->query($query, $use_prepare);
 			}
 
-			// Send back array of objects. Each row is an object
-			if ( $output == OBJECT )
-			{
+			if ( $output == OBJECT ) {
 				return $this->last_result;
-			}
-			elseif ( $output == ARRAY_A || $output == ARRAY_N )
-			{
-				if ( $this->last_result )
-				{
+			} elseif ( $output == _JSON ) { 
+				return json_encode($this->last_result); // return as json output
+			} elseif ( $output == ARRAY_A || $output == ARRAY_N ) {
+				if ( $this->last_result ) {
 					$i=0;
-					foreach( $this->last_result as $row )
-					{
-
+					foreach( $this->last_result as $row ) {
 						$new_array[$i] = get_object_vars($row);
-
-						if ( $output == ARRAY_N )
-						{
+						if ( $output == ARRAY_N ) {
 							$new_array[$i] = array_values($new_array[$i]);
 						}
-
 						$i++;
 					}
-
 					return $new_array;
-				}
-				else
-				{
+				} else {
 					return array();
 				}
 			}
 		}
-
-
+					
 		/**********************************************************************
 		*  Function to get column meta data info pertaining to the last query
 		* see docs for more info and usage
@@ -402,7 +385,7 @@
 
 		/**********************************************************************
 		*  Dumps the contents of any input variable to screen in a nicely
-		*  formatted and easy to understand way - any type: Object, Var or Array
+		*  formatted and easy to understand way - any type: Object, public or Array
 		*/
 
 		function vardump($mixed='')
@@ -697,5 +680,10 @@
     function affectedRows() {
         return $this->_affectedRows;
     } // affectedRows
-    
+	
+	// query call template
+    function query($query, $use_prepare=false) {
+		return false;
+	}    
+		
 } // ezSQLcore

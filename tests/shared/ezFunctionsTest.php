@@ -170,6 +170,8 @@ class ezFunctionsTest extends TestCase {
      */
     public function testsetQuery() {
         $this->assertFalse(setQuery());
+        $this->assertTrue(setQuery('pdo'));
+        $this->assertFalse(setQuery(''));
     }
 
     /**

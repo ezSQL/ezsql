@@ -25,6 +25,11 @@
  * and is licensed under the MIT license.
  */
  
+	// ezQuery prepare placeholder/positional tag
+		const _TAG = '__ez__';
+    // Use to set get_result output as json 
+        const _JSON = 'json';
+ 
     /*
      * Operator boolean expressions.
      */
@@ -53,7 +58,7 @@
 		const _OR = 'OR';
 		const _NOT = 'NOT';
 		const _andNOT = 'AND NOT'; 
-        
+                
         // Global class instances, will be used to create and call methods directly.
         $_ezQuery = null;
         $_ezCubrid = null;
@@ -66,14 +71,14 @@
         $_ezSqlite3 = null;
         $_ezSqlsrv = null;
 
-  /**********************************************************************
+	/**********************************************************************
      * Creates an array from expressions in the following formate
      * param:  strings @x,        The left expression.
-     *                           @operator, One of '<', '>', '=', '!=', '>=', '<=', '<>', 'IN',, 'NOT IN', 'LIKE', 
-     *                                                      'NOT LIKE', 'BETWEEN', 'NOT BETWEEN', 'IS', 'IS NOT', or  the constants above.
-     *                           @y,        The right expression.
-     *                           @and,        combine additional expressions with,  'AND','OR', 'NOT', 'AND NOT'.
-     *                           @args          for any extras
+     *                 @operator, One of '<', '>', '=', '!=', '>=', '<=', '<>', 'IN',, 'NOT IN', 'LIKE', 
+     *                              'NOT LIKE', 'BETWEEN', 'NOT BETWEEN', 'IS', 'IS NOT', or  the constants above.
+     *                 @y,        The right expression.
+     *                 @and,        combine additional expressions with,  'AND','OR', 'NOT', 'AND NOT'.
+     *                 @args          for any extras
      *
      * function comparison($x, $operator, $y, $and=null, ...$args)
      *  {
@@ -272,6 +277,7 @@
             }
             return true;            
         } else {
+			$_ezQuery = null;
             unset($_ezQuery);
             return false;            
         }
@@ -279,61 +285,61 @@
     
     function select($table='', $columns='*', ...$args) {
         global $_ezQuery;
-        return $_ezQuery->selecting($table, $columns, ...$args);
+        return ($_ezQuery) ? $_ezQuery->selecting($table, $columns, ...$args) : false;
     } 
     
     function select_into($newtable, $fromcolumns='*', $oldtable=null, ...$args) {
         global $_ezQuery;
-        return $_ezQuery->select_into($newtable, $fromcolumns, $oldtable, ...$args);
+        return ($_ezQuery) ? $_ezQuery->select_into($newtable, $fromcolumns, $oldtable, ...$args) : false;
     } 
     
     function insert_select($totable='', $tocolumns='*', $fromtable, $fromcolumns='*', ...$args) {
         global $_ezQuery;
-        return $_ezQuery->insert_select($totable, $tocolumns, $fromtable, $fromcolumns, ...$args);
+        return ($_ezQuery) ? $_ezQuery->insert_select($totable, $tocolumns, $fromtable, $fromcolumns, ...$args) : false;
     }     
     
     function create_select($newtable, $fromcolumns, $oldtable=null, ...$args) {
         global $_ezQuery;
-        return $_ezQuery->create_select($newtable, $fromcolumns, $oldtable, ...$args);
+        return ($_ezQuery) ? $_ezQuery->create_select($newtable, $fromcolumns, $oldtable, ...$args) : false;
     }  
     
     function where( ...$args) {
         global $_ezQuery;
-        return $_ezQuery->where( ...$args);
+        return ($_ezQuery) ? $_ezQuery->where( ...$args) : false;
     } 
     
     function groupBy($groupBy) {
         global $_ezQuery;
-        return $_ezQuery->groupBy($groupBy);
+        return ($_ezQuery) ? $_ezQuery->groupBy($groupBy) : false;
     } 
     
     function having( ...$args) {
         global $_ezQuery;
-        return $_ezQuery->having( ...$args);
+        return ($_ezQuery) ? $_ezQuery->having( ...$args) : false;
     }
     
     function orderBy($orderBy, $order) {
         global $_ezQuery;
-        return $_ezQuery->orderBy($orderBy, $order);
+        return ($_ezQuery) ? $_ezQuery->orderBy($orderBy, $order) : false;
     } 
     
     function insert($table='', $keyvalue) {
         global $_ezQuery;
-        return $_ezQuery->insert($table, $keyvalue);
+        return ($_ezQuery) ? $_ezQuery->insert($table, $keyvalue) : false;
     } 
     
     function update($table='', $keyvalue, ...$args) {
         global $_ezQuery;
-        return $_ezQuery->update($table, $keyvalue, ...$args);
+        return ($_ezQuery) ? $_ezQuery->update($table, $keyvalue, ...$args) : false;
     } 
     
     function delete($table='', ...$args) {
         global $_ezQuery;
-        return $_ezQuery->delete($table, ...$args);
+        return ($_ezQuery) ? $_ezQuery->delete($table, ...$args) : false;
     } 
         
     function replace($table='', $keyvalue) {
         global $_ezQuery;
-        return $_ezQuery->replace($table, $keyvalue);
+        return ($_ezQuery) ? $_ezQuery->replace($table, $keyvalue) : false;
     }  
 
