@@ -191,33 +191,6 @@ class ezSQL_pdo extends ezSQLcore
     } // quick_connect
 
     /**********************************************************************
-    *  No real equivalent of mySQL select in SQLite
-    *  once again, function included for the sake of consistency
-    */
-
-    /**
-     * With PDO it is only an alias for the connect method
-     *
-     * @param string $dsn The connection parameter string
-     *                    Default is empty string
-     * @param string $user The database user name
-     *                     Default is empty string
-     * @param string $password The database password
-     *                         Default is empty string
-     * @param array $options Array for setting connection options as MySQL
-     *                       charset for example
-     *                       Default is an empty array
-     * @param boolean $isFileBased File based databases like SQLite don't need
-     *                             user and password, they work with path in the
-     *                             dsn parameter
-     *                             Default is false
-     * @return boolean
-     */
-    public function select($dsn='', $user='', $password='', $options=array(), $isFileBased=false) {
-        return $this->connect($dsn, $user, $password, $options, $isFileBased);
-    } // select
-
-    /**********************************************************************
     *  Format a SQLite string correctly for safe SQLite insert
     *  (no mater if magic quotes are on or not)
     */
@@ -305,7 +278,7 @@ class ezSQL_pdo extends ezSQLcore
      */
     public function query($query, $use_prepare=false) {
         if ($use_prepare)
-            $param = $this->preparedvalues;
+            $param = &$this->getParamaters();
         
 		// check for ezQuery placeholder tag and replace tags with proper prepare tag
 		$query = str_replace(_TAG, '?', $query);
@@ -353,9 +326,9 @@ class ezSQL_pdo extends ezSQLcore
 
             // Perform the query and log number of affected rows
             // Perform the query via std PDO query or PDO prepare function..
-            if (!empty($param) && is_array($param) && ($this->prepareActive)) {
-                $this->_affectedRows = $this->query_prepared($query, $param, false);		
-				$this->preparedvalues = array();
+            if (!empty($param) && is_array($param) && ($this->getPrepare())) {
+                $this->_affectedRows = $this->query_prepared($query, $param, false);	
+				$this->setParamaters();
             } else
                 $this->_affectedRows = $this->dbh->exec($query);
 
@@ -379,9 +352,9 @@ class ezSQL_pdo extends ezSQLcore
 
             // Perform the query and log number of affected rows
             // Perform the query via std PDO query or PDO prepare function..
-            if (!empty($param) && is_array($param) && ($this->prepareActive)) {
-                $sth = $this->query_prepared($query, $param, true);		
-				$this->preparedvalues = array();
+            if (!empty($param) && is_array($param) && ($this->getPrepare())) {
+                $sth = $this->query_prepared($query, $param, true);	
+				$this->setParamaters();
             } else
                 $sth = $this->dbh->query($query);
 

@@ -182,7 +182,7 @@
 		function query($query, $use_prepare=false)
 		{
             if ($use_prepare) 
-                $param = $this->preparedvalues;
+                $param = &$this->getParamaters();
             
 			// check for ezQuery placeholder tag and replace tags with proper prepare tag
 			$query = str_replace(_TAG, '?', $query);
@@ -226,9 +226,9 @@
 			}
 
 			// Perform the query via std sqlsrv_query function..
-			if (!empty($param) && is_array($param) && ($this->prepareActive)) {
+			if (!empty($param) && is_array($param) && ($this->getPrepare())) {
 				$this->result = @sqlsrv_query($this->dbh, $query, $param);
-                $this->preparedvalues = array();                
+                $this->setParamaters();                
             }
 			else 
 				$this->result = @sqlsrv_query($this->dbh, $query);

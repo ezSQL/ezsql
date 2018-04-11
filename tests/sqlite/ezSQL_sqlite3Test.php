@@ -50,6 +50,7 @@ class ezSQL_sqlite3Test extends TestCase
             );
         }
         $this->object = new ezSQL_sqlite3(self::TEST_SQLITE_DB_DIR, self::TEST_SQLITE_DB); 
+        $this->object->setPrepare();
     }
 
     /**
@@ -58,6 +59,7 @@ class ezSQL_sqlite3Test extends TestCase
      */
     protected function tearDown()
     {
+        $this->object->query("DROP TABLE test_table;");
         $this->object = null;
     }
 
@@ -103,13 +105,13 @@ class ezSQL_sqlite3Test extends TestCase
     public function testQuery()
     {
         // Create a table..
-        $this->assertEquals(0, $this->object->query("DROP TABLE test_table;"));
+        $this->object->query("DROP TABLE test_table;");
         $this->assertEquals(0,$this->object->query("CREATE TABLE test_table ( MyColumnA INTEGER PRIMARY KEY, MyColumnB TEXT(32) );"));
 
         // Insert test data
         for($i=0;$i<3;++$i)
         {
-            $this->assertEquals(1, $this->object->query('INSERT INTO test_table (MyColumnB) VALUES ("'.md5(microtime()).'");'));
+            $this->assertNotNull($this->object->query('INSERT INTO test_table (MyColumnB) VALUES ("'.md5(microtime()).'");'));
         }
 	
         // Get list of tables from current database..
@@ -123,7 +125,97 @@ class ezSQL_sqlite3Test extends TestCase
         }
 
         // Get rid of the table we created..
+        $this->object->query("DROP TABLE test_table;");
     }   
+    /**
+     * @covers ezQuery::insert
+     */
+    public function testInsert()
+    {
+        $this->object->query('CREATE TABLE test_table(id integer, test_key varchar(50), PRIMARY KEY (ID))');
+
+        $result = $this->object->insert('test_table', array('test_key'=>'test 1' ));
+        $this->assertEquals(0, $result);
+    }
+       
+    /**
+     * @covers ezQuery::update
+     */
+    public function testUpdate()
+    {
+        $this->object->query('CREATE TABLE test_table(id integer, test_key varchar(50), test_value varchar(50), PRIMARY KEY (ID))');
+        $this->object->insert('test_table', array('test_key'=>'test 1', 'test_value'=>'testing string 1' ));
+        $this->object->insert('test_table', array('test_key'=>'test 2', 'test_value'=>'testing string 2' ));
+        $result = $this->object->insert('test_table', array('test_key'=>'test 3', 'test_value'=>'testing string 3' ));
+        $this->assertEquals($result, 3);
+        $test_table['test_key'] = 'the key string';
+        $where="test_key  =  test 1";
+        $this->assertEquals(1, $this->object->update('test_table', $test_table, $where));
+        $this->assertEquals(1, $this->object->update('test_table', $test_table, eq('test_key','test 3', _AND),
+                                                                            eq('test_value','testing string 3')));
+        $where=eq('test_value','testing string 4');
+        $this->assertEquals(0, $this->object->update('test_table', $test_table, $where));
+        $this->assertEquals(1, $this->object->update('test_table', $test_table, "test_key  =  test 2"));
+    }
+    
+    /**
+     * @covers ezQuery::delete
+     */
+    public function testDelete()
+    {
+        $this->object->query('CREATE TABLE test_table(id integer, test_key varchar(50), test_value varchar(50), PRIMARY KEY (ID))');
+        $this->object->insert('test_table', array('test_key'=>'test 1', 'test_value'=>'testing string 1' ));
+        $this->object->insert('test_table', array('test_key'=>'test 2', 'test_value'=>'testing string 2' ));
+        $this->object->insert('test_table', array('test_key'=>'test 3', 'test_value'=>'testing string 3' ));   
+
+        $where=array('test_key','=','test 1');
+        $this->assertEquals($this->object->delete('test_table', $where), 1);
+        
+        $this->assertEquals($this->object->delete('test_table', 
+            array('test_key','=','test 3'),
+            array('test_value','=','testing string 3')), 1);
+        $where=array('test_value','=','testing 2');
+        $this->assertEquals(0, $this->object->delete('test_table', $where));
+        $where="test_key  =  test 2";
+        $this->assertEquals(1, $this->object->delete('test_table', $where));
+    }  
+
+    /**
+     * @covers ezQuery::selecting
+     */
+    public function testSelecting()
+    {
+        $this->object->query('CREATE TABLE test_table(id integer, test_key varchar(50), test_value varchar(50), PRIMARY KEY (ID))');
+        $this->object->insert('test_table', array('test_key'=>'test 1', 'test_value'=>'testing string 1' ));
+        $this->object->insert('test_table', array('test_key'=>'test 2', 'test_value'=>'testing string 2' ));
+        $this->object->insert('test_table', array('test_key'=>'test 3', 'test_value'=>'testing string 3' ));   
+        
+        $result = $this->object->selecting('test_table');        
+        $i = 1;
+        foreach ($result as $row) {
+            $this->assertEquals($i, $row->id);
+            $this->assertEquals('testing string ' . $i, $row->test_value);
+            $this->assertEquals('test ' . $i, $row->test_key);
+            ++$i;
+        }
+        
+        $where = eq('id',2);
+        $result = $this->object->selecting('test_table', 'id', $this->object->where($where));
+        foreach ($result as $row) {
+            $this->assertEquals(2, $row->id);
+        }
+        
+        $where = [ eq('test_value','testing string 3') ];
+        $result = $this->object->selecting('test_table', 'test_key', $this->object->where($where));
+        foreach ($result as $row) {
+            $this->assertEquals('test 3', $row->test_key);
+        }      
+        
+        $result = $this->object->selecting('test_table', 'test_value', $this->object->where(eq( 'test_key','test 1' )));
+        foreach ($result as $row) {
+            $this->assertEquals('testing string 1', $row->test_value);
+        }
+    } 
     
     /**
      * @covers ezSQL_sqlite3::__construct

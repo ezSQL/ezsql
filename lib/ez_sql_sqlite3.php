@@ -30,7 +30,7 @@
 	class ezSQL_sqlite3 extends ezSQLcore
 	{
 
-		var $rows_affected = false;
+		private $rows_affected = false;
         
 		protected $preparedvalues = array();
 
@@ -41,6 +41,7 @@
 
 		function __construct($dbpath='', $dbname='')
 		{
+            parent::__construct();
 			// Turn on track errors 
 			ini_set('track_errors',1);
 			
@@ -149,7 +150,7 @@
                 if (is_array($val)) {
                     $ok = $stmt->bindParam($index + 1, $val);
                 } else {
-                    $ok = $stmt->bindValue($index + 1, $val, getArgType($val));
+                    $ok = $stmt->bindValue($index + 1, $val, $this->getArgType($val));
                 }
                
                 if (!$ok) {
@@ -173,7 +174,7 @@
 		function query($query, $use_prepare=false)
         {
             if ($use_prepare)
-                $param = $this->preparedvalues;
+                $param = &$this->getParamaters();
             
 			// check for ezQuery placeholder tag and replace tags with proper prepare tag
 			$query = str_replace(_TAG, '?', $query);
@@ -194,9 +195,9 @@
 			$this->last_query = $query;
 
 			// Perform the query via std SQLite3 query or SQLite3 prepare function..
-            if (($param) && is_array($param) && ($this->prepareActive)) {
-                $this->result = $this->query_prepared($query, $param);		
-				$this->preparedvalues = array();
+            if (!empty($param) && is_array($param) && ($this->getPrepare())) {
+                $this->result = $this->query_prepared($query, $param);	
+				$this->setParamaters();
             } else 
                 $this->result = $this->dbh->query($query);
 			$this->count(true, true);
@@ -260,7 +261,7 @@
 			
 			}
             
-            if (($param) && is_array($param) && ($this->prepareActive))
+            if (($param) && is_array($param) && ($this->getPrepare()))
                 $this->result->finalize(); 
 
 			// If debug ALL queries

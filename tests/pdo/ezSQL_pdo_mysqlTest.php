@@ -95,7 +95,7 @@ class ezSQL_pdo_mysqlTest extends TestCase {
             );
         }
         $this->object = new ezSQL_pdo();
-		$this->object->hasprepare = false;
+        $this->object->setPrepare();
     } // setUp
 
     /**
@@ -126,13 +126,6 @@ class ezSQL_pdo_mysqlTest extends TestCase {
     public function testMySQLQuick_connect() {
         $this->assertTrue($this->object->quick_connect('mysql:host=' . self::TEST_DB_HOST . ';dbname=' . self::TEST_DB_NAME . ';port=' . self::TEST_DB_PORT, self::TEST_DB_USER, self::TEST_DB_PASSWORD));
     } // testMySQLQuick_connect
-
-    /**
-     * @covers ezSQL_pdo::select
-     */
-    public function testMySQLSelect() {
-        $this->assertTrue($this->object->select('mysql:host=' . self::TEST_DB_HOST . ';dbname=' . self::TEST_DB_NAME . ';port=' . self::TEST_DB_PORT, self::TEST_DB_USER, self::TEST_DB_PASSWORD));
-    } // testMySQLSelect
 
     /**
      * @covers ezSQL_pdo::escape

@@ -75,7 +75,7 @@ class ezSQL_sqlsrvTest extends TestCase {
             );
         }
         $this->object = new ezSQL_sqlsrv;        
-        $this->object->setprepare();
+        $this->object->setPrepare();
     } // setUp
 
     /**
@@ -83,7 +83,6 @@ class ezSQL_sqlsrvTest extends TestCase {
      * This method is called after a test is executed.
      */
     protected function tearDown() {
-        $this->object->query('DROP TABLE unit_test');
         $this->object->query('TRUNCATE TABLE unit_test');
         $this->object = null;
     } // tearDown
