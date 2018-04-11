@@ -37,11 +37,35 @@ class ezQuery
     function __construct()
 		{
 		}
+    
+    // return status of prepare function availability in method calls
+    function getPrepare($on=true) {
+        return $this->prepareActive;
+	}
   	
-    // turns prepare statement use in method calls off or on
-    function setprepare($on=true) {
-        $this->prepareActive = $on;
-		return $on;
+    // turn off/on prepare function availability in ezQuery method calls 
+    function setPrepare($on=true) {
+        $this->prepareActive = ($on) ? true : false;
+		return null;
+	}  	
+    
+    // returns array of parameter values for prepare function 
+    function getParamaters() {
+		return $this->preparedvalues;
+	}
+    
+    /**
+        * desc: add parameter values to class array variable for prepare function or clear if no value supplied
+        * param: @valuetoadd mixed
+        *
+        * returns int - array count
+        */
+    function setParamaters($valuetoadd=null) {
+        if (empty($valuetoadd)) {
+            $this->preparedvalues = array();
+            return null;
+        } else 
+            return array_push($this->preparedvalues, $valuetoadd); 
 	}
     
     function to_string($arrays) {        
@@ -153,7 +177,7 @@ class ezQuery
 					$extra[] = (isset($values[4])) ? $values[4]: null;
 				}				
 			} else {
-                $this->preparedvalues = array();
+                $this->setParamaters();
 				return false;
             }                
 		}
@@ -171,7 +195,7 @@ class ezQuery
 				else 
 					$combinewith = _AND;
                 if (! in_array( $iscondition, array( '<', '>', '=', '!=', '>=', '<=', '<>', 'IN', 'LIKE', 'NOT LIKE', 'BETWEEN', 'NOT BETWEEN', 'IS', 'IS NOT' ) )) {
-                    $this->preparedvalues = array();
+                    $this->setParamaters();
                     return false;
                 } else {
                     if (($iscondition=='BETWEEN') || ($iscondition=='NOT BETWEEN')) {
@@ -180,19 +204,19 @@ class ezQuery
 							$mycombinewith = strtoupper($extra[$i]);
 						else 
                             $mycombinewith = _AND;
-						if ($this->prepareActive) {
+						if ($this->getPrepare()) {
 							$where.= "$key ".$iscondition.' '._TAG." AND "._TAG." $mycombinewith ";
-							array_push($this->preparedvalues, $val);
-							array_push($this->preparedvalues, $combinewith);
+							$this->setParamaters($val);
+							$this->setParamaters($combinewith);
 						} else 
 							$where.= "$key ".$iscondition." '".$this->escape($val)."' AND '".$value."' $mycombinewith ";
 						$combinewith = $mycombinewith;
 					} elseif ($iscondition=='IN') {
 						$value = '';
 						foreach ($val as $invalues) {
-							if ($this->prepareActive) {
+							if ($this->getPrepare()) {
 								$value .= _TAG.', ';
-								array_push($this->preparedvalues, $invalues);
+								$this->setParamaters($invalues);
 							} else 
 								$value .= "'".$this->escape($invalues)."', ";
 						}													
@@ -202,9 +226,9 @@ class ezQuery
                         $where.= "$key ".$iscondition." NULL $combinewith ";
                     } elseif((($iscondition=='LIKE') || ($iscondition=='NOT LIKE')) && ! preg_match('/[_%?]/',$val)) return false;
                     else {
-						if ($this->prepareActive) {
+						if ($this->getPrepare()) {
 							$where.= "$key ".$iscondition.' '._TAG." $combinewith ";
-							array_push($this->preparedvalues, $val);
+							$this->setParamaters($val);
 						} else 
 							$where.= "$key ".$iscondition." '".$this->escape($val)."' $combinewith ";
 					}
@@ -214,7 +238,7 @@ class ezQuery
             $where = rtrim($where, " $combinewith ");
         }
 		
-        if (($this->prepareActive) && !empty($this->preparedvalues) && ($where!='1'))
+        if (($this->getPrepare()) && !empty($this->getParamaters()) && ($where!='1'))
 			return " $whereorhaving ".$where.' ';
 		else
 			return ($where!='1') ? " $whereorhaving ".$where.' ' : ' ' ;
@@ -253,7 +277,7 @@ class ezQuery
         $where = '';
 		
         if ( ! isset($table) || $table=='' ) {
-            $this->preparedvalues = array();
+            $this->setParamaters();
             return false;
         }
         
@@ -284,7 +308,7 @@ class ezQuery
                             $args_by .= ' '.$where_groupby_having_orderby;
                             $havingset = true;
                         } else {
-                            $this->preparedvalues = array();
+                            $this->setParamaters();
                             return false;
                         }
                     } elseif (strpos($where_groupby_having_orderby,'ORDER BY')!==false ) {
@@ -307,11 +331,11 @@ class ezQuery
         if (is_string($where)) {
             $sql .= $where;
             if ($getselect_result) 
-                return (($this->prepareActive) && !empty($this->preparedvalues)) ? $this->get_results($sql, OBJECT, true) : $this->get_results($sql);     
+                return (($this->getPrepare()) && !empty($this->getParamaters())) ? $this->get_results($sql, OBJECT, true) : $this->get_results($sql);     
             else 
                 return $sql;
         } else {
-            $this->preparedvalues = array();
+            $this->setParamaters();
             return false;
         }             
     }
@@ -335,15 +359,15 @@ class ezQuery
 		if (isset($oldtable))
 			$this->fromtable = $oldtable;
 		else {
-            $this->preparedvalues = array();
+            $this->setParamaters();
 			return false;            
         }
 			
         $newtablefromtable = $this->select_sql($newtable, $fromcolumns, ...$fromwhere);			
         if (is_string($newtablefromtable))
-            return (($this->prepareActive) && !empty($this->preparedvalues)) ? $this->query($newtablefromtable, true) : $this->query($newtablefromtable); 
+            return (($this->getPrepare()) && !empty($this->getParamaters())) ? $this->query($newtablefromtable, true) : $this->query($newtablefromtable); 
         else {
-            $this->preparedvalues = array();
+            $this->setParamaters();
             return false;    		
         }
     }
@@ -362,15 +386,15 @@ class ezQuery
 		if (isset($oldtable))
 			$this->fromtable = $oldtable;
 		else {
-			$this->preparedvalues = array();
+			$this->setParamaters();
             return false;          			
 		}  
 			
         $newtablefromtable = $this->select_sql($newtable, $fromcolumns, ...$fromwhere);
         if (is_string($newtablefromtable))
-            return (($this->prepareActive) && !empty($this->preparedvalues)) ? $this->query($newtablefromtable, true) : $this->query($newtablefromtable); 
+            return (($this->getPrepare()) && !empty($this->getprepared())) ? $this->query($newtablefromtable, true) : $this->query($newtablefromtable); 
         else {
-			$this->preparedvalues = array();
+			$this->setParamaters();
             return false;          			
 		}  
     }
@@ -385,7 +409,7 @@ class ezQuery
 	*/
     function update($table='', $keyandvalue, ...$wherekeys) {        
         if ( ! is_array( $keyandvalue ) || ! isset($table) || $table=='' ) {
-			$this->preparedvalues = array();
+			$this->setParamaters();
             return false;
         }
         
@@ -397,9 +421,9 @@ class ezQuery
             } elseif(in_array(strtolower($val), array( 'current_timestamp()', 'date()', 'now()' ))) {
 				$sql.= "$key = CURRENT_TIMESTAMP(), ";
 			} else {
-				if ($this->prepareActive) {
+				if ($this->getPrepare()) {
 					$sql.= "$key = "._TAG.", ";
-					array_push($this->preparedvalues, $val);
+					$this->setParamaters($val);
 				} else 
 					$sql.= "$key = '".$this->escape($val)."', ";
 			}
@@ -408,9 +432,9 @@ class ezQuery
         $where = $this->where(...$wherekeys);
         if (is_string($where)) {   
             $sql = rtrim($sql, ', ') . $where;
-            return (($this->prepareActive) && !empty($this->preparedvalues)) ? $this->query($sql, true) : $this->query($sql) ;       
+            return (($this->getPrepare()) && !empty($this->getParamaters())) ? $this->query($sql, true) : $this->query($sql) ;       
         } else {
-			$this->preparedvalues = array();
+			$this->setParamaters();
             return false;
 		}
     }   
@@ -420,7 +444,7 @@ class ezQuery
 	*/
     function delete($table='', ...$wherekeys) {   
         if ( empty($table) ) {
-			$this->preparedvalues = array();
+			$this->setParamaters();
             return false;          			
 		}  
 		
@@ -429,9 +453,9 @@ class ezQuery
         $where = $this->where(...$wherekeys);
         if (is_string($where)) {   
             $sql .= $where;						
-            return (($this->prepareActive) && !empty($this->preparedvalues)) ? $this->query($sql, true) : $this->query($sql) ;  
+            return (($this->getPrepare()) && !empty($this->getParamaters())) ? $this->query($sql, true) : $this->query($sql) ;  
         } else {
-			$this->preparedvalues = array();
+			$this->setParamaters();
             return false;          			
 		}  
     }
@@ -441,12 +465,12 @@ class ezQuery
 	*/
     function _query_insert_replace($table='', $keyandvalue, $type='', $execute=true) {  
         if ((! is_array($keyandvalue) && ($execute)) || $table=='' ) {
-			$this->preparedvalues = array();
+			$this->setParamaters();
             return false;          			
 		}  
         
         if ( ! in_array( strtoupper( $type ), array( 'REPLACE', 'INSERT' ))) {
-			$this->preparedvalues = array();
+			$this->setParamaters();
             return false;          			
 		}  
             
@@ -459,9 +483,9 @@ class ezQuery
                 if(strtolower($val)=='null') $v.="NULL, ";
                 elseif(in_array(strtolower($val), array( 'current_timestamp()', 'date()', 'now()' ))) $v.="CURRENT_TIMESTAMP(), ";
                 else  {
-					if ($this->prepareActive) {
+					if ($this->getPrepare()) {
 						$v.= _TAG.", ";
-						array_push($this->preparedvalues, $val);
+						$this->setParamaters($val);
 					} else 
 						$v.= "'".$this->escape($val)."', ";
 				}               
@@ -469,7 +493,7 @@ class ezQuery
             
             $sql .= "(". rtrim($n, ', ') .") VALUES (". rtrim($v, ', ') .");";
 
-			if (($this->prepareActive) && !empty($this->preparedvalues)) 
+			if (($this->getPrepare()) && !empty($this->getParamaters())) 
 				$ok = $this->query($sql, true);
 			else 
 				$ok = $this->query($sql);
@@ -477,7 +501,7 @@ class ezQuery
             if ($ok)
                 return $this->insert_id;
             else {
-				$this->preparedvalues = array();
+				$this->setParamaters();
 				return false;          			
 			}  
         } else {
@@ -527,9 +551,9 @@ class ezQuery
         $puttotable = $this->_query_insert_replace($totable, $tocolumns, 'INSERT', false);
         $getfromtable = $this->select_sql($fromtable, $fromcolumns, ...$fromwhere);
         if (is_string($puttotable) && is_string($getfromtable))
-            return (($this->prepareActive) && !empty($this->preparedvalues)) ? $this->query($puttotable." ".$getfromtable, true) : $this->query($puttotable." ".$getfromtable) ;
+            return (($this->getPrepare()) && !empty($this->getParamaters())) ? $this->query($puttotable." ".$getfromtable, true) : $this->query($puttotable." ".$getfromtable) ;
         else {
-			$this->preparedvalues = array();
+			$this->setParamaters();
             return false;          			
 		}                 
     }    

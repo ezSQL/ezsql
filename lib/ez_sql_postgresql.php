@@ -122,9 +122,7 @@
 		* @return boolean
 		*/
 		function quick_connect($dbuser='', $dbpassword='', $dbname='', $dbhost='localhost', $dbport='5432') {
-			if ( ! $this->connect($dbuser, $dbpassword, $dbname, $dbhost, $dbport, true) ) ;
-			else if ( ! $this->select($dbname) );
-						
+			if ( ! $this->connect($dbuser, $dbpassword, $dbname, $dbhost, $dbport, true) ) ;						
 			return $this->_connected;
 		} // quick_connect
 
@@ -163,25 +161,6 @@
 
 			return $this->_connected;
 		} // connect
-
-		/**
-		* No real equivalent of mySQL select in PostgreSQL once again, function
-		* included for the sake of consistency
-		*
-		* @param string $dbuser The database user name
-		* @param string $dbpassword The database users password
-		* @param string $dbname The name of the database
-		* @param string $dbhost The host name or IP address of the database server.
-		*			Default is localhost
-		* @param string $dbport The database TCP/IP port
-		*						Default is PostgreSQL default port 5432
-		* @return boolean
-		*/
-		public function select($dbuser='', $dbpassword='', $dbname='', $dbhost='localhost', $dbport='5432') {
-			$this->disconnect();						
-			$this->connect($dbuser, $dbpassword, $dbname, $dbhost, $dbport);
-			return $this->_connected;
-		} // select
 
 		/**
 		* Format a mySQL string correctly for safe mySQL insert
@@ -246,10 +225,10 @@
 		function query($query, $use_prepare=false)
 		{
             if ($use_prepare)
-                $param = $this->preparedvalues;
+                $param = &$this->getParamaters();
             
 			// check for ezQuery placeholder tag and replace tags with proper prepare tag
-			if (!empty($param) && is_array($param) && ($this->prepareActive) && (strpos($query, _TAG) !== false))
+			if (!empty($param) && is_array($param) && ($this->getPrepare()) && (strpos($query, _TAG) !== false))
 			{
 				foreach ($param as $i => $value) {
 					$parametrize = $i + 1;
@@ -291,9 +270,9 @@
 			}
             
 			// Perform the query via std postgresql_query function..
-			if (!empty($param) && is_array($param) && ($this->prepareActive)){
+			if (!empty($param) && is_array($param) && ($this->getPrepare())){
 				$this->result = @pg_query_params($this->dbh, $query, $param);		
-				$this->preparedvalues = array();				
+				$this->setParamaters();				
 			} else 
 				$this->result = @pg_query($this->dbh, $query);
 

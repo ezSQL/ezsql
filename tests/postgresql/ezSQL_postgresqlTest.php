@@ -77,8 +77,8 @@ class ezSQL_postgresqlTest extends TestCase {
               'The PostgreSQL Lib is not available.'
             );
         }
-		$this->object->prepareActive = false;
-        $this->object = new ezSQL_postgresql;
+        $this->object = new ezSQL_postgresql;               
+        $this->object->setPrepare();
     } // setUp
 
     /**
@@ -109,15 +109,6 @@ class ezSQL_postgresqlTest extends TestCase {
         
         $this->assertTrue($this->object->connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME, self::TEST_DB_HOST, self::TEST_DB_PORT));
     } // testConnect
-
-    /**
-     * @covers ezSQL_postgresql::select
-     */
-    public function testSelect() {
-        $this->object->quick_connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME, self::TEST_DB_HOST, self::TEST_DB_PORT);
-        
-        $this->assertTrue($this->object->select(self::TEST_DB_NAME));
-    } // testSelect
 
     /**
      * @covers ezSQL_postgresql::escape

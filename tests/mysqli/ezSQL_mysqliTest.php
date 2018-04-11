@@ -79,7 +79,8 @@ class ezSQL_mysqliTest extends TestCase {
               'The MySQLi extension is not available.'
             );
         }
-        $this->object = new ezSQL_mysqli();
+        $this->object = new ezSQL_mysqli();       
+        $this->object->setPrepare();
     }
 
     /**
@@ -189,7 +190,7 @@ class ezSQL_mysqliTest extends TestCase {
 
         $this->object->select(self::TEST_DB_NAME);
         
-        $this->assertEquals($this->object->query('DROP TABLE IF EXISTS unit_test'), 0);   
+        $this->assertEquals($this->object->query('DROP TABLE IF EXISTS unit_test'), 0); 
         $this->assertEquals($this->object->query('CREATE TABLE unit_test(id integer, test_key varchar(50), PRIMARY KEY (ID))'), 0);
 
         $this->assertEquals($this->object->query('INSERT INTO unit_test(id, test_key) VALUES(1, \'test 1\')'), 1);
@@ -213,8 +214,7 @@ class ezSQL_mysqliTest extends TestCase {
         $this->object->connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD);
 
         $this->object->select(self::TEST_DB_NAME);
-        
-        $this->assertEquals($this->object->query('DROP TABLE IF EXISTS unit_test'), 0);   
+         
         $this->assertEquals($this->object->query('CREATE TABLE unit_test(id integer, test_key varchar(50), PRIMARY KEY (ID))'), 0);
 
         $this->assertEquals($this->object->query('INSERT INTO unit_test(id, test_key) VALUES(1, \'test 1\')'), 1);
@@ -287,7 +287,6 @@ class ezSQL_mysqliTest extends TestCase {
     {
         $this->object->connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD);
         $this->object->select(self::TEST_DB_NAME);
-            $this->assertEquals($this->object->query('DROP TABLE IF EXISTS unit_test'), 0);
         $this->object->query('CREATE TABLE unit_test(id int(11) NOT NULL AUTO_INCREMENT, test_key varchar(50), PRIMARY KEY (ID))ENGINE=MyISAM  DEFAULT CHARSET=utf8');
         $this->assertEquals($this->object->insert('unit_test', array('id'=>2, 'test_key'=>'test 2' )), 2);
     }
@@ -299,10 +298,9 @@ class ezSQL_mysqliTest extends TestCase {
     {
         $this->object->connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD);
         $this->object->select(self::TEST_DB_NAME);
-            $this->assertEquals($this->object->query('DROP TABLE IF EXISTS unit_test'), 0);
         $this->object->query('CREATE TABLE unit_test(id int(11) NOT NULL AUTO_INCREMENT, test_key varchar(50), PRIMARY KEY (ID))ENGINE=MyISAM  DEFAULT CHARSET=utf8');
-        $this->object->insert('unit_test', array('id'=>'2', 'test_key'=>'test 2' ));
-        $this->assertEquals($this->object->replace('unit_test', array('id'=>'2', 'test_key'=>'test 3' )), 2);
+        $this->object->insert('unit_test', array('id'=>2, 'test_key'=>'test 2' ));
+        $this->assertEquals($this->object->replace('unit_test', array('id'=>2, 'test_key'=>'test 3' )), 2);
     }
     
     /**
@@ -313,17 +311,16 @@ class ezSQL_mysqliTest extends TestCase {
         $this->object->connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD);
         $this->object->select(self::TEST_DB_NAME);  
         $this->object->query('CREATE TABLE unit_test(id int(11) NOT NULL AUTO_INCREMENT, test_key varchar(50), PRIMARY KEY (ID))ENGINE=MyISAM  DEFAULT CHARSET=utf8');
-        $this->object->insert('unit_test', array('id'=>1, 'test_key'=>'test 1' ));
-        $this->object->insert('unit_test', array('id'=>2, 'test_key'=>'test 2' ));
-        $this->object->insert('unit_test', array('id'=>3, 'test_key'=>'test 3' ));
-        $unit_test['test_key'] = 'testing';
-        $where="id  =  1";
-        $this->assertNotFalse($this->object->update('unit_test', $unit_test, $where));
-        $this->assertEquals($this->object->update('unit_test', $unit_test, 
-			array('test_key',EQ,'test 3','and'),
-			array('id','=',3)), 1);
-        $this->assertEquals($this->object->update('unit_test', $unit_test, "id = 4"), 0);
-        $this->assertEquals($this->object->update('unit_test', $unit_test, "test_key  =  test 2  and", "id  =  2"), 1);
+        $this->object->insert('unit_test', array('id'=>11, 'test_key'=>'testUpdate() 11' ));
+        $this->object->insert('unit_test', array('id'=>12, 'test_key'=>'testUpdate() 12' ));
+        $this->object->insert('unit_test', array('id'=>13, 'test_key'=>'testUpdate() 13' ));
+        $unit_test['test_key'] = 'testing testUpdate()';
+        $where="id  =  11";
+        $this->assertEquals($this->object->update('unit_test', $unit_test, $where), 1);
+        $this->assertEquals($this->object->update('unit_test', $unit_test, 	['test_key',EQ,'testUpdate() 13', 'and'], ['id','=', 13]), 1);
+        $this->assertEquals($this->object->update('unit_test', $unit_test, "id = 14"), 0);
+        $this->assertEquals($this->object->update('unit_test', $unit_test, "test_key  =  testUpdate() 12  and", "id  =  12"), 1);
+        $this->assertEquals($this->object->query('DROP TABLE IF EXISTS unit_test'), 0);
     }
     
     /**
@@ -334,21 +331,19 @@ class ezSQL_mysqliTest extends TestCase {
         $this->object->connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD);
         $this->object->select(self::TEST_DB_NAME);
         $this->object->query('CREATE TABLE unit_test(id int(11) NOT NULL AUTO_INCREMENT, test_key varchar(50), PRIMARY KEY (ID))ENGINE=MyISAM  DEFAULT CHARSET=utf8');
-        $unit_test['id'] = '1';
-        $unit_test['test_key'] = 'test 1';
+        $unit_test['id'] = 1;
+        $unit_test['test_key'] = 'testDelete() 11';
         $this->object->insert('unit_test', $unit_test );
-        $unit_test['id'] = '2';
-        $unit_test['test_key'] = 'test 2';
+        $unit_test['id'] = 2;
+        $unit_test['test_key'] = 'testDelete() 12';
         $this->object->insert('unit_test', $unit_test );
-        $unit_test['id'] = '3';
-        $unit_test['test_key'] = 'test 3';
+        $unit_test['id'] = 3;
+        $unit_test['test_key'] = 'testDelete() 13';
         $this->object->insert('unit_test', $unit_test );
-        $where='1';
-        $this->assertEquals($this->object->delete('unit_test', array('id','=','1')), 1);
-        $this->assertEquals($this->object->delete('unit_test', 
-            array('test_key','=',$unit_test['test_key'],'and'),
-            array('id','=','3')), 1);
-        $this->assertEquals($this->object->delete('unit_test', array('test_key','=',$where)), 0);
+        $where=1;
+        $this->assertEquals($this->object->delete('unit_test', ['id','=',1]), 1);
+        $this->assertEquals($this->object->delete('unit_test', ['test_key','=',$unit_test['test_key'],'and'],['id','=',3]), 1);
+        $this->assertEquals($this->object->delete('unit_test', ['test_key','=',$where]), 0);
         $where="id  =  2";
         $this->assertEquals($this->object->delete('unit_test', $where), 1);
     }  
@@ -361,9 +356,9 @@ class ezSQL_mysqliTest extends TestCase {
         $this->object->connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD);
         $this->object->select(self::TEST_DB_NAME);
         $this->object->query('CREATE TABLE unit_test(id int(11) NOT NULL AUTO_INCREMENT, test_key varchar(50), PRIMARY KEY (ID))ENGINE=MyISAM  DEFAULT CHARSET=utf8');
-        $this->object->insert('unit_test', array('id'=>'1', 'test_key'=>'testing 1' ));
-        $this->object->insert('unit_test', array('id'=>'2', 'test_key'=>'testing 2' ));
-        $this->object->insert('unit_test', array('id'=>'3', 'test_key'=>'testing 3' ));
+        $this->object->insert('unit_test', array('id'=>1, 'test_key'=>'testing 1' ));
+        $this->object->insert('unit_test', array('id'=>2, 'test_key'=>'testing 2' ));
+        $this->object->insert('unit_test', array('id'=>3, 'test_key'=>'testing 3' ));
         
         $result = $this->object->selecting('unit_test');
         $i = 1;
@@ -373,13 +368,13 @@ class ezSQL_mysqliTest extends TestCase {
             ++$i;
         }
         
-        $where=array('test_key','=','testing 2');
+        $where=['test_key','=','testing 2'];
         $result = $this->object->selecting('unit_test', 'id', $where);
         foreach ($result as $row) {
             $this->assertEquals(2, $row->id);
         }
         
-        $result = $this->object->selecting('unit_test', 'test_key', array( 'id','=','3' ));
+        $result = $this->object->selecting('unit_test', 'test_key', ['id','=',3 ]);
         foreach ($result as $row) {
             $this->assertEquals('testing 3', $row->test_key);
         }
@@ -447,7 +442,8 @@ class ezSQL_mysqliTest extends TestCase {
     {
         $this->object->connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD);
         $this->object->select(self::TEST_DB_NAME);
-        setQuery('mySQLi');
+        setQuery('mySQLi');       
+        $this->object->setPrepare(false);
         $expect = where(
             between('where_test','testing 1','testing 2','bad'),
 			like('test_null','null')
@@ -481,7 +477,15 @@ class ezSQL_mysqliTest extends TestCase {
         $this->assertContains('_good',$this->object->where(
             array('where_test','=','testing 1','or'),
 			array('test_like',_LIKE,'_good')
-			));
+			));                   
+        $this->object->setPrepare(true);
+        $expect = where(
+            between('where_test','testing 1','testing 2','bad'),
+			like('test_null','null')
+			);
+
+        $this->assertContains('WHERE where_test BETWEEN '._TAG.' AND '._TAG.' AND test_null IS NULL',$expect);
+        setQuery();       
     } 
     
     /**
@@ -497,22 +501,15 @@ class ezSQL_mysqliTest extends TestCase {
     } 
     
     /**
-     * @covers ezSQL_mysqli::prepare
+     * @covers ezSQL_mysqli::query_prepared
      */
-    public function testPrepare() {
+    public function testQuery_prepared() {
         $this->object->connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD);
-
-        $this->object->select(self::TEST_DB_NAME);
-
-        $parameter = '\'test 1\'';
-
+        $this->object->select(self::TEST_DB_NAME);       
         $this->assertEquals($this->object->query('CREATE TABLE unit_test(id int(11) NOT NULL AUTO_INCREMENT, test_key varchar(50), PRIMARY KEY (ID))ENGINE=MyISAM  DEFAULT CHARSET=utf8'), 0);
-        $result = $this->object->prepare('INSERT INTO unit_test(id, test_key) VALUES(1, ?)');
-        $this->assertInstanceOf('mysqli_stmt', $result);
-        $result->bind_param('s', $parameter);
-
-        $this->assertTrue($result->execute());
-    } // testPrepare
+        $result = $this->object->query_prepared('INSERT INTO unit_test(id, test_key) VALUES(1, ?)', ['test 1']);
+        $this->assertEquals(1, $result);
+    } // testQuery_prepared
        
     /**
      * @covers ezSQL_mysqli::__construct

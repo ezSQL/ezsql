@@ -95,7 +95,7 @@ class ezSQL_pdo_pgsqlTest extends TestCase {
             );
         }
         $this->object = new ezSQL_pdo();
-		$this->object->hasprepare = false;
+        $this->object->setPrepare();
     } // setUp
 
     /**
@@ -120,14 +120,7 @@ class ezSQL_pdo_pgsqlTest extends TestCase {
         $this->assertTrue($this->object->quick_connect('pgsql:host=' . self::TEST_DB_HOST . ';dbname=' . self::TEST_DB_NAME . ';port=' . self::TEST_DB_PORT, self::TEST_DB_USER, self::TEST_DB_PASSWORD));
     } // testPosgreSQLQuick_connect
 
-    /**
-     * @covers ezSQL_pdo::select
-     */
-    public function testPosgreSQLSelect() {
-        $this->assertTrue($this->object->select('pgsql:host=' . self::TEST_DB_HOST . ';dbname=' . self::TEST_DB_NAME . ';port=' . self::TEST_DB_PORT, self::TEST_DB_USER, self::TEST_DB_PASSWORD));
-    } // testPosgreSQLSelect
-
-    /**
+     /**
      * @covers ezSQL_pdo::escape
      */
     public function testPosgreSQLEscape() {

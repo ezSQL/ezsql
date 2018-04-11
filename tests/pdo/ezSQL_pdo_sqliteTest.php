@@ -91,7 +91,7 @@ class ezSQL_pdo_sqliteTest extends TestCase {
             );
         }
         $this->object = new ezSQL_pdo();
-		$this->object->hasprepare = false;
+        $this->object->setPrepare();
     } // setUp
 
     /**
@@ -127,13 +127,6 @@ class ezSQL_pdo_sqliteTest extends TestCase {
     public function testSQLiteQuick_connect() {
         $this->assertTrue($this->object->quick_connect('sqlite:' . self::TEST_SQLITE_DB, '', '', array(), true));
     } // testSQLiteQuick_connect
-
-    /**
-     * @covers ezSQL_pdo::select
-     */
-    public function testSQLiteSelect() {
-        $this->assertTrue($this->object->select('sqlite:' . self::TEST_SQLITE_DB, '', '', array(), true));
-    } // testSQLiteSelect
 
     /**
      * @covers ezSQL_pdo::escape
@@ -197,7 +190,7 @@ class ezSQL_pdo_sqliteTest extends TestCase {
     } // testSQLiteQuery
     
     /**
-     * @covers ezSQLcore::insert
+     * @covers ezQuery::insert
      */
     public function testInsert()
     {
@@ -210,7 +203,7 @@ class ezSQL_pdo_sqliteTest extends TestCase {
     }
        
     /**
-     * @covers ezSQLcore::update
+     * @covers ezQuery::update
      */
     public function testUpdate()
     {
@@ -232,7 +225,7 @@ class ezSQL_pdo_sqliteTest extends TestCase {
     }
     
     /**
-     * @covers ezSQLcore::delete
+     * @covers ezQuery::delete
      */
     public function testDelete()
     {
@@ -256,7 +249,7 @@ class ezSQL_pdo_sqliteTest extends TestCase {
     }  
 
     /**
-     * @covers ezSQLcore::selecting
+     * @covers ezQuery::selecting
      */
     public function testSelecting()
     {

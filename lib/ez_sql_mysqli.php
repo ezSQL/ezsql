@@ -237,7 +237,67 @@ class ezSQL_mysqli extends ezSQLcore
     public function sysdate() {
         return 'NOW()';
     } // sysdate
-	
+    
+    // fetches rows from a prepared result set
+    function fetch_prepared_result(&$stmt, $query) {
+        
+        if($stmt instanceof mysqli_stmt) {
+            $stmt->store_result();       
+            $variables = array();
+            $is_insert = false;
+            if ( preg_match("/^(insert|delete|update|replace)\s+/i", $query) ) {
+                $this->_affectedRows = mysqli_stmt_affected_rows($stmt);
+
+                // Take note of the insert_id
+                if ( preg_match("/^(insert|replace)\s+/i", $query) ){
+                    $this->insert_id = $stmt->insert_id;
+                }
+            } else {
+                $this->_affectedRows = $stmt->num_rows;
+                $meta = $stmt->result_metadata();
+       
+                // Take note of column info
+                while($field = $meta->fetch_field())
+                    $variables[] = &$this->col_info[$field->name]; // pass by reference
+                
+                // Binds variables to a prepared statement for result storage
+                call_user_func_array([$stmt, 'bind_result'], $variables);
+       
+                $i=0;
+                // Store Query Results
+                while($stmt->fetch()) {
+                    // Store results as an objects within main array
+                    foreach($this->col_info as $k=>$v)
+                        $this->last_result[$i] = (object) array( $k => $v );
+                    $i++;           
+                }
+            }       
+            
+            // If there is an error then take note of it..
+            if ( $str = $stmt->error ) {
+                $is_insert = true;
+                $this->register_error($str);
+                $this->show_errors ? trigger_error($str,E_USER_WARNING) : null;
+                
+                // If debug ALL queries
+                $this->trace || $this->debug_all ? $this->debug() : null ;
+                return false;
+            }
+               
+            // Return number of rows affected
+            $return_val = $this->_affectedRows;
+            
+            // disk caching of queries
+            $this->store_cache($query, $is_insert);
+
+            // If debug ALL queries
+            $this->trace || $this->debug_all ? $this->debug() : null ;
+            
+            return $return_val;
+        } else
+            return false;
+    }	
+
 	/**
      * Creates a prepared query, binds the given parameters and returns the result of the executed
      * {@link \mysqli_stmt}.
@@ -247,7 +307,7 @@ class ezSQL_mysqli extends ezSQLcore
      */
     public function query_prepared($query, array $args)
     {
-        $stmt   = $this->prepare($query);
+        $stmt   = $this->dbh->prepare($query);
         $params = [];
         $types  = array_reduce($args, 
                     function ($string, &$arg) use (&$params) {
@@ -264,11 +324,17 @@ class ezSQL_mysqli extends ezSQLcore
                     }, '');
         
         array_unshift($params, $types);
-
+            
         call_user_func_array([$stmt, 'bind_param'], $params);
-
-        $result = $stmt->execute() ? $stmt->get_result() : false;
-
+        
+        $result = ($stmt->execute()) ? $this->fetch_prepared_result($stmt, $query) : false;  
+        
+        // free and closes a prepared statement
+        $stmt->free_result();
+        $stmt->close();
+        
+        $this->setParamaters();
+        
         return $result;
     }
     
@@ -280,7 +346,7 @@ class ezSQL_mysqli extends ezSQLcore
      */
     public function query($query, $use_prepare=false) {
         if ($use_prepare)
-            $param = $this->preparedvalues;
+            $param = &$this->getParamaters();
         
 		// check for ezQuery placeholder tag and replace tags with proper prepare tag
 		$query = str_replace(_TAG, '?', $query);
@@ -315,10 +381,9 @@ class ezSQL_mysqli extends ezSQLcore
         }
 
         // Perform the query via std mysql_query function..
-		if (!empty($param) && is_array($param) && ($this->prepareActive)) {			
-			$this->_result = $this->query_prepared($query, $param);
-			$this->preparedvalues = array();
-		} else 
+		if (!empty($param) && is_array($param) && ($this->getPrepare()))		
+			return $this->query_prepared($query, $param);
+		else 
 			$this->_result = mysqli_query($this->dbh, $query);
 
         // If there is an error then take note of it..
@@ -326,6 +391,9 @@ class ezSQL_mysqli extends ezSQLcore
             $is_insert = true;
             $this->register_error($str);
             $this->show_errors ? trigger_error($str,E_USER_WARNING) : null;
+            
+            // If debug ALL queries
+            $this->trace || $this->debug_all ? $this->debug() : null ;
             return false;
         }
 
@@ -417,15 +485,5 @@ class ezSQL_mysqli extends ezSQLcore
     public function getInsertId() {
         return mysqli_insert_id($this->dbh);
     } // getInsertId
-
-    /**
-     * Returns a prepared statement
-     *
-     * @param string $query
-     * @return mysqli_stmt
-     */
-    public function prepare( $query ) {
-        return $this->dbh->prepare($query);
-    }
 
 } // ezSQL_mysqli
