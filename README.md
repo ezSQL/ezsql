@@ -24,11 +24,12 @@ Note: This change log isn't being used any more due to automated github tracking
 3.08 - Merged fork https://github.com/sjstoelting/ezSQL3 to be current with this repo. 
 * Added/Updated PHPunit tests, some marked as incomplete or not fully implemented, SQL drivers not loaded will be skipped.
 * Refactor class code to use `spl_autoload_register`. 
-  Simply using `require_once "ez_sql_loader.php";` then `$database = new database_driver_class;`. 
-  This will allow multi SQLdb to be loaded if need be. 
+  Simply using `require_once "ez_sql_loader.php";` then `$database = new database_driver_class;`. This will allow multi SQLdb to be loaded if need be. 
 * Added methods `create_select`, `insert_select`, `update`, `insert`, `replace`, `delete`, and `selecting` an alias for select.
-  These are ezSQL Core class shortcut calls and should be able to handle most use cases as is.  
-  These new methods will create proper SQL statements, from supplied arguments variable or array, prevent injections, then execute guery, in case of `selecting` execute get_results. They have been fully PHPunit tested under mySQLi and postgresSQL. 
+  These are part of the new ezQuery SQL builder class. They are shortcut calls, these new methods will create proper SQL statements, from supplied arguments variable or array, prevent injections, then execute guery, in case of `selecting` execute get_results. 
+* Added many additional functions to support ezQuery builder and to easily process SQL prepare statements. Supplied arguments will be replace with necessary placeholder and values added to parameter array.
+* All new methods has been fully PHPunit tested under current supported database systems, and should be able to handle most use cases as is.
+* Todo: Implement WHERE IN sub selection and shortcut method calls for the remainder of SQL standard statements.
 
 ```
 ezSQL3 - From Author: Stefanie Janine Stoelting - http://stefanie-stoelting.de
