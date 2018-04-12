@@ -107,9 +107,9 @@ class ezSQL_sqlsrvTest extends TestCase {
      * @covers ezSQL_sqlsrv::escape
      */
     public function testEscape() {
-        $result = $this->object->escape("'1 = 1");
+        $result = $this->object->escape("This is'nt escaped.");
 
-        $this->assertEquals("''1 = 1", $result);
+        $this->assertEquals("This is\\'nt escaped.", $result);
     } // testEscape
 
     /**

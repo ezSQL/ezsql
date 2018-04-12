@@ -131,7 +131,13 @@
 			return $return_val;
 		}
                 
-        function sql_escape_string($data) {
+		/**********************************************************************
+		*  Format a sqlsrv string correctly for safe sqlsrv insert
+		*  (no mater if magic quotes are on or not)
+		*/
+
+		function escape($data)
+		{
             if ( !isset($data) ) return '';
             if ( is_numeric($data) ) return $data;
 
@@ -146,20 +152,11 @@
                 
             foreach ( $non_displayables as $regex )
                 $data = preg_replace( $regex, '', $data );
-            $data = str_replace("'", "''", $data );
-            return $data;
-        }
+            $search = array("\\",  "\x00", "\n",  "\r",  "'",  '"', "\x1a");
+            $replace = array("\\\\","\\0","\\n", "\\r", "\'", '\"', "\\Z");
 
-		/**********************************************************************
-		*  Format a sqlsrv string correctly for safe sqlsrv insert
-		*  (no mater if magic quotes are on or not)
-		*/
-
-		function escape($str)
-		{
-			return  $this->sql_escape_string($str);
+            return str_replace($search, $replace, $data);
 		}
-
 
 		/**********************************************************************
 		*  Return sqlsrv specific system date syntax

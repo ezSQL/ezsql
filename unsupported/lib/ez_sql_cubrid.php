@@ -105,16 +105,6 @@
 		}
 
 		/**********************************************************************
-		*  No real equivalent of mySQL select in CUBRID
-		*  once again, function included for the sake of consistency
-		*/
-
-		function select($dbuser='', $dbpassword='', $dbname='', $dbhost='localhost', $dbport=33000)
-		{
-			return $this->connect($dbuser='', $dbpassword='', $dbname='', $dbhost='localhost', $dbport=33000);
-		}
-
-		/**********************************************************************
 		*  Format a CUBRID string correctly for safe CUBRID insert
 		*  (no mater if magic quotes are on or not)
 		*/

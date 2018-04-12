@@ -269,51 +269,31 @@ class ezSQL_oracleTNS extends ezSQLcore
     } // quick_connect
 
     /**
-     * No real equivalent of mySQL select in Oracle, once again, function
-     * included for the sake of consistency
-     *
-     * @param string $dbuser The database user name
-     *                       Default is empty string
-     * @param string $dbpassword The database users password
-     *                           Default is empty string
-     * @return boolean
-     */
-    public function select($dbuser='', $dbpassword='') {
-        return $this->connect($dbuser, $dbpassword);
-    } // select
-
-    /**
      * Format a Oracle string correctly for safe Oracle insert
      *
      * @param string $str
      * @return string
      */
     public function escape($str) {
-        $return_val = '';
+        if ( !isset($str) ) return '';
+        if ( is_numeric($str) ) return $str;
 
-        if ( !isset($str) or empty($str) ) {
-            $return_val = '';
-        } else if ( is_numeric($str) ) {
-            $return_val = $str;
-        } else {
-            $non_displayables = array(
+        $non_displayables = array(
                 '/%0[0-8bcef]/',            // url encoded 00-08, 11, 12, 14, 15
                 '/%1[0-9a-f]/',             // url encoded 16-31
                 '/[\x00-\x08]/',            // 00-08
                 '/\x0b/',                   // 11
                 '/\x0c/',                   // 12
                 '/[\x0e-\x1f]/'             // 14-31
-            );
+                );
+                
+        foreach ( $non_displayables as $regex )
+            $str = preg_replace( $regex, '', $str );
+        $search = array("\\",  "\x00", "\n",  "\r",  "'",  '"', "\x1a");
+        $replace = array("\\\\","\\0","\\n", "\\r", "\'", '\"', "\\Z");
 
-            foreach ( $non_displayables as $regex ) {
-                $str = preg_replace( $regex, '', $str );
-            }
-
-            $return_val = str_replace("'", "''", $str );
-        }
-
-        return $return_val;
-    } // escape
+        return str_replace($search, $replace, $str);
+	} // escape
 
     /**
      * Return Oracle specific system date syntax
