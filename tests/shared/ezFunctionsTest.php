@@ -31,6 +31,14 @@ class ezFunctionsTest extends TestCase {
 
  
     /**
+     * clean_input 
+     */
+    public function testClean_input()
+    {
+        $this->assertEquals("' help", clean_input("<?php echo 'foo' >' help</php?>"));
+    } 
+
+    /**
      * eq 
      */
     public function testeq()

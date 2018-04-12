@@ -61,16 +61,32 @@
                 
         // Global class instances, will be used to create and call methods directly.
         $_ezQuery = null;
-        $_ezCubrid = null;
+       // $_ezCubrid = null;
         $_ezMysqli = null;
-        $_ezOracle8_9 = null;
-        $_ezOracleTNS = null;
+       // $_ezOracle8_9 = null;
+       // $_ezOracleTNS = null;
         $_ezPdo = null;
         $_ezPostgresql = null;
         $_ezRecordset = null;
         $_ezSqlite3 = null;
         $_ezSqlsrv = null;
-
+        
+    function clean_input($string) 
+    {
+        $patterns = array( // strip out:
+                '@<script[^>]*?>.*?</script>@si', // Strip out javascript
+                '@<[\/\!]*?[^<>]*?>@si',          // HTML tags
+                '@<style[^>]*?>.*?</style>@siU',  // Strip style tags properly
+                '@<![\s\S]*?--[ \t\n\r]*>@'       // Strip multi-line comments
+                );
+                
+        $string = preg_replace($patterns,'',$string);
+        $string = trim($string);
+        $string = stripslashes($string);
+        
+        return htmlentities($string);
+    }
+ 
 	/**********************************************************************
      * Creates an array from expressions in the following formate
      * param:  strings @x,        The left expression.
@@ -243,22 +259,22 @@
        * returns: boolean - true, or false for error
        */
     function setQuery($ezSQL='') {
-        global $_ezQuery, $_ezCubrid, $_ezMysqli, $_ezOracle8_9, $_ezOracleTNS;
+        global $_ezQuery, $_ezMysqli;// $_ezCubrid, $_ezOracle8_9, $_ezOracleTNS; 'recordset' ,'oracle8_9', 'oracletns',
         global $_ezPdo, $_ezPostgresql, $_ezRecordset, $_ezSqlite3, $_ezSqlsrv;
-        if (in_array(strtolower($ezSQL), array( 'cubrid', 'mysqli', 'oracle8_9', 'oracletns', 'pdo', 'postgresql', 'recordset', 'sqlite3', 'sqlsrv' ))) {
+        if (in_array(strtolower($ezSQL), array( 'cubrid', 'mysqli', 'pdo', 'postgresql', 'sqlite3', 'sqlsrv' ))) {
             switch(strtolower($ezSQL)) {
-                case 'cubrid':
-                    $_ezQuery = $_ezCubrid;
-                    break;
+            //    case 'cubrid':
+            //        $_ezQuery = $_ezCubrid;
+            //        break;
                 case 'mysqli':
                     $_ezQuery = $_ezMysqli;
                     break;
-                case 'oracle8_9':
-                    $_ezQuery = $_ezOracle8_9;
-                    break;
-                case 'oracletns':
-                    $_ezQuery = $_ezOracleTNS;
-                    break;
+            //    case 'oracle8_9':
+            //        $_ezQuery = $_ezOracle8_9;
+            //        break;
+            //    case 'oracletns':
+            //        $_ezQuery = $_ezOracleTNS;
+            //        break;
                 case 'pdo':
                     $_ezQuery = $_ezPdo;
                     break;
@@ -275,7 +291,7 @@
                     $_ezQuery = $_ezSqlsrv;
                     break;                    
             }
-            return true;            
+            return (!empty($_ezQuery)) ? true: false;            
         } else {
 			$_ezQuery = null;
             unset($_ezQuery);
