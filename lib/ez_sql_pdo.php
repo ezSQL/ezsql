@@ -256,7 +256,8 @@ class ezSQL_pdo extends ezSQLcore
       * Creates a prepared query, binds the given parameters and returns the result of the executed
       * @param string $query
       * @param array $param
-      * @return bool \PDOStatement 
+      * @param boolean $isselect - return \PDOStatement if select statement otherwise int
+      * @return bool \ int \PDOStatement 
       */
     public function query_prepared($query, $param=null, $isselect=false)
     { 
