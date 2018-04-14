@@ -70,22 +70,6 @@
         $_ezRecordset = null;
         $_ezSqlite3 = null;
         $_ezSqlsrv = null;
-        
-    function clean_input($string) 
-    {
-        $patterns = array( // strip out:
-                '@<script[^>]*?>.*?</script>@si', // Strip out javascript
-                '@<[\/\!]*?[^<>]*?>@si',          // HTML tags
-                '@<style[^>]*?>.*?</style>@siU',  // Strip style tags properly
-                '@<![\s\S]*?--[ \t\n\r]*>@'       // Strip multi-line comments
-                );
-                
-        $string = preg_replace($patterns,'',$string);
-        $string = trim($string);
-        $string = stripslashes($string);
-        
-        return htmlentities($string);
-    }
  
 	/**********************************************************************
      * Creates an array from expressions in the following formate

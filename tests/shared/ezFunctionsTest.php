@@ -29,14 +29,6 @@ class ezFunctionsTest extends TestCase {
     protected function tearDown() {
     } // tearDown
 
- 
-    /**
-     * clean_input 
-     */
-    public function testClean_input()
-    {
-        $this->assertEquals("' help", clean_input("<?php echo 'foo' >' help</php?>"));
-    } 
 
     /**
      * eq 
