@@ -129,34 +129,7 @@
 			}
 
 			return $return_val;
-		}
-                
-		/**********************************************************************
-		*  Format a sqlsrv string correctly for safe sqlsrv insert
-		*  (no mater if magic quotes are on or not)
-		*/
-
-		function escape($data)
-		{
-            if ( !isset($data) ) return '';
-            if ( is_numeric($data) ) return $data;
-
-            $non_displayables = array(
-                '/%0[0-8bcef]/',            // url encoded 00-08, 11, 12, 14, 15
-                '/%1[0-9a-f]/',             // url encoded 16-31
-                '/[\x00-\x08]/',            // 00-08
-                '/\x0b/',                   // 11
-                '/\x0c/',                   // 12
-                '/[\x0e-\x1f]/'             // 14-31
-                );
-                
-            foreach ( $non_displayables as $regex )
-                $data = preg_replace( $regex, '', $data );
-            $search = array("\\",  "\x00", "\n",  "\r",  "'",  '"', "\x1a");
-            $replace = array("\\\\","\\0","\\n", "\\r", "\'", '\"', "\\Z");
-
-            return str_replace($search, $replace, $data);
-		}
+		}                
 
 		/**********************************************************************
 		*  Return sqlsrv specific system date syntax

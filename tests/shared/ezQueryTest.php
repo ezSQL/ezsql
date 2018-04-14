@@ -55,6 +55,14 @@ class ezQueryTest extends TestCase {
     } // tearDown
  
     /**
+      * @covers ezQuery::Clean
+     */
+    public function testClean()
+    {
+        $this->assertEquals("' help", $this->object->clean("<?php echo 'foo' >' help</php?>"));
+    } 
+    
+    /**
      * @covers ezQuery::to_string
      */
     public function testTo_string()

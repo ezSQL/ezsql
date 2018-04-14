@@ -37,6 +37,22 @@ class ezQuery
     function __construct()
 		{
 		}
+        
+    function clean($string) 
+    {
+        $patterns = array( // strip out:
+                '@<script[^>]*?>.*?</script>@si', // Strip out javascript
+                '@<[\/\!]*?[^<>]*?>@si',          // HTML tags
+                '@<style[^>]*?>.*?</style>@siU',  // Strip style tags properly
+                '@<![\s\S]*?--[ \t\n\r]*>@'       // Strip multi-line comments
+                );
+                
+        $string = preg_replace($patterns,'',$string);
+        $string = trim($string);
+        $string = stripslashes($string);
+        
+        return htmlentities($string);
+    }
     
     // return status of prepare function availability in method calls
     function getPrepare($on=true) {
