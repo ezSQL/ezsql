@@ -83,7 +83,7 @@ class ezSQL_sqlsrvTest extends TestCase {
      * This method is called after a test is executed.
      */
     protected function tearDown() {
-        $this->object->query('TRUNCATE TABLE unit_test');
+        $this->object->query('DROP TABLE unit_test');
         $this->object = null;
     } // tearDown
 
@@ -230,7 +230,6 @@ class ezSQL_sqlsrvTest extends TestCase {
     public function testSelecting()
     {
         $this->object->quick_connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME);   
-        $this->assertEquals(0, $this->object->query('DROP TABLE IF EXITS unit_test')); 
         $this->object->query('CREATE TABLE unit_test(id integer, test_key varchar(50), PRIMARY KEY (ID))');
         $this->object->insert('unit_test', array('id'=>8, 'test_key'=>'testing 8' ));
         $this->object->insert('unit_test', array('id'=>9, 'test_key'=>'testing 9' ));
