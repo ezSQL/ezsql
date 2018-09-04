@@ -1,5 +1,4 @@
 <?php
-require_once('ez_sql_loader.php');
 
 require 'vendor/autoload.php';
 use PHPUnit\Framework\TestCase;
