@@ -27,8 +27,7 @@
         }
     ],
     "require": {
-        "php": ">5.6",
-        "jv2222/ezsql": "v3.x-dev"
+        "php": ">5.6"
     },
     "autoload": {
         "files": ["ez_sql_loader.php"]
