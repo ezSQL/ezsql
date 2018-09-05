@@ -1,6 +1,6 @@
 {
     "name": "jv2222/ezsql-3",
-    "description": "PHP class to make interacting with a database ridiculously easy.",
+    "description": "Updated ezSQL v3, more advance database access layer PHP class. Make interacting with a database ridiculously easy.",
     "keywords": ["mysqli","postgres","msserver","pdo","database","abstraction","dba"],
     "license": "LGPL-3.0-or-later",
     "authors": [
