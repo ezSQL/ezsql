@@ -1,0 +1,164 @@
+build: false
+platform:
+  - x64
+clone_folder: c:\projects\php-project-workspace
+
+## Build matrix for lowest and highest possible targets
+environment:
+  matrix:
+  - php_ver_target: 7.1
+  MYSQL_DATABASE: ez_test
+  MYSQL_HOST: localhost
+  MYSQL_USER: root
+  MYSQL_PASSWORD: Password12!
+  MYSQL_PATH: C:\Program Files\MySQL\MySQL Server 5.7
+  
+services:
+    - mssql2014
+    - mysql
+    - postgresql
+    
+## Cache composer, chocolatey and php bits
+cache:
+    - composer.phar
+    # Cache chocolatey packages
+    - C:\ProgramData\chocolatey\bin -> .appveyor.yml
+    - C:\ProgramData\chocolatey\lib -> .appveyor.yml
+    # Cache php install
+    - c:\tools\php -> .appveyor.yml
+    
+## Set up environment variables
+init:
+    - SET CUBRID=c:\CUBRID
+    - SET PATH=C:\Program Files\OpenSSL;c:\tools\php;C:\Program Files\PostgreSQL\9.4\bin\;C:\CUBRID\bin\;%PATH%
+    - SET COMPOSER_NO_INTERACTION=1
+    - SET PHP=1 # This var is connected to PHP install cache
+    - SET ANSICON=121x90 (121x90)
+    
+## Install PHP and composer, and run the appropriate composer command Get the MSSQL DLL's and XDEBUG
+install:
+    - IF EXIST c:\tools\php (SET PHP=0)
+    - ps: >-
+        If ($env:php_ver_target -eq "5.6") {
+          appveyor-retry cinst --params '""/InstallDir:C:\tools\php""' --ignore-checksums -y --forcex86 php --version ((choco search php --exact --all-versions -r | select-string -pattern $env:php_ver_target | sort { [version]($_ -split '\|' | select -last 1) } -Descending | Select-Object -first 1) -replace '[php|]','')
+        } Else {
+          appveyor-retry cinst --params '""/InstallDir:C:\tools\php""' --ignore-checksums -y php --version ((choco search php --exact --all-versions -r | select-string -pattern $env:php_ver_target | sort { [version]($_ -split '\|' | select -last 1) } -Descending | Select-Object -first 1) -replace '[php|]','')
+        }
+    - appveyor-retry cinst -y sqlite
+    - cd c:\tools
+    - IF %PHP%==1 appveyor-retry appveyor DownloadFile http://dl.filehorse.com//win/developer-tools/oracle-database-express-64/OracleXE112_Win64.zip?st=JBllKt6MNHDfMAyhjqLFNA&e=1522806869&fn=OracleXE112_Win64.zip
+    - IF %PHP%==1 7z x -y OracleXE112_Win64.zip > $null
+    - IF %PHP%==1 del OracleXE112_Win64.zip
+    - cd c:\tools\DISK1
+    - IF %PHP%==1 setup.exe /s f1"response\OracleXE-install.iss" /f2"response\setup.log"
+    - cd c:\tools\php\ext
+    - IF %PHP%==1 appveyor-retry appveyor DownloadFile http://ftp.cubrid.org/CUBRID_Drivers/PHP_Driver/10.1.0/Windows/CUBRID-PHP-7.1-WIN64-VC14_NTS-10.1.0.0003.zip
+    - IF %PHP%==1 appveyor-retry appveyor DownloadFile http://ftp.cubrid.org/CUBRID_Drivers/PHP_Driver/PDO/CUBRID10.1.0/Windows/CUBRID-PDO-7.1-WIN64-VC14-NTS-10.1.0.0003.bin.zip
+    - IF %PHP%==1 7z x -y CUBRID-PHP-7.1-WIN64-VC14_NTS-10.1.0.0003.zip > $null
+    - IF %PHP%==1 7z x -y CUBRID-PDO-7.1-WIN64-VC14-NTS-10.1.0.0003.bin.zip > $null
+    - cd c:\tools
+    - IF %PHP%==1 appveyor-retry appveyor DownloadFile http://ftp.cubrid.org/CUBRID_Engine/10.1_latest/CUBRID-Windows-x64-10.1-latest.msi
+    - IF %PHP%==1 REG ADD "HKCU\Software\Microsoft\Windows NT\CurrentVersion\AppCompatFlags\Layers" /V %cd%\CUBRID-Windows-x64-10.1-latest.msi /T REG_SZ /D WIN7RTM /F
+    - IF %PHP%==1 msiexec /i CUBRID-Windows-x64-10.1-latest.msi /q
+    - cd c:\tools\php
+    # Get the MSSQL DLL's
+    - ps: >-
+        If ($env:PHP -eq "1") {
+          If ($env:php_ver_target -eq "5.6") {
+            $source = "https://cdn.joomla.org/ci/php-sqlsrv.zip"
+            $destination = "c:\tools\php\php-sqlsrv.zip"
+            Invoke-WebRequest $source -OutFile $destination
+            #appveyor-retry appveyor DownloadFile https://cdn.joomla.org/ci/php-sqlsrv.zip
+            7z x php-sqlsrv.zip > $null
+            copy SQLSRV\php_sqlsrv_56_nts.dll ext\php_sqlsrv_nts.dll
+            copy SQLSRV\php_pdo_sqlsrv_56_nts.dll ext\php_pdo_sqlsrv_nts.dll
+            Remove-Item c:\tools\php\* -include .zip
+            } Else {
+            $DLLVersion = "4.3.0"
+            cd c:\tools\php\ext
+            $source = "http://windows.php.net/downloads/pecl/releases/sqlsrv/$($DLLVersion)/php_sqlsrv-$($DLLVersion)-$($env:php_ver_target)-nts-vc14-x64.zip"
+            $destination = "c:\tools\php\ext\php_sqlsrv-$($DLLVersion)-$($env:php_ver_target)-nts-vc14-x64.zip"
+            Invoke-WebRequest $source -OutFile $destination
+            #appveyor-retry appveyor DownloadFile http://windows.php.net/downloads/pecl/releases/sqlsrv/$($DLLVersion)/php_sqlsrv-$($DLLVersion)-$($env:php_ver_target)-nts-vc14-x64.zip
+            7z x -y php_sqlsrv-$($DLLVersion)-$($env:php_ver_target)-nts-vc14-x64.zip > $null
+            $source = "http://windows.php.net/downloads/pecl/releases/pdo_sqlsrv/$($DLLVersion)/php_pdo_sqlsrv-$($DLLVersion)-$($env:php_ver_target)-nts-vc14-x64.zip"
+            $destination = "c:\tools\php\ext\php_pdo_sqlsrv-$($DLLVersion)-$($env:php_ver_target)-nts-vc14-x64.zip"
+            Invoke-WebRequest $source -OutFile $destination
+            #appveyor-retry appveyor DownloadFile http://windows.php.net/downloads/pecl/releases/pdo_sqlsrv/$($DLLVersion)/php_pdo_sqlsrv-$($DLLVersion)-$($env:php_ver_target)-nts-vc14-x64.zip
+            7z x -y php_pdo_sqlsrv-$($DLLVersion)-$($env:php_ver_target)-nts-vc14-x64.zip > $null
+            Remove-Item c:\tools\php\ext* -include .zip
+            cd c:\tools\php}}
+    - IF %PHP%==1 copy php.ini-production php.ini /Y
+    - IF %PHP%==1 echo date.timezone="UTC" >> php.ini
+    - IF %PHP%==1 echo extension_dir=ext >> php.ini
+    - IF %PHP%==1 echo extension=php_openssl.dll >> php.ini
+    - IF %PHP%==1 echo extension=php_mbstring.dll >> php.ini
+    - IF %PHP%==1 echo extension=php_fileinfo.dll >> php.ini
+    - ps: >-
+        If ($env:php_ver_target -eq "5.6") {
+          Add-Content php.ini "`nextension=php_sqlsrv_nts.dll"
+          Add-Content php.ini "`nextension=php_pdo_sqlsrv_nts.dll"
+          Add-Content php.ini "`n"
+        } Else {
+          Add-Content php.ini "`nextension=php_sqlsrv.dll"
+          Add-Content php.ini "`nextension=php_pdo_sqlsrv.dll"
+          Add-Content php.ini "`n"
+        }
+    - IF %PHP%==1 echo extension=php_pgsql.dll >> php.ini
+    - IF %PHP%==1 echo extension=php_pdo_pgsql.dll >> php.ini
+    - IF %PHP%==1 echo extension=php_sqlite3.dll >> php.ini
+    - IF %PHP%==1 echo extension=php_pdo_sqlite.dll >> php.ini
+    - IF %PHP%==1 echo extension=php_mysqli.dll >> php.ini
+    - IF %PHP%==1 echo extension=php_pdo_mysql.dll >> php.ini
+    - IF %PHP%==1 echo extension=php_cubrid.dll >> php.ini
+    - IF %PHP%==1 echo extension=php_pdo_cubrid.dll >> php.ini
+    - IF %PHP%==1 appveyor-retry appveyor DownloadFile https://xdebug.org/files/php_xdebug-2.6.0-7.1-vc14-nts-x86_64.dll -FileName c:\tools\php\ext\php_xdebug-2.6.0-7.1-vc14-nts-x86_64.dll
+    - IF %PHP%==1 echo [xdebug] >> php.ini
+    - IF %PHP%==1 echo zend_extension=php_xdebug-2.6.0-7.1-vc14-nts-x86_64.dll >> php.ini
+    - IF %PHP%==1 echo zend.assertions=1 >> php.ini
+    - IF %PHP%==1 echo assert.exception=On >> php.ini
+    - IF %PHP%==1 echo xdebug.remote_enable=1 >> php.ini
+    - IF %PHP%==1 echo xdebug.remote_autostart=1 >> php.ini
+    - IF %PHP%==1 echo xdebug.profiler_enable=off >> php.ini
+    - IF %PHP%==1 echo @php %%~dp0composer.phar %%* > composer.bat
+    - appveyor-retry appveyor DownloadFile https://getcomposer.org/composer.phar
+    - cd c:\projects\php-project-workspace
+    - composer self-update
+    - composer require php-coveralls/php-coveralls
+    
+build_script:
+  # postgres
+  - SET PGUSER=postgres
+  - SET PGPASSWORD=Password12!
+  - createdb ez_test
+  - psql -c "CREATE USER ez_test WITH PASSWORD 'ezTest';"
+  # sqlserver
+  - sqlcmd -S localhost,1433 -U sa -P Password12! -Q "CREATE DATABASE ez_test"
+  - sqlcmd -S localhost,1433 -U sa -P Password12! -d ez_test -Q "CREATE LOGIN ez_test WITH PASSWORD=N'ezTest', DEFAULT_DATABASE=ez_test, CHECK_EXPIRATION=OFF, CHECK_POLICY=OFF; ALTER SERVER ROLE [sysadmin] ADD MEMBER ez_test" 
+  
+before_test:
+  # cubrid
+  - mkdir c:\CUBRID\database
+  - cd c:\CUBRID\database
+  - cubrid service start
+  - cubrid createdb --db-volume-size=128M --db-page-size=16K --log-volume-size=128M ez_test en_US
+  - cubrid server start ez_test
+  - csql ez_test -u dba -c "CREATE USER ez_test PASSWORD 'ezTest' MEMBERS dba"
+  # mysql
+  - SET PATH=%MYSQL_PATH%\bin;%PATH%
+  - mysqladmin --host=%MYSQL_HOST% --user=%MYSQL_USER% --password=%MYSQL_PASSWORD% create %MYSQL_DATABASE%    
+  - mysql -u root -p"Password12!" -e "CREATE DATABASE IF NOT EXISTS ez_test;"
+  - mysql -u root -p"Password12!" -e "GRANT ALL PRIVILEGES ON ez_test.* TO ez_test@localhost IDENTIFIED BY 'ezTest'";
+  - mysql -u root -p"Password12!" -e "FLUSH PRIVILEGES;"
+    
+on_success:
+  - ps: |
+      $env:PATH = 'C:\msys64\usr\bin;' + $env:PATH
+      Invoke-WebRequest -Uri 'https://codecov.io/bash' -OutFile codecov.sh
+      bash codecov.sh -f "coverage.xml"
+      
+## Run the actual test
+test_script:
+    - cd c:\projects\php-project-workspace
+    - vendor/bin/phpunit --coverage-clover=coverage.xml
+    

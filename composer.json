@@ -1,30 +1,42 @@
 {
     "name": "jv2222/ezsql",
-    "description": "PHP class to make interacting with a database ridiculusly easy.",
-    "license": "LGPL",
+    "description": "Advance database access layer PHP 5.6+ class. Make interacting with a database ridiculously easy.",
+    "keywords": ["mysqli","postgres","msserver","pdo","sqlite","database","abstraction","dba"],
+    "license": "LGPL-3.0-or-later",
     "authors": [
         {
             "name": "Justin Vincent",
             "email": "webmaster@justinvincent.com"
+        },
+        {
+            "name": "Stefanie Janine Stoelting",
+            "email": "mail@stefanie-stoelting.de"
+        },
+        {
+            "name": "l. stubbs",
+            "email": "lstubbs@technoexpress.net"
+        }
+    ],
+    "support": {
+        "issues": "https://github.com/ezSQL/ezSQL/issues"
+    },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/ezSQL/ezSQL"
         }
     ],
     "require": {
-
+        "php": ">5.6"
     },
     "autoload": {
-        "classmap": [
-            "cubrid/ez_sql_cubrid.php",
-            "pdo/ez_sql_pdo.php",
-            "postgresql/ez_sql_postgresql.php",
-            "mysql/ez_sql_mysql.php",
-            "mysqli/ez_sql_mysqli.php",
-            "sqlsrv/ez_sql_sqlsrv.php",
-            "oracle8_9/ez_sql_oracle8_9.php",
-            "sqlite/ez_sql_sqlite.php",
-            "shared/ez_sql_core.php",
-            "mssql/ez_sql_mssql.php",
-            "sybase/ez_sql_sybase.php",
-            "codeigniter/Ezsql_codeigniter.php"
-        ]
+        "files": ["ez_sql_loader.php"]
+    },
+    "require-dev": {
+        "phpunit/phpunit": ">5.7.0"
+    },
+    "scripts": {
+        "test": "phpunit --bootstrap vendor/autoload.php tests"
     }
 }
+

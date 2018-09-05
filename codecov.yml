@@ -1,0 +1,5 @@
+ignore:
+  - "unsupported/."
+  - "tests/." 
+  - "vendor/."
+  - "docs/."  # regexp accepted

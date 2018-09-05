@@ -1,7 +1,5 @@
 <?php
 
-require_once 'shared/ez_sql_core.php';
-
 require 'vendor/autoload.php';
 use PHPUnit\Framework\TestCase;
 
@@ -12,16 +10,34 @@ use PHPUnit\Framework\TestCase;
  * @author  Stefanie Janine Stoelting <mail@stefanie-stoelting.de>
  * @name    ezSQLcoreTest
  * @package ezSQL
- * @subpackage unitTests
+ * @subpackage Tests
  * @license FREE / Donation (LGPL - You may do what you like with ezSQL - no exceptions.)
  */
 class ezSQLcoreTest extends TestCase {
-
+	
     /**
      * @var ezSQLcore
      */
     protected $object;
+    private $errors;
+ 
+    function errorHandler($errno, $errstr, $errfile, $errline, $errcontext) {
+        $this->errors[] = compact("errno", "errstr", "errfile",
+            "errline", "errcontext");
+    }
 
+    function assertError($errstr, $errno) {
+        foreach ($this->errors as $error) {
+            if ($error["errstr"] === $errstr
+                && $error["errno"] === $errno) {
+                return;
+            }
+        }
+        $this->fail("Error with level " . $errno .
+            " and message '" . $errstr . "' not found in ", 
+            var_export($this->errors, TRUE));
+    }   
+	
     /**
      * Sets up the fixture, for example, opens a network connection.
      * This method is called before a test is executed.
@@ -38,6 +54,16 @@ class ezSQLcoreTest extends TestCase {
         $this->object = null;
     } // tearDown
 
+    /**
+     * @covers ezSQLcore::get_host_port
+     */
+    public function testGet_host_port()
+    {
+        $hostport = $this->object->get_host_port("localhost:8181");
+        $this->assertEquals($hostport[0],"localhost");
+        $this->assertEquals($hostport[1],"8181");
+    }
+	
     /**
      * @covers ezSQLcore::register_error
      */
@@ -87,7 +113,10 @@ class ezSQLcoreTest extends TestCase {
      * @covers ezSQLcore::get_var
      */
     public function testGet_var() {
+        $this->object->last_result = array('1');
         $this->assertNull($this->object->get_var());
+        //$this->expectExceptionMessage('Call to undefined method ezSQLcore::query()');
+        $this->assertNull($this->object->get_var('1'));
     } // testGet_var
 
     /**
@@ -95,6 +124,11 @@ class ezSQLcoreTest extends TestCase {
      */
     public function testGet_row() {
         $this->assertNull($this->object->get_row());
+        $this->assertNull($this->object->get_row(null,ARRAY_A));
+        $this->assertNull($this->object->get_row(null,ARRAY_N));
+        $this->assertNull($this->object->get_row(null,'BAD'));
+       // $this->expectExceptionMessage('Call to undefined method ezSQLcore::query()');
+        $this->assertNull($this->object->get_row('1'));
     } // testGet_row
 
     /**
@@ -102,6 +136,10 @@ class ezSQLcoreTest extends TestCase {
      */
     public function testGet_col() {
         $this->assertEmpty($this->object->get_col());
+        $this->object->last_result = array('1');
+        $this->assertNotNull($this->object->get_col());
+        //$this->expectExceptionMessage('Call to undefined method ezSQLcore::query()');
+        $this->assertNotFalse($this->object->get_col('1'));
     } // testGet_col
 
     /**
@@ -109,6 +147,9 @@ class ezSQLcoreTest extends TestCase {
      */
     public function testGet_results() {
         $this->assertNull($this->object->get_results());
+        $this->assertNotNull($this->object->get_results(null,ARRAY_A));
+       // $this->expectExceptionMessage('Call to undefined method ezSQLcore::query()');
+        $this->assertNull($this->object->get_results('1'));
     } // testGet_results
 
     /**
@@ -116,6 +157,9 @@ class ezSQLcoreTest extends TestCase {
      */
     public function testGet_col_info() {
         $this->assertEmpty($this->object->get_col_info());
+        $this->object->col_info = true;
+        $this->assertNull($this->object->get_col_info());
+        $this->assertNull($this->object->get_col_info('name',1));
     } // testGet_col_info
 
     /**
@@ -141,11 +185,17 @@ class ezSQLcoreTest extends TestCase {
     } // testGet_cache
 
     /**
-     * The test echos HTML, it is just a test, that is still running
+     * The test does not echos HTML, it is just a test, that is still running
      * @covers ezSQLcore::vardump
      */
     public function testVardump() {
-        $this->object->vardump();
+        $this->object->debug_echo_is_on = false;
+        $this->object->last_result = array('Test 1');
+        $this->assertNotEmpty($this->object->vardump($this->object->last_result));
+        $this->object->debug_echo_is_on = true;
+        $this->expectOutputRegex('/[Last Function Call]/');
+        $this->object->vardump('');
+        
     } // testVardump
 
     /**
@@ -153,6 +203,8 @@ class ezSQLcoreTest extends TestCase {
      * @covers ezSQLcore::dumpvar
      */
     public function testDumpvar() {
+        $this->object->last_result = array('Test 1', 'Test 2');
+        $this->expectOutputRegex('/[Last Function Call]/');
         $this->object->dumpvar('');
     } // testDumpvar
 
@@ -163,7 +215,19 @@ class ezSQLcoreTest extends TestCase {
         $this->assertNotEmpty($this->object->debug(false));
         
         // In addition of getting a result, it fills the console
-        $this->assertNotEmpty($this->object->debug(true));
+        $this->expectOutputRegex('/[make a donation]/');
+        $this->object->debug(true);
+        $this->object->last_error = "test last";
+        $this->expectOutputRegex('/[test last]/');
+        $this->object->debug(true);
+        $this->object->from_disk_cache = true;
+        $this->expectOutputRegex('/[Results retrieved from disk cache]/');
+        $this->object->debug(true);
+        $this->object->col_info = array("just another test");        
+        $this->object->debug(false);   
+        $this->object->col_info = null;     
+        $this->object->last_result = array("just another test II");        
+        $this->object->debug(false);
     } // testDebug
 
     /**
@@ -189,16 +253,16 @@ class ezSQLcoreTest extends TestCase {
      */
     public function testTimer_start() {
         $this->object->timer_start('test_timer');
+        $this->assertNotNull($this->object->timers['test_timer']);        
     } // testTimer_start
 
     /**
      * @covers ezSQLcore::timer_elapsed
      */
     public function testTimer_elapsed() {
-        $expected = 0;
-        
-        $this->object->timer_start('test_timer');
-        
+        $expected = 0;        
+        $this->object->timer_start('test_timer');      
+		usleep( 5 );        
         $this->assertGreaterThanOrEqual($expected, $this->object->timer_elapsed('test_timer'));
     } // testTimer_elapsed
 
@@ -206,15 +270,74 @@ class ezSQLcoreTest extends TestCase {
      * @covers ezSQLcore::timer_update_global
      */
     public function testTimer_update_global() {
-        $this->object->timer_start('test_timer');
+        $this->object->timer_start('test_timer');           
+		usleep( 5 );
+        $this->object->do_profile = true;
         $this->object->timer_update_global('test_timer');
+        $expected = $this->object->total_query_time;     
+        $this->assertGreaterThanOrEqual($expected, $this->object->timer_elapsed('test_timer'));    
     }
 
+    /**
+     * @covers ezSQLcore::get_set
+     */
+    public function testGet_set()
+    {
+        $this->assertNull($this->object->get_set(''));    
+ 
+        //$this->expectExceptionMessage('Call to undefined method ezSQLcore::escape()');
+        $this->assertContains('NOW()',$this->object->get_set(
+            array('test_unit'=>'NULL',
+            'test_unit2'=>'NOW()',
+            'test_unit3'=>'true',
+            'test_unit4'=>'false')));
+        $this->assertContains('',$this->object->get_set(
+            array('test_unit'=>'false')));
+        $this->assertContains('',$this->object->get_set(
+            array('test_unit'=>'true')));
+    }
+
+    /**
+     * @covers ezSQLcore::count
+     */
+    public function testCount()
+    {
+        $this->assertEquals(0,$this->object->count());
+        $this->object->count(true,true);
+        $this->assertEquals(1,$this->object->count());
+        $this->assertEquals(2,$this->object->count(false,true));
+    }
+   
     /**
      * @covers ezSQLcore::affectedRows
      */
     public function testAffectedRows() {
         $this->assertEquals(0, $this->object->affectedRows());
-    } // testAffectedRows
+    } // testAffectedRows   
+    
+    /**
+     * @covers ezSQLcore::isConnected
+     */
+    public function testIsConnected() {
+        $this->assertFalse($this->object->isConnected());
+    }  //testisConnected
 
+    /**
+     * @covers ezSQLcore::getShowErrors
+     */
+    public function testGetShowErrors() {
+        $this->assertNotEmpty($this->object->getShowErrors());
+    } // testgetShowErrors       
+    
+    /**
+     * @covers ezSQLcore::__construct
+     */
+    public function test__Construct() {         
+        $ezSQLcore = $this->getMockBuilder(ezSQLcore::class)
+        ->setMethods(null)
+        ->disableOriginalConstructor()
+        ->getMock();
+        
+        $this->assertNull($ezSQLcore->__construct());  
+    }
 } //

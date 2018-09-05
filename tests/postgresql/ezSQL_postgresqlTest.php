@@ -1,7 +1,5 @@
 <?php
 
-require_once 'shared/ez_sql_core.php';
-
 require 'vendor/autoload.php';
 use PHPUnit\Framework\TestCase;
 
@@ -14,9 +12,8 @@ use PHPUnit\Framework\TestCase;
  * Run database tear down after tests to get rid of the database and the user.
  *
  * @author  Stefanie Janine Stoelting <mail@stefanie-stoelting.de>
- * @name    ezSQL_postgresql_tear_up
  * @package ezSQL
- * @subpackage unitTests
+ * @subpackage Tests
  * @license FREE / Donation (LGPL - You may do what you like with ezSQL - no exceptions.)
  */
 class ezSQL_postgresqlTest extends TestCase {
@@ -50,6 +47,24 @@ class ezSQL_postgresqlTest extends TestCase {
      * @var ezSQL_postgresql
      */
     protected $object;
+    private $errors;
+ 
+    function errorHandler($errno, $errstr, $errfile, $errline, $errcontext) {
+        $this->errors[] = compact("errno", "errstr", "errfile",
+            "errline", "errcontext");
+    }
+
+    function assertError($errstr, $errno) {
+        foreach ($this->errors as $error) {
+            if ($error["errstr"] === $errstr
+                && $error["errno"] === $errno) {
+                return;
+            }
+        }
+        $this->fail("Error with level " . $errno .
+            " and message '" . $errstr . "' not found in ", 
+            var_export($this->errors, TRUE));
+    }   
 
     /**
      * Sets up the fixture, for example, opens a network connection.
@@ -61,8 +76,8 @@ class ezSQL_postgresqlTest extends TestCase {
               'The PostgreSQL Lib is not available.'
             );
         }
-        require_once 'postgresql/ez_sql_postgresql.php';
-        $this->object = new ezSQL_postgresql;
+        $this->object = new ezSQL_postgresql;               
+        $this->object->setPrepare();
     } // setUp
 
     /**
@@ -77,25 +92,22 @@ class ezSQL_postgresqlTest extends TestCase {
      * @covers ezSQL_postgresql::quick_connect
      */
     public function testQuick_connect() {
-        $this->object->quick_connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME, self::TEST_DB_HOST, self::TEST_DB_PORT);
+        $this->assertTrue($this->object->quick_connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME, self::TEST_DB_HOST, self::TEST_DB_PORT));
     } // testQuick_connect
 
     /**
      * @covers ezSQL_postgresql::connect
      * 
      */
-    public function testConnect() {
-        $this->object->connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME, self::TEST_DB_HOST, self::TEST_DB_PORT);
-    } // testConnect
-
-    /**
-     * @covers ezSQL_postgresql::select
-     */
-    public function testSelect() {
-        $this->object->quick_connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME, self::TEST_DB_HOST, self::TEST_DB_PORT);
+    public function testConnect() {        
+        $this->errors = array();
+        set_error_handler(array($this, 'errorHandler')); 
+         
+        $this->assertFalse($this->object->connect('',''));  
+        $this->assertFalse($this->object->connect('self::TEST_DB_USER', 'self::TEST_DB_PASSWORD',' self::TEST_DB_NAME', 'self::TEST_DB_CHARSET'));  
         
-        $this->assertTrue($this->object->select(self::TEST_DB_NAME));
-    } // testSelect
+        $this->assertTrue($this->object->connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME, self::TEST_DB_HOST, self::TEST_DB_PORT));
+    } // testConnect
 
     /**
      * @covers ezSQL_postgresql::escape
@@ -157,16 +169,84 @@ class ezSQL_postgresqlTest extends TestCase {
      */
     public function testQuery() {
         $this->assertTrue($this->object->connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME, self::TEST_DB_HOST, self::TEST_DB_PORT));
+        $this->assertEquals(0, $this->object->query('DROP TABLE unit_test'));
+            
+        $this->object->query('CREATE TABLE unit_test(id serial, test_key varchar(50), test_value varchar(50), PRIMARY KEY (ID))');
+        $this->assertEquals($this->object->query('INSERT INTO unit_test(test_key, test_value) VALUES(\'test 1\', \'testing string 1\')'), 1);
         
-        $this->assertEquals(0, $this->object->query('CREATE TABLE unit_test(id integer, test_key varchar(50), PRIMARY KEY (ID))'));
+        $this->object->dbh = null;
+        $this->assertNull($this->object->query('INSERT INTO unit_test(test_key, test_value) VALUES(\'test 2\', \'testing string 2\')'));
+        $this->object->disconnect();
+        $this->assertNull($this->object->query('INSERT INTO unit_test(test_key, test_value) VALUES(\'test 3\', \'testing string 3\')'));    
         
         $this->assertEquals(0, $this->object->query('DROP TABLE unit_test'));
     } // testQuery
+    
+    /**
+     * @covers ezSQLcore::insert
+     */
+    public function testInsert()
+    {
+        $this->object->connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME, self::TEST_DB_HOST, self::TEST_DB_PORT);     
+        $this->assertEquals(0, $this->object->query('DROP TABLE unit_test'));   
+        $this->object->query('CREATE TABLE unit_test(id serial, test_key varchar(50), test_value varchar(50), PRIMARY KEY (ID))');
+        $result = $this->object->insert('unit_test', array('test_key'=>'test 1', 'test_value'=>'testing string 1' ));
+        $this->assertEquals($result, 1);
+        $this->assertEquals(0, $this->object->query('DROP TABLE unit_test'));
+    }
+       
+    /**
+     * @covers ezSQLcore::update
+     */
+    public function testUpdate()
+    {
+        $this->object->connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME, self::TEST_DB_HOST, self::TEST_DB_PORT);   
+        $this->object->query('CREATE TABLE unit_test(id serial, test_key varchar(50), test_value varchar(50), PRIMARY KEY (ID))');
+        $this->object->insert('unit_test', array('test_key'=>'test 1', 'test_value'=>'testing string 1' ));
+        $this->object->insert('unit_test', array('test_key'=>'test 2', 'test_value'=>'testing string 2' ));
+        $result = $this->object->insert('unit_test', array('test_key'=>'test 3', 'test_value'=>'testing string 3' ));
+        $this->assertEquals($result, 3);
+        $unit_test['test_key'] = 'the key string';
+        $where="test_key  =  test 1";
+        $this->assertEquals(1, $this->object->update('unit_test', $unit_test, $where));
+        $this->assertEquals(1, $this->object->update('unit_test', $unit_test, 
+			array('test_key',EQ,'test 3','and'),
+			array('test_value','=','testing string 3')));
+        $where=array('test_value',EQ,'testing string 4');
+        $this->assertEquals(0, $this->object->update('unit_test', $unit_test, $where));
+        $this->assertEquals(1, $this->object->update('unit_test', $unit_test, "test_key  =  test 2"));
+        $this->assertEquals(0, $this->object->query('DROP TABLE unit_test'));
+    }
+    
+    /**
+     * @covers ezSQLcore::delete
+     */
+    public function testDelete()
+    {
+        $this->object->connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME, self::TEST_DB_HOST, self::TEST_DB_PORT);
+        $this->object->query('CREATE TABLE unit_test(id serial, test_key varchar(50), test_value varchar(50), PRIMARY KEY (ID))');
+        $this->object->insert('unit_test', array('test_key'=>'test 1', 'test_value'=>'testing string 1' ));
+        $this->object->insert('unit_test', array('test_key'=>'test 2', 'test_value'=>'testing string 2' ));
+        $this->object->insert('unit_test', array('test_key'=>'test 3', 'test_value'=>'testing string 3' ));   
 
+        $where=array('test_key','=','test 1');
+        $this->assertEquals($this->object->delete('unit_test', $where), 1);
+        
+        $this->assertEquals($this->object->delete('unit_test', 
+            array('test_key','=','test 3'),
+            array('test_value','=','testing string 3')), 1);
+        $where=array('test_value','=','testing 2');
+        $this->assertEquals(0, $this->object->delete('unit_test', $where));
+        $where="test_key  =  test 2";
+        $this->assertEquals(1, $this->object->delete('unit_test', $where));
+        $this->assertEquals(0, $this->object->query('DROP TABLE unit_test'));
+    }  
+	
     /**
      * @covers ezSQL_postgresql::disconnect
      */
     public function testDisconnect() {
+        $this->object->connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME, self::TEST_DB_HOST, self::TEST_DB_PORT);  
         $this->object->disconnect();
         
         $this->assertFalse($this->object->isConnected());
@@ -187,5 +267,57 @@ class ezSQL_postgresqlTest extends TestCase {
         
         $this->assertEquals(self::TEST_DB_PORT, $this->object->getPort());
     } // testGetPort
+
+    /**
+     * @covers ezSQLcore::selecting
+     */
+    public function testSelecting()
+    {
+        $this->object->connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME, self::TEST_DB_HOST, self::TEST_DB_PORT);
+        $this->object->query('CREATE TABLE unit_test(id serial, test_key varchar(50), test_value varchar(50), PRIMARY KEY (ID))');
+        $this->object->insert('unit_test', array('test_key'=>'test 1', 'test_value'=>'testing string 1' ));
+        $this->object->insert('unit_test', array('test_key'=>'test 2', 'test_value'=>'testing string 2' ));
+        $this->object->insert('unit_test', array('test_key'=>'test 3', 'test_value'=>'testing string 3' ));   
+        
+        $result = $this->object->selecting('unit_test');        
+        $i = 1;
+        foreach ($result as $row) {
+            $this->assertEquals($i, $row->id);
+            $this->assertEquals('testing string ' . $i, $row->test_value);
+            $this->assertEquals('test ' . $i, $row->test_key);
+            ++$i;
+        }
+        
+        $where = eq('id','2');
+        $result = $this->object->selecting('unit_test', 'id', $this->object->where($where));
+        foreach ($result as $row) {
+            $this->assertEquals(2, $row->id);
+        }
+        
+        $where = [eq('test_value','testing string 3', _AND), eq('id','3')];
+        $result = $this->object->selecting('unit_test', 'test_key', $this->object->where($where));
+        foreach ($result as $row) {
+            $this->assertEquals('test 3', $row->test_key);
+        }      
+        
+        $result = $this->object->selecting('unit_test', 'test_value', $this->object->where(eq( 'test_key','test 1' )));
+        foreach ($result as $row) {
+            $this->assertEquals('testing string 1', $row->test_value);
+        }
+        $this->assertEquals(0, $this->object->query('DROP TABLE unit_test'));
+    } 
+    
+    /**
+     * @covers ezSQL_postgresql::__construct
+     */
+    public function test__Construct() {     
+        $postgresql = $this->getMockBuilder(ezSQL_postgresql::class)
+        ->setMethods(null)
+        ->disableOriginalConstructor()
+        ->getMock();
+        
+        $this->assertNull($postgresql->__construct());  
+        $this->assertNull($postgresql->__construct('testuser','','','','utf8'));  
+    } 
 
 } // ezSQL_postgresqlTest
