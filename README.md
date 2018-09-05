@@ -8,6 +8,7 @@ ezSQL
 Installation
 ------
 `composer require jv2222/ezsql`
+
 `require 'vendor/autoload.php';`
 
 Author
