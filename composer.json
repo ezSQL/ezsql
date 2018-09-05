@@ -1,5 +1,5 @@
 {
-    "name": "jv2222/ezsql",
+    "name": "jv2222/ezsql-3",
     "description": "PHP class to make interacting with a database ridiculously easy.",
     "keywords": ["mysqli","postgres","msserver","pdo","database","abstraction","dba"],
     "license": "LGPL-3.0-or-later",
