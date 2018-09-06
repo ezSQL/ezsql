@@ -7,7 +7,7 @@ ezSQL
 
 Installation
 ------
-`composer require techno-express/ezsql-3`
+`composer require dba/ezsql-3`
 
 `require 'vendor/autoload.php';`
 
