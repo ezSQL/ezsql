@@ -1,10 +1,34 @@
 <?php
-require_once(__DIR__ .DIRECTORY_SEPARATOR.'shared'.DIRECTORY_SEPARATOR.'ez_sql_core.php');
-function ezsql_autoloader($class) {    
-	$foldername = ltrim($class, 'ezSQL_');
-    $file = __DIR__ .DIRECTORY_SEPARATOR.'lib'.DIRECTORY_SEPARATOR.'ez_sql_'.strtolower($foldername).'.php';
+function ez_autoloader($class) {    
+    $base_dir = __DIR__ .DIRECTORY_SEPARATOR.'lib'.DIRECTORY_SEPARATOR;
+    $prefix = 'ezsql\\';
+    
+    $len = strlen($prefix);
+    if (strncmp($prefix, $class, $len) !== 0) {
+        return;
+    }
+
+    $relative_class = substr($class, $len);
+    $file = $base_dir.strtolower( str_replace('\\', DIRECTORY_SEPARATOR , $relative_class) ).'.php';
     if (file_exists($file)) {
         require_once($file);
     }
 }
-spl_autoload_register('ezsql_autoloader');
+spl_autoload_register('ez_autoloader');
+
+function sql_autoloader($class) {    
+    $base_dir = __DIR__ .DIRECTORY_SEPARATOR.'lib'.DIRECTORY_SEPARATOR.'Database'.DIRECTORY_SEPARATOR;
+    $prefix = 'ezsql\\Database\\';
+    
+    $len = strlen($prefix);
+    if (strncmp($prefix, $class, $len) !== 0) {
+        return;
+    }
+
+    $relative_class = substr($class, $len);
+    $file = $base_dir.strtolower( str_replace('\\', DIRECTORY_SEPARATOR , $relative_class) ).'.php';
+    if (file_exists($file)) {
+        require_once($file);
+    }
+}
+spl_autoload_register('sql_autoloader');

@@ -1,18 +1,21 @@
 <?php
 /**
  * ezSQL Database specific class - mySQL
- * Desc..: mySQL component (part of ezSQL databse abstraction library)
+ * Desc..: mySQLi component (part of ezSQL databse abstraction library)
  *
  * @author  Justin Vincent (jv@jvmultimedia.com)
  * @author  Stefanie Janine Stoelting <mail@stefanie-stoelting.de>
- * Contributor:  Lawrence Stubbs <technoexpressnet@gmail.com>
+ * @Contributor:  Lawrence Stubbs <technoexpressnet@gmail.com>
  * @link    http://twitter.com/justinvincent
- * @name    ezSQL_mysql
+ * @name    ez_mysql
  * @package ezSQL
  * @license FREE / Donation (LGPL - You may do what you like with ezSQL - no exceptions.)
  *
  */
-class ezSQL_mysqli extends ezSQLcore
+namespace ezsql\Database\ez_mysqli;
+use ezsql\ezsqlModel;
+
+class ez_mysqli extends ezsqlModel
 {
     /*
      * ezSQL error strings - mySQL
@@ -27,88 +30,30 @@ class ezSQL_mysqli extends ezSQLcore
             5 => 'Unexpected error while trying to select database'
         );
 
-
-    /**
-     * Database user name
-     * @var string
-     */
-    private $_dbuser;
-
-    /**
-     * Database password for the given user
-     * @var string
-     */
-    private $_dbpassword;
-
-    /**
-     * Database name
-     * @var string
-     */
-    private $_dbname;
-
-    /**
-     * Host name or IP address
-     * @var string
-     */
-    private $_dbhost;
-
-    /**
-     * Database charset
-     * @var string Default is utf8
-     */
-    private $_charset = 'utf8';
-
-    /**
-     * Query result
-     * @var mixed
-     */
-    private $_result;
-
-
     /**
      * Show errors
      * @var boolean Default is true
      */
     public $show_errors = true;
-
-    /**
-     * Database connection
-     * @var resource
-     */
-    public $dbh;
     
 	protected $preparedvalues = array();
 	
     /**
-     * Constructor - allow the user to perform a quick connect at the same time
-     * as initializing the ezSQL_mysql class
-     *
-     * @param string $dbuser The database user name
-     * @param string $dbpassword The database users password
-     * @param string $dbname The name of the database
-     * @param string $dbhost The host name or IP address of the database server.
-     *                       Default is localhost
      * @param string $charset The database charset
      *                        Default is empty string
      */
-    public function __construct($dbuser='', $dbpassword='', $dbname='', $dbhost='localhost', $charset='') {
+    public function __construct($charset='') {
         if ( ! function_exists ('mysqli_connect') ) {
-            throw new Exception('<b>Fatal Error:</b> ezSQL_mysql requires mySQL Lib to be compiled and or linked in to the PHP engine');
+            throw new Exception('<b>Fatal Error:</b> ez_mysql requires mySQLi Lib to be compiled and or linked in to the PHP engine');
         }
         if ( ! class_exists ('ezSQLcore') ) {
-            throw new Exception('<b>Fatal Error:</b> ezSQL_mysql requires ezSQLcore (ez_sql_core.php) to be included/loaded before it can be used');
+            throw new Exception('<b>Fatal Error:</b> ez_mysql requires ezSQLcore (ez_sql_core.php) to be included/loaded before it can be used');
         }
-
         parent::__construct();
-
-        $this->_dbuser = $dbuser;
-        $this->_dbpassword = $dbpassword;
-        $this->_dbname = $dbname;
-        $this->_dbhost = $dbhost;
+        
         if ( ! empty($charset) ) {
             $this->_charset = strtolower(str_replace('-', '', $charset));
-        }
-        
+        }        
         global $_ezMysqli;
         $_ezMysqli = $this;
     } // __construct
@@ -143,7 +88,7 @@ class ezSQL_mysqli extends ezSQLcore
      *                      Default is empty string
      * @return boolean
      */
-    public function connect($dbuser='', $dbpassword='', $dbhost='localhost', $charset='') {
+    public function connect($dbuser = '', $dbpassword = '', $dbhost = 'localhost', $charset = '') {
         $this->_connected = false;
 
         $this->_dbuser = empty($dbuser) ? $this->_dbuser : $dbuser;
@@ -174,7 +119,7 @@ class ezSQL_mysqli extends ezSQLcore
      * @param string $charset Encoding of the database
      * @return boolean
      */
-    public function select($dbname='', $charset='') {
+    public function select( $dbname='', $charset='') {
         if ( ! $dbname ) {
             // Must have a database name
             $this->register_error($this->ezsql_mysql_str[3] . ' in ' . __FILE__ . ' on line ' . __LINE__);
@@ -224,7 +169,7 @@ class ezSQL_mysqli extends ezSQLcore
      * @param string $str
      * @return string
      */
-    public function escape($str) {
+    public function escape(string $str) {
         return mysqli_real_escape_string($this->dbh, stripslashes($str));
     } // escape
 
@@ -305,7 +250,7 @@ class ezSQL_mysqli extends ezSQLcore
      * @param array $args
      * @return bool|\mysqli_result
      */
-    public function query_prepared($query, array $args)
+    public function query_prepared(string $query, array $args)
     {
         $stmt   = $this->dbh->prepare($query);
         $params = [];
@@ -344,7 +289,7 @@ class ezSQL_mysqli extends ezSQLcore
      * @param type $query
      * @return boolean
      */
-    public function query($query, $use_prepare=false) {
+    public function query(string $query, $use_prepare = false) {
         if ($use_prepare)
             $param = &$this->getParamaters();
         
@@ -486,4 +431,4 @@ class ezSQL_mysqli extends ezSQLcore
         return mysqli_insert_id($this->dbh);
     } // getInsertId
 
-} // ezSQL_mysqli
+} // ez_mysqli

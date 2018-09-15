@@ -3,9 +3,9 @@
 
 	/**********************************************************************
 	*  Author: davisjw (davisjw@gmail.com)
-           * Contributor:  Lawrence Stubbs <technoexpressnet@gmail.com>
+	*  Contributor:  Lawrence Stubbs <technoexpressnet@gmail.com>
 	*  Web...: http://twitter.com/justinvincent
-	*  Name..: ezSQL_sqlsrv
+	*  Name..: ez_sqlsrv
 	*  Desc..: Microsoft Sql Server component (MS drivers) (part of ezSQL databse abstraction library) - based on ezSql_msSql library class.
 	*
 	*/
@@ -14,6 +14,9 @@
 	*  ezSQL error strings - sqlsrv
 	*/
 
+	namespace ezsql\Database\ez_sqlsrv;
+	use ezsql\ezsqlModel;
+	
 	global $ezsql_sqlsrv_str;
 	
 	$ezsql_sqlsrv_str = array
@@ -42,10 +45,10 @@
 	*  ezSQL Database specific class - sqlsrv
 	*/
 
-	if ( ! function_exists ('sqlsrv_connect') ) die('<b>Fatal Error:</b> ezSQL_sqlsrv requires the php_sqlsrv.dll or php_pdo_sqlsrv.dll to be installed. Also enable MS-SQL extension in PHP.ini file ');
-	if ( ! class_exists ('ezSQLcore') ) die('<b>Fatal Error:</b> ezSQL_sqlsrv requires ezSQLcore (ez_sql_core.php) to be included/loaded before it can be used');
+	if ( ! function_exists ('sqlsrv_connect') ) die('<b>Fatal Error:</b> ez_sqlsrv requires the php_sqlsrv.dll or php_pdo_sqlsrv.dll to be installed. Also enable MS-SQL extension in PHP.ini file ');
+	if ( ! class_exists ('ezSQLcore') ) die('<b>Fatal Error:</b> ez_sqlsrv requires ezSQLcore (ez_sql_core.php) to be included/loaded before it can be used');
 
-	class ezSQL_sqlsrv extends ezSQLcore
+	class ez_sqlsrv extends ezsqlModel
 	{
 
 		private $dbuser = false;
@@ -62,7 +65,7 @@
 
 		/**********************************************************************
 		*  Constructor - allow the user to perform a quick connect at the
-		*  same time as initializing the ezSQL_mssql class
+		*  same time as initializing the ez_mssql class
 		*/
 
 		function __construct($dbuser='', $dbpassword='', $dbname='', $dbhost='localhost', $convertMySqlToMSSqlQuery=true)

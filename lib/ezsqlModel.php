@@ -1,20 +1,23 @@
 <?php
+	namespace ezsql\ezsqlModel;
+	use ezsql\ezFunctions;
+	use ezsql\ezQuery;
+
 	/**********************************************************************
 	*  Author: Justin Vincent (jv@vip.ie)
-           * Author: Stefanie Janine Stoelting <mail@stefanie-stoelting.de>
-           * Contributor:  Lawrence Stubbs <technoexpressnet@gmail.com>
+	*  Author: Stefanie Janine Stoelting <mail@stefanie-stoelting.de>
+	*  Contributor:  Lawrence Stubbs <technoexpressnet@gmail.com>
 	*  Web...: http://justinvincent.com
 	*  Name..: ezSQL
 	*  Desc..: ezSQL Core module - database abstraction library to make
 	*          it very easy to deal with databases. ezSQLcore can not be used by
 	*          itself (it is designed for use by database specific modules).
-           *
+	*
 	*/
 
 	/**********************************************************************
-	*  ezSQL Constants
+	*  ezsqlModel Constants
 	*/
-
 	defined('EZSQL_VERSION') or define('EZSQL_VERSION', '3.08');
 	defined('OBJECT') or define('OBJECT', 'OBJECT');
 	defined('ARRAY_A') or define('ARRAY_A', 'ARRAY_A');
@@ -24,12 +27,9 @@
 	*  Core class containing common functions to manipulate query result
 	*  sets once returned
 	*/
-
-    require_once('ezFunctions.php');
-    require_once('ezQuery.php');
-	class ezSQLcore extends ezQuery
-	{		
-    
+	
+	class ezsqlModel extends ezQuery
+	{		    
 		public $trace            = false;  // same as $debug_all
 		public $debug_all        = false;  // same as $trace
 		public $debug_called     = false;

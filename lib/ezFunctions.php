@@ -25,6 +25,8 @@
  * and is licensed under the MIT license.
  */
  
+namespace ezsql\Database\ezFunctions;
+
 	// ezQuery prepare placeholder/positional tag
 		const _TAG = '__ez__';
     // Use to set get_result output as json 
@@ -52,7 +54,7 @@
 		const _notNULL  = 'IS NOT NULL';
     
     /*
-     * Combine operators .
+     * Combine operators.
      */    
 		const _AND = 'AND';
 		const _OR = 'OR';

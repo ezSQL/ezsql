@@ -1,15 +1,17 @@
 <?php
+namespace ezsql\Database\ez_recordset;
+
 /**
  * ezSQL Database specific class for working with query results
  * Desc..: recordset component (part of ezSQL databse abstraction library)
  *
  * @author  Stefanie Janine Stoelting <mail@stefanie-stoelting.de>
- * @name    ezSQL_recordset
+ * @name    ez_recordset
  * @package ezSQL
  * @license FREE / Donation (LGPL - You may do what you like with ezSQL - no exceptions.)
  *
  */
-class ezSQL_recordset implements Iterator
+class ez_recordset implements Iterator
 {
     /**
      * Returns the result as array
@@ -52,15 +54,15 @@ class ezSQL_recordset implements Iterator
     /**
      * Initializes the record object
      *
-     * @param array $ezSQL_queryresult The result of an ezSQL query
-     * @throws Exception When $ezSQL_queryresult is not an array
+     * @param array $ez_queryresult The result of an ezSQL query
+     * @throws Exception When $ez_queryresult is not an array
      */
-    public function __construct($ezSQL_queryresult) {
-        if (!is_array($ezSQL_queryresult)) {
-            throw new Exception('$ezSQL_queryresult is not valid.');
+    public function __construct($ez_queryresult) {
+        if (!is_array($ez_queryresult)) {
+            throw new Exception('$ez_queryresult is not valid.');
         }
 
-        $this->_recordset = $ezSQL_queryresult;
+        $this->_recordset = $ez_queryresult;
         $this->position = 0;
         
         global $_ezRecordset;
@@ -163,7 +165,7 @@ class ezSQL_recordset implements Iterator
      *
      * @return array
      */
-    public function ezSQL_fetch_assoc() {
+    public function ez_fetch_assoc() {
         if ($this->valid()) {
             $return_val = $this->current(self::RESULT_AS_ARRAY);
             $this->next();
@@ -172,7 +174,7 @@ class ezSQL_recordset implements Iterator
         }
 
         return $return_val;
-    } // ezSQL_fetch_assoc
+    } // ez_fetch_assoc
 
     /**
      * Behaves like mysql_fetch_row This method it to implement ezSQL easier
@@ -182,7 +184,7 @@ class ezSQL_recordset implements Iterator
      *
      * @return array
      */
-    public function ezSQL_fetch_row() {
+    public function ez_fetch_row() {
         if ($this->valid()) {
             $return_val = $this->current(self::RESULT_AS_ROW);
             $this->next();
@@ -191,7 +193,7 @@ class ezSQL_recordset implements Iterator
         }
 
         return $return_val;
-    } // ezSQL_fetch_row
+    } // ez_fetch_row
 
     /**
      * Behaves like mysql_fetch_object This method it to implement ezSQL easier
@@ -201,7 +203,7 @@ class ezSQL_recordset implements Iterator
      *
      * @return array
      */
-    public function ezSQL_fetch_object() {
+    public function ez_fetch_object() {
         if ($this->valid()) {
             $return_val = $this->current(self::RESULT_AS_OBJECT);
             $this->next();
@@ -210,7 +212,7 @@ class ezSQL_recordset implements Iterator
         }
 
         return $return_val;
-    } // ezSQL_fetch_object
+    } // ez_fetch_object
     //public function
 
 } // dbapi_recordset

@@ -6,14 +6,18 @@
           *
           * @author  Justin Vincent (jv@jvmultimedia.com)
           * @author  Stefanie Janine Stoelting <mail@stefanie-stoelting.de>
-          * Contributor:  Lawrence Stubbs <technoexpressnet@gmail.com>
+          * @Contributor:  Lawrence Stubbs <technoexpressnet@gmail.com>
           * @link	   http://twitter.com/justinvincent
-          * @name	   ezSQL_postgresql
+          * @name	   ez_postgresql
           * @package ezSQL
           * @license FREE / Donation (LGPL - You may do what you like with ezSQL - no exceptions.)
           *
-          */
-	class ezSQL_postgresql extends ezSQLcore
+		  */
+		  
+	namespace ezsql\Database\ez_postgresql;
+	use ezsql\ezsqlModel;
+
+	class ez_postgresql extends ezsqlModel
 	{
 		
         /**********************************************************************
@@ -28,29 +32,6 @@
 				5 => 'Unexpected error while trying to select database'
 			);
 
-		/**
-		* Database user name
-		* @var string
-		*/
-		private $_dbuser;
-
-		/**
-		* Database password for the given user
-		* @var string
-		*/
-		private $_dbpassword;
-
-		/**
-		* Database name
-		* @var string
-		*/
-		private $_dbname;
-
-		/**
-		* Host name or IP address
-		* @var string
-		*/
-		private $_dbhost;
 
 		/**
 		* TCP/IP port of PostgreSQL
@@ -63,36 +44,21 @@
 		* @var boolean Default is true
 		*/
 		public $show_errors = true;
-						
-		/**
-		* Database connection
-		* @var resource
-		*/
-		public $dbh;
-		private $result;
         
 		private $rows_affected = false;
         
 		protected $preparedvalues = array();
 
 		/**
-		* Constructor - allow the user to perform a qucik connect at the same time
-		* as initialising the ezSQL_postgresql class
-		*
-		* @param string $dbuser The database user name
-		* @param string $dbpassword The database users password
-		* @param string $dbname The name of the database
-		* @param string $dbhost The host name or IP address of the database server.
-		*			Default is localhost
 		* @param string $dbport The database TCP/IP port
 		*			Default is PostgreSQL default port 5432
 		*/
 		public function __construct($dbuser='', $dbpassword='', $dbname='', $dbhost='localhost', $dbport='5432') {
 			if ( ! function_exists ('pg_connect') ) {
-				throw new Exception('<b>Fatal Error:</b> ezSQL_postgresql requires PostgreSQL Lib to be compiled and or linked in to the PHP engine');
+				throw new Exception('<b>Fatal Error:</b> ez_postgresql requires PostgreSQL Lib to be compiled and or linked in to the PHP engine');
 			}
 			if ( ! class_exists ('ezSQLcore') ) {
-				throw new Exception('<b>Fatal Error:</b> ezSQL_postgresql requires ezSQLcore (ez_sql_core.php) to be included/loaded before it can be used');
+				throw new Exception('<b>Fatal Error:</b> ez_postgresql requires ezSQLcore (ez_sql_core.php) to be included/loaded before it can be used');
 			}
 
 			parent::__construct();
@@ -393,4 +359,4 @@
 			return $this->_dbport;
 		} // getPort
 
-	} // ezSQL_postgresql
+	} // ez_postgresql

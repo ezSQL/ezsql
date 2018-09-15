@@ -5,14 +5,17 @@
  *
  * @author  Justin Vincent (jv@jvmultimedia.com)
  * @author  Stefanie Janine Stoelting <mail@stefanie-stoelting.de>
- * Contributor:  Lawrence Stubbs <technoexpressnet@gmail.com>
+ * @Contributor:  Lawrence Stubbs <technoexpressnet@gmail.com>
  * @link    http://twitter.com/justinvincent
- * @name    ezSQL_pdo
+ * @name    ez_pdo
  * @package ezSQL
  * @license FREE / Donation (LGPL - You may do what you like with ezSQL - no exceptions.)
  *
  */
-class ezSQL_pdo extends ezSQLcore
+namespace ezsql\Database\ez_pdo;
+use ezsql\ezsqlModel;
+
+class ez_pdo extends ezsqlModel
 {
     /**
      * ezSQL error strings - PDO
@@ -29,18 +32,6 @@ class ezSQL_pdo extends ezSQLcore
      * @var string
      */
     private $_dsn;
-
-    /**
-     * The database user name
-     * @var string
-     */
-    private $_dbuser;
-
-    /**
-     * The database password
-     * @var string
-     */
-    private $_dbpassword;
 
     /**
      * The array for connection options, MySQL connection charset, for example
@@ -65,7 +56,7 @@ class ezSQL_pdo extends ezSQLcore
 
     /**
      * Constructor - allow the user to perform a qucik connect at the same time
-     * as initialising the ezSQL_sqlite class
+     * as initialising the ez_sqlite class
      *
      * @param string $dsn The connection parameter string
      *                    Default is empty string
@@ -83,10 +74,10 @@ class ezSQL_pdo extends ezSQLcore
      */
     public function __construct($dsn='', $user='', $password='', $options=array(), $isFileBased=false) {
         if ( ! class_exists ('PDO') ) {
-            throw new Exception('<b>Fatal Error:</b> ezSQL_pdo requires PDO Lib to be compiled and or linked in to the PHP engine');
+            throw new Exception('<b>Fatal Error:</b> ez_pdo requires PDO Lib to be compiled and or linked in to the PHP engine');
         }
         if ( ! class_exists ('ezSQLcore') ) {
-            throw new Exception('<b>Fatal Error:</b> ezSQL_pdo requires ezSQLcore (ez_sql_core.php) to be included/loaded before it can be used');
+            throw new Exception('<b>Fatal Error:</b> ez_pdo requires ezSQLcore (ez_sql_core.php) to be included/loaded before it can be used');
         }
 
         parent::__construct();
@@ -422,4 +413,4 @@ class ezSQL_pdo extends ezSQLcore
         }
      } // disconnect
 
-} // ezSQL_pdo
+} // ez_pdo

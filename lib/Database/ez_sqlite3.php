@@ -2,9 +2,9 @@
 
 	/**********************************************************************
 	*  Author: Justin Vincent (jv@jvmultimedia.com) / Silvio Wanka 
-	* Contributor:  Lawrence Stubbs <technoexpressnet@gmail.com>
+	*  Contributor:  Lawrence Stubbs <technoexpressnet@gmail.com>
 	*  Web...: http://twitter.com/justinvincent
-	*  Name..: ezSQL_sqlite3
+	*  Name..: ez_sqlite3
 	*  Desc..: SQLite3 component (part of ezSQL databse abstraction library)
 	*
 	*/
@@ -13,6 +13,9 @@
 	*  ezSQL error strings - SQLite
 	*/
 
+	namespace ezsql\Database\ez_sqlite3;
+	use ezsql\ezsqlModel;
+	
 	global $ezsql_sqlite3_str;
 	
 	$ezsql_sqlite3_str = array
@@ -24,10 +27,10 @@
 	*  ezSQL Database specific class - SQLite
 	*/
 
-	if ( ! class_exists ('SQLite3') ) die('<b>Fatal Error:</b> ezSQL_sqlite3 requires SQLite3 Lib to be compiled and or linked in to the PHP engine');
-	if ( ! class_exists ('ezSQLcore') ) die('<b>Fatal Error:</b> ezSQL_sqlite3 requires ezSQLcore (ez_sql_core.php) to be included/loaded before it can be used');
+	if ( ! class_exists ('SQLite3') ) die('<b>Fatal Error:</b> ez_sqlite3 requires SQLite3 Lib to be compiled and or linked in to the PHP engine');
+	if ( ! class_exists ('ezSQLcore') ) die('<b>Fatal Error:</b> ez_sqlite3 requires ezSQLcore (ez_sql_core.php) to be included/loaded before it can be used');
 
-	class ezSQL_sqlite3 extends ezSQLcore
+	class ez_sqlite3 extends ezsqlModel
 	{
 
 		private $rows_affected = false;
@@ -36,7 +39,7 @@
 
 		/**********************************************************************
 		*  Constructor - allow the user to perform a quick connect at the 
-		*  same time as initializing the ezSQL_sqlite3 class
+		*  same time as initializing the ez_sqlite3 class
 		*/
 
 		function __construct($dbpath='', $dbname='')
