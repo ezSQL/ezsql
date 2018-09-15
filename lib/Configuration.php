@@ -49,66 +49,66 @@ class Configuration
      * Database Sql driver name
      * @var string
      */
-    public $_driver;
+    protected $driver;
 
      /**
      * Database user name
      * @var string
      */
-    protected $_dbuser;
+    protected $user;
 
     /**
      * Database password for the given user
      * @var string
      */
-    protected $_dbpassword;
+    protected $password;
 
     /**
      * Database name
      * @var string
      */
-    protected $_dbname;
+    protected $db;
 
     /**
      * Host name or IP address
      * @var string
      */
-    protected $_dbhost = 'localhost';
+    protected $host = 'localhost';
 
     /**
      * Database charset
      * @var string Default is utf8
      */
-    protected $_charset = 'utf8';
+    protected $charset = 'utf8';
 						
     /**
     * Database connection
     * @var resource
     */
-    public $dbh;
+    protected $connection;
     /**
      * Constructor - initializing the sql database class
      *     
      * @param string $sqldriver The sql database driver name
-     * @param string $dbuser The database user name
-     * @param string $dbpassword The database users password
-     * @param string $dbname The name of the database
-     * @param string $dbhost The host name or IP address of the database server.
+     * @param string $user The database user name
+     * @param string $password The database users password
+     * @param string $db The name of the database
+     * @param string $host The host name or IP address of the database server.
      *                       Default is localhost
      * @param string $charset The database charset
      *                        Default is empty string
      */
-    public function __construct(string $sqldriver, ...$arg)
+    public function __construct(string $sqldriver, ...$args)
     {
         if (! in_array(strtolower($sqldriver), _DATABASES) || empty($sqldriver) || empty($args)) {
             throw new Exception('<b>Fatal Error:</b> Missing configuration details to connect to database');
         } else {
-            $this->_driver = $sqldriver;
-            $this->_dbuser = empty($args[0]) ? $this->_dbuser : $args[0];
-            $this->_dbpassword = empty($args[1]) ? $this->_dbpassword : $args[1];
-            $this->_dbname = empty($args[2]) ? $this->_dbname : $args[2];
-            $this->_dbhost = empty($args[3]) ? $this->_dbhost : $args[3];
-            $this->_charset = empty($args[4]) ? $this->_charset : $args[4];
+            $this->driver = $sqldriver;
+            $this->user = empty($args[0]) ? $this->user : $args[0];
+            $this->password = empty($args[1]) ? $this->password : $args[1];
+            $this->db = empty($args[2]) ? $this->db : $args[2];
+            $this->host = empty($args[3]) ? $this->host : $args[3];
+            $this->charset = empty($args[4]) ? $this->charset : $args[4];
         }
     }
 }
