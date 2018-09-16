@@ -5,7 +5,7 @@
  *
  * @author  Justin Vincent (jv@jvmultimedia.com)
  * @author  Stefanie Janine Stoelting <mail@stefanie-stoelting.de>
- * @Contributor:  Lawrence Stubbs <technoexpressnet@gmail.com>
+ * @Contributor  Lawrence Stubbs <technoexpressnet@gmail.com>
  * @link    http://twitter.com/justinvincent
  * @name    ez_mysql
  * @package ezSQL
@@ -55,10 +55,10 @@ class ez_mysqli extends ezsqlModel
         if (empty($settings) || (!$settings instanceof Configuration)) {
             throw new Exception('<b>Fatal Error:</b> Missing configuration details to connect to database');
         }
-
         parent::__construct();
         $this->database = $settings;
-        $GLOBALS['_ezMysqli'] = $this;
+        
+        $GLOBALS['ez_'.$this->database->driver] = $this;
     } // __construct
 
     /**

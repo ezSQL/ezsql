@@ -1,6 +1,4 @@
 <?php
-namespace ezsql\Database\ez_recordset;
-
 /**
  * ezSQL Database specific class for working with query results
  * Desc..: recordset component (part of ezSQL databse abstraction library)
@@ -11,6 +9,8 @@ namespace ezsql\Database\ez_recordset;
  * @license FREE / Donation (LGPL - You may do what you like with ezSQL - no exceptions.)
  *
  */
+namespace ezsql\Database\ez_records;
+
 class ez_records implements Iterator
 {
     /**
@@ -64,8 +64,6 @@ class ez_records implements Iterator
 
         $this->_recordset = $ez_queryresult;
         $this->position = 0;
-
-        $GLOBALS['ez_records'] = $this;
     } // __construct
 
     /**

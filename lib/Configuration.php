@@ -27,20 +27,19 @@
 namespace ezsql\Configuration;
 
     /**
-    * Array of supported SQL Drivers
-    * @const string
+    * Associative array of supported SQL Drivers, and library
+    * @const array 
     */
     const _DATABASES = array
-        ('mysql', 
-        'mysqli',
-        'pdo', 
-        'pgsql', 
-        'postgresql', 
-        'sqlite', 
-        'sqlite3', 
-        'msserver', 
-        'mssql', 
-        'sqlsrv');
+        ('mysql' => 'ez_mysqli',
+        'mysqli' => 'ez_mysqli',
+        'pdo' => 'ez_pdo',
+        'postgresql' => 'ez_pgsql',
+        'pgsql' => 'ez_pgsql',
+        'sqlite' => 'ez_sqlite3',
+        'sqlite3' => 'ez_sqlite3',
+        'mssql' => 'ez_sqlsrv',
+        'sqlsrv' => 'ez_sqlsrv');
 
 class Configuration
 {
@@ -109,7 +108,7 @@ class Configuration
     * If we want to convert Queries in MySql syntax to MS-SQL syntax. 
     * Yes, there are some differences in query syntax.
     */
-    protected $convert_mySql = TRUE;
+    protected $convert_mySql = true;
 
     /**
     * The path to open an SQLite database
@@ -138,18 +137,25 @@ class Configuration
      */
     public function __construct(string $sqldriver, ...$args)
     {
+        $sql = strtolower($sqldriver);
         if ( ! class_exists ('ezsqlModel') ) {
             throw new Exception('<b>Fatal Error:</b> This configuration requires ezsqlModel (ezsqlModel.php) to be included/loaded before it can be used');
-        } elseif (!in_array(strtolower($sqldriver), _DATABASES) || empty($sqldriver) || empty($args) || (count($args)<3)) {
-            throw new Exception('<b>Fatal Error:</b> Missing configuration details to connect to database');
+        } elseif (!array_key_exists($sql, _DATABASES) || empty($sql) || empty($args) || (count($args)<3)) {
+            if ((($sql == 'sqlite3') || ($sql == 'sqlite')) && count($args)==2) {
+                if ( ! class_exists ('SQLite3') ) 
+                    throw new Exception('<b>Fatal Error:</b> ez_sqlite3 requires SQLite3 Lib to be compiled and or linked in to the PHP engine');
+                $this->driver = $sql;
+                $this->path = empty($args[0]) ? $this->path : $args[0];
+                $this->db = empty($args[1]) ? $this->db : $args[1];
+            } else
+                throw new Exception('<b>Fatal Error:</b> Missing configuration details to connect to database');
         } else {
-
-            $this->driver = $sqldriver;
+            $this->driver = $sql;
             $this->user = empty($args[0]) ? $this->user : $args[0];
             $this->password = empty($args[1]) ? $this->password : $args[1];
             $this->db = empty($args[2]) ? $this->db : $args[2];
             $this->host = empty($args[3]) ? $this->host : $args[3];
-            if ($sqlDriver == 'pdo') 
+            if ($sql == 'pdo') 
             {
                 if ( ! class_exists ('PDO') )
                     throw new Exception('<b>Fatal Error:</b> ez_pdo requires PDO Lib to be compiled and or linked in to the PHP engine');
@@ -159,26 +165,19 @@ class Configuration
                 $this->options = empty($args[3]) ? $this->options : $args[3];
                 $this->isFileBased = empty($args[4]) ? $this->isFileBased : $args[4];           
             } 
-            elseif (($sqlDriver == 'postgresql') || ($sqlDriver == 'pgsql')) 
+            elseif (($sql == 'postgresql') || ($sql == 'pgsql')) 
             {
                 if ( ! function_exists ('pg_connect') )
-                    throw new Exception('<b>Fatal Error:</b> ez_postgresql requires PostgreSQL Lib to be compiled and or linked in to the PHP engine');
+                    throw new Exception('<b>Fatal Error:</b> ez_pgsql requires PostgreSQL Lib to be compiled and or linked in to the PHP engine');
                 $this->database->port = empty($args[4]) ? $this->database->port : $args[4];
             } 
-            elseif (($sqlDriver == 'sqlite3') || ($sqlDriver == 'sqlite')) 
-            {
-                if ( ! class_exists ('SQLite3') ) 
-                    throw new Exception('<b>Fatal Error:</b> ez_sqlite3 requires SQLite3 Lib to be compiled and or linked in to the PHP engine');
-                $this->path = empty($args[0]) ? $this->path : $args[0];
-                $this->db = empty($args[1]) ? $this->db : $args[1];
-            } 
-            elseif (($sqlDriver == 'msserver') || ($sqlDriver == 'sqlsrv') || ($sqlDriver == 'mssql')) 
+            elseif (($sql == 'sqlsrv') || ($sql == 'mssql')) 
             {
                 if ( ! function_exists ('sqlsrv_connect') ) 
                     throw new Exception('<b>Fatal Error:</b> ez_sqlsrv requires the php_sqlsrv.dll or php_pdo_sqlsrv.dll to be installed. Also enable MS-SQL extension in PHP.ini file ');
                 $this->convert_mySql = empty($args[4]) ? $this->convert_mySql : $args[4];
             } 
-            elseif (($sqlDriver == 'mysqli') || ($sqlDriver == 'mysql')) 
+            elseif (($sql == 'mysqli') || ($sql == 'mysql')) 
             {
                 if ( ! function_exists ('mysqli_connect') ) 
                     throw new Exception('<b>Fatal Error:</b> ez_mysql requires mySQLi Lib to be compiled and or linked in to the PHP engine');

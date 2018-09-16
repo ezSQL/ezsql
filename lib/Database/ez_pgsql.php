@@ -1,29 +1,26 @@
 <?php
-
 	/**********************************************************************
-          * ezSQL Database specific class - PostgreSQL
-          * Desc..: PostgreSQL component (part of ezSQL databse abstraction library)
-          *
-          * @author  Justin Vincent (jv@jvmultimedia.com)
-          * @author  Stefanie Janine Stoelting <mail@stefanie-stoelting.de>
-          * @Contributor:  Lawrence Stubbs <technoexpressnet@gmail.com>
-          * @link	   http://twitter.com/justinvincent
-          * @name	   ez_postgresql
-          * @package ezSQL
-          * @license FREE / Donation (LGPL - You may do what you like with ezSQL - no exceptions.)
-          *
-		  */
-		  
-	namespace ezsql\Database\ez_postgresql;
+	* ezSQL Database specific class - PostgreSQL
+	* Desc..: PostgreSQL component (part of ezSQL databse abstraction library)
+	*
+	* @author  Justin Vincent (jv@jvmultimedia.com)
+	* @author  Stefanie Janine Stoelting <mail@stefanie-stoelting.de>
+	* @Contributor:  Lawrence Stubbs <technoexpressnet@gmail.com>
+	* @link	   http://twitter.com/justinvincent
+	* @name	   ez_postgresql
+	* @package ezSQL
+	* @license FREE / Donation (LGPL - You may do what you like with ezSQL - no exceptions.)
+	*
+	*/		  
+	namespace ezsql\Database\ez_pgsql;
 	use ezsql\Configuration;
 	use ezsql\ezsqlModel;
 
-	class ez_postgresql extends ezsqlModel
-	{
-		
+	class ez_pgsql extends ezsqlModel
+	{		
         /**********************************************************************
-                     *  ezSQL error strings - PostgreSQL
-                     */
+		*  ezSQL error strings - PostgreSQL
+		*/
 		private $_ezsql_postgresql_str = array
 			(
 				1 => 'Require $dbuser and $dbpassword to connect to a database server',
@@ -32,12 +29,6 @@
 				4 => 'mySQL database connection is not active',
 				5 => 'Unexpected error while trying to select database'
 			);
-
-		/**
-		* Show errors
-		* @var boolean Default is true
-		*/
-		public $show_errors = true;
         
 		private $rows_affected = false;
         
@@ -53,11 +44,10 @@
 			if (empty($settings) || (!$settings instanceof Configuration)) {
 				throw new Exception('<b>Fatal Error:</b> Missing configuration details to connect to database');
 			}
-
 			parent::__construct();
 			$this->database = $settings;
             
-            $GLOBALS['_ezPostgresql'] = $this;
+            $GLOBALS['ez_'.$this->database->driver] = $this;
 		} // __construct
 
 		/**

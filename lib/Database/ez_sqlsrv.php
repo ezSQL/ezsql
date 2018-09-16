@@ -1,6 +1,4 @@
 <?php
-
-
 	/**********************************************************************
 	*  Author: davisjw (davisjw@gmail.com)
 	*  Contributor:  Lawrence Stubbs <technoexpressnet@gmail.com>
@@ -55,7 +53,7 @@
             parent::__construct();
 			$this->database = $settings;
             
-            $GLOBALS['_ezSqlsrv'] = $this;        
+            $GLOBALS['ez_'.$this->database->driver] = $this;      
 		}
 
 		/**********************************************************************
@@ -77,29 +75,27 @@
 		*/
 		public function connect($dbuser='', $dbpassword='', $dbname='', $dbhost='localhost')
 		{
-			global $ezsql_sqlsrv_str; $return_val = false;
+			$return_val = false;
             $this->_connected = false;
+						
+			$this->database->user = empty($dbuser) ? $this->database->user : $dbuser;
+			$this->database->password = empty($dbpassword) ? $this->database->password : $dbpassword;
+			$this->database->db = empty($dbname) ? $this->database->db : $dbname;
+			$this->database->host = $dbhost!='localhost' ? $this->database->host : $dbhost;
 
-			// Blank dbuser assumes Windows Authentication
-			$connectionOptions["Database"] =$dbname;
-			if ( $dbuser ) {
-				$connectionOptions["UID"] = $dbuser;
-				$connectionOptions["PWD"] = $dbpassword;
-			}
-			$connectionOptions = array("UID" => $dbuser, "PWD" => $dbpassword, "Database" => $dbname, "ReturnDatesAsStrings" => true);
+			// Blank user assumes Windows Authentication
+			$connectionOptions = array("UID" => $this->database->user, 
+				"PWD" => $this->database->password, 
+				"Database" => $this->database->db, 
+				"ReturnDatesAsStrings" => true);
 
-			if ( ( $this->dbh = @sqlsrv_connect($dbhost, $connectionOptions) ) === false )
+			if ( ( $this->dbh = @sqlsrv_connect($this->database->host, $connectionOptions) ) === false )
 			{
-				$this->register_error($ezsql_sqlsrv_str[2].' in '.__FILE__.' on line '.__LINE__);
-				$this->show_errors ? trigger_error($ezsql_sqlsrv_str[2],E_USER_WARNING) : null;
-                return false;
+				$this->register_error($this->ezsql_sqlsrv_str[2].' in '.__FILE__.' on line '.__LINE__);
+				$this->show_errors ? trigger_error($this->ezsql_sqlsrv_str[2],E_USER_WARNING) : null;
 			} else {
-				$this->dbuser = $dbuser;
-				$this->dbpassword = $dbpassword;
-				$this->dbhost = $dbhost;
 				$return_val = true;
                 $this->_connected = true;
-
 				$this->conn_queries = 0;
 			}
 
@@ -162,7 +158,10 @@
 			// If there is no existing database connection then try to connect
 			if ( ! isset($this->dbh) || ! $this->dbh )
 			{
-				$this->connect($this->dbuser, $this->dbpassword, $this->dbname, $this->dbhost);
+				$this->connect($this->database->ser, 
+					$this->database->password, 
+					$this->database->db, 
+					$this->database->host);
 			}
 
 			// Perform the query via std sqlsrv_query function..
@@ -301,7 +300,6 @@
 
 		public function get_datatype($col)
 		{
-			global $ezsql_sqlsrv_type2str_non_dup;
 			$datatype = "dt not defined";
 			if(isset($col->typeid))
 			{
@@ -329,7 +327,7 @@
 							$datatype = "datetime2";
 						break;
 					default :
-						$datatype = $ezsql_sqlsrv_type2str_non_dup[$col->typeid];
+						$datatype = $this->ezsql_sqlsrv_type2str_non_dup[$col->typeid];
 						break;
 				}
 			}
@@ -347,5 +345,4 @@
 			$this->_connected = false;
 		}
 
-
-	} // end class
+	} // end class	

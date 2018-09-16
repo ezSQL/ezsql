@@ -29,36 +29,18 @@ use ezsql\Configuration;
 use ezsql\Container;
 use ezsql\Database\ez_mysqli;
 use ezsql\Database\ez_sqlsrv;
-use ezsql\Database\ez_postgresql;
+use ezsql\Database\ez_pgsql;
 use ezsql\Database\ez_pdo;
 use ezsql\Database\ez_sqlite3;
 
 class Database extends Container
 {
     /**
-     * Database result
-     * @var resource
-     */
-    private $result;
-
-    /**
-     * Query result
-     * @var mixed
-     */
-    private $_result;
-
-    /**
      * Timestamp for benchmark.
      *
      * @var float
      */
     private $_ts = null;
-
-    /**
-     * Database connection
-     * @var resource
-     */
-    public $dbh; 
 
     /**
      * Database configuration setting 
@@ -72,26 +54,15 @@ class Database extends Container
      * @param class $settings with sql driver and connection parameters
      */    
     public function __construct(Configuration $settings)
-    {
-        if (empty($settings)) {
+    { 
+        if  (empty($settings) || (!$settings instanceof Configuration)) {
             throw new Exception('<b>Fatal Error:</b> Missing configuration details to connect to database');
         } else {
             $this->_ts = microtime();
             parent::__construct();
             $this->database = $settings;
-            $sqlDriver = $this->database->driver;
-            if ((($sqlDriver == 'mysqli') || ($sqlDriver == 'mysql')) && empty($GLOBALS['db_mysqli'])) {
-                $GLOBALS['db_mysqli'] = $this->get('ez_mysqli', $this->database);
-            } elseif ((($sqlDriver == 'postgresql') || ($sqlDriver == 'pgsql')) && empty($GLOBALS['db_pgsql'])) {
-                $GLOBALS['db_pgsql'] = $this->get('ez_postgresql', $this->database);
-            } elseif ((($sqlDriver == 'msserver') || ($sqlDriver == 'sqlsrv') || ($sqlDriver == 'mssql')) && empty($GLOBALS['db_mssql'])) {
-                $GLOBALS['db_mssql'] = $this->get('ez_sqlsrv', $this->database);
-            } elseif (($sqlDriver == 'pdo') && empty($GLOBALS['db_pdo'])) {
-                $GLOBALS['db_pdo'] = $this->get('ez_pdo', $this->database);
-            } elseif ((($sqlDriver == 'sqlite3') || ($sqlDriver == 'sqlite')) && empty($GLOBALS['db_sqlite3'])) {
-                $GLOBALS['db_sqlite3'] = $this->get('ez_sqlite3', $this->database);
-            } elseif (empty($GLOBALS['db_'.$sqlDriver])) {
-                $GLOBALS['db_'.$sqlDriver] = $this->get($sqlDriver, $this->database);
+            if (empty($GLOBALS['db_'.$this->database->driver])) {
+                $GLOBALS['db_'.$this->database->driver] = $this->get(_DATABASES[$this->database->driver], $this->database);
             }
         }
     }

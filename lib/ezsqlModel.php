@@ -1,24 +1,23 @@
 <?php
+	/**
+	* @author	Justin Vincent (jv@vip.ie)
+	* @author	Stefanie Janine Stoelting <mail@stefanie-stoelting.de>
+	* @contributor	Lawrence Stubbs <technoexpressnet@gmail.com>
+	* @web	http://justinvincent.com
+	* @name	ezSQL
+	* @desc	ezsqlModel - database abstraction library to make
+	*          it very easy to deal with databases. ezsqlModel can not be used by
+	*          itself (it is designed for use by database specific modules).	*
+	*/
 	namespace ezsql\ezsqlModel;
 	use ezsql\ezFunctions;
 	use ezsql\ezQuery;
 
-	/**********************************************************************
-	*  Author: Justin Vincent (jv@vip.ie)
-	*  Author: Stefanie Janine Stoelting <mail@stefanie-stoelting.de>
-	*  Contributor:  Lawrence Stubbs <technoexpressnet@gmail.com>
-	*  Web...: http://justinvincent.com
-	*  Name..: ezSQL
-	*  Desc..: ezSQL Core module - database abstraction library to make
-	*          it very easy to deal with databases. ezSQLcore can not be used by
-	*          itself (it is designed for use by database specific modules).
-	*
-	*/
 
 	/**********************************************************************
 	*  ezsqlModel Constants
 	*/
-	defined('EZSQL_VERSION') or define('EZSQL_VERSION', '3.08');
+	defined('EZSQL_VERSION') or define('EZSQL_VERSION', '4.0.0');
 	defined('OBJECT') or define('OBJECT', 'OBJECT');
 	defined('ARRAY_A') or define('ARRAY_A', 'ARRAY_A');
 	defined('ARRAY_N') or define('ARRAY_N', 'ARRAY_N');
@@ -26,15 +25,13 @@
 	/**********************************************************************
 	*  Core class containing common functions to manipulate query result
 	*  sets once returned
-	*/
-	
+	*/	
 	class ezsqlModel extends ezQuery
 	{		    
 		public $trace            = false;  // same as $debug_all
 		public $debug_all        = false;  // same as $trace
 		public $debug_called     = false;
 		public $vardump_called   = false;
-		public $show_errors      = true;
 		public $num_queries      = 0;
 		public $conn_queries     = 0;
 		public $last_query       = null;
@@ -77,7 +74,19 @@
      * Get data from disk cache
      * @public boolean Default is false
      */
-    public $from_disk_cache = false;
+	public $from_disk_cache = false;
+	
+    /**
+     * Database connection
+     * @var resource
+     */
+	public $dbh;
+	
+	/**
+	* Show errors
+	* @var boolean Default is true
+	*/
+	public $show_errors = true;
 
     /**
      * Function called
@@ -85,13 +94,12 @@
      */
     private $func_call;
 
-		// == TJH == default now needed for echo of debug function
-		public $debug_echo_is_on = true;
+	// == TJH == default now needed for echo of debug function
+	public $debug_echo_is_on = true;
 
 		/**********************************************************************
 		*  Constructor
 		*/
-
 		function __construct()
 		{
             parent::__construct();
@@ -101,7 +109,6 @@
 		*  Get host and port from an "host:port" notation.
 		*  Returns array of host and port. If port is omitted, returns $default
 		*/
-
 		function get_host_port( $host, $default = false )
 		{
 			$port = $default;
@@ -115,7 +122,6 @@
 		/**********************************************************************
 		*  Print SQL/DB error - over-ridden by specific DB class
 		*/
-
 		function register_error($err_str)
 		{
 			// Keep track of last error
@@ -132,7 +138,6 @@
 		/**********************************************************************
 		*  Turn error handling on or off..
 		*/
-
 		function show_errors()
 		{
 			$this->show_errors = true;
@@ -160,7 +165,6 @@
 		/**********************************************************************
 		*  Get one variable from the DB - see docs for more detail
 		*/
-
 		function get_var($query=null,$x=0,$y=0, $use_prepare=false)
 		{
 
@@ -186,7 +190,6 @@
 		/**********************************************************************
 		*  Get one row from the DB - see docs for more detail
 		*/
-
 		function get_row($query=null,$output=OBJECT,$y=0, $use_prepare=false)
 		{
 
@@ -226,7 +229,6 @@
 		*  Function to get 1 column from the cached result set based in X index
 		*  see docs for usage and info
 		*/
-
 		function get_col($query=null,$x=0, $use_prepare=false)
 		{
 
@@ -285,10 +287,8 @@
 		*  Function to get column meta data info pertaining to the last query
 		* see docs for more info and usage
 		*/
-
-		function get_col_info($info_type="name",$col_offset=-1)
+		function get_col_info($info_type="name", $col_offset=-1)
 		{
-
 			if ( $this->col_info )
 			{
 				if ( $col_offset == -1 )
@@ -305,18 +305,14 @@
 				{
 					return $this->col_info[$col_offset]->{$info_type};
 				}
-
 			}
-
 		}
 
 		/**********************************************************************
 		*  store_cache
 		*/
-
-		function store_cache($query,$is_insert)
+		function store_cache(string $query, $is_insert)
 		{
-
 			// The would be cache file for this query
 			$cache_file = $this->cache_dir.'/'.md5($query);
 
@@ -343,16 +339,13 @@
 						unlink($cache_file . ".updating");
 				}
 			}
-
 		}
 
 		/**********************************************************************
 		*  get_cache
 		*/
-
-		function get_cache($query)
+		function get_cache(string $query)
 		{
-
 			// The would be cache file for this query
 			$cache_file = $this->cache_dir.'/'.md5($query);
 
@@ -381,17 +374,14 @@
 					return $result_cache['return_value'];
 				}
 			}
-
 		}
 
 		/**********************************************************************
 		*  Dumps the contents of any input variable to screen in a nicely
 		*  formatted and easy to understand way - any type: Object, public or Array
 		*/
-
 		function vardump($mixed='')
 		{
-
 			// Start outup buffering
 			ob_start();
 
@@ -425,13 +415,11 @@
 			$this->vardump_called = true;
 
 			return $html;
-
 		}
 
 		/**********************************************************************
 		*  Alias for the above function
 		*/
-
 		function dumpvar($mixed)
 		{
 			return $this->vardump($mixed);
@@ -442,10 +430,8 @@
 		* table listing results (if there were any).
 		* (abstracted into a seperate file to save server overhead).
 		*/
-
 		function debug($print_to_screen=true)
 		{
-
 			// Start outup buffering
 			ob_start();
 
@@ -475,10 +461,8 @@
 
 			if ( $this->col_info )
 			{
-
 				// =====================================================
 				// Results top rows
-
 				echo "<table cellpadding=5 cellspacing=1 bgcolor=555555>";
 				echo "<tr bgcolor=eeeeee><td nowrap valign=bottom><font color=555599 face=arial size=2><b>(row)</b></font></td>";
 
@@ -495,12 +479,10 @@
 					}
 					echo "</font><br><span style='font-family: arial; font-size: 10pt; font-weight: bold;'>{$this->col_info[$i]->name}</span></td>";
 				}
-
 				echo "</tr>";
 
-				// ======================================================
-				// print main results
-
+			// ======================================================
+			// print main results
 			if ( $this->last_result )
 			{
 
@@ -514,7 +496,6 @@
 					{
 						echo "<td nowrap><font face=arial size=2>$item</font></td>";
 					}
-
 					echo "</tr>";
 				}
 
@@ -547,13 +528,11 @@
 			$this->debug_called = true;
 
 			return $html;
-
 		}
 
 		/**********************************************************************
-		*  Naughty little function to ask for some remuniration!
+		*  Naughty little function to ask for some remuneration!
 		*/
-
 		function donation()
 		{
 			return "<font size=1 face=arial color=000000>If ezSQL has helped <a href=\"https://www.paypal.com/xclick/business=justin%40justinvincent.com&item_name=ezSQL&no_note=1&tax=0\" style=\"color: 0000CC;\">make a donation!?</a> &nbsp;&nbsp;<!--[ go on! you know you want to! ]--></font>";
@@ -562,7 +541,6 @@
 		/**********************************************************************
 		*  Timer related functions
 		*/
-
 		function timer_get_cur()
 		{
 			list($usec, $sec) = explode(" ",microtime());
@@ -610,7 +588,6 @@
 		*
 		*     login = 'jv', email = 'jv@vip.ie', user_id = 1, created = NOW()
 		*/
-
 		function get_set($params)
 		{
 			if( !is_array( $params ) )
@@ -683,7 +660,7 @@
     } // affectedRows
 	
 	// query call template
-    function query($query, $use_prepare=false) {
+    function query(string $query, $use_prepare=false) {
 		return false;
 	}    
 	
@@ -709,4 +686,4 @@
         return str_replace($search, $replace, $data);
 	}
         
-} // ezSQLcore
+} // ezsqlModel

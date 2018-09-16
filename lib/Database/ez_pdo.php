@@ -27,16 +27,8 @@ class ez_pdo extends ezsqlModel
             1 => 'Require $dsn and $user and $password to create a connection',
             2 => 'File based databases require $dsn to create a connection'
         );
-
-
-
-    /**
-     * Show errors
-     * @var boolean Default is true
-     */
-    public $show_errors = true;
     
-	protected $preparedvalues = array();
+    protected $preparedvalues = array(); 
 
     /**
      * Database configuration setting 
@@ -48,7 +40,6 @@ class ez_pdo extends ezsqlModel
         if (empty($settings) || (!$settings instanceof Configuration)) {
             throw new Exception('<b>Fatal Error:</b> Missing configuration details to connect to database');
         }
-
         parent::__construct();
         $this->database = $settings;
 
@@ -64,7 +55,7 @@ class ez_pdo extends ezsqlModel
                 $this->database->isFileBased);
         }
         
-        $GLOBALS['_ezPdo'] = $this;
+        $GLOBALS['ez_'.$this->database->driver] = $this;
     } // __construct
 
     /**

@@ -62,20 +62,12 @@ namespace ezsql\Database\ezFunctions;
 		const _andNOT = 'AND NOT'; 
                 
         // Global class instances, will be used to create and call methods directly.
+        global $_ezQuery;
         $_ezQuery = null;
-       // $_ezCubrid = null;
-        $_ezMysqli = null;
-       // $_ezOracle8_9 = null;
-       // $_ezOracleTNS = null;
-        $_ezPdo = null;
-        $_ezPostgresql = null;
-        $_ezRecordset = null;
-        $_ezSqlite3 = null;
-        $_ezSqlsrv = null;
  
-	/**********************************************************************
-     * Creates an array from expressions in the following formate
-     * param:  strings @x,        The left expression.
+	/**
+     * Creates an array from expressions in the following format
+     * @param  strings @x,        The left expression.
      *                 @operator, One of '<', '>', '=', '!=', '>=', '<=', '<>', 'IN',, 'NOT IN', 'LIKE', 
      *                              'NOT LIKE', 'BETWEEN', 'NOT BETWEEN', 'IS', 'IS NOT', or  the constants above.
      *                 @y,        The right expression.
@@ -85,12 +77,15 @@ namespace ezsql\Database\ezFunctions;
      * function comparison($x, $operator, $y, $and=null, ...$args)
      *  {
      *          return array($x, $operator, $y, $and, ...$args);
-     * }    
-     * @returns: array
-     ***********************************************************************/
+     *  }    
+     * @return array
+     */
     
     /**
      * Creates an equality comparison expression with the given arguments.
+     * 
+     * @param  strings 
+     * @return array
      */
     function eq($x, $y, $and=null, ...$args)
     {
@@ -101,6 +96,9 @@ namespace ezsql\Database\ezFunctions;
 
     /**
      * Creates a non equality comparison expression with the given arguments.
+     * 
+     * @param  strings 
+     * @return array
      */
     function neq($x, $y, $and=null, ...$args)
     {
@@ -111,6 +109,9 @@ namespace ezsql\Database\ezFunctions;
 
     /**
      * Creates the other non equality comparison expression with the given arguments.
+     * 
+     * @param  strings 
+     * @return array
      */
     function ne($x, $y, $and=null, ...$args)
     {
@@ -121,6 +122,9 @@ namespace ezsql\Database\ezFunctions;
     
     /**
      * Creates a lower-than comparison expression with the given arguments.
+     * 
+     * @param  strings 
+     * @return array
      */
     function lt($x, $y, $and=null, ...$args)
     {
@@ -131,6 +135,9 @@ namespace ezsql\Database\ezFunctions;
 
     /**
      * Creates a lower-than-equal comparison expression with the given arguments.
+     * 
+     * @param  strings 
+     * @return array
      */
     function lte($x, $y, $and=null, ...$args)
     {
@@ -141,6 +148,9 @@ namespace ezsql\Database\ezFunctions;
 
     /**
      * Creates a greater-than comparison expression with the given arguments.
+     * 
+     * @param  strings 
+     * @return array
      */
     function gt($x, $y, $and=null, ...$args)
     {
@@ -151,6 +161,9 @@ namespace ezsql\Database\ezFunctions;
 
     /**
      * Creates a greater-than-equal comparison expression with the given arguments.
+     * 
+     * @param  strings 
+     * @return array
      */
     function gte($x, $y, $and=null, ...$args)
     {
@@ -161,6 +174,9 @@ namespace ezsql\Database\ezFunctions;
 
     /**
      * Creates an IS NULL expression with the given arguments.
+     * 
+     * @param  strings 
+     * @return array
      */
     function isNull($x, $y='null', $and=null, ...$args)
     {
@@ -171,6 +187,9 @@ namespace ezsql\Database\ezFunctions;
 
     /**
      * Creates an IS NOT NULL expression with the given arguments.
+     * 
+     * @param  strings 
+     * @return array
      */
     function isNotNull($x, $y='null', $and=null, ...$args)
     {
@@ -181,6 +200,9 @@ namespace ezsql\Database\ezFunctions;
 
     /**
      * Creates a LIKE() comparison expression with the given arguments.
+     * 
+     * @param  strings 
+     * @return array
      */
     function like($x, $y, $and=null, ...$args)
     {
@@ -191,6 +213,9 @@ namespace ezsql\Database\ezFunctions;
 
     /**
      * Creates a NOT LIKE() comparison expression with the given arguments.
+     * 
+     * @param  strings 
+     * @return array
      */
     function notLike($x, $y, $and=null, ...$args)
     {
@@ -201,6 +226,9 @@ namespace ezsql\Database\ezFunctions;
 
     /**
      * Creates a IN () comparison expression with the given arguments.
+     * 
+     * @param  strings 
+     * @return array
      */
     function in($x, $y, $and=null, ...$args)
     {
@@ -211,6 +239,9 @@ namespace ezsql\Database\ezFunctions;
 
     /**
      * Creates a NOT IN () comparison expression with the given arguments.
+     * 
+     * @param  strings 
+     * @return array
      */
     function notIn($x, $y, $and=null, ...$args)
     {
@@ -221,6 +252,9 @@ namespace ezsql\Database\ezFunctions;
 
     /**
      * Creates a BETWEEN () comparison expression with the given arguments.
+     * 
+     * @param  strings 
+     * @return array
      */
     function between($x, $y, $y2, ...$args)
     {
@@ -231,6 +265,9 @@ namespace ezsql\Database\ezFunctions;
 
     /**
      * Creates a NOT BETWEEN () comparison expression with the given arguments.
+     * 
+     * @param  strings 
+     * @return array
      */
     function notBetween($x, $y, $y2, ...$args)
     {
@@ -240,108 +277,82 @@ namespace ezsql\Database\ezFunctions;
     }
     
     /**
-       * desc: Using global class instances, setup functions to call class methods directly.
-       * param: @ezSQL - string, representing class  'cubrid', 'mysqli', 'oracle8_9', 'oracletns', 'pdo', 'postgresql', 'recordset', 'sqlite3', 'sqlsrv'
-       * returns: boolean - true, or false for error
-       */
+    * Using global class instances, setup functions to call class methods directly.
+    * @param @ezSQL - string, representing class  'cubrid', 'mysqli', 'oracle8_9', 'oracletns', 'pdo', 'postgresql', 'recordset', 'sqlite3', 'sqlsrv'
+    * @return boolean
+    */
     function setQuery($ezSQL='') {
-        global $_ezQuery, $_ezMysqli;// $_ezCubrid, $_ezOracle8_9, $_ezOracleTNS; 'recordset' ,'oracle8_9', 'oracletns',
-        global $_ezPdo, $_ezPostgresql, $_ezRecordset, $_ezSqlite3, $_ezSqlsrv;
-        if (in_array(strtolower($ezSQL), array( 'cubrid', 'mysqli', 'pdo', 'postgresql', 'sqlite3', 'sqlsrv' ))) {
-            switch(strtolower($ezSQL)) {
-            //    case 'cubrid':
-            //        $_ezQuery = $_ezCubrid;
-            //        break;
-                case 'mysqli':
-                    $_ezQuery = $_ezMysqli;
-                    break;
-            //    case 'oracle8_9':
-            //        $_ezQuery = $_ezOracle8_9;
-            //        break;
-            //    case 'oracletns':
-            //        $_ezQuery = $_ezOracleTNS;
-            //        break;
-                case 'pdo':
-                    $_ezQuery = $_ezPdo;
-                    break;
-                case 'postgresql':
-                    $_ezQuery = $_ezPostgresql;
-                    break;
-                case 'recordset':
-                    $_ezQuery = $_ezRecordset;
-                    break;
-                case 'sqlite3':
-                    $_ezQuery = $_ezSqlite3;
-                    break;
-                case 'sqlsrv':
-                    $_ezQuery = $_ezSqlsrv;
-                    break;                    
-            }
+        global $_ezQuery;
+        if (in_array(strtolower($ezSQL), array( 'mysqli', 'pdo', 'pgsql', 'sqlite3', 'sqlsrv' ))) {
+            if (!empty($GLOBALS['db_'.strtolower($ezSQL)]))
+                $_ezQuery = $GLOBALS['db_'.strtolower($ezSQL)];
+            elseif (!empty($GLOBALS['ez_'.strtolower($ezSQL)]))
+                $_ezQuery = $GLOBALS['ez_'.strtolower($ezSQL)]; 
             return (!empty($_ezQuery)) ? true: false;            
         } else {
 			$_ezQuery = null;
-            unset($_ezQuery);
+            unset($GLOBALS['_ezQuery']);
             return false;            
         }
     }     
     
     function select($table='', $columns='*', ...$args) {
         global $_ezQuery;
-        return ($_ezQuery) ? $_ezQuery->selecting($table, $columns, ...$args) : false;
+        return !empty($_ezQuery) ? $_ezQuery->selecting($table, $columns, ...$args) : false;
     } 
     
     function select_into($newtable, $fromcolumns='*', $oldtable=null, ...$args) {
         global $_ezQuery;
-        return ($_ezQuery) ? $_ezQuery->select_into($newtable, $fromcolumns, $oldtable, ...$args) : false;
+        return !empty($_ezQuery) ? $_ezQuery->select_into($newtable, $fromcolumns, $oldtable, ...$args) : false;
     } 
     
     function insert_select($totable='', $tocolumns='*', $fromtable, $fromcolumns='*', ...$args) {
         global $_ezQuery;
-        return ($_ezQuery) ? $_ezQuery->insert_select($totable, $tocolumns, $fromtable, $fromcolumns, ...$args) : false;
+        return !empty($_ezQuery) ? $_ezQuery->insert_select($totable, $tocolumns, $fromtable, $fromcolumns, ...$args) : false;
     }     
     
     function create_select($newtable, $fromcolumns, $oldtable=null, ...$args) {
         global $_ezQuery;
-        return ($_ezQuery) ? $_ezQuery->create_select($newtable, $fromcolumns, $oldtable, ...$args) : false;
+        return !empty($_ezQuery) ? $_ezQuery->create_select($newtable, $fromcolumns, $oldtable, ...$args) : false;
     }  
     
     function where( ...$args) {
         global $_ezQuery;
-        return ($_ezQuery) ? $_ezQuery->where( ...$args) : false;
+        return !empty($_ezQuery) ? $_ezQuery->where( ...$args) : false;
     } 
     
     function groupBy($groupBy) {
         global $_ezQuery;
-        return ($_ezQuery) ? $_ezQuery->groupBy($groupBy) : false;
+        return !empty($_ezQuery) ? $_ezQuery->groupBy($groupBy) : false;
     } 
     
     function having( ...$args) {
         global $_ezQuery;
-        return ($_ezQuery) ? $_ezQuery->having( ...$args) : false;
+        return !empty($_ezQuery) ? $_ezQuery->having( ...$args) : false;
     }
     
     function orderBy($orderBy, $order) {
         global $_ezQuery;
-        return ($_ezQuery) ? $_ezQuery->orderBy($orderBy, $order) : false;
+        return !empty($_ezQuery) ? $_ezQuery->orderBy($orderBy, $order) : false;
     } 
     
     function insert($table='', $keyvalue) {
         global $_ezQuery;
-        return ($_ezQuery) ? $_ezQuery->insert($table, $keyvalue) : false;
+        return !empty($_ezQuery) ? $_ezQuery->insert($table, $keyvalue) : false;
     } 
     
     function update($table='', $keyvalue, ...$args) {
         global $_ezQuery;
-        return ($_ezQuery) ? $_ezQuery->update($table, $keyvalue, ...$args) : false;
+        return !empty($_ezQuery) ? $_ezQuery->update($table, $keyvalue, ...$args) : false;
     } 
     
     function delete($table='', ...$args) {
         global $_ezQuery;
-        return ($_ezQuery) ? $_ezQuery->delete($table, ...$args) : false;
+        return !empty($_ezQuery) ? $_ezQuery->delete($table, ...$args) : false;
     } 
         
     function replace($table='', $keyvalue) {
         global $_ezQuery;
-        return ($_ezQuery) ? $_ezQuery->replace($table, $keyvalue) : false;
+        return !empty($_ezQuery) ? $_ezQuery->replace($table, $keyvalue) : false;
     }  
 

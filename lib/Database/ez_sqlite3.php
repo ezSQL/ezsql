@@ -1,5 +1,4 @@
 <?php
-
 	/**********************************************************************
 	*  Author: Justin Vincent (jv@jvmultimedia.com) / Silvio Wanka 
 	*  Contributor:  Lawrence Stubbs <technoexpressnet@gmail.com>
@@ -8,17 +7,15 @@
 	*  Desc..: SQLite3 component (part of ezSQL databse abstraction library)
 	*
 	*/
-
-	/**********************************************************************
-	*  ezSQL error strings - SQLite
-	*/
-
 	namespace ezsql\Database\ez_sqlite3;
 	use ezsql\Configuration;
 	use ezsql\ezsqlModel;
 	
 	class ez_sqlite3 extends ezsqlModel
 	{
+		/**********************************************************************
+		*  ezSQL error strings - SQLite
+		*/
 		private $ezsql_sqlite3_str = array
 		(
 			1 => 'Require $dbpath and $dbname to open an SQLite database'
@@ -42,7 +39,6 @@
 			if (empty($settings) || (!$settings instanceof Configuration)) {
 				throw new Exception('<b>Fatal Error:</b> Missing configuration details to connect to database');
 			}
-
             parent::__construct();
 			$this->database = $settings;
 
@@ -54,7 +50,7 @@
 				$this->connect($this->database->path, $this->database->db);
 			}
             
-            $GLOBALS['_ezSqlite3'] = $this;
+            $GLOBALS['ez_'.$this->database->driver] = $this;
 		}
 
 		/**********************************************************************
