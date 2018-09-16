@@ -11,7 +11,7 @@ namespace ezsql\Database\ez_recordset;
  * @license FREE / Donation (LGPL - You may do what you like with ezSQL - no exceptions.)
  *
  */
-class ez_recordset implements Iterator
+class ez_records implements Iterator
 {
     /**
      * Returns the result as array
@@ -59,14 +59,13 @@ class ez_recordset implements Iterator
      */
     public function __construct($ez_queryresult) {
         if (!is_array($ez_queryresult)) {
-            throw new Exception('$ez_queryresult is not valid.');
+            throw new Exception("$ez_queryresult is not valid.");
         }
 
         $this->_recordset = $ez_queryresult;
         $this->position = 0;
-        
-        global $_ezRecordset;
-        $_ezRecordset = $this;
+
+        $GLOBALS['ez_records'] = $this;
     } // __construct
 
     /**

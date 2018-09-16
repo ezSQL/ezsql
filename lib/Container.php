@@ -6,7 +6,7 @@ namespace ezsql\Container;
  * @see https://gist.github.com/MustafaMagdi/2bb27aebf6ab078b1f3e5635c0282fac
  * 
  */
-trait Container
+class Container
 {
 	/**
 	 * @var array

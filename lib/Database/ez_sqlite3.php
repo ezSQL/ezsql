@@ -14,47 +14,47 @@
 	*/
 
 	namespace ezsql\Database\ez_sqlite3;
+	use ezsql\Configuration;
 	use ezsql\ezsqlModel;
 	
-	global $ezsql_sqlite3_str;
-	
-	$ezsql_sqlite3_str = array
-	(
-		1 => 'Require $dbpath and $dbname to open an SQLite database'
-	);
-
-	/**********************************************************************
-	*  ezSQL Database specific class - SQLite
-	*/
-
-	if ( ! class_exists ('SQLite3') ) die('<b>Fatal Error:</b> ez_sqlite3 requires SQLite3 Lib to be compiled and or linked in to the PHP engine');
-	if ( ! class_exists ('ezSQLcore') ) die('<b>Fatal Error:</b> ez_sqlite3 requires ezSQLcore (ez_sql_core.php) to be included/loaded before it can be used');
-
 	class ez_sqlite3 extends ezsqlModel
 	{
+		private $ezsql_sqlite3_str = array
+		(
+			1 => 'Require $dbpath and $dbname to open an SQLite database'
+		);
 
 		private $rows_affected = false;
         
 		protected $preparedvalues = array();
 
+		/**
+		 * Database configuration setting 
+		 * @var Configuration instance
+		 */
+		private $database;
+
 		/**********************************************************************
 		*  Constructor - allow the user to perform a quick connect at the 
 		*  same time as initializing the ez_sqlite3 class
 		*/
+		public function __construct(Configuration $settings) {
+			if (empty($settings) || (!$settings instanceof Configuration)) {
+				throw new Exception('<b>Fatal Error:</b> Missing configuration details to connect to database');
+			}
 
-		function __construct($dbpath='', $dbname='')
-		{
             parent::__construct();
+			$this->database = $settings;
+
 			// Turn on track errors 
 			ini_set('track_errors',1);
 			
-			if ( $dbpath && $dbname )
+			if ( !empty($this->database->path) && !empty($this->database->db) )
 			{
-				$this->connect($dbpath, $dbname);
+				$this->connect($this->database->path, $this->database->db);
 			}
             
-            global $_ezSqlite3;
-            $_ezSqlite3 = $this;
+            $GLOBALS['_ezSqlite3'] = $this;
 		}
 
 		/**********************************************************************
@@ -63,26 +63,18 @@
 
 		function connect($dbpath='', $dbname='')
 		{
-			global $ezsql_sqlite3_str; 
             $return_val = false;
             $this->_connected = false;
 			
 			// Must have a user and a password
-			if ( ! $dbpath || ! $dbname )
-			{
-				$this->register_error($ezsql_sqlite3_str[1].' in '.__FILE__.' on line '.__LINE__);
-				$this->show_errors ? trigger_error($ezsql_sqlite3_str[1],E_USER_WARNING) : null;
-				return false;
-			}
+			if ( ! $dbpath || ! $dbname ) {
+				$this->register_error($this->ezsql_sqlite3_str[1].' in '.__FILE__.' on line '.__LINE__);
+				$this->show_errors ? trigger_error($this->ezsql_sqlite3_str[1],E_USER_WARNING) : null;
 			// Try to establish the server database handle
-			else if ( ! $this->dbh = @new SQLite3($dbpath.$dbname) )
-			{
+			} elseif ( ! $this->dbh = @new SQLite3($dbpath.$dbname) ) {
 				$this->register_error($php_errormsg);
 				$this->show_errors ? trigger_error($php_errormsg,E_USER_WARNING) : null;
-				return false;
-			}
-			else
-			{
+			} else {
 				$return_val = true;
 				$this->conn_queries = 0;
                 $this->_connected = true;

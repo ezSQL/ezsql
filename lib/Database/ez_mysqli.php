@@ -1,6 +1,6 @@
 <?php
 /**
- * ezSQL Database specific class - mySQL
+ * ezSQL Database specific class - mySQLi
  * Desc..: mySQLi component (part of ezSQL databse abstraction library)
  *
  * @author  Justin Vincent (jv@jvmultimedia.com)
@@ -13,12 +13,13 @@
  *
  */
 namespace ezsql\Database\ez_mysqli;
+use ezsql\Configuration;
 use ezsql\ezsqlModel;
 
 class ez_mysqli extends ezsqlModel
 {
     /*
-     * ezSQL error strings - mySQL
+     * ezSQL error strings - mySQLi
      * @var array
      */
     private $ezsql_mysql_str = array
@@ -36,26 +37,28 @@ class ez_mysqli extends ezsqlModel
      */
     public $show_errors = true;
     
-	protected $preparedvalues = array();
-	
+	protected $preparedvalues = array();	
+
     /**
-     * @param string $charset The database charset
-     *                        Default is empty string
+     * Query result
+     * @var mixed
      */
-    public function __construct($charset='') {
-        if ( ! function_exists ('mysqli_connect') ) {
-            throw new Exception('<b>Fatal Error:</b> ez_mysql requires mySQLi Lib to be compiled and or linked in to the PHP engine');
+    private $_result;
+
+    /**
+     * Database configuration setting 
+     * @var Configuration instance
+     */
+    private $database;
+
+    public function __construct(Configuration $settings) {
+        if (empty($settings) || (!$settings instanceof Configuration)) {
+            throw new Exception('<b>Fatal Error:</b> Missing configuration details to connect to database');
         }
-        if ( ! class_exists ('ezSQLcore') ) {
-            throw new Exception('<b>Fatal Error:</b> ez_mysql requires ezSQLcore (ez_sql_core.php) to be included/loaded before it can be used');
-        }
+
         parent::__construct();
-        
-        if ( ! empty($charset) ) {
-            $this->_charset = strtolower(str_replace('-', '', $charset));
-        }        
-        global $_ezMysqli;
-        $_ezMysqli = $this;
+        $this->database = $settings;
+        $GLOBALS['_ezMysqli'] = $this;
     } // __construct
 
     /**
@@ -78,7 +81,7 @@ class ez_mysqli extends ezsqlModel
     } // quick_connect
 
     /**
-     * Try to connect to mySQL database server
+     * Try to connect to mySQLi database server
      *
      * @param string $dbuser The database user name
      * @param string $dbpassword The database users password
@@ -91,21 +94,21 @@ class ez_mysqli extends ezsqlModel
     public function connect($dbuser = '', $dbpassword = '', $dbhost = 'localhost', $charset = '') {
         $this->_connected = false;
 
-        $this->_dbuser = empty($dbuser) ? $this->_dbuser : $dbuser;
-        $this->_dbpassword = empty($dbpassword) ? $this->_dbpassword : $dbpassword;
-        $this->_dbhost = $dbhost!='localhost' ? $this->_dbhost : $dbhost;
-        $this->_charset = empty($charset) ? $this->_charset : $charset;
+        $this->database->user = empty($dbuser) ? $this->database->user : $dbuser;
+        $this->database->password = empty($dbpassword) ? $this->database->password : $dbpassword;
+        $this->database->host = $dbhost!='localhost' ? $this->database->host : $dbhost;
+        $this->database->charset = empty($charset) ? $this->database->charset : $charset;
 
         // Must have a user and a password
-        if ( empty($this->_dbuser) ) {
+        if ( empty($this->database->user) ) {
             $this->register_error($this->ezsql_mysql_str[1] . ' in ' . __FILE__ . ' on line ' . __LINE__);
             $this->show_errors ? trigger_error($this->ezsql_mysql_str[1], E_USER_WARNING) : null;
-        } else if ( ! $this->dbh = mysqli_connect($this->_dbhost, $this->_dbuser, $this->_dbpassword, $this->_dbname) ) {
+        } else if ( ! $this->dbh = mysqli_connect($this->database->host, $this->database->user, $this->database->password, $this->database->db) ) {
             // Try to establish the server database handle
             $this->register_error($this->ezsql_mysql_str[2] . ' in ' . __FILE__ . ' on line ' . __LINE__);
             $this->show_errors ? trigger_error($this->ezsql_mysql_str[2], E_USER_WARNING) : null;
         } else {
-            mysqli_set_charset($this->dbh, $this->_charset);
+            mysqli_set_charset($this->dbh, $this->database->charset);
             $this->_connected = true;
         }
 
@@ -120,16 +123,15 @@ class ez_mysqli extends ezsqlModel
      * @return boolean
      */
     public function select( $dbname='', $charset='') {
+        $this->_connected = false;
         if ( ! $dbname ) {
             // Must have a database name
             $this->register_error($this->ezsql_mysql_str[3] . ' in ' . __FILE__ . ' on line ' . __LINE__);
             $this->show_errors ? trigger_error($this->ezsql_mysql_str[3], E_USER_WARNING) : null;
-            return false;
         } else if ( ! $this->dbh ) {
             // Must have an active database connection
             $this->register_error($this->ezsql_mysql_str[4] . ' in ' . __FILE__ . ' on line ' . __LINE__);
             $this->show_errors ? trigger_error($this->ezsql_mysql_str[4], E_USER_WARNING) : null;
-            return false;
         } else if ( !mysqli_select_db($this->dbh, $dbname) ) {
             // Try to connect to the database
             // Try to get error supplied by mysql if not use our own
@@ -139,11 +141,10 @@ class ez_mysqli extends ezsqlModel
 
             $this->register_error($str . ' in ' .__FILE__ . ' on line ' . __LINE__);
             $this->show_errors ? trigger_error($str, E_USER_WARNING) : null;
-            return false;
         } else {
-            $this->_dbname = $dbname;
+            $this->database->db = $dbname;
             if ( $charset == '') {
-                $charset = $this->_charset;
+                $charset = $this->database->charset;
             }
              if ( $charset != '' ) {
                 $encoding = strtolower(str_replace('-', '', $charset));
@@ -174,7 +175,7 @@ class ez_mysqli extends ezsqlModel
     } // escape
 
     /**
-     * Return mySQL specific system date syntax
+     * Return mySQLi specific system date syntax
      * i.e. Oracle: SYSDATE Mysql: NOW()
      *
      * @return string
@@ -183,9 +184,15 @@ class ez_mysqli extends ezsqlModel
         return 'NOW()';
     } // sysdate
     
-    // fetches rows from a prepared result set
-    function fetch_prepared_result(&$stmt, $query) {
-        
+    /**
+     * Helper fetches rows from a prepared result set 
+     * @param \mysqli_stmt
+     * @param string $query
+     * @return bool|\mysqli_result
+     */
+    function fetch_prepared_result(&$stmt, $query) 
+    {
+        $has_values = false; 
         if($stmt instanceof mysqli_stmt) {
             $stmt->store_result();       
             $variables = array();
@@ -222,25 +229,19 @@ class ez_mysqli extends ezsqlModel
             if ( $str = $stmt->error ) {
                 $is_insert = true;
                 $this->register_error($str);
-                $this->show_errors ? trigger_error($str,E_USER_WARNING) : null;
-                
-                // If debug ALL queries
-                $this->trace || $this->debug_all ? $this->debug() : null ;
-                return false;
+                $this->show_errors ? trigger_error($str,E_USER_WARNING) : null;                
+            } else {               
+                // Return number of rows affected
+                $has_values = $this->_affectedRows;                
             }
-               
-            // Return number of rows affected
-            $return_val = $this->_affectedRows;
-            
+
             // disk caching of queries
             $this->store_cache($query, $is_insert);
 
             // If debug ALL queries
             $this->trace || $this->debug_all ? $this->debug() : null ;
-            
-            return $return_val;
-        } else
-            return false;
+        }
+        return $has_values;
     }	
 
 	/**
@@ -289,7 +290,8 @@ class ez_mysqli extends ezsqlModel
      * @param type $query
      * @return boolean
      */
-    public function query(string $query, $use_prepare = false) {
+    public function query(string $query, $use_prepare = false) 
+    {
         if ($use_prepare)
             $param = &$this->getParamaters();
         
@@ -321,8 +323,8 @@ class ez_mysqli extends ezsqlModel
 
         // If there is no existing database connection then try to connect
         if ( ! isset($this->dbh) || ! $this->dbh ) {
-            $this->connect($this->_dbuser, $this->_dbpassword, $this->_dbhost);
-            $this->select($this->_dbname);
+            $this->connect($this->database->user, $this->database->password, $this->database->host);
+            $this->select($this->database->db);
         }
 
         // Perform the query via std mysql_query function..
@@ -410,7 +412,7 @@ class ez_mysqli extends ezsqlModel
      * @return string
      */
     public function getDBHost() {
-        return $this->_dbhost;
+        return $this->database->host;
     } // getDBHost
 
     /**
@@ -419,7 +421,7 @@ class ez_mysqli extends ezsqlModel
      * @return string
      */
     public function getCharset() {
-        return $this->_charset;
+        return $this->database->charset;
     } // getCharset
 
     /**

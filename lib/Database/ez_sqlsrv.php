@@ -9,85 +9,60 @@
 	*  Desc..: Microsoft Sql Server component (MS drivers) (part of ezSQL databse abstraction library) - based on ezSql_msSql library class.
 	*
 	*/
-
-	/**********************************************************************
-	*  ezSQL error strings - sqlsrv
-	*/
-
 	namespace ezsql\Database\ez_sqlsrv;
+	use ezsql\Configuration;
 	use ezsql\ezsqlModel;
-	
-	global $ezsql_sqlsrv_str;
-	
-	$ezsql_sqlsrv_str = array
-	(
-		1 => 'Require $dbuser and $dbpassword to connect to a database server',
-		2 => 'Error establishing sqlsrv database connection. Correct user/password? Correct hostname? Database server running?',
-		3 => 'Require $dbname to select a database',
-		4 => 'SQL Server database connection is not active',
-		5 => 'Unexpected error while trying to select database'
-	);
-	
-	/**********************************************************************
-	*  ezSQL non duplicating data type id's; converting type ids to str
-	*/
-	
-	$ezsql_sqlsrv_type2str_non_dup = array
-	(
-		-5 => 'bigint', -7 => 'bit', 1 => 'char', 91 => 'date', -155 => 'datetimeoffset', 6 => 'float', -4 => 'image', 4 => 'int', -8 => 'nchar',
-		-10 => 'ntext', 2 => 'numeric', -9 => 'nvarchar', 7 => 'real', 5 => 'smallint', -1 => 'text', -154 => 'time', -6 => 'tinyint', -151 => 'udt', 
-		-11 => 'uniqueidentifier', -3 => 'varbinary', 12 => 'varchar', -152 => 'xml'
-	);
-
-
-
-	/**********************************************************************
-	*  ezSQL Database specific class - sqlsrv
-	*/
-
-	if ( ! function_exists ('sqlsrv_connect') ) die('<b>Fatal Error:</b> ez_sqlsrv requires the php_sqlsrv.dll or php_pdo_sqlsrv.dll to be installed. Also enable MS-SQL extension in PHP.ini file ');
-	if ( ! class_exists ('ezSQLcore') ) die('<b>Fatal Error:</b> ez_sqlsrv requires ezSQLcore (ez_sql_core.php) to be included/loaded before it can be used');
 
 	class ez_sqlsrv extends ezsqlModel
 	{
 
-		private $dbuser = false;
-		private $dbpassword = false;
-		private $dbname = false;
-		private $dbhost = false;
+		/**********************************************************************
+		*  ezSQL error strings - sqlsrv
+		*/
+		private $ezsql_sqlsrv_str = array
+		(
+			1 => 'Require $dbuser and $dbpassword to connect to a database server',
+			2 => 'Error establishing sqlsrv database connection. Correct user/password? Correct hostname? Database server running?',
+			3 => 'Require $dbname to select a database',
+			4 => 'SQL Server database connection is not active',
+			5 => 'Unexpected error while trying to select database'
+		);
+		
+		/**********************************************************************
+		*  ezSQL non duplicating data type id's; converting type ids to str
+		*/		
+		private $ezsql_sqlsrv_type2str_non_dup = array
+		(
+			-5 => 'bigint', -7 => 'bit', 1 => 'char', 91 => 'date', -155 => 'datetimeoffset', 6 => 'float', -4 => 'image', 4 => 'int', -8 => 'nchar',
+			-10 => 'ntext', 2 => 'numeric', -9 => 'nvarchar', 7 => 'real', 5 => 'smallint', -1 => 'text', -154 => 'time', -6 => 'tinyint', -151 => 'udt', 
+			-11 => 'uniqueidentifier', -3 => 'varbinary', 12 => 'varchar', -152 => 'xml'
+		);
+
 		private $rows_affected = false;
         
 		protected $preparedvalues = array();
 
-		//if we want to convert Queries in MySql syntax to MS-SQL syntax. Yes, there
-		//are some differences in query syntax.
-		private $convertMySqlToMSSqlQuery = TRUE;
+		/**
+		 * Database configuration setting 
+		 * @var Configuration instance
+		 */
+		private $database;
 
-		/**********************************************************************
-		*  Constructor - allow the user to perform a quick connect at the
-		*  same time as initializing the ez_mssql class
-		*/
-
-		function __construct($dbuser='', $dbpassword='', $dbname='', $dbhost='localhost', $convertMySqlToMSSqlQuery=true)
-		{
+		public function __construct(Configuration $settings) {
+			if (empty($settings) || (!$settings instanceof Configuration)) {
+				throw new Exception('<b>Fatal Error:</b> Missing configuration details to connect to database');
+			}
             parent::__construct();
+			$this->database = $settings;
             
-			$this->dbuser = $dbuser;
-			$this->dbpassword = $dbpassword;
-			$this->dbname = $dbname;
-			$this->dbhost = $dbhost;
-			$this->convertMySqlToMSSqlQuery = $convertMySqlToMSSqlQuery;
-            
-            global $_ezSqlsrv;
-            $_ezSqlsrv = $this;        
+            $GLOBALS['_ezSqlsrv'] = $this;        
 		}
 
 		/**********************************************************************
 		*  Short hand way to connect to sqlsrv database server
 		*  and select a sqlsrv database at the same time
 		*/
-
-		function quick_connect($dbuser='', $dbpassword='', $dbname='', $dbhost='localhost')
+		public function quick_connect($dbuser='', $dbpassword='', $dbname='', $dbhost='localhost')
 		{
 			$return_val = false;
             $this->_connected = false;
@@ -100,8 +75,7 @@
 		/**********************************************************************
 		*  Try to connect to sqlsrv database server
 		*/
-
-		function connect($dbuser='', $dbpassword='', $dbname='', $dbhost='localhost')
+		public function connect($dbuser='', $dbpassword='', $dbname='', $dbhost='localhost')
 		{
 			global $ezsql_sqlsrv_str; $return_val = false;
             $this->_connected = false;
@@ -119,9 +93,7 @@
 				$this->register_error($ezsql_sqlsrv_str[2].' in '.__FILE__.' on line '.__LINE__);
 				$this->show_errors ? trigger_error($ezsql_sqlsrv_str[2],E_USER_WARNING) : null;
                 return false;
-			}
-			else
-			{
+			} else {
 				$this->dbuser = $dbuser;
 				$this->dbpassword = $dbpassword;
 				$this->dbhost = $dbhost;
@@ -142,8 +114,7 @@
 		*   it to a string inside of SQL in order to prevent this from ocurring
 		*  ** make sure to use " AS <label>" after calling this...
 		*/
-
-		function sysdate()
+		public function sysdate()
 		{
 			return "GETDATE()";
 		}
@@ -151,8 +122,7 @@
 		/**********************************************************************
 		*  Perform sqlsrv query and try to determine result value
 		*/
-
-		function query($query, $use_prepare=false)
+		public function query($query, $use_prepare=false)
 		{
             if ($use_prepare) 
                 $param = &$this->getParamaters();
@@ -162,13 +132,11 @@
 
 			//if flag to convert query from MySql syntax to MS-Sql syntax is true
 			//convert the query
-			if($this->convertMySqlTosqlsrvQuery == true)
-				$query = $this->ConvertMySqlTosqlsrv($query);
-
+			if($this->convert_mySql == true)
+				$query = $this->mySqlto($query);
 
 			// Initialize return
 			$return_val = 0;
-
 
 			// Flush cached values..
 			$this->flush();
@@ -190,7 +158,6 @@
 			{
 				return $cache;
 			}
-
 
 			// If there is no existing database connection then try to connect
 			if ( ! isset($this->dbh) || ! $this->dbh )
@@ -240,14 +207,12 @@
 					}
 
 				}
-
 				// Return number of rows affected
 				$return_val = $this->rows_affected;
 			}
 			// Query was a select
 			else
 			{
-
 				// Take note of column info
 				$i=0;
 				foreach ( @sqlsrv_field_metadata( $this->result) as $field ) {
@@ -292,10 +257,7 @@
 			$this->trace || $this->debug_all ? $this->debug() : null ;
 
 			return $return_val;
-
 		}
-
-
 
 		/**********************************************************************
 		*  Convert a Query From MySql Syntax to MS-Sql syntax
@@ -311,13 +273,10 @@
 		   		not work. e.g. MS SQL requires all columns in Select Clause to be present in 'group by' clause.
 		   		There is no such restriction in MySql.
 		*/
-
-		function ConvertMySqlTosqlsrv($query)
+		public function mySqlto($query)
 		{
-
 			//replace the '`' character used for MySql queries, but not
 			//supported in MS-Sql
-
 			$query = str_replace("`", "", $query);
 			$limit_str = "/LIMIT[^\w]{1,}([0-9]{1,})([\,]{0,})([0-9]{0,})/i";
 			$patterns = array(
@@ -340,7 +299,7 @@
 
 		}
 
-		function get_datatype($col)
+		public function get_datatype($col)
 		{
 			global $ezsql_sqlsrv_type2str_non_dup;
 			$datatype = "dt not defined";
@@ -378,12 +337,10 @@
 			return $datatype;
 		}
 
-
 		/**********************************************************************
 		*  Close the active SQLSRV connection
 		*/
-
-		function disconnect()
+		public function disconnect()
 		{
 			$this->conn_queries = 0;
 			@sqlsrv_close($this->dbh);
