@@ -48,25 +48,28 @@ class Database extends Container
      */
     private $database;
 
+    protected function __construct() {}
+    private function __clone() {}
+    private function __wakeup() {}
+
     /**
-     * Construct and connect a database driver
+     * Initialize and connect a sql database driver
      *
      * @param class $settings with sql driver and connection parameters
      */    
-    public function __construct(Configuration $settings)
+    public static function initialize(Configuration $settings)
     { 
         if  (empty($settings) || (!$settings instanceof Configuration)) {
             throw new Exception('<b>Fatal Error:</b> Missing configuration details to connect to database');
         } else {
             $this->_ts = microtime();
-            parent::__construct();
             $this->database = $settings;
-            if (empty($GLOBALS['db_'.$this->database->driver])) {
+            if (empty($GLOBALS['db_'.$this->database->driver]))
                 $GLOBALS['db_'.$this->database->driver] = $this->get(_DATABASES[$this->database->driver], $this->database);
-            }
+            return $GLOBALS['db_'.$this->database->driver];
         }
     }
-    
+
     /**
      * Print-out a memory used benchmark.
      *

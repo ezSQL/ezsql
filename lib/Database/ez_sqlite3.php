@@ -50,7 +50,7 @@
 				$this->connect($this->database->path, $this->database->db);
 			}
             
-            $GLOBALS['ez_'.$this->database->driver] = $this;
+            $GLOBALS['db_'.$this->database->driver] = $this;
 		}
 
 		/**********************************************************************

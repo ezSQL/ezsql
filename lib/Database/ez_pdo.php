@@ -55,7 +55,7 @@ class ez_pdo extends ezsqlModel
                 $this->database->isFileBased);
         }
         
-        $GLOBALS['ez_'.$this->database->driver] = $this;
+        $GLOBALS['db_'.$this->database->driver] = $this;
     } // __construct
 
     /**

@@ -283,14 +283,11 @@ namespace ezsql\Database\ezFunctions;
     */
     function setQuery($ezSQL='') {
         global $_ezQuery;
-        if (in_array(strtolower($ezSQL), array( 'mysqli', 'pdo', 'pgsql', 'sqlite3', 'sqlsrv' ))) {
+        if (in_array(strtolower($ezSQL), array( 'mysql', 'mysqli', 'pdo', 'pgsql', 'postgresql', 'sqlite', 'sqlite3', 'sqlsrv' , 'mssql' ))) {
             if (!empty($GLOBALS['db_'.strtolower($ezSQL)]))
                 $_ezQuery = $GLOBALS['db_'.strtolower($ezSQL)];
-            elseif (!empty($GLOBALS['ez_'.strtolower($ezSQL)]))
-                $_ezQuery = $GLOBALS['ez_'.strtolower($ezSQL)]; 
             return (!empty($_ezQuery)) ? true: false;            
         } else {
-			$_ezQuery = null;
             unset($GLOBALS['_ezQuery']);
             return false;            
         }

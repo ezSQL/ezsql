@@ -47,7 +47,7 @@
 			parent::__construct();
 			$this->database = $settings;
             
-            $GLOBALS['ez_'.$this->database->driver] = $this;
+            $GLOBALS['db_'.$this->database->driver] = $this;
 		} // __construct
 
 		/**
