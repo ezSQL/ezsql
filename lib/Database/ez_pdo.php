@@ -16,7 +16,7 @@ namespace ezsql\Database\ez_pdo;
 use ezsql\Configuration;
 use ezsql\ezsqlModel;
 
-class ez_pdo extends ezsqlModel
+final class ez_pdo extends ezsqlModel
 {
     /**
      * ezSQL error strings - PDO

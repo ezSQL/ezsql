@@ -1,13 +1,13 @@
 <?php
-	/**********************************************************************
+	/**
 	* ezSQL Database specific class - PostgreSQL
 	* Desc..: PostgreSQL component (part of ezSQL databse abstraction library)
 	*
 	* @author  Justin Vincent (jv@jvmultimedia.com)
 	* @author  Stefanie Janine Stoelting <mail@stefanie-stoelting.de>
-	* @Contributor:  Lawrence Stubbs <technoexpressnet@gmail.com>
+	* @Contributor  Lawrence Stubbs <technoexpressnet@gmail.com>
 	* @link	   http://twitter.com/justinvincent
-	* @name	   ez_postgresql
+	* @name	   ez_pgsql
 	* @package ezSQL
 	* @license FREE / Donation (LGPL - You may do what you like with ezSQL - no exceptions.)
 	*
@@ -16,7 +16,7 @@
 	use ezsql\Configuration;
 	use ezsql\ezsqlModel;
 
-	class ez_pgsql extends ezsqlModel
+	final class ez_pgsql extends ezsqlModel
 	{		
         /**********************************************************************
 		*  ezSQL error strings - PostgreSQL
@@ -340,4 +340,4 @@
 			return $this->database->port;
 		} // getPort
 
-	} // ez_postgresql
+	} // ez_pgsql

@@ -11,7 +11,7 @@
 	use ezsql\Configuration;
 	use ezsql\ezsqlModel;
 
-	class ez_sqlsrv extends ezsqlModel
+	final class ez_sqlsrv extends ezsqlModel
 	{
 
 		/**********************************************************************

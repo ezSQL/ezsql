@@ -11,7 +11,7 @@
 	use ezsql\Configuration;
 	use ezsql\ezsqlModel;
 	
-	class ez_sqlite3 extends ezsqlModel
+	final class ez_sqlite3 extends ezsqlModel
 	{
 		/**********************************************************************
 		*  ezSQL error strings - SQLite

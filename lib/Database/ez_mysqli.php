@@ -16,7 +16,7 @@ namespace ezsql\Database\ez_mysqli;
 use ezsql\Configuration;
 use ezsql\ezsqlModel;
 
-class ez_mysqli extends ezsqlModel
+final class ez_mysqli extends ezsqlModel
 {
     /*
      * ezSQL error strings - mySQLi
