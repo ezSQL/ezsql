@@ -1,17 +1,18 @@
 <?php
 /**
- * ezSQL Database specific class for working with query results
- * Desc..: recordset component (part of ezSQL databse abstraction library)
- *
- * @author  Stefanie Janine Stoelting <mail@stefanie-stoelting.de>
- * @name    ez_recordset
- * @package ezSQL
- * @license FREE / Donation (LGPL - You may do what you like with ezSQL - no exceptions.)
- *
+ * 
+ * 
+ * Originally:
+ *  ezSQL Database specific class for working with query results
+ *  Desc..: recordset component (part of ezSQL databse abstraction library)
+ *  @author  Stefanie Janine Stoelting <mail@stefanie-stoelting.de>
+ *  @name    ezSQL_recordset
+ *  @package ezSQL
+ *  @license FREE / Donation (LGPL - You may do what you like with ezSQL - no exceptions.) *
  */
-namespace ezsql\Database\ez_records;
+namespace ezsql\ezResultset;
 
-class ez_records implements Iterator
+class ezResultset implements Iterator
 {
     /**
      * Returns the result as array
@@ -29,7 +30,12 @@ class ez_records implements Iterator
     const RESULT_AS_ROW = 'row';
 
     /**
-     * The current position in the recordset
+     * Returns the result as json encoded
+     */
+    const RESULT_AS_JSON = 'json';
+
+    /**
+     * The current position in the resultset
      * @var int
      */
     private $_position = 0;
@@ -38,31 +44,24 @@ class ez_records implements Iterator
      * Contains the possible return types
      * @var array
      */
-    private $_checkTypes = array(
-        'array'
-        , 'object'
-        , 'row'
-    );
+    private $_checkTypes = array('array', 'object', 'row', 'json');
 
     /**
-     * The recordset
+     * The resultset
      * @var array
      */
-    private $_recordset = array();
-
+    private $_resultset = array();
 
     /**
      * Initializes the record object
-     *
-     * @param array $ez_queryresult The result of an ezSQL query
-     * @throws Exception When $ez_queryresult is not an array
+     * @param array $query_result The result of an ezSQL query
+     * @throws Exception When $query_result is not an array
      */
-    public function __construct($ez_queryresult) {
-        if (!is_array($ez_queryresult)) {
-            throw new Exception("$ez_queryresult is not valid.");
+    public function __construct($query_result) {
+        if (!is_array($query_result)) {
+            throw new Exception("$query_result is not valid.");
         }
-
-        $this->_recordset = $ez_queryresult;
+        $this->_resultset = $query_result;
         $this->position = 0;
     } // __construct
 
@@ -74,16 +73,14 @@ class ez_records implements Iterator
     } // rewind
 
     /**
-     * Returns the current row of the recordset as stdClass, which is the
-     * default mode, or as array as fieldname - fieldvalue.
-     *
+     * Returns the current row of the resultset as stdClass, which is the
+     * default mode, or as array as {field name} => {field value}.
      * @param string $mode Return the current row as array, or object
-     *                     Default is RESULT_AS_OBJECT
+     *                      Default is RESULT_AS_OBJECT
      * @return stdClass/array
      */
     public function current($mode=self::RESULT_AS_OBJECT) {
         $return_val = null;
-
         if (!in_array($mode, $this->_checkTypes)) {
             throw new Exception(sprintf('$mode is not in %s1 or %s2', self::RESULT_AS_OBJECT, self::RESULT_AS_ARRAY));
         }
@@ -91,35 +88,26 @@ class ez_records implements Iterator
         if ($this->valid()) {
             switch ($mode) {
                 case self::RESULT_AS_OBJECT:
-                    // The result is a standard ezSQL row of stdClass
-                    $return_val = $this->_recordset[$this->_position];
-
+                    // The result is a standard row of stdClass
+                    $return_val = $this->_resultset[$this->_position];
                     break;
-
                 case self::RESULT_AS_ARRAY:
-                    $return_val = get_object_vars($this->_recordset[$this->_position]);
-
+                    $return_val = get_object_vars($this->_resultset[$this->_position]);
                     break;
-
                 case self::RESULT_AS_ROW:
-                    $return_val = array_values(get_object_vars($this->_recordset[$this->_position]));
-                    
+                    $return_val = array_values(get_object_vars($this->_resultset[$this->_position]));                    
                     break;
-
                 default:
-
                     break;
             }
         } else {
             $result = false;
-        }
-
+        }        
         return $return_val;
     } // current
 
     /**
-     * Returns the current position in the recordset
-     *
+     * Returns the current position in the resultset
      * @return int
      */
     public function key() {
@@ -127,14 +115,14 @@ class ez_records implements Iterator
     } // key
 
     /**
-     * Sets the position of the recordset up by one
+     * Sets the position of the resultset up by one
      */
     public function next() {
         ++$this->_position;
     } // next
 
     /**
-     * Sets position of the recordset down by one, if the position is below the
+     * Sets position of the resultset down by one, if the position is below the
      * start, the position is set to the start position
      */
     public function previous() {
@@ -147,69 +135,56 @@ class ez_records implements Iterator
 
     /**
      * Whether the current position contains a row, or not
-     *
      * @return boolean
      */
     public function valid() {
-        return isset($this->_recordset[$this->_position]);
+        return isset($this->_resultset[$this->_position]);
     } // valid
 
     /**
-     * Behaves like mysql_fetch_assoc. This method it to implement ezSQL easier
-     * in an existing system, that made us of mysql_fetch_assoc.
-     * It returns the current record as an associative array and moves the
-     * internal data pointer ahead.
-     *
+     * Returns the current record as an associative array and moves the internal data pointer ahead.
+     * Behaves like mysql_fetch_assoc
      * @return array
      */
-    public function ez_fetch_assoc() {
+    public function fetch_assoc() {
         if ($this->valid()) {
             $return_val = $this->current(self::RESULT_AS_ARRAY);
             $this->next();
         } else {
             $return_val = false;
         }
-
         return $return_val;
-    } // ez_fetch_assoc
+    } // fetch_assoc
 
-    /**
-     * Behaves like mysql_fetch_row This method it to implement ezSQL easier
-     * in an existing system, that made us of mysql_fetch_row.
-     * It returns the current record as a numeric array and moves the internal
-     * data pointer ahead.
-     *
+    /** 
+     * Returns the current record as a numeric array and moves the internal data pointer ahead.
+     * Behaves like mysql_fetch_row
      * @return array
      */
-    public function ez_fetch_row() {
+    public function fetch_row() {
         if ($this->valid()) {
             $return_val = $this->current(self::RESULT_AS_ROW);
             $this->next();
         } else {
             $return_val = false;
         }
-
         return $return_val;
-    } // ez_fetch_row
+    } // fetch_row
 
     /**
-     * Behaves like mysql_fetch_object This method it to implement ezSQL easier
-     * in an existing system, that made us of mysql_fetch_object.
-     * It returns n object with properties that correspond to the fetched row
-     * and moves the internal data pointer ahead.
-     *
+     * Returns n object with properties that correspond to the fetched row and moves the internal data pointer ahead.
+     * Behaves like mysql_fetch_object
      * @return array
      */
-    public function ez_fetch_object() {
+    public function fetch_object() {
         if ($this->valid()) {
             $return_val = $this->current(self::RESULT_AS_OBJECT);
             $this->next();
         } else {
             $return_val = false;
         }
-
         return $return_val;
-    } // ez_fetch_object
+    } // fetch_object
     //public function
 
-} // dbapi_recordset
+} // ezResultset
