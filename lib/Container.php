@@ -35,13 +35,23 @@ class Container
 	public function get($abstract, $values = [])
 	{
 		// if we don't have it, just register it
-		if (!isset($this->instances[$abstract])) {
+		if (!$this->has($abstract)) {
 			$this->set($abstract);
 		}
 
 		return $this->resolve($this->instances[$abstract], $values);
 	}
 
+	/**
+	 * Do we have it
+	 * @param       $abstract
+     * @return bool
+     */
+    public function has($abstract)
+    {
+        return isset($this->instances[$abstract]);
+	}
+	
 	/**
 	 * resolve single
 	 *
