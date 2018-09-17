@@ -23,9 +23,8 @@
  *
  * This software consists of voluntary contributions made by many individuals
  * and is licensed under the MIT license.
- */
- 
-namespace ezsql\Database\ezFunctions;
+ */ 
+namespace ezsql\ezFunctions;
 
 	// ezQuery prepare placeholder/positional tag
 		const _TAG = '__ez__';
@@ -65,6 +64,21 @@ namespace ezsql\Database\ezFunctions;
         global $_ezQuery;
         $_ezQuery = null;
  
+        /**
+        * Associative array of supported SQL Drivers, and library
+        * @const array 
+        */
+        const _DATABASES = array
+            ('mysql' => 'ez_mysqli',
+            'mysqli' => 'ez_mysqli',
+            'pdo' => 'ez_pdo',
+            'postgresql' => 'ez_pgsql',
+            'pgsql' => 'ez_pgsql',
+            'sqlite' => 'ez_sqlite3',
+            'sqlite3' => 'ez_sqlite3',
+            'mssql' => 'ez_sqlsrv',
+            'sqlsrv' => 'ez_sqlsrv');
+
 	/**
      * Creates an array from expressions in the following format
      * @param  strings @x,        The left expression.
@@ -278,19 +292,20 @@ namespace ezsql\Database\ezFunctions;
     
     /**
     * Using global class instances, setup functions to call class methods directly.
-    * @param @ezSQL - string, representing class  'cubrid', 'mysqli', 'oracle8_9', 'oracletns', 'pdo', 'postgresql', 'recordset', 'sqlite3', 'sqlsrv'
+    * @param @ezSQL - string, representing sql database class
     * @return boolean
     */
     function setQuery($ezSQL='') {
         global $_ezQuery;
-        if (in_array(strtolower($ezSQL), array( 'mysql', 'mysqli', 'pdo', 'pgsql', 'postgresql', 'sqlite', 'sqlite3', 'sqlsrv' , 'mssql' ))) {
+        $status = false;
+        if (array_key_exists(strtolower($ezSQL), _DATABASES)) {
             if (!empty($GLOBALS['db_'.strtolower($ezSQL)]))
                 $_ezQuery = $GLOBALS['db_'.strtolower($ezSQL)];
-            return (!empty($_ezQuery)) ? true: false;            
-        } else {
+            $status = !empty($_ezQuery) ? true: false;            
+        } elseif (!empty($GLOBALS['_ezQuery'])) {
             unset($GLOBALS['_ezQuery']);
-            return false;            
         }
+        return $status;
     }     
     
     function select($table='', $columns='*', ...$args) {

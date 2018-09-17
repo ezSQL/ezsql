@@ -25,21 +25,7 @@
  * and is licensed under the MIT license.
  */
 namespace ezsql\Configuration;
-
-    /**
-    * Associative array of supported SQL Drivers, and library
-    * @const array 
-    */
-    const _DATABASES = array
-        ('mysql' => 'ez_mysqli',
-        'mysqli' => 'ez_mysqli',
-        'pdo' => 'ez_pdo',
-        'postgresql' => 'ez_pgsql',
-        'pgsql' => 'ez_pgsql',
-        'sqlite' => 'ez_sqlite3',
-        'sqlite3' => 'ez_sqlite3',
-        'mssql' => 'ez_sqlsrv',
-        'sqlsrv' => 'ez_sqlsrv');
+use const ezsql\ezFunctions\_DATABASES;
 
 class Configuration
 {
@@ -140,7 +126,7 @@ class Configuration
         $sql = strtolower($sqldriver);
         if ( ! class_exists ('ezsqlModel') ) {
             throw new Exception('<b>Fatal Error:</b> This configuration requires ezsqlModel (ezsqlModel.php) to be included/loaded before it can be used');
-        } elseif (!array_key_exists($sql, _DATABASES) || empty($sql) || empty($args) || (count($args)<3)) {
+        } elseif (!array_key_exists($sql, \ezsql\ezFunctions\_DATABASES) || empty($sql) || empty($args) || (count($args)<3)) {
             if ((($sql == 'sqlite3') || ($sql == 'sqlite')) && count($args)==2) {
                 if ( ! class_exists ('SQLite3') ) 
                     throw new Exception('<b>Fatal Error:</b> ez_sqlite3 requires SQLite3 Lib to be compiled and or linked in to the PHP engine');

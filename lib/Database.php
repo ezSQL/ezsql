@@ -32,6 +32,7 @@ use ezsql\Database\ez_sqlsrv;
 use ezsql\Database\ez_pgsql;
 use ezsql\Database\ez_pdo;
 use ezsql\Database\ez_sqlite3;
+use const ezsql\ezFunctions\_DATABASES;
 
 class Database extends Container
 {
@@ -64,9 +65,11 @@ class Database extends Container
         } else {
             $this->_ts = microtime();
             $this->database = $settings;
-            if (empty($GLOBALS['db_'.$this->database->driver]))
-                $GLOBALS['db_'.$this->database->driver] = $this->get(_DATABASES[$this->database->driver], $this->database);
-            return $GLOBALS['db_'.$this->database->driver];
+            $key = $this->database->driver;
+            $value = \ezsql\ezFunctions\_DATABASES[$key];
+            if (empty($GLOBALS['db_'.$key]))
+                $GLOBALS['db_'.$key] = $this->get( $value, $this->database);                
+            return $GLOBALS['db_'.$key];
         }
     }
 
