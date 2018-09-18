@@ -58,7 +58,7 @@ final class ez_mysqli extends ezsqlModel
         parent::__construct();
         $this->database = $settings;
 
-        $GLOBALS['db_'.$this->database->driver] = $this;
+        $GLOBALS['db_'.$this->database->getDriver()] = $this;
     } // __construct
 
     /**
@@ -91,24 +91,24 @@ final class ez_mysqli extends ezsqlModel
      *                      Default is empty string
      * @return boolean
      */
-    public function connect($dbuser = '', $dbpassword = '', $dbhost = 'localhost', $charset = '') {
+    public function connect($dbuser = '', $dbpassword = '', $dbhost = 'localhost', $dbcharset = '') {
         $this->_connected = false;
 
-        $this->database->user = empty($dbuser) ? $this->database->user : $dbuser;
-        $this->database->password = empty($dbpassword) ? $this->database->password : $dbpassword;
-        $this->database->host = $dbhost!='localhost' ? $this->database->host : $dbhost;
-        $this->database->charset = empty($charset) ? $this->database->charset : $charset;
+        $user = empty($dbuser) ? $this->database->getUser() : $dbuser;
+        $password = empty($dbpassword) ? $this->database->getPassword() : $dbpassword;
+        $host = ($dbhost!='localhost') ? $this->database->getHost() : $dbhost;
+        $charset = empty($dbcharset) ? $this->database->getCharset() : $dbcharset;
 
         // Must have a user and a password
-        if ( empty($this->database->user) ) {
+        if ( empty($user ) ) {
             $this->register_error($this->ezsql_mysql_str[1] . ' in ' . __FILE__ . ' on line ' . __LINE__);
             $this->show_errors ? trigger_error($this->ezsql_mysql_str[1], E_USER_WARNING) : null;
-        } else if ( ! $this->dbh = mysqli_connect($this->database->host, $this->database->user, $this->database->password, $this->database->db) ) {
+        } else if ( ! $this->dbh = mysqli_connect($host, $user, $password, $name) ) {
             // Try to establish the server database handle
             $this->register_error($this->ezsql_mysql_str[2] . ' in ' . __FILE__ . ' on line ' . __LINE__);
             $this->show_errors ? trigger_error($this->ezsql_mysql_str[2], E_USER_WARNING) : null;
         } else {
-            mysqli_set_charset($this->dbh, $this->database->charset);
+            mysqli_set_charset($this->dbh, $charset);
             $this->_connected = true;
         }
 
@@ -142,9 +142,9 @@ final class ez_mysqli extends ezsqlModel
             $this->register_error($str . ' in ' .__FILE__ . ' on line ' . __LINE__);
             $this->show_errors ? trigger_error($str, E_USER_WARNING) : null;
         } else {
-            $this->database->db = $dbname;
+            $this->database->setName($dbname);
             if ( $charset == '') {
-                $charset = $this->database->charset;
+                $charset = $this->database->getCharset();
             }
              if ( $charset != '' ) {
                 $encoding = strtolower(str_replace('-', '', $charset));
@@ -323,8 +323,10 @@ final class ez_mysqli extends ezsqlModel
 
         // If there is no existing database connection then try to connect
         if ( ! isset($this->dbh) || ! $this->dbh ) {
-            $this->connect($this->database->user, $this->database->password, $this->database->host);
-            $this->select($this->database->db);
+            $this->connect($this->database->getUser(), 
+                            $this->database->getPassword(), 
+                            $this->database->getHost());
+            $this->select($this->database->getName());
         }
 
         // Perform the query via std mysql_query function..
@@ -412,7 +414,7 @@ final class ez_mysqli extends ezsqlModel
      * @return string
      */
     public function getDBHost() {
-        return $this->database->host;
+        return $this->database->getHost();
     } // getDBHost
 
     /**
@@ -421,7 +423,7 @@ final class ez_mysqli extends ezsqlModel
      * @return string
      */
     public function getCharset() {
-        return $this->database->charset;
+        return $this->database->getCharset();
     } // getCharset
 
     /**

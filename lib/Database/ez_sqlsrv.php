@@ -7,6 +7,8 @@
 	*  Desc..: Microsoft Sql Server component (MS drivers) (part of ezSQL databse abstraction library) - based on ezSql_msSql library class.
 	*
 	*/
+	declare(strict_types=1);
+
 	namespace ezsql\Database\ez_sqlsrv;
 	use ezsql\Configuration;
 	use ezsql\ezsqlModel;
@@ -53,7 +55,7 @@
             parent::__construct();
 			$this->database = $settings;
             
-            $GLOBALS['db_'.$this->database->driver] = $this;      
+            $GLOBALS['db_'.$this->database->getDriver()] = $this;      
 		}
 
 		/**********************************************************************
@@ -78,18 +80,18 @@
 			$return_val = false;
             $this->_connected = false;
 						
-			$this->database->user = empty($dbuser) ? $this->database->user : $dbuser;
-			$this->database->password = empty($dbpassword) ? $this->database->password : $dbpassword;
-			$this->database->db = empty($dbname) ? $this->database->db : $dbname;
-			$this->database->host = $dbhost!='localhost' ? $this->database->host : $dbhost;
+			$user = empty($dbuser) ? $this->database->getUser() : $dbuser;
+			$password = empty($dbpassword) ? $this->database->getPassword() : $dbpassword;
+			$name = empty($dbname) ? $this->database->getName() : $dbname;
+			$host = ($dbhost!='localhost') ? $this->database->getHost() : $dbhost;
 
 			// Blank user assumes Windows Authentication
-			$connectionOptions = array("UID" => $this->database->user, 
-				"PWD" => $this->database->password, 
-				"Database" => $this->database->db, 
+			$connectionOptions = array("UID" => $user, 
+				"PWD" => $password, 
+				"Database" => $name, 
 				"ReturnDatesAsStrings" => true);
 
-			if ( ( $this->dbh = @sqlsrv_connect($this->database->host, $connectionOptions) ) === false )
+			if ( ( $this->dbh = @sqlsrv_connect($host, $connectionOptions) ) === false )
 			{
 				$this->register_error($this->ezsql_sqlsrv_str[2].' in '.__FILE__.' on line '.__LINE__);
 				$this->show_errors ? trigger_error($this->ezsql_sqlsrv_str[2],E_USER_WARNING) : null;
@@ -128,7 +130,7 @@
 
 			//if flag to convert query from MySql syntax to MS-Sql syntax is true
 			//convert the query
-			if($this->convert_mySql == true)
+			if($this->database->getTo_mySql())
 				$query = $this->mySqlto($query);
 
 			// Initialize return
@@ -158,10 +160,10 @@
 			// If there is no existing database connection then try to connect
 			if ( ! isset($this->dbh) || ! $this->dbh )
 			{
-				$this->connect($this->database->ser, 
-					$this->database->password, 
-					$this->database->db, 
-					$this->database->host);
+				$this->connect($this->database->getUser(), 
+								$this->database->getPassword(), 
+								$this->database->getName(), 
+								$this->database->getHost());
 			}
 
 			// Perform the query via std sqlsrv_query function..

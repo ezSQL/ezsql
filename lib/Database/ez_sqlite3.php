@@ -7,6 +7,8 @@
 	*  Desc..: SQLite3 component (part of ezSQL databse abstraction library)
 	*
 	*/
+	declare(strict_types=1);
+	
 	namespace ezsql\Database\ez_sqlite3;
 	use ezsql\Configuration;
 	use ezsql\ezsqlModel;
@@ -44,13 +46,14 @@
 
 			// Turn on track errors 
 			ini_set('track_errors',1);
-			
-			if ( !empty($this->database->path) && !empty($this->database->db) )
+			$path = $this->database->getPath();
+			$name = $this->database->getName();
+			if ( !empty($path) && !empty($name) )
 			{
-				$this->connect($this->database->path, $this->database->db);
+				$this->connect($path, $name);
 			}
             
-            $GLOBALS['db_'.$this->database->driver] = $this;
+            $GLOBALS['db_'.$this->database->getDriver()] = $this;
 		}
 
 		/**********************************************************************

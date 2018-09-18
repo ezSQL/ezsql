@@ -1,13 +1,6 @@
 <?php
 /**
- * Author:  Lawrence Stubbs <technoexpressnet@gmail.com>
- *
- * Important: Verify that every feature you use will work with your database vendor.
- * ezSQL Query Builder will attempt to validate the generated SQL according to standards.
- * Any errors will return an boolean false, and you will be responsible for handling.
- *
- * ezQuery does no validation whatsoever if certain features even work with the
- * underlying database vendor. 
+ * @author  Lawrence Stubbs <technoexpressnet@gmail.com>
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -25,59 +18,11 @@
  * and is licensed under the MIT license.
  */ 
 namespace ezsql\ezFunctions;
-
-	// ezQuery prepare placeholder/positional tag
-		const _TAG = '__ez__';
-    // Use to set get_result output as json 
-        const _JSON = 'json';
- 
-    /*
-     * Operator boolean expressions.
-     */
-		const EQ  = '=';
-		const NEQ = '<>';
-		const NE  = '!=';
-		const LT  = '<';
-		const LTE = '<=';
-		const GT  = '>';
-		const GTE = '>=';
-    
-		const _IN = 'IN';
-		const _notIN = 'NOT IN';
-		const _LIKE = 'LIKE';
-		const _notLIKE  = 'NOT LIKE';
-		const _BETWEEN = 'BETWEEN';
-		const _notBETWEEN = 'NOT BETWEEN';
-        
-		const _isNULL = 'IS NULL';
-		const _notNULL  = 'IS NOT NULL';
-    
-    /*
-     * Combine operators.
-     */    
-		const _AND = 'AND';
-		const _OR = 'OR';
-		const _NOT = 'NOT';
-		const _andNOT = 'AND NOT'; 
+use ezsql\Constants;
                 
-        // Global class instances, will be used to create and call methods directly.
-        global $_ezQuery;
-        $_ezQuery = null;
- 
-        /**
-        * Associative array of supported SQL Drivers, and library
-        * @const array 
-        */
-        const _DATABASES = array
-            ('mysql' => 'ez_mysqli',
-            'mysqli' => 'ez_mysqli',
-            'pdo' => 'ez_pdo',
-            'postgresql' => 'ez_pgsql',
-            'pgsql' => 'ez_pgsql',
-            'sqlite' => 'ez_sqlite3',
-            'sqlite3' => 'ez_sqlite3',
-            'mssql' => 'ez_sqlsrv',
-            'sqlsrv' => 'ez_sqlsrv');
+    // Global class instances, will be used to create and call methods directly.
+    global $_ezQuery;
+    $_ezQuery = null;
 
 	/**
      * Creates an array from expressions in the following format

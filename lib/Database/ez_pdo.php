@@ -46,16 +46,16 @@ final class ez_pdo extends ezsqlModel
         // Turn on track errors
         ini_set('track_errors', 1);
 
-        if ( !empty($this->database->dsn) && !empty($this->database->user) && !empty($this->database->password) ) {
-            print "<p>constructor: ".$this->database->dsn."</p>";
-            $this->connect($this->database->dsn, 
-                $this->database->user, 
-                $this->database->password, 
-                $this->database->options, 
-                $this->database->isFileBased);
+        if ( !empty($this->database->getDsn()) && !empty($this->database->getUser()) && !empty($this->database->getPassword()) ) {
+            print "<p>constructor: ".$this->database->getDsn()."</p>";
+            $this->connect($this->database->getDsn(), 
+                $this->database->getUser(), 
+                $this->database->getPassword(), 
+                $this->database->getOptions(), 
+                $this->database->getIsFile());
         }
         
-        $GLOBALS['db_'.$this->database->driver] = $this;
+        $GLOBALS['db_'.$this->database->getDriver()] = $this;
     } // __construct
 
     /**
@@ -78,48 +78,38 @@ final class ez_pdo extends ezsqlModel
     public function connect($dsn='', $dbuser='', $dbpassword='', $options=array(), $isFileBased=false) {
         $this->_connected = false;
 
-        $this->database->dsn = empty($dsn) ? $this->database->dsn : $dsn;
-        $this->database->isFileBased = $isFileBased;
+        $setDsn = empty($dsn) ? $this->database->getDsn() : $dsn;
+        $setUser = empty($dbuser) ? $this->database->getUser() : $dbuser;
+        $setPassword = empty($dbpassword) ? $this->database->getPassword() : $dbpassword; 
+        $setOptions = empty($options) ? $this->database->getOptions() : $options;   
+        $IsFile = empty($IsFileBased) ? $this->database->getIsFile() : $IsFileBased;   
         
-        if (!$isFileBased) {
-            $this->database->user = empty($dbuser) ? $this->database->user : $dbuser;
-            $this->database->password = empty($dbpassword) ? $this->database->password : $dbpassword;
-            $this->database->options = $options;        
-
+        if (!$IsFile) {                
             // Must have a user and a password if not file based
-            if ( empty($this->database->dsn) || empty($this->database->user) || empty($this->database->password) ) {
+            if ( empty($setDsn) || empty($setUser) || empty($setPassword )) {
                 $this->register_error($this->_ezsql_pdo_str[1] . ' in ' . __FILE__ . ' on line ' . __LINE__);
                 $this->show_errors ? trigger_error($this->_ezsql_pdo_str[1], E_USER_WARNING) : null;
-                return false;
             }
-        } elseif (empty($this->database->dsn)) {
+        } elseif (empty($setDsn)) {
             // Must have a dsn
             $this->register_error($this->_ezsql_pdo_str[2] . ' in ' . __FILE__ . ' on line ' . __LINE__);
-            $this->show_errors ? trigger_error($this->_ezsql_pdo_str[2], E_USER_WARNING) : null;
-            return false;
-        
-        }
-        
+            $this->show_errors ? trigger_error($this->_ezsql_pdo_str[2], E_USER_WARNING) : null;        
+        }        
 
         // Establish PDO connection
         try  {
-            if ($this->database->isFileBased) {
-                $this->dbh = new PDO($this->database->dsn);
+            if ($IsFile) {
+                $this->dbh = new PDO($setDsn);
                 $this->_connected = true;
             } else {
-                $this->dbh = new PDO($this->database->dsn, 
-                    $this->database->user, 
-                    $this->database->password, 
-                    $this->database->options);
+                $this->dbh = new PDO($setDsn, $setUser, $setPassword, $setOptions);
                 $this->_connected = true;
             }
         }
         catch (PDOException $e) {
             $this->register_error($e->getMessage());
             $this->show_errors ? trigger_error($e->getMessage() . '- $dsn: ' . $dsn, E_USER_WARNING) : null;
-            return false;
         }
-
         $this->isConnected = $this->_connected;
 
         return $this->_connected;
@@ -161,11 +151,11 @@ final class ez_pdo extends ezsqlModel
     public function escape($str) {
         // If there is no existing database connection then try to connect
         if ( ! isset($this->dbh) || ! $this->dbh ) {
-            $this->connect($this->database->dsn, 
-                $this->database->user, 
-                $this->database->password, 
-                $this->database->options, 
-                $this->database->isFileBased);
+            $this->connect($this->database->getDsn(), 
+                $this->database->getUser(), 
+                $this->database->getPassword(), 
+                $this->database->getOptions(), 
+                $this->database->getIsFile());
         }
 
         // pdo quote adds ' at the beginning and at the end, remove them for standard behavior
@@ -280,11 +270,11 @@ final class ez_pdo extends ezsqlModel
 
         // If there is no existing database connection then try to connect
         if ( ! isset($this->dbh) || ! $this->dbh ) {
-            $this->connect($this->database->dsn, 
-                $this->database->user, 
-                $this->database->password, 
-                $this->database->options, 
-                $this->database->isFileBased);
+            $this->connect($this->database->getDsn(), 
+                $this->database->getUser(), 
+                $this->database->getPassword(), 
+                $this->database->getOptions(), 
+                $this->database->getIsFile());
         }
 
         // Query was an insert, delete, update, replace

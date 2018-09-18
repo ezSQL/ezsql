@@ -2,13 +2,6 @@
 /**
  * Author:  Lawrence Stubbs <technoexpressnet@gmail.com>
  *
- * Important: Verify that every feature you use will work with your database vendor.
- * ezSQL Query Builder will attempt to validate the generated SQL according to standards.
- * Any errors will return an boolean false, and you will be responsible for handling.
- *
- * ezQuery does no validation whatsoever if certain features even work with the
- * underlying database vendor. 
- *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -24,17 +17,20 @@
  * This software consists of voluntary contributions made by many individuals
  * and is licensed under the MIT license.
  */
+declare(strict_types=1);
+
 namespace ezsql\Database;
 use ezsql\Configuration;
-use ezsql\Container;
+use ezsql\ezResultset;
+use ezsql\ezInjector;
 use ezsql\Database\ez_mysqli;
 use ezsql\Database\ez_sqlsrv;
 use ezsql\Database\ez_pgsql;
 use ezsql\Database\ez_pdo;
 use ezsql\Database\ez_sqlite3;
-use const ezsql\ezFunctions\_DATABASES;
+use const ezsql\Constants\_DATABASES as VENDOR;
 
-class Database extends Container
+class Database extends ezInjector
 {
     /**
      * Timestamp for benchmark.
@@ -63,12 +59,12 @@ class Database extends Container
         if  (empty($settings) || (!$settings instanceof Configuration)) {
             throw new Exception('<b>Fatal Error:</b> Missing configuration details to connect to database');
         } else {
-            $this->_ts = microtime();
-            $this->database = $settings;
-            $key = $this->database->driver;
-            $value = \ezsql\ezFunctions\_DATABASES[$key];
+            self::$_ts = microtime();
+            self::$database = $settings;
+            $key = self::$database->getDriver();
+            $value = VENDOR[$key];
             if (empty($GLOBALS['db_'.$key]))
-                $GLOBALS['db_'.$key] = $this->get( $value, $this->database);                
+                $GLOBALS['db_'.$key] = self::get( $value, self::$database);                
             return $GLOBALS['db_'.$key];
         }
     }

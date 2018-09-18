@@ -47,7 +47,7 @@
 			parent::__construct();
 			$this->database = $settings;
             
-            $GLOBALS['db_'.$this->database->driver] = $this;
+            $GLOBALS['db_'.$this->database->getDriver()] = $this;
 		} // __construct
 
 		/**
@@ -84,17 +84,19 @@
 		public function connect($dbuser='', $dbpassword='', $dbname='', $dbhost='localhost', $dbport='5432') {
 			$this->_connected = false;
 						
-			$this->database->user = empty($dbuser) ? $this->database->user : $dbuser;
-			$this->database->password = empty($dbpassword) ? $this->database->password : $dbpassword;
-			$this->database->db = empty($dbname) ? $this->database->db : $dbname;
-			$this->database->host = $dbhost!='localhost' ? $this->database->host : $dbhost;
-			$this->database->port = $dbport!='5432' ? $dbport : $this->database->port;
+			$user = empty($dbuser) ? $this->database->getUser() : $dbuser;
+			$password = empty($dbpassword) ? $this->database->getPassword() : $dbpassword;
+			$name = empty($dbname) ? $this->database->getName() : $dbname;
+			$host = ($dbhost!='localhost') ? $this->database->getHost() : $dbhost;
+			$port = ($dbport!='5432') ? $dbport : $this->database->getPort();
 
-			if ( !$this->database->user ) {
+			$connect_string = "host=".$host." port=".$port." dbname=".$name." user=".$user." password=".$password;
+
+			if ( !$user ) {
 				// Must have a user and a password
 				$this->register_error($this->_ezsql_postgresql_str[1] . ' in ' . __FILE__ . ' on line ' . __LINE__);
 				$this->show_errors ? trigger_error($this->_ezsql_postgresql_str[1], E_USER_WARNING) : null;
-			} else if ( ! $this->dbh = pg_connect("host=$this->database->host port=$this->database->port dbname=$this->database->db user=$this->database->user password=$this->database->password", true) ) {
+			} else if ( ! $this->dbh = pg_connect( $connect_string, true) ) {
 				// Try to establish the server database handle
 				$this->register_error($this->_ezsql_postgresql_str[2] . ' in ' . __FILE__ . ' on line ' . __LINE__);
 				$this->show_errors ? trigger_error($this->_ezsql_postgresql_str[2], E_USER_WARNING) : null;
@@ -209,11 +211,11 @@
 			// If there is no existing database connection then try to connect
 			if ( ! isset($this->dbh) || ! $this->dbh )
 			{	
-				$this->connect($this->database->user, 
-						$this->database->password, 
-						$this->database->db, 
-						$this->database->host, 
-						$this->database->port);
+				$this->connect($this->database->getUser(), 
+						$this->database->getPassword(), 
+						$this->database->getName(), 
+						$this->database->getHost(), 
+						$this->database->getPort());
 			}
             
 			// Perform the query via std postgresql_query function..
