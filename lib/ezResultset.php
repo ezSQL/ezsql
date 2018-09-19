@@ -97,8 +97,11 @@ class ezResultset implements Iterator
                 case self::RESULT_AS_ROW:
                     $return_val = array_values(get_object_vars($this->_resultset[$this->_position]));                    
                     break;
-                default:
+                case self::RESULT_AS_JSON:
+                    $return_val = json_encode($this->_resultset[$this->_position]);                    
                     break;
+                default:
+                    throw new \Error("Invalid result fetch type");
             }
         } else {
             $result = false;
@@ -185,6 +188,20 @@ class ezResultset implements Iterator
         }
         return $return_val;
     } // fetch_object
+
+    /**
+     * Returns the current record as an json object and moves the internal data pointer ahead.
+     * @return array
+     */
+    public function fetch_json() {
+        if ($this->valid()) {
+            $return_val = $this->current(self::RESULT_AS_JSON);
+            $this->next();
+        } else {
+            $return_val = false;
+        }
+        return $return_val;
+    } // fetch_assoc
     //public function
 
 } // ezResultset

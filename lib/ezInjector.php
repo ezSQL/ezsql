@@ -21,12 +21,13 @@ declare(strict_types=1);
 
 namespace ezsql\ezInjector;
 
+use Psr\Container\ContainerInterface;
+
 /**
  * Dependency Injection Container 
  * @see https://gist.github.com/MustafaMagdi/2bb27aebf6ab078b1f3e5635c0282fac
- * 
  */
-class ezInjector
+class ezInjector implements ContainerInterface
 {
 	/**
 	 * @var array

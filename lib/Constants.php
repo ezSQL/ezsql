@@ -57,13 +57,57 @@ namespace ezsql\Constants;
     * Associative array of supported SQL Drivers, and library
     * @const array 
     */
-    const _DATABASES = array
-            ('mysql' => 'ez_mysqli',
-            'mysqli' => 'ez_mysqli',
-            'pdo' => 'ez_pdo',
-            'postgresql' => 'ez_pgsql',
-            'pgsql' => 'ez_pgsql',
-            'sqlite' => 'ez_sqlite3',
-            'sqlite3' => 'ez_sqlite3',
-            'mssql' => 'ez_sqlsrv',
-            'sqlsrv' => 'ez_sqlsrv');
+    const VENDOR = [
+        'mysql' => 'ez_mysqli',
+        'mysqli' => 'ez_mysqli',
+        'pdo' => 'ez_pdo',
+        'postgresql' => 'ez_pgsql',
+        'pgsql' => 'ez_pgsql',
+        'sqlite' => 'ez_sqlite3',
+        'sqlite3' => 'ez_sqlite3',
+        'mssql' => 'ez_sqlsrv',
+        'sqlsrv' => 'ez_sqlsrv'
+    ];
+
+    const ALLOWED_KEYS = [
+        'host',
+        'hostname',
+        'user',
+        'username',
+        'password',
+        'database',
+        'db',
+        'name',
+        'dsn',
+        'char',
+        'charset',
+        'path',
+        'port',
+        'file',
+        'filebase',
+        'nosql',
+        'nomysql',
+        'options'
+    ];
+        
+    const KEY_MAP = [
+        'host' => 'host',
+        'hostname' => 'host',
+        'user' => 'user',
+        'username' => 'user',
+        'pass' => 'password',
+        'password' => 'password',
+        'database' => 'name',
+        'db' => 'name',
+        'name' => 'name',
+        'dsn' => 'dsn',
+        'char' => 'charset',
+        'charset' => 'charset',
+        'path' => 'path',
+        'port' => 'port',
+        'file' => 'isfile',
+        'filebase' => 'isfile',
+        'nosql' => 'to_mysql',
+        'nomysql' => 'to_mysql',
+        'options' => 'options'
+    ];

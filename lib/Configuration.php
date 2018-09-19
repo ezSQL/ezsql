@@ -21,7 +21,9 @@ declare(strict_types=1);
 
 namespace ezsql\Configuration;
 use ezsql\ConfigAbstract;
-use const ezsql\Constants\_DATABASES as VENDOR;
+use const ezsql\Constants\VENDOR as VENDOR;
+use const ezsql\Constants\KEY_MAP as KEY_MAP;
+use const ezsql\Constants\ALLOWED_KEYS as ALLOWED_KEYS;
 
 class Configuration implements ConfigAbstract
 {
@@ -50,50 +52,127 @@ class Configuration implements ConfigAbstract
         $sql = strtolower($driver);
         if ( ! class_exists ('ezsqlModel') ) {
             throw new Exception('<b>Fatal Error:</b> This configuration requires ezsqlModel (ezsqlModel.php) to be included/loaded before it can be used');
-        } elseif (!array_key_exists($sql, VENDOR) || empty($sql) || empty($args) || (count($args)<3)) {
-            if ((($sql == 'sqlite3') || ($sql == 'sqlite')) && count($args)==2) {
-                if ( ! class_exists ('SQLite3') ) 
-                    throw new Exception('<b>Fatal Error:</b> ez_sqlite3 requires SQLite3 Lib to be compiled and or linked in to the PHP engine');
-                $this->setDriver($sql);
-                $this->setPath(empty($args[0]) ? $this->getPath() : $args[0]);
-                $this->setName(empty($args[1]) ? $this->getName() : $args[1]);
-            } else
+        } elseif (!array_key_exists($sql, VENDOR) || empty($sql) || empty($args)) {
                 throw new Exception('<b>Fatal Error:</b> Missing configuration details to connect to database');
         } else {
-            $this->setDriver($sql);
-            $this->setUser(empty($args[0]) ? $this->getUser() : $args[0]);
-            $this->setPassword(empty($args[1]) ? $this->getPassword() : $args[1]);
-            $this->setName(empty($args[2]) ? $this->getName() : $args[2]);
-            $this->setHost(empty($args[3]) ? $this->getHost() : $args[3]);
-            if ($sql == 'pdo') 
-            {
-                if ( ! class_exists ('PDO') )
-                    throw new Exception('<b>Fatal Error:</b> ez_pdo requires PDO Lib to be compiled and or linked in to the PHP engine');           
-                $this->setDsn(empty($args[0]) ? $this->getDsn() : $args[0]);
-                $this->setUser(empty($args[1]) ? $this->getUser() : $args[1]);
-                $this->setPassword(empty($args[2]) ? $this->getPassword() : $args[2]);
-                $this->setOptions(empty($args[3]) ? $this->getOptions() : $args[3]);
-                $this->setIsFile(empty($args[4]) ? $this->getIsFile() : $args[4]);                    
-            } 
-            elseif (($sql == 'postgresql') || ($sql == 'pgsql')) 
-            {
-                if ( ! function_exists ('pg_connect') )
-                    throw new Exception('<b>Fatal Error:</b> ez_pgsql requires PostgreSQL Lib to be compiled and or linked in to the PHP engine');
-                $this->database->setPort(empty($args[4]) ? $this->database->getPort() : $args[4]);
-            } 
-            elseif (($sql == 'sqlsrv') || ($sql == 'mssql')) 
-            {
-                if ( ! function_exists ('sqlsrv_connect') ) 
-                    throw new Exception('<b>Fatal Error:</b> ez_sqlsrv requires the php_sqlsrv.dll or php_pdo_sqlsrv.dll to be installed. Also enable MS-SQL extension in PHP.ini file ');
-                $this->setTo_mySql(empty($args[4]) ? $this->getTo_mySql() : $args[4]);
-            } 
-            elseif (($sql == 'mysqli') || ($sql == 'mysql')) 
-            {
-                if ( ! function_exists ('mysqli_connect') ) 
-                    throw new Exception('<b>Fatal Error:</b> ez_mysql requires mySQLi Lib to be compiled and or linked in to the PHP engine');
-                $charset = !empty($args[4]) ? $args[4] : '';
-                $this->setCharset(empty($charset) ? $this->getCharset() : strtolower(str_replace('-', '', $charset)));
+            $this->driver = $sql;
+            if ($sql == 'pdo') {    
+                $this->setupPdo($args);            
+            } elseif (($sql == 'postgresql') || ($sql == 'pgsql')) {
+                $this->setupPgsql($args);
+            } elseif (($sql == 'sqlsrv') || ($sql == 'mssql')) {
+                $this->setupSqlsrv($args);
+            } elseif (($sql == 'mysqli') || ($sql == 'mysql')) {
+                $this->setupMysqli($args);
+            } elseif ((($sql == 'sqlite3') || ($sql == 'sqlite')) && count($args)==2) {
+                $this->setupSqlite3($args);
             }
         }
+    }
+
+    private function setupMysqli($args) {
+        if ( ! function_exists ('mysqli_connect') ) 
+            throw new Exception('<b>Fatal Error:</b> ez_mysql requires mySQLi Lib to be compiled and or linked in to the PHP engine');
+        elseif (is_string($args))
+            $this->parseConnectionString($args, ['path', 'name']);
+        elseif (count($args)>=3) {
+            $this->user = empty($args[0]) ? $this->getUser() : $args[0];
+            $this->password = empty($args[1]) ? $this->getPassword() : $args[1];
+            $this->name = empty($args[2]) ? $this->getName() : $args[2];
+            $this->host = empty($args[3]) ? $this->getHost() : $args[3];
+            $charset = !empty($args[4]) ? $args[4] : '';
+            $this->charset = empty($charset) ? $this->getCharset() : strtolower(str_replace('-', '', $charset));
+        } else
+            throw new Exception('<b>Fatal Error:</b> Missing configuration details to connect to database');
+    }
+
+    private function setupPdo($args) {
+        if ( ! class_exists ('PDO') )
+            throw new Exception('<b>Fatal Error:</b> ez_pdo requires PDO Lib to be compiled and or linked in to the PHP engine');           
+        elseif (is_string($args))
+            $this->parseConnectionString($args, ['user', 'dsn', 'password']);
+        elseif (count($args)>=3) {
+            $this->dsn = empty($args[0]) ? $this->getDsn() : $args[0];
+            $this->user = empty($args[1]) ? $this->getUser() : $args[1];
+            $this->password = empty($args[2]) ? $this->getPassword() : $args[2];
+            $this->options = empty($args[3]) ? $this->getOptions() : $args[3];
+            $this->isfile = empty($args[4]) ? $this->getIsFile() : $args[4];
+        } else
+           throw new Exception('<b>Fatal Error:</b> Missing configuration details to connect to database');
+    }
+
+    private function setupSqlsrv($args) {
+        if ( ! function_exists ('sqlsrv_connect') ) 
+            throw new Exception('<b>Fatal Error:</b> ez_sqlsrv requires the php_sqlsrv.dll or php_pdo_sqlsrv.dll to be installed. Also enable MS-SQL extension in PHP.ini file ');
+        elseif (is_string($args))
+            $this->parseConnectionString($args, ['user', 'name', 'password']);
+        elseif (count($args)>=3) {
+            $this->user = empty($args[0]) ? $this->getUser() : $args[0];
+            $this->password = empty($args[1]) ? $this->getPassword() : $args[1];
+            $this->name = empty($args[2]) ? $this->getName() : $args[2];
+            $this->host = empty($args[3]) ? $this->getHost() : $args[3];
+            $this->to_mysql = empty($args[4]) ? $this->getTo_mySql() : $args[4];
+        } else
+            throw new Exception('<b>Fatal Error:</b> Missing configuration details to connect to database');
+    }
+
+    private function setupPgsql($args) {
+        if ( ! function_exists ('pg_connect') )
+            throw new Exception('<b>Fatal Error:</b> ez_pgsql requires PostgreSQL Lib to be compiled and or linked in to the PHP engine');
+        elseif (is_string($args))
+            $this->parseConnectionString($args, ['user', 'name', 'password']);
+        elseif (count($args)>=3) {
+            $this->user = empty($args[0]) ? $this->getUser() : $args[0];
+            $this->password = empty($args[1]) ? $this->getPassword() : $args[1];
+            $this->name = empty($args[2]) ? $this->getName() : $args[2];
+            $this->host = empty($args[3]) ? $this->getHost() : $args[3];
+            $this->port = empty($args[4]) ? $this->getPort() : $args[4];
+        } else
+            throw new Exception('<b>Fatal Error:</b> Missing configuration details to connect to database');
+    }
+
+    private function setupSqlite3($args) {
+        if ( ! class_exists ('SQLite3') ) 
+            throw new Exception('<b>Fatal Error:</b> ez_sqlite3 requires SQLite3 Lib to be compiled and or linked in to the PHP engine');
+        elseif (is_string($args))
+            $this->parseConnectionString($args, ['path', 'name']);
+        elseif (count($args)==2) {
+            $this->path = empty($args[0]) ? $this->getPath() : $args[0];
+            $this->name = empty($args[1]) ? $this->getName() : $args[1];
+        } else
+            throw new Exception('<b>Fatal Error:</b> Missing configuration details to connect to database');
+    }
+
+    /**
+    * @param string $connectionString
+    * @throws Exception If vendor specifics not provided.
+    */
+    public function parseConnectionString(string $connectionString, array $check_for) {
+        $params = explode(";", $connectionString);
+
+        if (count($params) === 1) { // Attempt to explode on a space if no ';' are found.
+            $params = explode(" ", $connectionString);
+        }
+
+        foreach ($params as $param) {
+            list($key, $value) = array_map("trim", explode("=", $param, 2) + [1 => null]);
+
+            if (isset(KEY_MAP[$key])) {
+                $key = KEY_MAP[$key];
+            }
+
+            if (!in_array($key, ALLOWED_KEYS, true)) {
+                throw new Exception("Invalid key in connection string: " . $key);
+            }
+
+            $this->{$key} = $value;
+        }
+
+        foreach ($check_for as $must_have) {
+            if(!isset($this->{$must_have}))
+                throw new Exception("Required parameters ".$must_have." need to be passed in connection string");
+        }
+
+        return true;
     }
 }

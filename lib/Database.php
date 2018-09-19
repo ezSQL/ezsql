@@ -28,7 +28,7 @@ use ezsql\Database\ez_sqlsrv;
 use ezsql\Database\ez_pgsql;
 use ezsql\Database\ez_pdo;
 use ezsql\Database\ez_sqlite3;
-use const ezsql\Constants\_DATABASES as VENDOR;
+use const ezsql\Constants\VENDOR as VENDOR;
 
 class Database extends ezInjector
 {
