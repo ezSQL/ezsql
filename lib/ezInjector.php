@@ -24,7 +24,8 @@ namespace ezsql\ezInjector;
 use Psr\Container\ContainerInterface;
 
 /**
- * Dependency Injection Container 
+ * Dependency Injection Container
+ * 
  * @see https://gist.github.com/MustafaMagdi/2bb27aebf6ab078b1f3e5635c0282fac
  */
 class ezInjector implements ContainerInterface
@@ -47,24 +48,67 @@ class ezInjector implements ContainerInterface
 	}
 
 	/**
+	 * For compatibility with other containers, same as set()
+	 */
+	public function register($abstract, $concrete = NULL)
+	{
+		$this->set($abstract, $concrete);
+	}
+	
+	/** 
+	 * Execute with any dependencies
+	 * 
+	 * @param		$abstract
+	 * @param array $values
+	 *
+	 * @return mixed
+	 * @throws Exception
+	 */
+	public function call($abstract, $values = [])
+	{		
+		$concrete = $this->instances[$abstract];
+		if ($concrete instanceof Closure) {
+			return $concrete($this, $values);
+		} else
+			throw new Exception("{$concrete} is not callable");
+	}
+
+	/**
+	 * @param       $abstract
+	 * @param array $values
+	 *
+	 * @return null|object
+	 * @throws Exception
+	 */
+	public function get($abstract)
+	{
+		if (!$this->has($abstract)) {
+			throw new Exception("{$abstract} does not exists");
+		}
+		return $this->instances[$abstract];
+	}
+
+	/**
+	 * Auto setup, execute, or resolve any dependencies.
+	 * 
 	 * @param       $abstract
 	 * @param array $values
 	 *
 	 * @return mixed|null|object
 	 * @throws Exception
 	 */
-	public function get($abstract, $values = [])
+	public function autowire($abstract, $values = [])
 	{
 		// if we don't have it, just register it
 		if (!$this->has($abstract)) {
 			$this->set($abstract);
 		}
-		// Auto load any dependencies
+
 		return $this->resolve($this->instances[$abstract], $values);
 	}
 
 	/**
-	 * Do we have it
+	 * Do we have dependence
 	 * @param       $abstract
      * @return bool
      */
@@ -74,7 +118,7 @@ class ezInjector implements ContainerInterface
 	}
 	
 	/**
-	 * resolve single
+	 * resolve single dependence
 	 *
 	 * @param $concrete
 	 * @param $values
