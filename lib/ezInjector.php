@@ -67,10 +67,10 @@ class ezInjector implements ContainerInterface
 	public function call($abstract, $values = [])
 	{		
 		$concrete = $this->instances[$abstract];
-		if ($concrete instanceof Closure) {
+		if ($concrete instanceof \Closure) {
 			return $concrete($this, $values);
 		} else
-			throw new Exception("{$concrete} is not callable");
+			throw new \Exception("{$concrete} is not callable");
 	}
 
 	/**
@@ -83,7 +83,7 @@ class ezInjector implements ContainerInterface
 	public function get($abstract)
 	{
 		if (!$this->has($abstract)) {
-			throw new Exception("{$abstract} does not exists");
+			throw new \Exception("{$abstract} does not exists");
 		}
 		return $this->instances[$abstract];
 	}
@@ -128,14 +128,14 @@ class ezInjector implements ContainerInterface
 	 */
 	public function resolve($concrete, $values = [])
 	{
-		if ($concrete instanceof Closure) {
+		if ($concrete instanceof \Closure) {
 			return $concrete($this, $values);
 		}
 
 		$reflector = new ReflectionClass($concrete);
 		// check if class is instantiable
 		if (!$reflector->isInstantiable()) {
-			throw new Exception("Class {$concrete} is not instantiable");
+			throw new \Exception("Class {$concrete} is not instantiable");
 		}
 
 		// get class constructor
@@ -178,7 +178,7 @@ class ezInjector implements ContainerInterface
 					// get default value of parameter
 					$dependencies[] = $parameter->getDefaultValue();			  
 				  } else {			  
-					throw new Exception("Can not resolve class dependency {$parameter->name}");			  
+					throw new \Exception("Can not resolve class dependency {$parameter->name}");			  
 				  }			  
 				}							  
 			} else {			  
