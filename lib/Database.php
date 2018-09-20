@@ -64,7 +64,7 @@ class Database extends ezInjector
             $key = self::$database->getDriver();
             $value = VENDOR[$key];
             if (empty($GLOBALS['db_'.$key]))
-                $GLOBALS['db_'.$key] = self::get( $value, self::$database);                
+                $GLOBALS['db_'.$key] = self::autowire( $value, self::$database);                
             return $GLOBALS['db_'.$key];
         }
     }
