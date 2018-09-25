@@ -82,7 +82,7 @@ class ezSQL_sqlsrvTest extends TestCase {
      * This method is called after a test is executed.
      */
     protected function tearDown() {
-        $this->object->query('DROP TABLE unit_test');
+        $this->object->query('DROP TABLE IF EXISTS unit_test');
         $this->object = null;
     } // tearDown
 
