@@ -81,9 +81,15 @@
 
     /**
      * Function called
-     * @public string
+     * @private string
      */
-    private $func_call;
+    private $func_call; 
+
+	/**
+     * All functions called
+     * @private array 
+     */
+    private $all_func_calls = array();
 
 		// == TJH == default now needed for echo of debug function
 		public $debug_echo_is_on = true;
@@ -91,7 +97,6 @@
 		/**********************************************************************
 		*  Constructor
 		*/
-
 		function __construct()
 		{
             parent::__construct();
@@ -101,7 +106,6 @@
 		*  Get host and port from an "host:port" notation.
 		*  Returns array of host and port. If port is omitted, returns $default
 		*/
-
 		function get_host_port( $host, $default = false )
 		{
 			$port = $default;
@@ -115,7 +119,6 @@
 		/**********************************************************************
 		*  Print SQL/DB error - over-ridden by specific DB class
 		*/
-
 		function register_error($err_str)
 		{
 			// Keep track of last error
@@ -132,7 +135,6 @@
 		/**********************************************************************
 		*  Turn error handling on or off..
 		*/
-
 		function show_errors()
 		{
 			$this->show_errors = true;
@@ -146,7 +148,6 @@
 		/**********************************************************************
 		*  Kill cached query results
 		*/
-
 		function flush()
 		{
 			// Get rid of these
@@ -158,14 +159,25 @@
 		}
 
 		/**********************************************************************
-		*  Get one variable from the DB - see docs for more detail
+		* Log how the query function was called
+		* @param string
 		*/
+		function log_query($query)
+		{
+			// Log how the last function was called
+			$this->func_call = $query;
+			
+			// Keep an running Log of all functions called
+			array_push($this->all_func_calls, $this->func_call);
+		}
 
+		/**********************************************************************
+		* Get one variable from the DB - see docs for more detail
+		*/
 		function get_var($query=null,$x=0,$y=0, $use_prepare=false)
 		{
-
 			// Log how the function was called
-			$this->func_call = "\$db->get_var(\"$query\",$x,$y)";
+			$this->log_query("\$db->get_var(\"$query\",$x,$y)");
 
 			// If there is a query then perform it if not then use cached results..
 			if ( $query)
@@ -178,7 +190,7 @@
 			{
 				$values = array_values(get_object_vars($this->last_result[$y]));
 			}
-
+			
 			// If there is a value return it else return null
 			return (isset($values[$x]) && $values[$x]!=='')?$values[$x]:null;
 		}
@@ -186,12 +198,10 @@
 		/**********************************************************************
 		*  Get one row from the DB - see docs for more detail
 		*/
-
 		function get_row($query=null,$output=OBJECT,$y=0, $use_prepare=false)
 		{
-
 			// Log how the function was called
-			$this->func_call = "\$db->get_row(\"$query\",$output,$y)";
+			$this->log_query("\$db->get_row(\"$query\",$output,$y)");
 
 			// If there is a query then perform it if not then use cached results..
 			if ( $query )
@@ -219,7 +229,6 @@
 			{
 				$this->show_errors ? trigger_error(" \$db->get_row(string query, output type, int offset) -- Output type must be one of: OBJECT, ARRAY_A, ARRAY_N",E_USER_WARNING) : null;
 			}
-
 		}
 
 		/**********************************************************************
@@ -253,7 +262,7 @@
 		*/
 		function get_results($query=null, $output = OBJECT, $use_prepare=false) {
 			// Log how the function was called
-			$this->func_call = "\$db->get_results(\"$query\", $output, $use_prepare)";
+			$this->log_query("\$db->get_results(\"$query\", $output, $use_prepare)");
 
 			// If there is a query then perform it if not then use cached results..
 			if ( $query ) {
@@ -285,10 +294,8 @@
 		*  Function to get column meta data info pertaining to the last query
 		* see docs for more info and usage
 		*/
-
 		function get_col_info($info_type="name",$col_offset=-1)
 		{
-
 			if ( $this->col_info )
 			{
 				if ( $col_offset == -1 )
@@ -305,18 +312,14 @@
 				{
 					return $this->col_info[$col_offset]->{$info_type};
 				}
-
 			}
-
 		}
 
 		/**********************************************************************
 		*  store_cache
 		*/
-
 		function store_cache($query,$is_insert)
 		{
-
 			// The would be cache file for this query
 			$cache_file = $this->cache_dir.'/'.md5($query);
 
@@ -343,16 +346,13 @@
 						unlink($cache_file . ".updating");
 				}
 			}
-
 		}
 
 		/**********************************************************************
 		*  get_cache
 		*/
-
 		function get_cache($query)
 		{
-
 			// The would be cache file for this query
 			$cache_file = $this->cache_dir.'/'.md5($query);
 
@@ -381,18 +381,15 @@
 					return $result_cache['return_value'];
 				}
 			}
-
 		}
 
 		/**********************************************************************
 		*  Dumps the contents of any input variable to screen in a nicely
 		*  formatted and easy to understand way - any type: Object, public or Array
 		*/
-
 		function vardump($mixed='')
 		{
-
-			// Start outup buffering
+			// Start output buffering
 			ob_start();
 
 			echo "<p><table><tr><td bgcolor=ffffff><blockquote><font color=000090>";
@@ -408,7 +405,15 @@
 			echo "\n\n<b>Type:</b> " . ucfirst($var_type) . "\n";
 			echo "<b>Last Query</b> [$this->num_queries]<b>:</b> ".($this->last_query?$this->last_query:"NULL")."\n";
 			echo "<b>Last Function Call:</b> " . ($this->func_call?$this->func_call:"None")."\n";
-			echo "<b>Last Rows Returned:</b> ".count($this->last_result)."\n";
+			
+			if (count($this->all_func_calls)>1)
+			{
+				echo "<b>List of All Function Calls:</b><br>"; 
+				foreach($this->all_func_calls as $func_string)
+					echo "  " . $func_string ."<br>\n";
+			}
+			
+			echo "<b>Last Rows Returned:</b> ".(count($this->last_result)>0 ? $this->last_result : '')."\n";
 			echo "</font></pre></font></blockquote></td></tr></table>".$this->donation();
 			echo "\n<hr size=1 noshade color=dddddd>";
 
@@ -422,16 +427,13 @@
 				echo $html;
 			}
 
-			$this->vardump_called = true;
-
+			$this->vardump_called = true;			
 			return $html;
-
 		}
 
 		/**********************************************************************
 		*  Alias for the above function
 		*/
-
 		function dumpvar($mixed)
 		{
 			return $this->vardump($mixed);
@@ -442,10 +444,8 @@
 		* table listing results (if there were any).
 		* (abstracted into a seperate file to save server overhead).
 		*/
-
 		function debug($print_to_screen=true)
 		{
-
 			// Start outup buffering
 			ob_start();
 
@@ -469,19 +469,15 @@
 
 			echo "<font face=arial size=2 color=000099><b>Query</b> [$this->num_queries] <b>--</b> ";
 			echo "[<font color=000000><b>$this->last_query</b></font>]</font><p>";
-
-				echo "<font face=arial size=2 color=000099><b>Query Result..</b></font>";
-				echo "<blockquote>";
+			echo "<font face=arial size=2 color=000099><b>Query Result..</b></font>";
+			echo "<blockquote>";
 
 			if ( $this->col_info )
 			{
-
 				// =====================================================
 				// Results top rows
-
 				echo "<table cellpadding=5 cellspacing=1 bgcolor=555555>";
 				echo "<tr bgcolor=eeeeee><td nowrap valign=bottom><font color=555599 face=arial size=2><b>(row)</b></font></td>";
-
 
 				for ( $i=0, $j=count($this->col_info); $i < $j; $i++ )
 				{
@@ -495,40 +491,31 @@
 					}
 					echo "</font><br><span style='font-family: arial; font-size: 10pt; font-weight: bold;'>{$this->col_info[$i]->name}</span></td>";
 				}
-
 				echo "</tr>";
 
 				// ======================================================
 				// print main results
-
-			if ( $this->last_result )
-			{
-
-				$i=0;
-				foreach ( $this->get_results(null,ARRAY_N) as $one_row )
+				if ( $this->last_result )
 				{
-					$i++;
-					echo "<tr bgcolor=ffffff><td bgcolor=eeeeee nowrap align=middle><font size=2 color=555599 face=arial>$i</font></td>";
-
-					foreach ( $one_row as $item )
+					$i=0;
+					foreach ( $this->get_results(null,ARRAY_N) as $one_row )
 					{
-						echo "<td nowrap><font face=arial size=2>$item</font></td>";
+						$i++;
+						echo "<tr bgcolor=ffffff><td bgcolor=eeeeee nowrap align=middle><font size=2 color=555599 face=arial>$i</font></td>";
+
+						foreach ( $one_row as $item )
+						{
+							echo "<td nowrap><font face=arial size=2>$item</font></td>";
+						}
+						echo "</tr>";
 					}
-
-					echo "</tr>";
+				// if last result
+				} else {
+					echo "<tr bgcolor=ffffff><td colspan=".(count($this->col_info)+1)."><font face=arial size=2>No Results</font></td></tr>";
 				}
-
-			} // if last result
-			else
-			{
-				echo "<tr bgcolor=ffffff><td colspan=".(count($this->col_info)+1)."><font face=arial size=2>No Results</font></td></tr>";
-			}
-
-			echo "</table>";
-
-			} // if col_info
-			else
-			{
+				echo "</table>";
+			// if col_info
+			} else {
 				echo "<font face=arial size=2>No Results</font>";
 			}
 
@@ -545,15 +532,12 @@
 			}
 
 			$this->debug_called = true;
-
 			return $html;
-
 		}
 
 		/**********************************************************************
 		*  Naughty little function to ask for some remuniration!
 		*/
-
 		function donation()
 		{
 			return "<font size=1 face=arial color=000000>If ezSQL has helped <a href=\"https://www.paypal.com/xclick/business=justin%40justinvincent.com&item_name=ezSQL&no_note=1&tax=0\" style=\"color: 0000CC;\">make a donation!?</a> &nbsp;&nbsp;<!--[ go on! you know you want to! ]--></font>";
@@ -562,7 +546,6 @@
 		/**********************************************************************
 		*  Timer related functions
 		*/
-
 		function timer_get_cur()
 		{
 			list($usec, $sec) = explode(" ",microtime());
@@ -589,7 +572,6 @@
 					'time' => $this->timer_elapsed($timer_name)
 				);
 			}
-
 			$this->total_query_time += $this->timer_elapsed($timer_name);
 		}
 
@@ -610,7 +592,6 @@
 		*
 		*     login = 'jv', email = 'jv@vip.ie', user_id = 1, created = NOW()
 		*/
-
 		function get_set($params)
 		{
 			if( !is_array( $params ) )
@@ -635,7 +616,6 @@
 						$sql[] = "$field = '".$this->escape( $val )."'";
 				}
 			}
-
 			return implode( ', ' , $sql );
 		}
 

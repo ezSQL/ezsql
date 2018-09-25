@@ -361,7 +361,7 @@ class ezSQL_mysqli extends ezSQLcore
         $query = trim($query);
 
         // Log how the function was called
-        $this->func_call = "\$db->query(\"$query\")";
+        $this->log_query("\$db->query(\"$query\")");
 
         // Keep track of the last query for debug..
         $this->last_query = $query;
