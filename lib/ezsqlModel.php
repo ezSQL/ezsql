@@ -1,30 +1,30 @@
 <?php
 	/**
-	* @author	Justin Vincent (jv@vip.ie)
-	* @author	Stefanie Janine Stoelting <mail@stefanie-stoelting.de>
-	* @contributor	Lawrence Stubbs <technoexpressnet@gmail.com>
-	* @web	http://justinvincent.com
-	* @name	ezSQL
-	* @desc	ezsqlModel - database abstraction library to make
+	* ezsqlModel - database abstraction library to make
 	*          it very easy to deal with databases. ezsqlModel can not be used by
-	*          itself (it is designed for use by database specific modules).	*
+	*          itself (it is designed for use by database specific modules).
+	* @author Justin Vincent (jv@vip.ie)
+	* @author Stefanie Janine Stoelting <mail@stefanie-stoelting.de>
+	* @contributor Lawrence Stubbs <technoexpressnet@gmail.com>
+	* @link	http://justinvincent.com
+	* @package ezsqlModel
 	*/
 	namespace ezsql\ezsqlModel;
+
 	use ezsql\ezFunctions;
 	use ezsql\ezQuery;
 
-
-	/**********************************************************************
-	*  ezsqlModel Constants
+	/**
+	* ezsqlModel Constants
 	*/
 	defined('EZSQL_VERSION') or define('EZSQL_VERSION', '4.0.0');
 	defined('OBJECT') or define('OBJECT', 'OBJECT');
 	defined('ARRAY_A') or define('ARRAY_A', 'ARRAY_A');
 	defined('ARRAY_N') or define('ARRAY_N', 'ARRAY_N');
 
-	/**********************************************************************
-	*  Core class containing common functions to manipulate query result
-	*  sets once returned
+	/**
+	* Core class containing common functions to manipulate query result
+	* sets once returned
 	*/	
 	class ezsqlModel extends ezQuery
 	{		    
@@ -54,32 +54,32 @@
 		public $insert_id        = null;
 		
     /**
-     * Whether the database connection is established, or not
-     * @public boolean Default is false
-     */
+	* Whether the database connection is established, or not
+	* @public boolean Default is false
+	*/
     protected $_connected = false;    
     /**
-     * Contains the number of affected rows of a query
-     * @public int Default is 0
-     */
+	* Contains the number of affected rows of a query
+	* @public int Default is 0
+	*/
     protected $_affectedRows = 0;
 
     /**
-     * The last query result
-     * @public object Default is null
-     */
+	* The last query result
+	* @public object Default is null
+	*/
     public $last_result = null;
 
     /**
-     * Get data from disk cache
-     * @public boolean Default is false
-     */
+	* Get data from disk cache
+	* @public boolean Default is false
+	*/
 	public $from_disk_cache = false;
 	
     /**
-     * Database connection
-     * @var resource
-     */
+	* Database connection
+	* @var resource
+	*/
 	public $dbh;
 	
 	/**
@@ -89,25 +89,31 @@
 	public $show_errors = true;
 
     /**
-     * Function called
-     * @public string
-     */
+	* Function called
+	* @private string
+	*/
     private $func_call;
 
+	/**
+	* All functions called
+	* @private array 
+	*/
+	private static $all_func_calls = array();
+	
 	// == TJH == default now needed for echo of debug function
 	public $debug_echo_is_on = true;
 
-		/**********************************************************************
-		*  Constructor
+		/**
+		* Constructor
 		*/
 		function __construct()
 		{
             parent::__construct();
 		}
 
-		/**********************************************************************
-		*  Get host and port from an "host:port" notation.
-		*  Returns array of host and port. If port is omitted, returns $default
+		/**
+		* Get host and port from an "host:port" notation.
+		* @return array of host and port. If port is omitted, returns $default
 		*/
 		function get_host_port( $host, $default = false )
 		{
@@ -119,8 +125,8 @@
 			return array( $host, $port );
 		}
 
-		/**********************************************************************
-		*  Print SQL/DB error - over-ridden by specific DB class
+		/**
+		* Print SQL/DB error - over-ridden by specific DB class
 		*/
 		function register_error($err_str)
 		{
@@ -135,8 +141,8 @@
 			);
 		}
 
-		/**********************************************************************
-		*  Turn error handling on or off..
+		/**
+		* Turn error handling on or off..
 		*/
 		function show_errors()
 		{
@@ -148,10 +154,9 @@
 			$this->show_errors = false;
 		}
 
-		/**********************************************************************
-		*  Kill cached query results
+		/**
+		* Kill cached query results
 		*/
-
 		function flush()
 		{
 			// Get rid of these
@@ -162,14 +167,27 @@
             $this->setParamaters();
 		}
 
-		/**********************************************************************
-		*  Get one variable from the DB - see docs for more detail
+		/**
+		* Log how the query function was called
+		* @param string
+		*/
+		function log_query(string $query)
+		{
+			// Log how the last function was called
+			$this->func_call = $query;
+			
+			// Keep an running Log of all functions called
+			array_push($this->all_func_calls, $this->func_call);
+		}
+
+		/**
+		* Get one variable from the DB - see docs for more detail
 		*/
 		function get_var($query=null,$x=0,$y=0, $use_prepare=false)
 		{
 
 			// Log how the function was called
-			$this->func_call = "\$db->get_var(\"$query\",$x,$y)";
+			$this->log_query("\$db->get_var(\"$query\",$x,$y)");
 
 			// If there is a query then perform it if not then use cached results..
 			if ( $query)
@@ -187,14 +205,14 @@
 			return (isset($values[$x]) && $values[$x]!=='')?$values[$x]:null;
 		}
 
-		/**********************************************************************
-		*  Get one row from the DB - see docs for more detail
+		/**
+		* Get one row from the DB - see docs for more detail
 		*/
 		function get_row($query=null,$output=OBJECT,$y=0, $use_prepare=false)
 		{
 
 			// Log how the function was called
-			$this->func_call = "\$db->get_row(\"$query\",$output,$y)";
+			$this->log_query("\$db->get_row(\"$query\",$output,$y)");
 
 			// If there is a query then perform it if not then use cached results..
 			if ( $query )
@@ -225,9 +243,9 @@
 
 		}
 
-		/**********************************************************************
-		*  Function to get 1 column from the cached result set based in X index
-		*  see docs for usage and info
+		/**
+		* Function to get 1 column from the cached result set based in X index
+		* see docs for usage and info
 		*/
 		function get_col($query=null,$x=0, $use_prepare=false)
 		{
@@ -250,12 +268,12 @@
 			return $new_array;
 		}
 
-		/**********************************************************************
-		*  Return the the query as a result set, will use prepare statements if setup - see docs for more details
+		/**
+		* Return the the query as a result set, will use prepare statements if setup - see docs for more details
 		*/
 		function get_results($query=null, $output = OBJECT, $use_prepare=false) {
 			// Log how the function was called
-			$this->func_call = "\$db->get_results(\"$query\", $output, $use_prepare)";
+			$this->log_query("\$db->get_results(\"$query\", $output, $use_prepare)");
 
 			// If there is a query then perform it if not then use cached results..
 			if ( $query ) {
@@ -283,8 +301,8 @@
 			}
 		}
 					
-		/**********************************************************************
-		*  Function to get column meta data info pertaining to the last query
+		/**
+		* Function to get column meta data info pertaining to the last query
 		* see docs for more info and usage
 		*/
 		function get_col_info($info_type="name", $col_offset=-1)
@@ -308,8 +326,8 @@
 			}
 		}
 
-		/**********************************************************************
-		*  store_cache
+		/**
+		* store_cache
 		*/
 		function store_cache(string $query, $is_insert)
 		{
@@ -341,8 +359,8 @@
 			}
 		}
 
-		/**********************************************************************
-		*  get_cache
+		/**
+		* get_cache
 		*/
 		function get_cache(string $query)
 		{
@@ -376,9 +394,9 @@
 			}
 		}
 
-		/**********************************************************************
-		*  Dumps the contents of any input variable to screen in a nicely
-		*  formatted and easy to understand way - any type: Object, public or Array
+		/**
+		* Dumps the contents of any input variable to screen in a nicely
+		* formatted and easy to understand way - any type: Object, public or Array
 		*/
 		function vardump($mixed='')
 		{
@@ -398,7 +416,15 @@
 			echo "\n\n<b>Type:</b> " . ucfirst($var_type) . "\n";
 			echo "<b>Last Query</b> [$this->num_queries]<b>:</b> ".($this->last_query?$this->last_query:"NULL")."\n";
 			echo "<b>Last Function Call:</b> " . ($this->func_call?$this->func_call:"None")."\n";
-			echo "<b>Last Rows Returned:</b> ".count($this->last_result)."\n";
+			
+			if (count($this->all_func_calls)>1)
+			{
+				echo "<b>List of All Function Calls:</b><br>"; 
+				foreach($this->all_func_calls as $func_string)
+					echo "  " . $func_string ."<br>\n";
+			}
+			
+			echo "<b>Last Rows Returned:</b> ".(count($this->last_result)>0 ? $this->last_result : '')."\n";
 			echo "</font></pre></font></blockquote></td></tr></table>".$this->donation();
 			echo "\n<hr size=1 noshade color=dddddd>";
 
@@ -417,7 +443,7 @@
 			return $html;
 		}
 
-		/**********************************************************************
+		/**
 		*  Alias for the above function
 		*/
 		function dumpvar($mixed)
@@ -425,8 +451,8 @@
 			return $this->vardump($mixed);
 		}
 
-		/**********************************************************************
-		*  Displays the last query string that was sent to the database & a
+		/**
+		* Displays the last query string that was sent to the database & a
 		* table listing results (if there were any).
 		* (abstracted into a seperate file to save server overhead).
 		*/
@@ -530,16 +556,16 @@
 			return $html;
 		}
 
-		/**********************************************************************
-		*  Naughty little function to ask for some remuneration!
+		/**
+		* Naughty little function to ask for some remuneration!
 		*/
 		function donation()
 		{
 			return "<font size=1 face=arial color=000000>If ezSQL has helped <a href=\"https://www.paypal.com/xclick/business=justin%40justinvincent.com&item_name=ezSQL&no_note=1&tax=0\" style=\"color: 0000CC;\">make a donation!?</a> &nbsp;&nbsp;<!--[ go on! you know you want to! ]--></font>";
 		}
 
-		/**********************************************************************
-		*  Timer related functions
+		/**
+		* Timer related functions
 		*/
 		function timer_get_cur()
 		{
@@ -567,11 +593,10 @@
 					'time' => $this->timer_elapsed($timer_name)
 				);
 			}
-
 			$this->total_query_time += $this->timer_elapsed($timer_name);
 		}
 
-		/**********************************************************************
+		/**
 		* Creates a SET nvp sql string from an associative array (and escapes all values)
 		*
 		*  Usage:
@@ -684,6 +709,5 @@
         $replace = array("\\\\","\\0","\\n", "\\r", "\'", '\"', "\\Z");
 
         return str_replace($search, $replace, $data);
-	}
-        
+	}        
 } // ezsqlModel

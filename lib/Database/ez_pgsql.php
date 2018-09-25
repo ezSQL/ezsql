@@ -1,7 +1,7 @@
 <?php
 	/**
 	* ezSQL Database specific class - PostgreSQL
-	* Desc..: PostgreSQL component (part of ezSQL databse abstraction library)
+	* PostgreSQL component (part of ezSQL databse abstraction library)
 	*
 	* @author  Justin Vincent (jv@jvmultimedia.com)
 	* @author  Stefanie Janine Stoelting <mail@stefanie-stoelting.de>
@@ -18,8 +18,8 @@
 
 	final class ez_pgsql extends ezsqlModel
 	{		
-        /**********************************************************************
-		*  ezSQL error strings - PostgreSQL
+        /**
+		* ezSQL error strings - PostgreSQL
 		*/
 		private $_ezsql_postgresql_str = array
 			(
@@ -40,8 +40,10 @@
 		 */
 		private $database;
 
-		public function __construct(Configuration $settings) {
-			if (empty($settings) || (!$settings instanceof Configuration)) {
+		public function __construct(Configuration $settings) 
+		{
+			if (empty($settings) || (!$settings instanceof Configuration))
+			{
 				throw new Exception('<b>Fatal Error:</b> Missing configuration details to connect to database');
 			}
 			parent::__construct();
@@ -64,12 +66,13 @@
 		*		  Default is PostgreSQL default port 5432
 		* @return boolean
 		*/
-		function quick_connect($dbuser='', $dbpassword='', $dbname='', $dbhost='localhost', $dbport='5432') {
+		function quick_connect($dbuser='', $dbpassword='', $dbname='', $dbhost='localhost', $dbport='5432')
+		{
 			if ( ! $this->connect($dbuser, $dbpassword, $dbname, $dbhost, $dbport, true) ) ;						
 			return $this->_connected;
 		} // quick_connect
 
-		/**********************************************************************
+		/**
 		* Try to connect to PostgreSQL database server
 		*
 		* @param string $dbuser The database user name
@@ -81,7 +84,8 @@
 		*						Default is PostgreSQL default port 5432
 		* @return boolean
 		*/
-		public function connect($dbuser='', $dbpassword='', $dbname='', $dbhost='localhost', $dbport='5432') {
+		public function connect($dbuser='', $dbpassword='', $dbname='', $dbhost='localhost', $dbport='5432') 
+		{
 			$this->_connected = false;
 						
 			$user = empty($dbuser) ? $this->database->getUser() : $dbuser;
@@ -114,7 +118,8 @@
 		* @param string $str
 		* @return string
 		*/
-		public function escape($str) {
+		public function escape($str) 
+		{
 			return pg_escape_string(stripslashes($str));
 		} // escape
 
@@ -124,17 +129,18 @@
 		*
 		* @return string
 		*/
-		public function sysdate() {
+		public function sysdate() 
+		{
 			return 'NOW()';
 		} // sysdate
 
 		/**
-		* Return PostgreSQL specific values: Return all tables of the current
-		* schema
+		* Return PostgreSQL specific values: Return all tables of the current schema
 		*
 		* @return string
 		*/
-		public function showTables() {
+		public function showTables() 
+		{
 			return "SELECT table_name FROM information_schema.tables WHERE table_schema = '$this->database->db' AND table_type='BASE TABLE'";
 		} // showTables
 
@@ -144,7 +150,8 @@
 		* @param string $tbl_name The table name
 		* @return string
 		*/
-		public function descTable($tbl_name) {
+		public function descTable($tbl_name) 
+		{
 			return "SELECT ordinal_position, column_name, data_type, column_default, is_nullable, character_maximum_length, numeric_precision FROM information_schema.columns WHERE table_name = '$tbl_name' AND table_schema='$this->database->db' ORDER BY ordinal_position";
 		} // descTable
 
@@ -153,21 +160,19 @@
 		*
 		* @return string
 		*/
-		public function showDatabases() {
+		public function showDatabases() 
+		{
 			return "SELECT datname FROM pg_database WHERE datname NOT IN ('template0', 'template1') ORDER BY 1";
 		} // showDatabases
 
 		/**
 		* Perform PostgreSQL query and try to determine result value
-		*
-		* @param string $query
-		* @return boolean
+		*	
+		* @param string
+		* @param bool
+		* @return object 
 		*/
-		/**********************************************************************
-		*  Perform PostgreSQL query and try to determine result value
-		*/
-
-		function query($query, $use_prepare=false)
+		function query(string $query, $use_prepare=false)
 		{
             if ($use_prepare)
                 $param = &$this->getParamaters();
@@ -194,7 +199,7 @@
 			$query = trim($query);
 
 			// Log how the function was called
-			$this->func_call = "\$db->query(\"$query\")";
+			$this->log_query("\$db->query(\"$query\")");
 
 			// Keep track of the last query for debug..
 			$this->last_query = $query;
@@ -219,7 +224,8 @@
 			}
             
 			// Perform the query via std postgresql_query function..
-			if (!empty($param) && is_array($param) && ($this->getPrepare())){
+			if (!empty($param) && is_array($param) && ($this->getPrepare()))
+			{
 				$this->result = @pg_query_params($this->dbh, $query, $param);		
 				$this->setParamaters();				
 			} else 
@@ -263,39 +269,34 @@
 					}
 					$return_val = $return_valx;
 				}
-			}
-			// Query was a select
-			else
-			{ 
+			// Query was a select	
+			} else { 
 				$num_rows=0;
 				if ( $this->result )	//may be needed but my tests did not
-				{	
-							
-				// =======================================================
-				// Take note of column info
+				{								
+					// Take note of column info
+					$i=0;
+					while ($i < @pg_num_fields($this->result))
+						{
+							$this->col_info[$i]->name = pg_field_name($this->result,$i);
+							$this->col_info[$i]->type = pg_field_type($this->result,$i);
+							$this->col_info[$i]->size = pg_field_size($this->result,$i);
+							$i++;
+						}
 
-				$i=0;
-				while ($i < @pg_num_fields($this->result))
-					{
-						$this->col_info[$i]->name = pg_field_name($this->result,$i);
-						$this->col_info[$i]->type = pg_field_type($this->result,$i);
-						$this->col_info[$i]->size = pg_field_size($this->result,$i);
-						$i++;
-					}
+					/**
+					 * Store Query Results 
+					 * while ( $row = @pg_fetch_object($this->result, $i, PGSQL_ASSOC) ) doesn't work? donno
+					 * while ( $row = @pg_fetch_object($this->result,$num_rows) ) does work
+					 */
+					while ( $row = @pg_fetch_object($this->result) )
+						{
+							// Store results as an objects within main array
+							$this->last_result[$num_rows] = $row ;
+							$num_rows++;
+						}
 
-				// =======================================================
-				// Store Query Results
-
-				//while ( $row = @pg_fetch_object($this->result, $i, PGSQL_ASSOC) ) doesn't work? donno
-				//while ( $row = @pg_fetch_object($this->result,$num_rows) ) does work
-				while ( $row = @pg_fetch_object($this->result) )
-					{
-						// Store results as an objects within main array
-						$this->last_result[$num_rows] = $row ;
-						$num_rows++;
-					}
-
-				@pg_free_result($this->result);
+					@pg_free_result($this->result);
 				}
 				// Log number of rows the query returned
 				$this->num_rows = $num_rows;
@@ -317,7 +318,8 @@
 		/**
 		* Close the database connection
 		*/
-		public function disconnect() {
+		public function disconnect() 
+		{
 			if ( $this->dbh ) {
 				pg_close($this->dbh);
 				$this->_connected = false;
@@ -329,8 +331,9 @@
 		*
 		* @return string
 		*/
-		public function getDBHost() {
-			return $this->database->host;
+		public function getDBHost() 
+		{
+			return $this->database->getHost();
 		} // getDBHost
 
 		/**
@@ -338,8 +341,8 @@
 		*
 		* @return string
 		*/
-		public function getPort() {
-			return $this->database->port;
+		public function getPort() 
+		{
+			return $this->database->getPort();
 		} // getPort
-
 	} // ez_pgsql

@@ -1,11 +1,12 @@
 <?php
-	/**********************************************************************
-	*  Author: davisjw (davisjw@gmail.com)
-	*  Contributor:  Lawrence Stubbs <technoexpressnet@gmail.com>
-	*  Web...: http://twitter.com/justinvincent
-	*  Name..: ez_sqlsrv
-	*  Desc..: Microsoft Sql Server component (MS drivers) (part of ezSQL databse abstraction library) - based on ezSql_msSql library class.
+	/**
+	* Microsoft Sql Server component (MS drivers) (part of ezSQL database abstraction library)
+	* based on ez_msSql library class.
 	*
+	* @author davisjw (davisjw@gmail.com)
+	* @contributor  Lawrence Stubbs <technoexpressnet@gmail.com>
+	* @link http://twitter.com/justinvincent
+	* @package ez_sqlsrv
 	*/
 	declare(strict_types=1);
 
@@ -16,8 +17,8 @@
 	final class ez_sqlsrv extends ezsqlModel
 	{
 
-		/**********************************************************************
-		*  ezSQL error strings - sqlsrv
+		/**
+		* ezSQL error strings - sqlsrv
 		*/
 		private $ezsql_sqlsrv_str = array
 		(
@@ -28,8 +29,8 @@
 			5 => 'Unexpected error while trying to select database'
 		);
 		
-		/**********************************************************************
-		*  ezSQL non duplicating data type id's; converting type ids to str
+		/**
+		* ezSQL non duplicating data type id's; converting type ids to str
 		*/		
 		private $ezsql_sqlsrv_type2str_non_dup = array
 		(
@@ -58,7 +59,7 @@
             $GLOBALS['db_'.$this->database->getDriver()] = $this;      
 		}
 
-		/**********************************************************************
+		/**
 		*  Short hand way to connect to sqlsrv database server
 		*  and select a sqlsrv database at the same time
 		*/
@@ -72,7 +73,7 @@
 			return $return_val;
 		}
 
-		/**********************************************************************
+		/**
 		*  Try to connect to sqlsrv database server
 		*/
 		public function connect($dbuser='', $dbpassword='', $dbname='', $dbhost='localhost')
@@ -104,7 +105,7 @@
 			return $return_val;
 		}                
 
-		/**********************************************************************
+		/**
 		*  Return sqlsrv specific system date syntax
 		*  i.e. Oracle: SYSDATE sqlsrv: NOW(), MS-SQL : getDate()
 		*
@@ -117,10 +118,13 @@
 			return "GETDATE()";
 		}
 
-		/**********************************************************************
-		*  Perform sqlsrv query and try to determine result value
+		/**
+		* Perform sqlsrv query and try to determine result value	
+		* @param string
+		* @param bool
+		* @return object 
 		*/
-		public function query($query, $use_prepare=false)
+		public function query(string $query, $use_prepare=false)
 		{
             if ($use_prepare) 
                 $param = &$this->getParamaters();
@@ -143,7 +147,7 @@
 			$query = trim($query);
 
 			// Log how the function was called
-			$this->func_call = "\$db->query(\"$query\")";
+			$this->log_query("\$db->query(\"$query\")");
 
 			// Keep track of the last query for debug..
 			$this->last_query = $query;
@@ -260,19 +264,18 @@
 			return $return_val;
 		}
 
-		/**********************************************************************
-		*  Convert a Query From MySql Syntax to MS-Sql syntax
-		   Following conversions are made:-
-		   1. The '`' character used for MySql queries is not supported - the character is removed.
-		   2. FROM_UNIXTIME method is not supported. The Function is removed.It is replaced with
-		      getDate(). Warning: This logic may not be right.
-		   3. unix_timestamp function is removed.
-		   4. LIMIT keyword is replaced with TOP keyword. Warning: Logic not fully tested.
-
-		   Note: This method is only a small attempt to convert the syntax. There are many aspects which are not covered here.
-		   		This method doesn't at all guarantee complete conversion. Certain queries will still
-		   		not work. e.g. MS SQL requires all columns in Select Clause to be present in 'group by' clause.
-		   		There is no such restriction in MySql.
+		/**
+		* Convert a Query From MySql Syntax to MS-Sql syntax
+		* Following conversions are made:-
+		* 1. The '`' character used for MySql queries is not supported - the character is removed.
+		* 2. FROM_UNIXTIME method is not supported. The Function is removed.It is replaced with
+		*      getDate(). Warning: This logic may not be right.
+		* 3. unix_timestamp function is removed.
+		* 4. LIMIT keyword is replaced with TOP keyword. Warning: Logic not fully tested.
+		* Note: This method is only a small attempt to convert the syntax. There are many aspects which are not covered here.
+		*		This method doesn't at all guarantee complete conversion. Certain queries will still
+		*		not work. e.g. MS SQL requires all columns in Select Clause to be present in 'group by' clause.
+		*		There is no such restriction in MySql.
 		*/
 		public function mySqlto($query)
 		{
@@ -337,7 +340,7 @@
 			return $datatype;
 		}
 
-		/**********************************************************************
+		/**
 		*  Close the active SQLSRV connection
 		*/
 		public function disconnect()

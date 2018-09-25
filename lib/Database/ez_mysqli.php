@@ -1,14 +1,13 @@
 <?php
 /**
  * ezSQL Database specific class - mySQLi
- * Desc..: mySQLi component (part of ezSQL databse abstraction library)
+ * mySQLi component (part of ezSQL database abstraction library)
  *
- * @author  Justin Vincent (jv@jvmultimedia.com)
- * @author  Stefanie Janine Stoelting <mail@stefanie-stoelting.de>
- * @Contributor  Lawrence Stubbs <technoexpressnet@gmail.com>
- * @link    http://twitter.com/justinvincent
- * @name    ez_mysql
- * @package ezSQL
+ * @author Justin Vincent (jv@jvmultimedia.com)
+ * @author Stefanie Janine Stoelting <mail@stefanie-stoelting.de>
+ * @contributor Lawrence Stubbs <technoexpressnet@gmail.com>
+ * @link http://twitter.com/justinvincent
+ * @package ez_mysqli
  * @license FREE / Donation (LGPL - You may do what you like with ezSQL - no exceptions.)
  *
  */
@@ -308,7 +307,7 @@ final class ez_mysqli extends ezsqlModel
         $query = trim($query);
 
         // Log how the function was called
-        $this->func_call = "\$db->query(\"$query\")";
+        $this->log_query("\$db->query(\"$query\")");
 
         // Keep track of the last query for debug..
         $this->last_query = $query;

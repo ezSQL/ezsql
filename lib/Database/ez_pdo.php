@@ -1,16 +1,14 @@
 <?php
 /**
  * ezSQL class - PDO
- * Desc..: PDO component (part of ezSQL databse abstraction library)
+ * PDO component (part of ezSQL database abstraction library)
  *
- * @author  Justin Vincent (jv@jvmultimedia.com)
- * @author  Stefanie Janine Stoelting <mail@stefanie-stoelting.de>
- * @Contributor:  Lawrence Stubbs <technoexpressnet@gmail.com>
- * @link    http://twitter.com/justinvincent
- * @name    ez_pdo
- * @package ezSQL
+ * @author Justin Vincent (jv@jvmultimedia.com)
+ * @author Stefanie Janine Stoelting <mail@stefanie-stoelting.de>
+ * @contributor Lawrence Stubbs <technoexpressnet@gmail.com>
+ * @link http://twitter.com/justinvincent
+ * @package ez_pdo
  * @license FREE / Donation (LGPL - You may do what you like with ezSQL - no exceptions.)
- *
  */
 namespace ezsql\Database\ez_pdo;
 use ezsql\Configuration;
@@ -19,9 +17,9 @@ use ezsql\ezsqlModel;
 final class ez_pdo extends ezsqlModel
 {
     /**
-     * ezSQL error strings - PDO
-     * @var array
-     */
+    * ezSQL error strings - PDO
+    * @var array
+    */
     private $_ezsql_pdo_str = array
         (
             1 => 'Require $dsn and $user and $password to create a connection',
@@ -31,9 +29,9 @@ final class ez_pdo extends ezsqlModel
     protected $preparedvalues = array(); 
 
     /**
-     * Database configuration setting 
-     * @var Configuration instance
-     */
+    * Database configuration setting 
+    * @var Configuration instance
+    */
     private $database;
 
     public function __construct(Configuration $settings) {
@@ -59,22 +57,22 @@ final class ez_pdo extends ezsqlModel
     } // __construct
 
     /**
-     * Try to connect to the database server in the DSN parameters
-     *
-     * @param string $dsn The connection parameter string
-     *                  Default is empty string
-     * @param string $dbuser The database user name
-     *                  Default is empty string
-     * @param string $dbpassword The database password
-     *                  Default is empty string
-     * @param array $options Array for setting connection options as MySQL
-     * charset for example
-     *                  Default is an empty array
-     * @param boolean $isFileBased File based databases like SQLite don't need user and password, 
-     * they work with path in the dsn parameter
-     *                  Default is false
-     * @return boolean
-     */
+    * Try to connect to the database server in the DSN parameters
+    *
+    * @param string $dsn The connection parameter string
+    *                  Default is empty string
+    * @param string $dbuser The database user name
+    *                  Default is empty string
+    * @param string $dbpassword The database password
+    *                  Default is empty string
+    * @param array $options Array for setting connection options as MySQL
+    * charset for example
+    *                  Default is an empty array
+    * @param boolean $isFileBased File based databases like SQLite don't need user and password, 
+    * they work with path in the dsn parameter
+    *                  Default is false
+    * @return boolean
+    */
     public function connect($dsn='', $dbuser='', $dbpassword='', $options=array(), $isFileBased=false) {
         $this->_connected = false;
 
@@ -116,38 +114,38 @@ final class ez_pdo extends ezsqlModel
     } // connect
 
     /**
-     * With PDO it is only an alias for the connect method
-     *
-     * @param string $dsn The connection parameter string
-     *                    Default is empty string
-     * @param string $user The database user name
-     *                     Default is empty string
-     * @param string $password The database password
-     *                         Default is empty string
-     * @param array $options Array for setting connection options as MySQL
-     *                       charset for example
-     *                       Default is an empty array
-     * @param boolean $isFileBased File based databases like SQLite don't need
-     *                             user and password, they work with path in the
-     *                             dsn parameter
-     *                             Default is false
-     * @return boolean
-     */
+    * With PDO it is only an alias for the connect method
+    *
+    * @param string $dsn The connection parameter string
+    *                    Default is empty string
+    * @param string $user The database user name
+    *                     Default is empty string
+    * @param string $password The database password
+    *                         Default is empty string
+    * @param array $options Array for setting connection options as MySQL
+    *                       charset for example
+    *                       Default is an empty array
+    * @param boolean $isFileBased File based databases like SQLite don't need
+    *                             user and password, they work with path in the
+    *                             dsn parameter
+    *                             Default is false
+    * @return boolean
+    */
     public function quick_connect($dsn='', $user='', $password='', $options=array(), $isFileBased=false) {
         return $this->connect($dsn, $user, $password, $options, $isFileBased);
     } // quick_connect
 
-    /**********************************************************************
+    /**
     *  Format a SQLite string correctly for safe SQLite insert
     *  (no mater if magic quotes are on or not)
     */
 
     /**
-     * Escape a string with the PDO method
-     *
-     * @param string $str
-     * @return string
-     */
+    * Escape a string with the PDO method
+    *
+    * @param string $str
+    * @return string
+    */
     public function escape($str) {
         // If there is no existing database connection then try to connect
         if ( ! isset($this->dbh) || ! $this->dbh ) {
@@ -165,20 +163,20 @@ final class ez_pdo extends ezsqlModel
     } // escape
 
     /**
-     * Return SQLite specific system date syntax
-     * i.e. Oracle: SYSDATE Mysql: NOW()
-     *
-     * @return string
-     */
+    * Return SQLite specific system date syntax
+    * i.e. Oracle: SYSDATE Mysql: NOW()
+    *
+    * @return string
+    */
     public function sysdate() {
         return "datetime('now')";
     } // sysdate
 
     /**
-     * Hooks into PDO error system and reports it to user
-     *
-     * @return string
-     */
+    * Hooks into PDO error system and reports it to user
+    *
+    * @return string
+    */
     public function catch_error(){
         $error_str = 'No error info';
 
@@ -199,18 +197,16 @@ final class ez_pdo extends ezsqlModel
 
             return true;
         }
-
-    } // catch_error
-    
+    } // catch_error    
     
     /**
-      * Creates a prepared query, binds the given parameters and returns the result of the executed
-      * @param string $query
-      * @param array $param
-      * @param boolean $isselect - return \PDOStatement if select statement otherwise int
-      * @return bool \ int \PDOStatement 
-      */
-    public function query_prepared($query, $param=null, $isselect=false)
+    * Creates a prepared query, binds the given parameters and returns the result of the executed
+    * @param string $query
+    * @param array $param
+    * @param boolean $isselect - return \PDOStatement if select statement otherwise int
+    * @return bool \ int \PDOStatement 
+    */
+    public function query_prepared(string $query, $param=null, $isselect=false)
     { 
         $stmt = $this->dbh->prepare($query);
         $result = false;
@@ -228,7 +224,8 @@ final class ez_pdo extends ezsqlModel
      * @param type $query
      * @return object
      */
-    public function query($query, $use_prepare=false) {
+    public function query(string $query, $use_prepare=false)
+     {
         if ($use_prepare)
             $param = &$this->getParamaters();
         
@@ -245,7 +242,7 @@ final class ez_pdo extends ezsqlModel
         $this->flush();
 
         // Log how the function was called
-        $this->func_call = "\$db->query(\"$query\")";
+        $this->log_query("\$db->query(\"$query\")");
 
         // Keep track of the last query for debug..
         $this->last_query = $query;
@@ -346,7 +343,6 @@ final class ez_pdo extends ezsqlModel
 
             // Return number of rows selected
             $return_val = $this->num_rows;
-
         }
 
         // disk caching of queries
@@ -376,5 +372,4 @@ final class ez_pdo extends ezsqlModel
             $this->_connected = false;
         }
      } // disconnect
-
 } // ez_pdo

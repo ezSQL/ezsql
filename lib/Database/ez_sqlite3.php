@@ -1,11 +1,11 @@
 <?php
-	/**********************************************************************
-	*  Author: Justin Vincent (jv@jvmultimedia.com) / Silvio Wanka 
-	*  Contributor:  Lawrence Stubbs <technoexpressnet@gmail.com>
-	*  Web...: http://twitter.com/justinvincent
-	*  Name..: ez_sqlite3
-	*  Desc..: SQLite3 component (part of ezSQL databse abstraction library)
-	*
+	/**
+	* SQLite3 component (part of ezSQL database abstraction library
+	* 
+	* @author Justin Vincent (jv@jvmultimedia.com) / Silvio Wanka 
+	* @contributor  Lawrence Stubbs <technoexpressnet@gmail.com>
+	* @link http://twitter.com/justinvincent
+	* @package ez_sqlite3
 	*/
 	declare(strict_types=1);
 	
@@ -15,8 +15,8 @@
 	
 	final class ez_sqlite3 extends ezsqlModel
 	{
-		/**********************************************************************
-		*  ezSQL error strings - SQLite
+		/**
+		* ezSQL error strings - SQLite
 		*/
 		private $ezsql_sqlite3_str = array
 		(
@@ -33,7 +33,7 @@
 		 */
 		private $database;
 
-		/**********************************************************************
+		/**
 		*  Constructor - allow the user to perform a quick connect at the 
 		*  same time as initializing the ez_sqlite3 class
 		*/
@@ -56,10 +56,9 @@
             $GLOBALS['db_'.$this->database->getDriver()] = $this;
 		}
 
-		/**********************************************************************
+		/**
 		*  Try to connect to SQLite database server
 		*/
-
 		function connect($dbpath='', $dbname='')
 		{
             $return_val = false;
@@ -82,18 +81,17 @@
 			return $return_val;			
 		}
 
-		/**********************************************************************
+		/**
 		*  In the case of SQLite quick_connect is not really needed
 		*  because std. connect already does what quick connect does - 
 		*  but for the sake of consistency it has been included
 		*/
-
 		function quick_connect($dbpath='', $dbname='')
 		{
 			return $this->connect($dbpath, $dbname);
 		}
 
-		/**********************************************************************
+		/**
 		*  Format a SQLite string correctly for safe SQLite insert
 		*  (no mater if magic quotes are on or not)
 		*/
@@ -103,7 +101,7 @@
 			return $this->dbh->escapeString(stripslashes(preg_replace("/[\r\n]/",'',$str)));				
 		}
 
-		/**********************************************************************
+		/**
 		*  Return SQLite specific system date syntax 
 		*  i.e. Oracle: SYSDATE Mysql: NOW()
 		*/
@@ -158,14 +156,14 @@
             return $stmt->execute();
         }
     
-		/**********************************************************************
-		*  Perform SQLite query and try to determine result value
+		/**
+		* Perform SQLite query and try to determine result value
+		* Basic Query	- see docs for more detail	
+		* @param string
+		* @param bool
+		* @return object 
 		*/
-
-		// ==================================================================
-		//	Basic Query	- see docs for more detail
-	
-		function query($query, $use_prepare=false)
+		function query(string $query, $use_prepare=false)
         {
             if ($use_prepare)
                 $param = &$this->getParamaters();
@@ -189,7 +187,8 @@
 			$this->last_query = $query;
 
 			// Perform the query via std SQLite3 query or SQLite3 prepare function..
-            if (!empty($param) && is_array($param) && ($this->getPrepare())) {
+			if (!empty($param) && is_array($param) && ($this->getPrepare())) 
+			{
                 $this->result = $this->query_prepared($query, $param);	
 				$this->setParamaters();
             } else 
@@ -219,11 +218,8 @@
 				// Return number of rows affected
 				$return_val = $this->rows_affected;
 	
-			}
 			// Query was an select
-			else
-			{
-				
+			} else {				
 				// Take note of column info	
 				$i=0;
 				$this->col_info = array();
@@ -244,15 +240,13 @@
 					$obj= (object) $row; //convert to object
 					$this->last_result[$num_rows] = $obj;
 					$num_rows++;
-				}
-                
+				}                
 
 				// Log number of rows the query returned
 				$this->num_rows = $num_rows;
 				
 				// Return number of rows selected
-				$return_val = $this->num_rows;
-			
+				$return_val = $this->num_rows;			
 			}
             
             if (($param) && is_array($param) && ($this->getPrepare()))
@@ -261,9 +255,6 @@
 			// If debug ALL queries
 			$this->trace||$this->debug_all ? $this->debug() : null ;
 
-			return $return_val;
-		
+			return $return_val;		
 		}
-
 	}
-
