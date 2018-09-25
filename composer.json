@@ -34,7 +34,8 @@
         }
     },
     "require-dev": {
-        "phpunit/phpunit": ">5.7.0"
+        "phpunit/phpunit": ">5.7.0",
+        "php-coveralls/php-coveralls": "^2.1"
     },
     "scripts": {
         "test": "phpunit --bootstrap vendor/autoload.php tests"
