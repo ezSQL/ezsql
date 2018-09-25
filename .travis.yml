@@ -17,7 +17,7 @@ services:
 # Commands to be run before your environment runs.
 before_script:
   - composer self-update
-  - composer install --dev --no-interaction
+  - composer install --no-interaction
   - mysql -e 'CREATE DATABASE IF NOT EXISTS ez_test;'
   - mysql -e 'GRANT ALL PRIVILEGES ON ez_test.* TO ez_test@localhost;'
   - mysql -e "SET PASSWORD FOR 'ez_test'@'localhost' = PASSWORD('ezTest')"
