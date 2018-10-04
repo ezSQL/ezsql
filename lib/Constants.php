@@ -17,7 +17,7 @@
  * This software consists of voluntary contributions made by many individuals
  * and is licensed under the MIT license.
  */ 
-namespace ezsql\Constants;
+namespace ezsql;
 
     // ezQuery prepare placeholder/positional tag
     const _TAG = '__ez__';

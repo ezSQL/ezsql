@@ -19,7 +19,7 @@
  */
 declare(strict_types=1);
 
-namespace ezsql\Configuration;
+namespace ezsql;
 use ezsql\ConfigAbstract;
 use const ezsql\Constants\VENDOR as VENDOR;
 use const ezsql\Constants\KEY_MAP as KEY_MAP;

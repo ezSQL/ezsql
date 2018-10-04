@@ -10,7 +10,7 @@
 	*/
 	declare(strict_types=1);
 
-	namespace ezsql\Database\ez_sqlsrv;
+	namespace ezsql\Database;
 	use ezsql\Configuration;
 	use ezsql\ezsqlModel;
 

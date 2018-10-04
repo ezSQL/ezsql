@@ -11,7 +11,7 @@
  * @license FREE / Donation (LGPL - You may do what you like with ezSQL - no exceptions.)
  *
  */
-namespace ezsql\Database\ez_mysqli;
+namespace ezsql\Database;
 use ezsql\Configuration;
 use ezsql\ezsqlModel;
 

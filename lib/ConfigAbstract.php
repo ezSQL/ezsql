@@ -19,7 +19,7 @@
  */
 declare(strict_types=1);
 
-namespace ezsql\ConfigAbstract;
+namespace ezsql;
 
 abstract class ConfigAbstract 
 {

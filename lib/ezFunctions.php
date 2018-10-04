@@ -17,7 +17,7 @@
  * This software consists of voluntary contributions made by many individuals
  * and is licensed under the MIT license.
  */ 
-namespace ezsql\ezFunctions;
+namespace ezsql;
 use ezsql\Constants;
                 
     // Global class instances, will be used to create and call methods directly.

@@ -19,7 +19,7 @@
  */
 declare(strict_types=1);
 
-namespace ezsql\ezInjector;
+namespace ezsql;
 
 use Psr\Container\ContainerInterface;
 
@@ -28,7 +28,7 @@ use Psr\Container\ContainerInterface;
  * 
  * @see https://gist.github.com/MustafaMagdi/2bb27aebf6ab078b1f3e5635c0282fac
  */
-class ezInjector implements ContainerInterface
+class DInjector implements ContainerInterface
 {
 	/**
 	 * @var array

@@ -9,7 +9,7 @@
 	* @link	http://justinvincent.com
 	* @package ezsqlModel
 	*/
-	namespace ezsql\ezsqlModel;
+	namespace ezsql;
 
 	use ezsql\ezFunctions;
 	use ezsql\ezQuery;

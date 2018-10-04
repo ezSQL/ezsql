@@ -10,7 +10,7 @@
  *  @package ezSQL
  *  @license FREE / Donation (LGPL - You may do what you like with ezSQL - no exceptions.) *
  */
-namespace ezsql\ezResultset;
+namespace ezsql;
 
 class ezResultset implements Iterator
 {

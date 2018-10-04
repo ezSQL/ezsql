@@ -19,18 +19,13 @@
  */
 declare(strict_types=1);
 
-namespace ezsql\Database;
+namespace ezsql;
 use ezsql\Configuration;
 use ezsql\ezResultset;
-use ezsql\ezInjector;
-use ezsql\Database\ez_mysqli;
-use ezsql\Database\ez_sqlsrv;
-use ezsql\Database\ez_pgsql;
-use ezsql\Database\ez_pdo;
-use ezsql\Database\ez_sqlite3;
+use ezsql\DInjector;
 use const ezsql\Constants\VENDOR as VENDOR;
 
-class Database extends ezInjector
+class Database extends DInjector
 {
     /**
      * Timestamp for benchmark.

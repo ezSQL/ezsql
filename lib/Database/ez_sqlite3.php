@@ -9,7 +9,7 @@
 	*/
 	declare(strict_types=1);
 	
-	namespace ezsql\Database\ez_sqlite3;
+	namespace ezsql\Database;
 	use ezsql\Configuration;
 	use ezsql\ezsqlModel;
 	
