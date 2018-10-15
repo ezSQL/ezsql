@@ -366,7 +366,10 @@ class ezSQL_pdo extends ezSQLcore
 
             $col_count = $sth->columnCount();
 
-            for ( $i=0 ; $i < $col_count ; $i++ ) {
+            for ( $i=0 ; $i < $col_count ; $i++ ) {                
+                // Start DEBUG by psc!
+                $this->col_info[$i] = new stdClass();
+                // End DEBUG by psc
                 if ( $meta = $sth->getColumnMeta($i) ) {
                     $this->col_info[$i]->name =  $meta['name'];
                     $this->col_info[$i]->type =  $meta['native_type'];
