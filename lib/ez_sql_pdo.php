@@ -1,7 +1,7 @@
 <?php
 /**
  * ezSQL class - PDO
- * Desc..: PDO component (part of ezSQL databse abstraction library)
+ * Desc..: PDO component (part of ezSQL database abstraction library)
  *
  * @author  Justin Vincent (jv@jvmultimedia.com)
  * @author  Stefanie Janine Stoelting <mail@stefanie-stoelting.de>
