@@ -95,7 +95,6 @@ class ezSQL_pdo extends ezSQLcore
         ini_set('track_errors', 1);
 
         if ( !empty($dsn) && !empty($user) && !empty($password) ) {
-            print "<p>constructor: $dsn</p>";
             $this->connect($dsn, $user, $password, $options, $isFileBased);
         }
         
