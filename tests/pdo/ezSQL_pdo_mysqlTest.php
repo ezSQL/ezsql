@@ -295,7 +295,6 @@ class ezSQL_pdo_mysqlTest extends TestCase {
         ->disableOriginalConstructor()
         ->getMock();
         
-        $this->expectOutputRegex('/[constructor:]/');
         $this->assertNull($pdo->__construct('mysql:host=' . self::TEST_DB_HOST . ';dbname=' . self::TEST_DB_NAME . ';port=' . self::TEST_DB_PORT, self::TEST_DB_USER, self::TEST_DB_PASSWORD));  
     } 
      
