@@ -28,65 +28,65 @@
 	*/	
 	class ezsqlModel extends ezQuery
 	{		    
-		public $trace            = false;  // same as $debug_all
-		public $debug_all        = false;  // same as $trace
-		public $debug_called     = false;
-		public $vardump_called   = false;
-		public $num_queries      = 0;
-		public $conn_queries     = 0;
-		public $last_query       = null;
-		public $last_error       = null;
-		public $col_info         = null;
-		public $captured_errors  = array();
-		public $cache_dir        = false;
-		public $cache_queries    = false;
-		public $cache_inserts    = false;
-		public $use_disk_cache   = false;
-		public $cache_timeout    = 24; // hours
-		public $timers           = array();
-		public $total_query_time = 0;
-		public $db_connect_time  = 0;
-		public $trace_log        = array();
-		public $use_trace_log    = false;
-		public $sql_log_file     = false;
-		public $do_profile       = false;
-		public $profile_times    = array();
-		public $insert_id        = null;
+		protected $trace            = false;  // same as $debug_all
+		protected $debug_all        = false;  // same as $trace
+		protected $debug_called     = false;
+		protected $vardump_called   = false;
+		protected $num_queries      = 0;
+		protected $conn_queries     = 0;
+		protected $last_query       = null;
+		protected $last_error       = null;
+		protected $col_info         = null;
+		protected $captured_errors  = array();
+		protected $cache_dir        = false;
+		protected $cache_queries    = false;
+		protected $cache_inserts    = false;
+		protected $use_disk_cache   = false;
+		protected $cache_timeout    = 24; // hours
+		protected $timers           = array();
+		protected $total_query_time = 0;
+		protected $db_connect_time  = 0;
+		protected $trace_log        = array();
+		protected $use_trace_log    = false;
+		protected $sql_log_file     = false;
+		protected $do_profile       = false;
+		protected $profile_times    = array();
+		protected $insert_id        = null;
 		
     /**
 	* Whether the database connection is established, or not
-	* @public boolean Default is false
+	* @protected boolean Default is false
 	*/
     protected $_connected = false;    
     /**
 	* Contains the number of affected rows of a query
-	* @public int Default is 0
+	* @protected int Default is 0
 	*/
     protected $_affectedRows = 0;
 
     /**
 	* The last query result
-	* @public object Default is null
+	* @protected object Default is null
 	*/
-    public $last_result = null;
+    protected $last_result = null;
 
     /**
 	* Get data from disk cache
-	* @public boolean Default is false
+	* @protected boolean Default is false
 	*/
-	public $from_disk_cache = false;
+	protected $from_disk_cache = false;
 	
     /**
 	* Database connection
 	* @var resource
 	*/
-	public $dbh;
+	protected $dbh;
 	
 	/**
 	* Show errors
 	* @var boolean Default is true
 	*/
-	public $show_errors = true;
+	protected $show_errors = true;
 
     /**
 	* Function called
@@ -101,7 +101,7 @@
 	private static $all_func_calls = array();
 	
 	// == TJH == default now needed for echo of debug function
-	public $debug_echo_is_on = true;
+	protected $debug_echo_is_on = true;
 
 		/**
 		* Constructor
@@ -269,7 +269,8 @@
 		/**
 		* Return the the query as a result set, will use prepare statements if setup - see docs for more details
 		*/
-		public function get_results(string $query = null, $output = OBJECT, $use_prepare = false) {
+		public function get_results(string $query = null, $output = OBJECT, $use_prepare = false) 
+		{
 			// Log how the function was called
 			$this->log_query("\$db->get_results(\"$query\", $output, $use_prepare)");
 
@@ -303,7 +304,7 @@
 		* Function to get column meta data info pertaining to the last query
 		* see docs for more info and usage
 		*/
-		public function get_col_info($info_type="name", $col_offset=-1)
+		public function get_col_info($info_type = "name", $col_offset = -1)
 		{
 			if ( $this->col_info )
 			{
@@ -396,7 +397,7 @@
 		* Dumps the contents of any input variable to screen in a nicely
 		* formatted and easy to understand way - any type: Object, public or Array
 		*/
-		public function vardump($mixed='')
+		public function vardump($mixed = '')
 		{
 			// Start outup buffering
 			ob_start();
@@ -454,7 +455,7 @@
 		* table listing results (if there were any).
 		* (abstracted into a seperate file to save server overhead).
 		*/
-		public function debug($print_to_screen=true)
+		public function debug($print_to_screen = true)
 		{
 			// Start outup buffering
 			ob_start();
@@ -698,17 +699,18 @@
 		if ( !isset($data) ) return '';
         if ( is_numeric($data) ) return $data;
 
-        $non_displayables = array(
-                '/%0[0-8bcef]/',            // url encoded 00-08, 11, 12, 14, 15
-                '/%1[0-9a-f]/',             // url encoded 16-31
-                '/[\x00-\x08]/',            // 00-08
-                '/\x0b/',                   // 11
-                '/\x0c/',                   // 12
-                '/[\x0e-\x1f]/'             // 14-31
-                );
+        $nonDisplayable = array(
+			'/%0[0-8bcef]/',            // url encoded 00-08, 11, 12, 14, 15
+			'/%1[0-9a-f]/',             // url encoded 16-31
+			'/[\x00-\x08]/',            // 00-08
+			'/\x0b/',                   // 11
+			'/\x0c/',                   // 12
+			'/[\x0e-\x1f]/'             // 14-31
+		);
                 
-        foreach ( $non_displayables as $regex )
-            $data = preg_replace( $regex, '', $data );
+        foreach ( $nonDisplayable as $regex )
+			$data = preg_replace( $regex, '', $data );
+
         $search = array("\\",  "\x00", "\n",  "\r",  "'",  '"', "\x1a");
         $replace = array("\\\\","\\0","\\n", "\\r", "\'", '\"', "\\Z");
 
