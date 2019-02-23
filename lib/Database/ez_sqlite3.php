@@ -10,6 +10,7 @@
 	declare(strict_types=1);
 	
 	namespace ezsql\Database;
+	
 	use ezsql\Configuration;
 	use ezsql\ezsqlModel;
 	
@@ -25,7 +26,7 @@
 
 		private $rows_affected = false;
         
-		protected $preparedvalues = array();
+		protected $preparedValues = array();
 
 		/**
 		 * Database configuration setting 
@@ -166,7 +167,7 @@
 		function query(string $query, $use_prepare=false)
         {
             if ($use_prepare)
-                $param = &$this->getParamaters();
+                $param = &$this->getParameters();
             
 			// check for ezQuery placeholder tag and replace tags with proper prepare tag
 			$query = str_replace(_TAG, '?', $query);
@@ -190,7 +191,7 @@
 			if (!empty($param) && is_array($param) && ($this->getPrepare())) 
 			{
                 $this->result = $this->query_prepared($query, $param);	
-				$this->setParamaters();
+				$this->setParameters();
             } else 
                 $this->result = $this->dbh->query($query);
 			$this->count(true, true);

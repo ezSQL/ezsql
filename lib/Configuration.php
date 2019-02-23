@@ -20,6 +20,7 @@
 declare(strict_types=1);
 
 namespace ezsql;
+
 use ezsql\ConfigAbstract;
 use const ezsql\Constants\VENDOR as VENDOR;
 use const ezsql\Constants\KEY_MAP as KEY_MAP;
@@ -70,7 +71,8 @@ class Configuration implements ConfigAbstract
         }
     }
 
-    private function setupMysqli($args) {
+    private function setupMysqli($args) 
+    {
         if ( ! function_exists ('mysqli_connect') ) 
             throw new Exception('<b>Fatal Error:</b> ez_mysql requires mySQLi Lib to be compiled and or linked in to the PHP engine');
         elseif (is_string($args))
@@ -86,7 +88,8 @@ class Configuration implements ConfigAbstract
             throw new Exception('<b>Fatal Error:</b> Missing configuration details to connect to database');
     }
 
-    private function setupPdo($args) {
+    private function setupPdo($args) 
+    {
         if ( ! class_exists ('PDO') )
             throw new Exception('<b>Fatal Error:</b> ez_pdo requires PDO Lib to be compiled and or linked in to the PHP engine');           
         elseif (is_string($args))
@@ -101,7 +104,8 @@ class Configuration implements ConfigAbstract
            throw new Exception('<b>Fatal Error:</b> Missing configuration details to connect to database');
     }
 
-    private function setupSqlsrv($args) {
+    private function setupSqlsrv($args) 
+    {
         if ( ! function_exists ('sqlsrv_connect') ) 
             throw new Exception('<b>Fatal Error:</b> ez_sqlsrv requires the php_sqlsrv.dll or php_pdo_sqlsrv.dll to be installed. Also enable MS-SQL extension in PHP.ini file ');
         elseif (is_string($args))
@@ -116,7 +120,8 @@ class Configuration implements ConfigAbstract
             throw new Exception('<b>Fatal Error:</b> Missing configuration details to connect to database');
     }
 
-    private function setupPgsql($args) {
+    private function setupPgsql($args) 
+    {
         if ( ! function_exists ('pg_connect') )
             throw new Exception('<b>Fatal Error:</b> ez_pgsql requires PostgreSQL Lib to be compiled and or linked in to the PHP engine');
         elseif (is_string($args))
@@ -147,7 +152,8 @@ class Configuration implements ConfigAbstract
     * @param string $connectionString
     * @throws Exception If vendor specifics not provided.
     */
-    public function parseConnectionString(string $connectionString, array $check_for) {
+    public function parseConnectionString(string $connectionString, array $check_for) 
+    {
         $params = explode(";", $connectionString);
 
         if (count($params) === 1) { // Attempt to explode on a space if no ';' are found.

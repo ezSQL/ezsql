@@ -97,7 +97,7 @@ class DInjector implements ContainerInterface
 	 * @return mixed|null|object
 	 * @throws Exception
 	 */
-	public function autowire($abstract, $values = [])
+	public function autoWire($abstract, $values = [])
 	{
 		// if we don't have it, just register it
 		if (!$this->has($abstract)) {

@@ -18,6 +18,7 @@
  * and is licensed under the MIT license.
  */ 
 namespace ezsql;
+
 use ezsql\Constants;
                 
     // Global class instances, will be used to create and call methods directly.

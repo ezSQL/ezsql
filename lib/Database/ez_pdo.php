@@ -11,6 +11,7 @@
  * @license FREE / Donation (LGPL - You may do what you like with ezSQL - no exceptions.)
  */
 namespace ezsql\Database;
+
 use ezsql\Configuration;
 use ezsql\ezsqlModel;
 
@@ -26,7 +27,7 @@ final class ez_pdo extends ezsqlModel
             2 => 'File based databases require $dsn to create a connection'
         );
     
-    protected $preparedvalues = array(); 
+    protected $preparedValues = array(); 
 
     /**
     * Database configuration setting 
@@ -227,7 +228,7 @@ final class ez_pdo extends ezsqlModel
     public function query(string $query, $use_prepare=false)
      {
         if ($use_prepare)
-            $param = &$this->getParamaters();
+            $param = &$this->getParameters();
         
 		// check for ezQuery placeholder tag and replace tags with proper prepare tag
 		$query = str_replace(_TAG, '?', $query);
@@ -281,7 +282,7 @@ final class ez_pdo extends ezsqlModel
             // Perform the query via std PDO query or PDO prepare function..
             if (!empty($param) && is_array($param) && ($this->getPrepare())) {
                 $this->_affectedRows = $this->query_prepared($query, $param, false);	
-				$this->setParamaters();
+				$this->setParameters();
             } else
                 $this->_affectedRows = $this->dbh->exec($query);
 
@@ -307,7 +308,7 @@ final class ez_pdo extends ezsqlModel
             // Perform the query via std PDO query or PDO prepare function..
             if (!empty($param) && is_array($param) && ($this->getPrepare())) {
                 $sth = $this->query_prepared($query, $param, true);	
-				$this->setParamaters();
+				$this->setParameters();
             } else
                 $sth = $this->dbh->query($query);
 

@@ -11,6 +11,7 @@
 	declare(strict_types=1);
 
 	namespace ezsql\Database;
+	
 	use ezsql\Configuration;
 	use ezsql\ezsqlModel;
 
@@ -41,7 +42,7 @@
 
 		private $rows_affected = false;
         
-		protected $preparedvalues = array();
+		protected $preparedValues = array();
 
 		/**
 		 * Database configuration setting 
@@ -127,7 +128,7 @@
 		public function query(string $query, $use_prepare=false)
 		{
             if ($use_prepare) 
-                $param = &$this->getParamaters();
+                $param = &$this->getParameters();
             
 			// check for ezQuery placeholder tag and replace tags with proper prepare tag
 			$query = str_replace(_TAG, '?', $query);
@@ -173,7 +174,7 @@
 			// Perform the query via std sqlsrv_query function..
 			if (!empty($param) && is_array($param) && ($this->getPrepare())) {
 				$this->result = @sqlsrv_query($this->dbh, $query, $param);
-                $this->setParamaters();                
+                $this->setParameters();                
             }
 			else 
 				$this->result = @sqlsrv_query($this->dbh, $query);
@@ -282,15 +283,25 @@
 			//replace the '`' character used for MySql queries, but not
 			//supported in MS-Sql
 			$query = str_replace("`", "", $query);
+
 			$limit_str = "/LIMIT[^\w]{1,}([0-9]{1,})([\,]{0,})([0-9]{0,})/i";
+
 			$patterns = array(
-					0 => "/FROM_UNIXTIME\(([^\/]{0,})\)/i", 	//replace From UnixTime command in MS-Sql, doesn't work
-					1 => "/unix_timestamp\(([^\/]{0,})\)/i", 	//replace unix_timestamp function. Doesn't work in MS-Sql
-					2 => $limit_str);													//replace LIMIT keyword. Works only on MySql not on MS-Sql with TOP keyword
+				//replace From UnixTime command in MS-Sql, doesn't work
+				0 => "/FROM_UNIXTIME\(([^\/]{0,})\)/i", 
+				//replace unix_timestamp function. Doesn't work in MS-Sql
+				1 => "/unix_timestamp\(([^\/]{0,})\)/i",
+				//replace LIMIT keyword. Works only on MySql not on MS-Sql with TOP keyword
+				2 => $limit_str
+			);
+
 			$replacements = array(
-					0 => "getdate()", 
-					1 => "\\1", 
-					2 => "");
+				0 => "getdate()", 
+				1 => "\\1", 
+				2 => ""
+			);
+
+			$regs = null;
 			preg_match($limit_str, $query, $regs);
 			$query = preg_replace($patterns, $replacements, $query);
 			
@@ -300,7 +311,6 @@
 				$query  = str_ireplace("SELECT ", "SELECT TOP ".$regs[1]." ", $query);
 
 			return $query;
-
 		}
 
 		public function get_datatype($col)

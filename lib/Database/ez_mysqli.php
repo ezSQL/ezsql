@@ -12,6 +12,7 @@
  *
  */
 namespace ezsql\Database;
+
 use ezsql\Configuration;
 use ezsql\ezsqlModel;
 
@@ -36,7 +37,7 @@ final class ez_mysqli extends ezsqlModel
      */
     public $show_errors = true;
     
-	protected $preparedvalues = array();	
+	protected $preparedValues = array();	
 
     /**
      * Query result
@@ -72,7 +73,13 @@ final class ez_mysqli extends ezsqlModel
      * @param string $charset Encoding of the database
      * @return boolean
      */
-    public function quick_connect($dbuser='', $dbpassword='', $dbname='', $dbhost='localhost', $charset='') {
+    public function quick_connect(
+        $dbuser = '', 
+        $dbpassword = '', 
+        $dbname = '', 
+        $dbhost = 'localhost', 
+        $charset = '') 
+    {
         if ( ! $this->connect($dbuser, $dbpassword, $dbhost, true) ) ;
         else if ( ! $this->select($dbname, $charset) ) ;
 
@@ -90,7 +97,12 @@ final class ez_mysqli extends ezsqlModel
      *                      Default is empty string
      * @return boolean
      */
-    public function connect($dbuser = '', $dbpassword = '', $dbhost = 'localhost', $dbcharset = '') {
+    public function connect(
+        $dbuser = '', 
+        $dbpassword = '', 
+        $dbhost = 'localhost', 
+        $dbcharset = '') 
+    {
         $this->_connected = false;
 
         $user = empty($dbuser) ? $this->database->getUser() : $dbuser;
@@ -291,8 +303,9 @@ final class ez_mysqli extends ezsqlModel
      */
     public function query(string $query, $use_prepare = false) 
     {
+        $param  = [];
         if ($use_prepare)
-            $param = &$this->getParamaters();
+            $param = $this->getParamaters();
         
 		// check for ezQuery placeholder tag and replace tags with proper prepare tag
 		$query = str_replace(_TAG, '?', $query);

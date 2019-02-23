@@ -99,7 +99,8 @@ abstract class ConfigAbstract
     * Use for Calling Non-Existent Functions, handling Getters and Setters
     * @param function set/get{name} = private property that needs to be accessed
     */
-    public function __call($function, $args) {
+    public function __call($function, $args) 
+    {
         $prefix = substr($function, 0, 3);
         $property = strtolower(substr($function, 3, strlen($function)));
         if ($prefix == 'set') {
