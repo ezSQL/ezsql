@@ -77,7 +77,7 @@ class ezSQL_mysqli extends ezSQLcore
      */
     public $dbh;
     
-	protected $preparedvalues = array();
+	protected $preparedvalues = [];
 	
     /**
      * Constructor - allow the user to perform a quick connect at the same time
@@ -345,8 +345,9 @@ class ezSQL_mysqli extends ezSQLcore
      * @return boolean
      */
     public function query($query, $use_prepare=false) {
+        $param = [];
         if ($use_prepare)
-            $param = &$this->getParamaters();
+            $param = $this->getParamaters();
         
 		// check for ezQuery placeholder tag and replace tags with proper prepare tag
 		$query = str_replace(_TAG, '?', $query);

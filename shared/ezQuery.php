@@ -173,6 +173,8 @@ class ezQuery
         
 		if (!empty($getwherekeys)){
 			if (is_string($getwherekeys[0])) {
+                if ((strpos($getwherekeys[0], 'WHERE') !== false) || (strpos($getwherekeys[0], 'HAVING') !== false))
+                    return $getwherekeys[0];
 				foreach ($getwherekeys as $makearray) 
 					$wherekeys[] = explode('  ',$makearray);	
 			} else 
@@ -184,7 +186,7 @@ class ezQuery
 			$operator[] = (isset($values[1])) ? $values[1]: '';
 			if (!empty($values[1])){
 				if (strtoupper($values[1]) == 'IN') {
-					$wherekey[ $values[0] ] = array_slice($values,2);
+					$wherekey[ $values[0] ] = array_slice((array) $values, 2);
 					$combiner[] = (isset($values[3])) ? $values[3]: _AND;
 					$extra[] = (isset($values[4])) ? $values[4]: null;				
 				} else {

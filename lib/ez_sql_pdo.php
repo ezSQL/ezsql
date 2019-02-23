@@ -149,7 +149,7 @@ class ezSQL_pdo extends ezSQLcore
         // Establish PDO connection
         try  {
             if ($this->_isFileBased) {
-                $this->dbh = new PDO($this->_dsn);
+                $this->dbh = new PDO($this->_dsn, null, null, null);
                 $this->_connected = true;
             } else {
                 $this->dbh = new PDO($this->_dsn, $this->_dbuser, $this->_dbpassword, $this->_options);

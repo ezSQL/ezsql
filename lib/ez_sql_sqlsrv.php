@@ -325,6 +325,7 @@
 					0 => "getdate()", 
 					1 => "\\1", 
 					2 => "");
+			$regs = null;
 			preg_match($limit_str, $query, $regs);
 			$query = preg_replace($patterns, $replacements, $query);
 			

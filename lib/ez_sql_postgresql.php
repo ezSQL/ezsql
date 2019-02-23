@@ -224,8 +224,9 @@
 
 		function query($query, $use_prepare=false)
 		{
+			$param = [];
             if ($use_prepare)
-                $param = &$this->getParamaters();
+                $param = $this->getParamaters();
             
 			// check for ezQuery placeholder tag and replace tags with proper prepare tag
 			if (!empty($param) && is_array($param) && ($this->getPrepare()) && (strpos($query, _TAG) !== false))
