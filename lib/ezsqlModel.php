@@ -106,7 +106,7 @@
 		/**
 		* Constructor
 		*/
-		function __construct()
+		public function __construct()
 		{
             parent::__construct();
 		}
@@ -115,7 +115,7 @@
 		* Get host and port from an "host:port" notation.
 		* @return array of host and port. If port is omitted, returns $default
 		*/
-		function get_host_port( $host, $default = false )
+		public function get_host_port( $host, $default = false )
 		{
 			$port = $default;
 			if ( false !== strpos( $host, ':' ) ) {
@@ -128,7 +128,7 @@
 		/**
 		* Print SQL/DB error - over-ridden by specific DB class
 		*/
-		function register_error($err_str)
+		public function register_error($err_str)
 		{
 			// Keep track of last error
 			$this->last_error = $err_str;
@@ -144,12 +144,12 @@
 		/**
 		* Turn error handling on or off..
 		*/
-		function show_errors()
+		public function show_errors()
 		{
 			$this->show_errors = true;
 		}
 
-		function hide_errors()
+		public function hide_errors()
 		{
 			$this->show_errors = false;
 		}
@@ -157,21 +157,21 @@
 		/**
 		* Kill cached query results
 		*/
-		function flush()
+		public function flush()
 		{
 			// Get rid of these
 			$this->last_result = null;
 			$this->col_info = null;
 			$this->last_query = null;
 			$this->from_disk_cache = false;
-            $this->setParamaters();
+            $this->setParameters();
 		}
 
 		/**
 		* Log how the query function was called
 		* @param string
 		*/
-		function log_query(string $query)
+		public function log_query(string $query)
 		{
 			// Log how the last function was called
 			$this->func_call = $query;
@@ -183,7 +183,7 @@
 		/**
 		* Get one variable from the DB - see docs for more detail
 		*/
-		function get_var($query=null,$x=0,$y=0, $use_prepare=false)
+		public function get_var(string $query = null, $x = 0, $y = 0, $use_prepare = false)
 		{
 
 			// Log how the function was called
@@ -208,9 +208,8 @@
 		/**
 		* Get one row from the DB - see docs for more detail
 		*/
-		function get_row($query=null,$output=OBJECT,$y=0, $use_prepare=false)
+		public function get_row(string $query = null, $output = OBJECT, $y = 0, $use_prepare = false)
 		{
-
 			// Log how the function was called
 			$this->log_query("\$db->get_row(\"$query\",$output,$y)");
 
@@ -247,9 +246,8 @@
 		* Function to get 1 column from the cached result set based in X index
 		* see docs for usage and info
 		*/
-		function get_col($query=null,$x=0, $use_prepare=false)
+		public function get_col(string $query = null, $x = 0, $use_prepare = false)
 		{
-
 			$new_array = array();
 
 			// If there is a query then perform it if not then use cached results..
@@ -271,7 +269,7 @@
 		/**
 		* Return the the query as a result set, will use prepare statements if setup - see docs for more details
 		*/
-		function get_results($query=null, $output = OBJECT, $use_prepare=false) {
+		public function get_results(string $query = null, $output = OBJECT, $use_prepare = false) {
 			// Log how the function was called
 			$this->log_query("\$db->get_results(\"$query\", $output, $use_prepare)");
 
@@ -305,7 +303,7 @@
 		* Function to get column meta data info pertaining to the last query
 		* see docs for more info and usage
 		*/
-		function get_col_info($info_type="name", $col_offset=-1)
+		public function get_col_info($info_type="name", $col_offset=-1)
 		{
 			if ( $this->col_info )
 			{
@@ -329,7 +327,7 @@
 		/**
 		* store_cache
 		*/
-		function store_cache(string $query, $is_insert)
+		public function store_cache(string $query, $is_insert)
 		{
 			// The would be cache file for this query
 			$cache_file = $this->cache_dir.'/'.md5($query);
@@ -362,7 +360,7 @@
 		/**
 		* get_cache
 		*/
-		function get_cache(string $query)
+		public function get_cache(string $query)
 		{
 			// The would be cache file for this query
 			$cache_file = $this->cache_dir.'/'.md5($query);
@@ -398,7 +396,7 @@
 		* Dumps the contents of any input variable to screen in a nicely
 		* formatted and easy to understand way - any type: Object, public or Array
 		*/
-		function vardump($mixed='')
+		public function vardump($mixed='')
 		{
 			// Start outup buffering
 			ob_start();
@@ -446,7 +444,7 @@
 		/**
 		*  Alias for the above function
 		*/
-		function dumpvar($mixed)
+		public function dumpvar($mixed)
 		{
 			return $this->vardump($mixed);
 		}
@@ -456,7 +454,7 @@
 		* table listing results (if there were any).
 		* (abstracted into a seperate file to save server overhead).
 		*/
-		function debug($print_to_screen=true)
+		public function debug($print_to_screen=true)
 		{
 			// Start outup buffering
 			ob_start();
@@ -559,7 +557,7 @@
 		/**
 		* Naughty little function to ask for some remuneration!
 		*/
-		function donation()
+		public function donation()
 		{
 			return "<font size=1 face=arial color=000000>If ezSQL has helped <a href=\"https://www.paypal.com/xclick/business=justin%40justinvincent.com&item_name=ezSQL&no_note=1&tax=0\" style=\"color: 0000CC;\">make a donation!?</a> &nbsp;&nbsp;<!--[ go on! you know you want to! ]--></font>";
 		}
@@ -567,23 +565,23 @@
 		/**
 		* Timer related functions
 		*/
-		function timer_get_cur()
+		public function timer_get_cur()
 		{
 			list($usec, $sec) = explode(" ",microtime());
 			return ((float)$usec + (float)$sec);
 		}
 
-		function timer_start($timer_name)
+		public function timer_start($timer_name)
 		{
 			$this->timers[$timer_name] = $this->timer_get_cur();
 		}
 
-		function timer_elapsed($timer_name)
+		public function timer_elapsed($timer_name)
 		{
 			return round($this->timer_get_cur() - $this->timers[$timer_name],2);
 		}
 
-		function timer_update_global($timer_name)
+		public function timer_update_global($timer_name)
 		{
 			if ( $this->do_profile )
 			{
@@ -613,7 +611,7 @@
 		*
 		*     login = 'jv', email = 'jv@vip.ie', user_id = 1, created = NOW()
 		*/
-		function get_set($params)
+		public function get_set($params)
 		{
 			if( !is_array( $params ) )
 			{
@@ -648,7 +646,8 @@
 		 * @param bool $increase Set to true to increase query count (internal usage)
 		 * @return int Returns query count base on $all
 		 */
-		function count ($all = true, $increase = false) {
+		public function count ($all = true, $increase = false) 
+		{
 			if ($increase) {
 				$this->num_queries++;
 				$this->conn_queries++;
@@ -662,7 +661,8 @@
      *
      * @return boolean
      */
-    function isConnected() {
+	public function isConnected() 
+	{
         return $this->_connected;
     } // isConnected
 
@@ -671,7 +671,8 @@
      *
      * @return boolean
      */
-    function getShowErrors() {
+	public function getShowErrors() 
+	{
         return $this->show_errors;
     } // getShowErrors
 
@@ -680,17 +681,20 @@
      * 
      * @return int
      */
-    function affectedRows() {
+	public function affectedRows() 
+	{
         return $this->_affectedRows;
     } // affectedRows
 	
 	// query call template
-    function query(string $query, $use_prepare=false) {
+	public function query(string $query, $use_prepare=false) 
+	{
 		return false;
 	}    
 	
 	// escape call template if not available by vendor
-	function escape($data) {
+	public function escape($data) 
+	{
 		if ( !isset($data) ) return '';
         if ( is_numeric($data) ) return $data;
 
