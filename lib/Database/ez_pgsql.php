@@ -1,17 +1,6 @@
 <?php
-	/**
-	* ezSQL Database specific class - PostgreSQL
-	* PostgreSQL component (part of ezSQL databse abstraction library)
-	*
-	* @author  Justin Vincent (jv@jvmultimedia.com)
-	* @author  Stefanie Janine Stoelting <mail@stefanie-stoelting.de>
-	* @Contributor  Lawrence Stubbs <technoexpressnet@gmail.com>
-	* @link	   http://twitter.com/justinvincent
-	* @name	   ez_pgsql
-	* @package ezSQL
-	* @license FREE / Donation (LGPL - You may do what you like with ezSQL - no exceptions.)
-	*
-	*/		  
+	declare(strict_types=1);
+
 	namespace ezsql\Database;
 	
 	use ezsql\Configuration;

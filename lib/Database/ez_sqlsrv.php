@@ -1,13 +1,4 @@
 <?php
-	/**
-	* Microsoft Sql Server component (MS drivers) (part of ezSQL database abstraction library)
-	* based on ez_msSql library class.
-	*
-	* @author davisjw (davisjw@gmail.com)
-	* @contributor  Lawrence Stubbs <technoexpressnet@gmail.com>
-	* @link http://twitter.com/justinvincent
-	* @package ez_sqlsrv
-	*/
 	declare(strict_types=1);
 
 	namespace ezsql\Database;

@@ -1,12 +1,4 @@
 <?php
-	/**
-	* SQLite3 component (part of ezSQL database abstraction library
-	* 
-	* @author Justin Vincent (jv@jvmultimedia.com) / Silvio Wanka 
-	* @contributor  Lawrence Stubbs <technoexpressnet@gmail.com>
-	* @link http://twitter.com/justinvincent
-	* @package ez_sqlite3
-	*/
 	declare(strict_types=1);
 	
 	namespace ezsql\Database;

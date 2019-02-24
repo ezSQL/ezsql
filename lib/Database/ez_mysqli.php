@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace ezsql\Database;
 
@@ -24,7 +25,7 @@ final class ez_mysqli extends ezsqlModel
      * Show errors
      * @var boolean Default is true
      */
-    public $show_errors = true;
+    protected $show_errors = true;
     
 	protected $preparedValues = array();	
 

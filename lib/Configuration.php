@@ -26,7 +26,7 @@ use const ezsql\Constants\VENDOR as VENDOR;
 use const ezsql\Constants\KEY_MAP as KEY_MAP;
 use const ezsql\Constants\ALLOWED_KEYS as ALLOWED_KEYS;
 
-class Configuration implements ConfigAbstract
+class Configuration extends ConfigAbstract
 {
     /**
      * Constructor - initializing the SQL database class

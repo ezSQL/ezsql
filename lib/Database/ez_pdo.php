@@ -1,15 +1,6 @@
 <?php
-/**
- * ezSQL class - PDO
- * PDO component (part of ezSQL database abstraction library)
- *
- * @author Justin Vincent (jv@jvmultimedia.com)
- * @author Stefanie Janine Stoelting <mail@stefanie-stoelting.de>
- * @contributor Lawrence Stubbs <technoexpressnet@gmail.com>
- * @link http://twitter.com/justinvincent
- * @package ez_pdo
- * @license FREE / Donation (LGPL - You may do what you like with ezSQL - no exceptions.)
- */
+declare(strict_types=1);
+
 namespace ezsql\Database;
 
 use ezsql\Configuration;

@@ -1,32 +1,15 @@
 <?php 
-/**
- * Author:  Lawrence Stubbs <technoexpressnet@gmail.com>
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
- * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
- * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
- * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
- * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
- * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- * This software consists of voluntary contributions made by many individuals
- * and is licensed under the MIT license.
- */
+
 declare(strict_types=1);
 
 namespace ezsql;
 
 use ezsql\Configuration;
-use ezsql\ezResultset;
+//use ezsql\ezResultset;
 use ezsql\DInjector;
 use const ezsql\Constants\VENDOR as VENDOR;
 
-class Database extends DInjector
+class Database
 {
     /**
      * Timestamp for benchmark.
@@ -41,7 +24,7 @@ class Database extends DInjector
      */
     private $database;
 
-    protected function __construct() {}
+    private function __construct() {}
     private function __clone() {}
     private function __wakeup() {}
 
@@ -59,8 +42,12 @@ class Database extends DInjector
             self::$database = $settings;
             $key = self::$database->getDriver();
             $value = VENDOR[$key];
-            if (empty($GLOBALS['db_'.$key]))
-                $GLOBALS['db_'.$key] = self::autowire( $value, self::$database);                
+
+            if (empty($GLOBALS['db_'.$key])) {    
+                $di = new DInjector();
+                $GLOBALS['db_'.$key] = $di->autoWire( $value, self::$database); 
+            }
+
             return $GLOBALS['db_'.$key];
         }
     }
