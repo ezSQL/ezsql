@@ -10,14 +10,14 @@
         stopOnFailure="false" >
         
     <testsuites>
-        <testsuite name="ezSQL Test Suite">
+        <testsuite name="ezDBA Test Suite">
             <directory suffix=".php">./tests/</directory>
         </testsuite>
     </testsuites>
-    
+
     <filter>
         <whitelist>
-            <directory>./</directory>
+            <directory suffix=".php">lib/</directory>
             <exclude>
                 <directory>./build</directory>
                 <directory>./demo</directory>
@@ -26,17 +26,21 @@
                 <directory>./vendor</directory>
                 <file>./ez_sql_loader.php</file>
             </exclude>
-        </whitelist>
+        </whitelist>		
     </filter>
-    
-    <logging>
-        <log type="coverage-clover" target="clover.xml"/>
-    </logging>
-    
+
     <php>
         <var name="DB_DSN" value="mysql:dbname=ez_test;host=localhost" />
         <var name="DB_USER" value="ez_test" />
         <var name="DB_PASSWD" value="ezTest" />
         <var name="DB_DBNAME" value="ez_test" />    
     </php>
+	
+	<logging>
+        <log type="tap" target="build/report.tap"/>
+        <log type="junit" target="build/report.junit.xml"/>
+        <log type="coverage-html" target="build/coverage"/>
+        <log type="coverage-text" target="build/coverage.txt"/>
+        <log type="coverage-clover" target="build/logs/clover.xml"/>
+    </logging>
 </phpunit>

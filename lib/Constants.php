@@ -1,63 +1,45 @@
 <?php
-/**
- * Author:  Lawrence Stubbs <technoexpressnet@gmail.com>
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
- * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
- * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
- * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
- * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
- * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- * This software consists of voluntary contributions made by many individuals
- * and is licensed under the MIT license.
- */ 
-namespace ezsql;
 
+if (!\defined('CONSTANTS')) {
     // ezQuery prepare placeholder/positional tag
-    const _TAG = '__ez__';
+    \define('_TAG', '__ez__');
     // Use to set get_result output as json 
-    const _JSON = 'json';
+    \define('_JSON', 'json');
  
-    /*
+    /**
     * Operator boolean expressions.
     */
-    const EQ  = '=';
-    const NEQ = '<>';
-    const NE  = '!=';
-    const LT  = '<';
-    const LTE = '<=';
-    const GT  = '>';
-    const GTE = '>=';
+    \define('EQ', '=');
+    \define('NEQ', '<>');
+    \define('NE', '!=');
+    \define('LT', '<');
+    \define('LTE', '<=');
+    \define('GT', '>');
+    \define('GTE', '>=');
     
-    const _IN = 'IN';
-    const _notIN = 'NOT IN';
-    const _LIKE = 'LIKE';
-    const _notLIKE  = 'NOT LIKE';
-    const _BETWEEN = 'BETWEEN';
-    const _notBETWEEN = 'NOT BETWEEN';
+    \define('_IN', 'IN');
+    \define('_notIN', 'NOT IN');
+    \define('_LIKE', 'LIKE');
+    \define('_notLIKE', 'NOT LIKE');
+    \define('_BETWEEN', 'BETWEEN');
+    \define('_notBETWEEN', 'NOT BETWEEN');
         
-    const _isNULL = 'IS NULL';
-    const _notNULL  = 'IS NOT NULL';
+    \define('_isNULL', 'IS NULL');
+    \define('_notNULL', 'IS NOT NULL');
     
-    /*
+    /**
     * Combine operators.
     */    
-    const _AND = 'AND';
-    const _OR = 'OR';
-    const _NOT = 'NOT';
-    const _andNOT = 'AND NOT';
+    \define('_AND', 'AND');
+    \define('_OR', 'OR');
+    \define('_NOT', 'NOT');
+    \define('_andNOT', 'AND NOT');
  
     /**
     * Associative array of supported SQL Drivers, and library
-    * @const array 
+    * @define(array)
     */
-    const VENDOR = [
+    \define('VENDOR', [
         'mysql' => 'ez_mysqli',
         'mysqli' => 'ez_mysqli',
         'pdo' => 'ez_pdo',
@@ -67,9 +49,9 @@ namespace ezsql;
         'sqlite3' => 'ez_sqlite3',
         'mssql' => 'ez_sqlsrv',
         'sqlsrv' => 'ez_sqlsrv'
-    ];
+    ]);
 
-    const ALLOWED_KEYS = [
+    \define('ALLOWED_KEYS', [
         'host',
         'hostname',
         'user',
@@ -88,9 +70,9 @@ namespace ezsql;
         'nosql',
         'nomysql',
         'options'
-    ];
+    ]);
         
-    const KEY_MAP = [
+    \define('KEY_MAP', [
         'host' => 'host',
         'hostname' => 'host',
         'user' => 'user',
@@ -110,4 +92,7 @@ namespace ezsql;
         'nosql' => 'to_mysql',
         'nomysql' => 'to_mysql',
         'options' => 'options'
-    ];
+    ]);
+
+    \define('CONSTANTS', true);
+}

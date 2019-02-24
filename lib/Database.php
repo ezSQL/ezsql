@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace ezsql;
 
 use ezsql\Configuration;
-//use ezsql\ezResultset;
 use ezsql\DInjector;
 use const ezsql\Constants\VENDOR as VENDOR;
 

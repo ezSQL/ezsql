@@ -1,14 +1,13 @@
 /nbproject/private/
 /nbproject/
-~
-~*.*
 *.lock
 clover.xml
 *.sqlite
 *.sqlite3
 vendor
-build/logs/clover.xml
+build/
 tests/pdo/ez_test.sqlite
 tests/sqlite/ez_test.sqlite
 tests/sqlite/ez_test.sqlite3
 .DS_Store
+.vscode/settings.json
