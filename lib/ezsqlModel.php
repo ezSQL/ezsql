@@ -1,14 +1,5 @@
 <?php
-	/**
-	* ezsqlModel - database abstraction library to make
-	*          it very easy to deal with databases. ezsqlModel can not be used by
-	*          itself (it is designed for use by database specific modules).
-	* @author Justin Vincent (jv@vip.ie)
-	* @author Stefanie Janine Stoelting <mail@stefanie-stoelting.de>
-	* @contributor Lawrence Stubbs <technoexpressnet@gmail.com>
-	* @link	http://justinvincent.com
-	* @package ezsqlModel
-	*/
+
 	namespace ezsql;
 
 	use ezsql\ezFunctions;

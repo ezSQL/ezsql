@@ -1,79 +1,32 @@
 <?php
 
-require 'vendor/autoload.php';
-use PHPUnit\Framework\TestCase;
+namespace ezsql\Tests;
 
-/**
- * Test class for ezSQL_sqlsrv.
- * Desc..: Microsoft Sql Server component (MS drivers) (part of ezSQL databse abstraction library)
- * 
- * @author  Justin Vincent (jv@jvmultimedia.com)
- * @author  Stefanie Janine Stoelting <mail@stefanie-stoelting.de>
- * @link    http://twitter.com/justinvincent
- * @name    ezSQL_sqlsrvTest
- * @package ezSQL
- * @subpackage Tests
- * @license FREE / Donation (LGPL - You may do what you like with ezSQL - no exceptions.)
- * @todo The connection to sqlsrv is not tested by now. There might also
- *       be tests done for different versions of sqlsrv
- *
- */
-class ezSQL_sqlsrvTest extends TestCase {
+use ezsql\Configuration;
+use ezsql\Database\ez_sqlsrv;
+use ezsql\Tests\DBTestCase;
 
-    /**
-     * constant string user name
-     */
-    const TEST_DB_USER = 'ez_test';
-
-    /**
-     * constant string password
-     */
-    const TEST_DB_PASSWORD = 'ezTest';
-
-    /**
-     * constant database name
-     */
-    const TEST_DB_NAME = 'ez_test';
-
-    /**
-     * constant database host
-     */
-    const TEST_DB_HOST = 'localhost';
+class sqlsrvTest extends DBTestCase 
+{
 
     /**
      * @var ezSQL_sqlsrv
      */
-    protected $object;
-    private $errors;
- 
-    function errorHandler($errno, $errstr, $errfile, $errline, $errcontext) {
-        $this->errors[] = compact("errno", "errstr", "errfile",
-            "errline", "errcontext");
-    }
-
-    function assertError($errstr, $errno) {
-        foreach ($this->errors as $error) {
-            if ($error["errstr"] === $errstr
-                && $error["errno"] === $errno) {
-                return;
-            }
-        }
-        $this->fail("Error with level " . $errno .
-            " and message '" . $errstr . "' not found in ", 
-            var_export($this->errors, TRUE));
-    }   
+    protected $object;   
 
     /**
      * Sets up the fixture, for example, opens a network connection.
      * This method is called before a test is executed.
      */
-    protected function setUp() {
+    protected function setUp(): void
+	{
         if (!extension_loaded('sqlsrv')) {
             $this->markTestSkipped(
               'The sqlsrv Lib is not available.'
             );
         }
-        $this->object = new ezSQL_sqlsrv;        
+
+        $this->object = new ez_sqlsrv(Configuration);
         $this->object->setPrepare();
     } // setUp
 
@@ -81,7 +34,8 @@ class ezSQL_sqlsrvTest extends TestCase {
      * Tears down the fixture, for example, closes a network connection.
      * This method is called after a test is executed.
      */
-    protected function tearDown() {
+    protected function tearDown() 
+    {
         $this->object->query('DROP TABLE IF EXISTS unit_test');
         $this->object = null;
     } // tearDown
@@ -89,7 +43,8 @@ class ezSQL_sqlsrvTest extends TestCase {
     /**
      * @covers ezSQL_sqlsrv::quick_connect
      */
-    public function testQuick_connect() {
+    public function testQuick_connect() 
+    {
         $result = $this->object->quick_connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME);
         $this->assertTrue($result);
     } // testQuick_connect
@@ -97,7 +52,8 @@ class ezSQL_sqlsrvTest extends TestCase {
     /**
      * @covers ezSQL_sqlsrv::connect
      */
-    public function testConnect() {
+    public function testConnect() 
+    {
         $result = $this->object->connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME);
         $this->assertTrue($result);
     } // testConnect
@@ -105,7 +61,8 @@ class ezSQL_sqlsrvTest extends TestCase {
     /**
      * @covers ezSQL_sqlsrv::escape
      */
-    public function testEscape() {
+    public function testEscape() 
+    {
         $result = $this->object->escape("This is'nt escaped.");
 
         $this->assertEquals("This is\\'nt escaped.", $result);
@@ -114,14 +71,16 @@ class ezSQL_sqlsrvTest extends TestCase {
     /**
      * @covers ezSQL_sqlsrv::sysdate
      */
-    public function testSysdate() {
+    public function testSysdate() 
+    {
         $this->assertEquals('GETDATE()', $this->object->sysdate());
     } // testSysdate
     
     /**
      * @covers ezSQLcore::get_var
      */
-    public function testGet_var() { 
+    public function testGet_var() 
+    { 
         $this->object->quick_connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME);    
         $current_time = $this->object->get_var("SELECT " . $this->object->sysdate() . " AS 'GetDate()'");
         $this->assertNotNull($current_time);
@@ -130,7 +89,8 @@ class ezSQL_sqlsrvTest extends TestCase {
     /**
      * @covers ezSQLcore::get_results
      */
-    public function testGet_results() {           
+    public function testGet_results() 
+    {           
     $this->object->quick_connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME);    
     
 	// Get list of tables from current database..
@@ -148,7 +108,8 @@ class ezSQL_sqlsrvTest extends TestCase {
     /**
      * @covers ezSQL_sqlsrv::query
      */
-    public function testQuery() {
+    public function testQuery() 
+    {
         $this->object->quick_connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME);    
         $this->assertEquals($this->object->query('CREATE TABLE unit_test(id integer, test_key varchar(50), PRIMARY KEY (ID))'), 0);
         $this->assertEquals($this->object->query('INSERT INTO unit_test(id, test_key) VALUES(1, \'test 1\')'), 1);
@@ -162,7 +123,8 @@ class ezSQL_sqlsrvTest extends TestCase {
     /**
      * @covers ezSQL_sqlsrv::ConvertMySqlTosqlsrv
      */
-    public function testConvertMySqlTosqlsrv() {
+    public function testConvertMySqlTosqlsrv() 
+    {
         $result = $this->object->ConvertMySqlTosqlsrv("SELECT `test` FROM `unit_test`;");
         $this->assertEquals("SELECT test FROM unit_test;", $result);
     } // testConvertMySqlTosqlsrv
@@ -185,10 +147,13 @@ class ezSQL_sqlsrvTest extends TestCase {
         $this->object->quick_connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME);  
         $this->object->query('CREATE TABLE unit_test(id integer, test_key varchar(50), PRIMARY KEY (ID))');  
         $this->assertNotFalse($this->object->insert('unit_test', array('id'=>1, 'test_key'=>'testUpdate() 1' )));
+
         $this->object->insert('unit_test', array('id'=>2, 'test_key'=>'testUpdate() 2' ));
         $this->object->insert('unit_test', array('id'=>3, 'test_key'=>'testUpdate() 3' ));
+
         $unit_test['test_key'] = 'testing';
         $where="id  =  1";
+
         $this->assertEquals($this->object->update('unit_test', $unit_test, $where), 1);
         $this->assertEquals($this->object->update('unit_test', $unit_test, eq('id', 3, _AND), eq('test_key', 'testUpdate() 3')), 1);
         $this->assertEquals($this->object->update('unit_test', $unit_test, "id = 4"), 0);
@@ -229,13 +194,16 @@ class ezSQL_sqlsrvTest extends TestCase {
     public function testSelecting()
     {
         $this->object->quick_connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME);   
+
         $this->object->query('CREATE TABLE unit_test(id integer, test_key varchar(50), PRIMARY KEY (ID))');
+
         $this->object->insert('unit_test', array('id'=>8, 'test_key'=>'testing 8' ));
         $this->object->insert('unit_test', array('id'=>9, 'test_key'=>'testing 9' ));
         $this->object->insert('unit_test', array('id'=>10, 'test_key'=>'testing 10' ));
         
         $result = $this->object->selecting('unit_test');
         $i = 8;
+
         foreach ($result as $row) {
             $this->assertEquals($i, $row->id);
             $this->assertEquals('testing ' . $i, $row->test_key);
@@ -262,7 +230,8 @@ class ezSQL_sqlsrvTest extends TestCase {
     /**
      * @covers ezSQL_sqlsrv::disconnect
      */
-    public function testDisconnect() {
+    public function testDisconnect() 
+    {
         $this->object->quick_connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME);    
         $this->object->disconnect();
         $this->assertFalse($this->object->isConnected());
@@ -271,7 +240,8 @@ class ezSQL_sqlsrvTest extends TestCase {
     /**
      * @covers ezSQL_sqlsrv::__construct
      */
-    public function test__Construct() {   
+    public function test__Construct() 
+    {   
         $this->errors = array();
         set_error_handler(array($this, 'errorHandler'));    
         

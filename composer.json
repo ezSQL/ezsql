@@ -36,6 +36,11 @@
         "phpunit/phpunit": ">5.7.0",
         "php-coveralls/php-coveralls": "^2.1"
     },
+    "autoload-dev": {
+        "psr-4": {
+            "ezsql\\Tests\\": "tests/"
+        }
+    },
     "scripts": {
         "test": "phpunit --bootstrap vendor/autoload.php tests"
     }

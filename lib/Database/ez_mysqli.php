@@ -1,16 +1,5 @@
 <?php
-/**
- * ezSQL Database specific class - mySQLi
- * mySQLi component (part of ezSQL database abstraction library)
- *
- * @author Justin Vincent (jv@jvmultimedia.com)
- * @author Stefanie Janine Stoelting <mail@stefanie-stoelting.de>
- * @contributor Lawrence Stubbs <technoexpressnet@gmail.com>
- * @link http://twitter.com/justinvincent
- * @package ez_mysqli
- * @license FREE / Donation (LGPL - You may do what you like with ezSQL - no exceptions.)
- *
- */
+
 namespace ezsql\Database;
 
 use ezsql\Configuration;
@@ -55,6 +44,7 @@ final class ez_mysqli extends ezsqlModel
         if (empty($settings) || (!$settings instanceof Configuration)) {
             throw new Exception('<b>Fatal Error:</b> Missing configuration details to connect to database');
         }
+
         parent::__construct();
         $this->database = $settings;
 
@@ -65,23 +55,23 @@ final class ez_mysqli extends ezsqlModel
      * Short hand way to connect to mysql database server and select a mysql
      * database at the same time
      *
-     * @param string $dbuser The database user name
-     * @param string $dbpassword The database users password
-     * @param string $dbname The name of the database
-     * @param string $dbhost The host name or IP address of the database server.
+     * @param string $user The database user name
+     * @param string $password The database users password
+     * @param string $name The name of the database
+     * @param string $host The host name or IP address of the database server.
      *                       Default is localhost
      * @param string $charset Encoding of the database
      * @return boolean
      */
     public function quick_connect(
-        $dbuser = '', 
-        $dbpassword = '', 
-        $dbname = '', 
-        $dbhost = 'localhost', 
-        $charset = '') 
+        string $user = '', 
+        string $password = '', 
+        string $name = '', 
+        string $host = 'localhost', 
+        string $charset = '') 
     {
-        if ( ! $this->connect($dbuser, $dbpassword, $dbhost, true) ) ;
-        else if ( ! $this->select($dbname, $charset) ) ;
+        if ( ! $this->connect($user, $password, $host, $charset) ) ;
+        else if ( ! $this->select($name, $charset) ) ;
 
         return $this->_connected;
     } // quick_connect
@@ -89,26 +79,26 @@ final class ez_mysqli extends ezsqlModel
     /**
      * Try to connect to mySQLi database server
      *
-     * @param string $dbuser The database user name
-     * @param string $dbpassword The database users password
-     * @param string $dbhost The host name or IP address of the database server.
+     * @param string $user The database user name
+     * @param string $password The database users password
+     * @param string $host The host name or IP address of the database server.
      *                       Default is localhost
      * @param type $charset The database charset
      *                      Default is empty string
      * @return boolean
      */
     public function connect(
-        $dbuser = '', 
-        $dbpassword = '', 
-        $dbhost = 'localhost', 
-        $dbcharset = '') 
+        string $user = '', 
+        string $password = '',
+        string $host = 'localhost', 
+        string $charset = '')
     {
         $this->_connected = false;
 
-        $user = empty($dbuser) ? $this->database->getUser() : $dbuser;
-        $password = empty($dbpassword) ? $this->database->getPassword() : $dbpassword;
-        $host = ($dbhost!='localhost') ? $this->database->getHost() : $dbhost;
-        $charset = empty($dbcharset) ? $this->database->getCharset() : $dbcharset;
+        $user = empty($user) ? $this->database->getUser() : $user;
+        $password = empty($password) ? $this->database->getPassword() : $password;
+        $host = ($host != 'localhost') ? $this->database->getHost() : $host;
+        $charset = empty($charset) ? $this->database->getCharset() : $charset;
 
         // Must have a user and a password
         if ( empty($user ) ) {
@@ -133,7 +123,8 @@ final class ez_mysqli extends ezsqlModel
      * @param string $charset Encoding of the database
      * @return boolean
      */
-    public function select( $dbname='', $charset='') {
+    public function select($dbname = '', $charset = '') 
+    {
         $this->_connected = false;
         if ( ! $dbname ) {
             // Must have a database name
@@ -181,7 +172,8 @@ final class ez_mysqli extends ezsqlModel
      * @param string $str
      * @return string
      */
-    public function escape(string $str) {
+    public function escape(string $str) 
+    {
         return mysqli_real_escape_string($this->dbh, stripslashes($str));
     } // escape
 
@@ -290,7 +282,7 @@ final class ez_mysqli extends ezsqlModel
         $stmt->free_result();
         $stmt->close();
         
-        $this->setParamaters();
+        $this->setParameters();
         
         return $result;
     }
@@ -305,7 +297,7 @@ final class ez_mysqli extends ezsqlModel
     {
         $param  = [];
         if ($use_prepare)
-            $param = $this->getParamaters();
+            $param = $this->getParameters();
         
 		// check for ezQuery placeholder tag and replace tags with proper prepare tag
 		$query = str_replace(_TAG, '?', $query);

@@ -433,7 +433,7 @@ class ezSQL_oracleTNS extends ezSQLcore
             }
 
             // If there are any results then get them
-            if ($this->num_rows = @OCIFetchStatement($stmt, $results)) {
+            if ($this->num_rows = @OCIFetchStatement($stmt, $results, null, null, null)) {
                 // Convert results into object orientated results..
                 // Due to Oracle strange return structure - loop through columns
                 foreach ( $results as $col_title => $col_contents ) {
