@@ -43,10 +43,11 @@ if (!\defined('CONSTANTS')) {
         'mysql' => 'ez_mysqli',
         'mysqli' => 'ez_mysqli',
         'pdo' => 'ez_pdo',
-        'postgresql' => 'ez_pgsql',
+        'postgres' => 'ez_pgsql',
         'pgsql' => 'ez_pgsql',
         'sqlite' => 'ez_sqlite3',
         'sqlite3' => 'ez_sqlite3',
+        'msserver' => 'ez_sqlsrv',
         'mssql' => 'ez_sqlsrv',
         'sqlsrv' => 'ez_sqlsrv'
     ]);
@@ -87,10 +88,10 @@ if (!\defined('CONSTANTS')) {
         'charset' => 'charset',
         'path' => 'path',
         'port' => 'port',
-        'file' => 'isfile',
-        'filebase' => 'isfile',
-        'nosql' => 'to_mysql',
-        'nomysql' => 'to_mysql',
+        'file' => 'isFile',
+        'filebase' => 'isFile',
+        'nosql' => 'toMysql',
+        'nomysql' => 'toMysql',
         'options' => 'options'
     ]);
 

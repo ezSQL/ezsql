@@ -76,7 +76,7 @@ abstract class ConfigAbstract
     * database file, or not
     * @var boolean Default is false
     */
-    private $isfile = false;
+    private $isFile = false;
 
     /**
     * TCP/IP port of PostgreSQL
@@ -88,7 +88,7 @@ abstract class ConfigAbstract
     * If we want to convert Queries in MySql syntax to MS-SQL syntax. 
     * Yes, there are some differences in query syntax.
     */
-    private $to_mysql = true;
+    private $toMysql = true;
 
     /**
     * The path to open an SQLite database

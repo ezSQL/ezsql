@@ -1,30 +1,11 @@
 <?php 
-/**
- * Author:  Lawrence Stubbs <technoexpressnet@gmail.com>
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
- * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
- * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
- * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
- * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
- * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- * This software consists of voluntary contributions made by many individuals
- * and is licensed under the MIT license.
- */
+
 declare(strict_types=1);
 
 namespace ezsql;
 
+use Exception;
 use ezsql\ConfigAbstract;
-use const ezsql\Constants\VENDOR as VENDOR;
-use const ezsql\Constants\KEY_MAP as KEY_MAP;
-use const ezsql\Constants\ALLOWED_KEYS as ALLOWED_KEYS;
 
 class Configuration extends ConfigAbstract
 {
@@ -59,9 +40,9 @@ class Configuration extends ConfigAbstract
             $this->driver = $sql;
             if ($sql == 'pdo') {    
                 $this->setupPdo($args);            
-            } elseif (($sql == 'postgresql') || ($sql == 'pgsql')) {
+            } elseif (($sql == 'postgres') || ($sql == 'pgsql')) {
                 $this->setupPgsql($args);
-            } elseif (($sql == 'sqlsrv') || ($sql == 'mssql')) {
+            } elseif (($sql == 'sqlsrv') || ($sql == 'mssql') || ($sql == 'msserver')) {
                 $this->setupSqlsrv($args);
             } elseif (($sql == 'mysqli') || ($sql == 'mysql')) {
                 $this->setupMysqli($args);
@@ -99,7 +80,7 @@ class Configuration extends ConfigAbstract
             $this->user = empty($args[1]) ? $this->getUser() : $args[1];
             $this->password = empty($args[2]) ? $this->getPassword() : $args[2];
             $this->options = empty($args[3]) ? $this->getOptions() : $args[3];
-            $this->isfile = empty($args[4]) ? $this->getIsFile() : $args[4];
+            $this->isFile = empty($args[4]) ? $this->getIsFile() : $args[4];
         } else
            throw new Exception('<b>Fatal Error:</b> Missing configuration details to connect to database');
     }
@@ -115,7 +96,7 @@ class Configuration extends ConfigAbstract
             $this->password = empty($args[1]) ? $this->getPassword() : $args[1];
             $this->name = empty($args[2]) ? $this->getName() : $args[2];
             $this->host = empty($args[3]) ? $this->getHost() : $args[3];
-            $this->to_mysql = empty($args[4]) ? $this->getTo_mySql() : $args[4];
+            $this->toMysql = empty($args[4]) ? $this->getToMysql() : $args[4];
         } else
             throw new Exception('<b>Fatal Error:</b> Missing configuration details to connect to database');
     }

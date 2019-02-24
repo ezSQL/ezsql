@@ -56,6 +56,7 @@ class ezQuery implements ezQueryInterface
     public function clearParameters() 
     {
         $this->preparedValues = array();
+        return false;
 	}
     
     public function to_string($arrays)  
@@ -100,7 +101,20 @@ class ezQuery implements ezQueryInterface
         
         return 'ORDER BY '.$columns.' '. $order;
     }
-   
+
+    public function limit($numberOf, $offset = null)
+    {
+        if (empty($numberOf)) {
+            return false;
+        }
+        
+        $rows = (int) $numberOf;
+        
+        $value = !empty($offset) ? ' OFFSET '.(int) $offset : '';
+        
+        return 'LIMIT '.$rows.$value;
+    }
+
     public function where( ...$whereKeyArray) 
     {      
         $whereOrHaving = ($this->isWhere) ? 'WHERE' : 'HAVING';
@@ -130,8 +144,7 @@ class ezQuery implements ezQueryInterface
 					$extra[] = (isset($values[4])) ? $values[4]: null;
 				}				
 			} else {
-                $this->clearParameters();
-				return false;
+                return $this->clearParameters();
             }                
 		}
         
@@ -148,8 +161,7 @@ class ezQuery implements ezQueryInterface
                     $combineWith = _AND;
 
                 if (! in_array( $isCondition, array( '<', '>', '=', '!=', '>=', '<=', '<>', 'IN', 'LIKE', 'NOT LIKE', 'BETWEEN', 'NOT BETWEEN', 'IS', 'IS NOT' ) )) {
-                    $this->clearParameters();
-                    return false;
+                    return $this->clearParameters();
                 } else {
                     if (($isCondition == 'BETWEEN') || ($isCondition == 'NOT BETWEEN')) {
 						$value = $this->escape($combineWith);
@@ -180,8 +192,7 @@ class ezQuery implements ezQueryInterface
                         $isCondition = (($isCondition == 'IS') || ($isCondition == 'IS NOT')) ? $isCondition : 'IS';
                         $where .= "$key ".$isCondition." NULL $combineWith ";
                     } elseif ((($isCondition == 'LIKE') || ($isCondition == 'NOT LIKE')) && ! preg_match('/[_%?]/', $val)) {
-                        $this->clearParameters();
-                        return false;
+                        return $this->clearParameters();
                     } else {
 						if ($this->getPrepare()) {
 							$where .= "$key ".$isCondition.' '._TAG." $combineWith ";
@@ -217,8 +228,7 @@ class ezQuery implements ezQueryInterface
         $where = '';
 		
         if (empty($table)) {
-            $this->clearParameters();
-            return false;
+            return $this->clearParameters();
         }
         
         $columns = $this->to_string($fields);
@@ -236,27 +246,30 @@ class ezQuery implements ezQueryInterface
                 $groupBySet = false;      
                 $havingSet = false;             
                 $orderBySet = false;   
-				foreach ($get_args as $where_groupBy_having_orderby) {
-                    if (strpos($where_groupBy_having_orderby,'WHERE') !== false ) {
-                        $args_by .= $where_groupBy_having_orderby;
+                $limitSet = false;   
+				foreach ($get_args as $where_groupBy_having_orderby_limit) {
+                    if (strpos($where_groupBy_having_orderby_limit, 'WHERE') !== false ) {
+                        $args_by .= $where_groupBy_having_orderby_limit;
                         $skipWhere = true;
-                    } elseif (strpos($where_groupBy_having_orderby,'GROUP BY') !== false ) {
-                        $args_by .= ' '.$where_groupBy_having_orderby;
+                    } elseif (strpos($where_groupBy_having_orderby_limit, 'GROUP BY') !== false ) {
+                        $args_by .= ' '.$where_groupBy_having_orderby_limit;
                         $groupBySet = true;
-                    } elseif (strpos($where_groupBy_having_orderby,'HAVING') !== false ) {
+                    } elseif (strpos($where_groupBy_having_orderby_limit, 'HAVING') !== false ) {
                         if ($groupBySet) {
-                            $args_by .= ' '.$where_groupBy_having_orderby;
+                            $args_by .= ' '.$where_groupBy_having_orderby_limit;
                             $havingSet = true;
                         } else {
-                            $this->clearParameters();
-                            return false;
+                            return $this->clearParameters();
                         }
-                    } elseif (strpos($where_groupBy_having_orderby,'ORDER BY') !== false ) {
-                        $args_by .= ' '.$where_groupBy_having_orderby;    
+                    } elseif (strpos($where_groupBy_having_orderby_limit, 'ORDER BY') !== false ) {
+                        $args_by .= ' '.$where_groupBy_having_orderby_limit;    
                         $orderBySet = true;
+                    } elseif (strpos($where_groupBy_having_orderby_limit, 'LIMIT') !== false ) {
+                        $args_by .= ' '.$where_groupBy_having_orderby_limit;    
+                        $limitSet = true;
                     }
                 }
-                if ($skipWhere || $groupBySet || $havingSet || $orderBySet) {
+                if ($skipWhere || $groupBySet || $havingSet || $orderBySet || $limitSet) {
                     $where = $args_by;
                     $skipWhere = true;
                 }
@@ -277,12 +290,11 @@ class ezQuery implements ezQueryInterface
             else 
                 return $sql;
         } else {
-            $this->clearParameters();
-            return false;
+            return $this->clearParameters();
         }             
     }
 	
-    public function select_sql($table='', $fields='*', ...$get_args) 
+    public function select_sql($table = '', $fields = '*', ...$get_args) 
     {
 		$this->select_result = false;
         return $this->selecting($table, $fields, ...$get_args);	            
@@ -293,8 +305,7 @@ class ezQuery implements ezQueryInterface
 		if (isset($oldTable))
 			$this->fromTable = $oldTable;
 		else {
-            $this->clearParameters();
-			return false;            
+            return $this->clearParameters();            
         }
 			
         $newTableFromTable = $this->select_sql($newTable, $fromColumns, ...$fromWhere);			
@@ -303,8 +314,7 @@ class ezQuery implements ezQueryInterface
                 ? $this->query($newTableFromTable, true) 
                 : $this->query($newTableFromTable); 
         else {
-            $this->clearParameters();
-            return false;    		
+            return $this->clearParameters();   		
         }
     }
     
@@ -314,8 +324,7 @@ class ezQuery implements ezQueryInterface
 		if (isset($oldTable))
 			$this->fromTable = $oldTable;
 		else {
-			$this->clearParameters();
-            return false;          			
+			return $this->clearParameters();          			
 		}  
 			
         $newTableFromTable = $this->select_sql($newTable, $fromColumns, ...$fromWhere);
@@ -324,16 +333,14 @@ class ezQuery implements ezQueryInterface
                 ? $this->query($newTableFromTable, true) 
                 : $this->query($newTableFromTable); 
         else {
-			$this->clearParameters();
-            return false;          			
+			return $this->clearParameters();         			
 		}  
     }
 
     public function update($table='', $keyAndValue, ...$WhereKeys) 
     {        
         if ( ! is_array( $keyAndValue ) || empty($table) ) {
-			$this->clearParameters();
-            return false;
+			return $this->clearParameters();
         }
         
         $sql = "UPDATE $table SET ";
@@ -359,16 +366,14 @@ class ezQuery implements ezQueryInterface
                 ? $this->query($sql, true) 
                 : $this->query($sql) ;       
         } else {
-			$this->clearParameters();
-            return false;
+			return $this->clearParameters();
 		}
     }   
          
     public function delete($table='', ...$WhereKeys) 
     {   
         if ( empty($table) ) {
-			$this->clearParameters();
-            return false;          			
+			return $this->clearParameters();         			
 		}  
 		
         $sql = "DELETE FROM $table";
@@ -380,21 +385,18 @@ class ezQuery implements ezQueryInterface
                 ? $this->query($sql, true) 
                 : $this->query($sql) ;  
         } else {
-			$this->clearParameters();
-            return false;          			
+			return $this->clearParameters();         			
 		}  
     }
 
     private function _query_insert_replace($table = '', $keyAndValue, $type = '', $execute = true) 
     {  
         if ((! is_array($keyAndValue) && ($execute)) || empty($table)) {
-			$this->clearParameters();
-            return false;          			
+			return $this->clearParameters();          			
 		}  
         
         if ( ! in_array( strtoupper( $type ), array( 'REPLACE', 'INSERT' ))) {
-			$this->clearParameters();
-            return false;          			
+			return $this->clearParameters();          			
 		}  
             
         $sql = "$type INTO $table";
@@ -427,8 +429,7 @@ class ezQuery implements ezQueryInterface
             if ($ok)
                 return $this->insert_id;
             else {
-				$this->clearParameters();
-				return false;          			
+				return $this->clearParameters();          			
 			}  
         } else {
             if (is_array($keyAndValue)) {
@@ -465,8 +466,7 @@ class ezQuery implements ezQueryInterface
                 ? $this->query($putToTable." ".$getFromTable, true) 
                 : $this->query($putToTable." ".$getFromTable) ;
         else {
-			$this->clearParameters();
-            return false;          			
+			return $this->clearParameters();          			
 		}
     }    
 }

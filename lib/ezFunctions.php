@@ -293,6 +293,13 @@ if (!function_exists('ezFunctions')) {
             ? $_ezQuery->orderBy($orderBy, $order) 
             : false;
     } 
+
+    function limit($numberOf, $offset = null) {
+        global $_ezQuery;
+        return (!empty($_ezQuery) && $_ezQuery instanceOf ezQueryInterface) 
+            ? $_ezQuery->limit($numberOf, $offset) 
+            : false;
+    } 
     
     function insert($table = '', $keyValue) {
         global $_ezQuery;

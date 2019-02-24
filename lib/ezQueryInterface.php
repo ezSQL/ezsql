@@ -47,18 +47,25 @@ interface ezQueryInterface
     public function getParameters();
     
     /**
-    * Add parameter values to class array variable for prepare function
+    * Add parameter values to class array variable for prepare function.
     * @param mixed $valueToAdd
     *
-    * @return int count
+    * @return int array count
     */
     public function setParameters($valueToAdd = null);
     
     /**
     * Clear parameter values
+    *
+    * @return bool false
     */
-    public function clearParameters() ;
-    
+    public function clearParameters();
+
+    /**
+    * Convert array to string, and attach '`, `' for separation.
+    *
+    * @return string
+    */  
     public function to_string($arrays);
             
     /**
@@ -81,27 +88,38 @@ interface ezQueryInterface
     * Specifies a restriction over the groups of the query. 
     * format having( array(x, =, y, and, extra) ) or having( "x  =  y  and  extra" );    
 	* example: having( array(key, operator, value, combine, extra) ); or having( "key operator value combine extra" );
-    * @param mixed $having
-    * @param $key, - table column  
-    * @param $operator, - set the operator condition, 
+    * @param array $having
+    * @param string $key, - table column  
+    * @param string $operator, - set the operator condition, 
     *                       either '<','>', '=', '!=', '>=', '<=', '<>', 'in', 
     *                           'like', 'between', 'not between', 'is null', 'is not null'
-    * @param $value, - will be escaped
-    * @param $combine, - combine additional where clauses with, 
+    * @param mixed $value, - will be escaped
+    * @param string $combine, - combine additional where clauses with, 
     *                       either 'AND','OR', 'NOT', 'AND NOT' 
     *                           or  carry over of @value in the case the @operator is 'between' or 'not between'
-    * @param $extra - carry over of @combine in the case the operator is 'between' or 'not between'
+    * @param string $extra - carry over of @combine in the case the operator is 'between' or 'not between'
     * @return bool/string - HAVING SQL statement, or false on error
     */
     public function having(...$having);
  
     /**
     * Specifies an ordering for the query results.  
-    * @param $order The ordering direction. 
+    * @param string $orderBy - The column. 
+    * @param string $order - The ordering direction. 
+    *
     * @return string - ORDER BY SQL statement, or false on error
     */
     public function orderBy($orderBy, $order);
-   
+
+    /**
+    * Specifies records from one or more tables in a database and limit the number of records returned.  
+    * @param int $numberOf - set limit number of records to be returned.
+    * @param int $offset - Optional. The first row returned by LIMIT will be determined by offset value. 
+    *
+    * @return string - LIMIT and/or OFFSET SQL statement, or false on error
+    */
+    public function limit($numberOf, $offset = null);
+
  	/**
     * Helper returns an WHERE sql clause string.
     *
@@ -111,7 +129,7 @@ interface ezQueryInterface
     * example: 
     *   `where( array(key, operator, value, combine, extra) );` or `where( "key operator value combine extra" );`
     *
-    * @param mixed $whereKeyArray
+    * @param array $whereKeyArray
     * @param $key, - table column  
     * @param $operator, - set the operator condition, 
     *                   either '<','>', '=', '!=', '>=', '<=', '<>', 'in', 'like', 
@@ -133,20 +151,21 @@ interface ezQueryInterface
     * selecting(
     *   table,
     *   columns, 
-    *   where( eq( columns, values, _AND ), 
-    *   like( columns, _d ) ), 
+    *   where( eq( columns, values, _AND ), like( columns, _d ) ), 
     *   groupBy( columns ), 
     *   having( between( columns, values1, values2 ) ), 
-    *   orderBy( columns, desc )
+    *   orderBy( columns, desc ),
+    *   limit( numberOfRecords, offset )
     *);
     * ``` 
     *
     * @param $table, - database table to access
     * @param $fields, - table columns, string or array
     * @param $WhereKey, - where clause ( array(x, =, y, and, extra) ) or ( "x  =  y  and  extra" )
-    * @param $groupBy, - 
+    * @param $groupBy, - grouping over the results
     * @param $having, - having clause ( array(x, =, y, and, extra) ) or ( "x  =  y  and  extra" )
-    * @param $orderby -
+    * @param $orderby - ordering for the query
+    * @param $limit - limit the number of records
     *   
     * @return result set - see docs for more details, or false for error
 	*/
