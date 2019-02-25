@@ -15,8 +15,7 @@ require_once('ezQuery.php');
 	*  sets once returned
 	*/	
 	class ezSQLcore extends ezQuery
-	{		
-    
+	{    
 		protected $trace            = false;  // same as $debug_all
 		protected $debug_all        = false;  // same as $trace
 		protected $debug_called     = false;
@@ -24,24 +23,25 @@ require_once('ezQuery.php');
 		protected $show_errors      = true;
 		protected $num_queries      = 0;
 		protected $conn_queries     = 0;
-		public $last_query       = null;
-		public $last_error       = null;
-		public $col_info         = null;
 		protected $captured_errors  = array();
 		protected $cache_dir        = false;
 		protected $cache_queries    = false;
 		protected $cache_inserts    = false;
 		protected $use_disk_cache   = false;
 		protected $cache_timeout    = 24; // hours
-		public $timers           = array();
-		public $total_query_time = 0;
 		protected $db_connect_time  = 0;
-		protected $trace_log        = array();
-		public $use_trace_log    = false;
 		protected $sql_log_file     = false;
-		public $do_profile       = false;
 		protected $profile_times    = array();
 		protected $insert_id        = null;
+
+		public $last_query       = null;
+		public $last_error       = null;
+		public $col_info         = null;
+		public $timers           = array();
+		public $total_query_time = 0;
+		public $trace_log        = array();
+		public $use_trace_log    = false;
+		public $do_profile       = false;
 		
     /**
      * Whether the database connection is established, or not
