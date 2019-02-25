@@ -152,7 +152,7 @@
 		function query($query, $use_prepare=false)
 		{
             if ($use_prepare) 
-                $param = &$this->getParameters();
+                $param = $this->getParameters();
             
 			// check for ezQuery placeholder tag and replace tags with proper prepare tag
 			$query = str_replace(_TAG, '?', $query);
