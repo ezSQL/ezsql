@@ -17,40 +17,40 @@ require_once('ezQuery.php');
 	class ezSQLcore extends ezQuery
 	{		
     
-		public $trace            = false;  // same as $debug_all
-		public $debug_all        = false;  // same as $trace
-		public $debug_called     = false;
-		public $vardump_called   = false;
-		public $show_errors      = true;
-		public $num_queries      = 0;
-		public $conn_queries     = 0;
+		protected $trace            = false;  // same as $debug_all
+		protected $debug_all        = false;  // same as $trace
+		protected $debug_called     = false;
+		protected $vardump_called   = false;
+		protected $show_errors      = true;
+		protected $num_queries      = 0;
+		protected $conn_queries     = 0;
 		public $last_query       = null;
 		public $last_error       = null;
 		public $col_info         = null;
-		public $captured_errors  = array();
-		public $cache_dir        = false;
-		public $cache_queries    = false;
-		public $cache_inserts    = false;
-		public $use_disk_cache   = false;
-		public $cache_timeout    = 24; // hours
+		protected $captured_errors  = array();
+		protected $cache_dir        = false;
+		protected $cache_queries    = false;
+		protected $cache_inserts    = false;
+		protected $use_disk_cache   = false;
+		protected $cache_timeout    = 24; // hours
 		public $timers           = array();
 		public $total_query_time = 0;
-		public $db_connect_time  = 0;
-		public $trace_log        = array();
+		protected $db_connect_time  = 0;
+		protected $trace_log        = array();
 		public $use_trace_log    = false;
-		public $sql_log_file     = false;
+		protected $sql_log_file     = false;
 		public $do_profile       = false;
-		public $profile_times    = array();
-		public $insert_id        = null;
+		protected $profile_times    = array();
+		protected $insert_id        = null;
 		
     /**
      * Whether the database connection is established, or not
-     * @public boolean Default is false
+     * @protected boolean Default is false
      */
     protected $_connected = false;    
     /**
      * Contains the number of affected rows of a query
-     * @public int Default is 0
+     * @protected int Default is 0
      */
     protected $_affectedRows = 0;
 
