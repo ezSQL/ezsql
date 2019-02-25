@@ -3,32 +3,37 @@ ezSQL
 [![Build Status](https://travis-ci.org/ezSQL/ezSQL.svg?branch=master)](https://travis-ci.org/ezSQL/ezSQL)
 [![Build status](https://ci.appveyor.com/api/projects/status/6s8oqnoxa2i5k04f?svg=true)](https://ci.appveyor.com/project/jv2222/ezsql)
 [![codecov](https://codecov.io/gh/ezSQL/ezSQL/branch/master/graph/badge.svg)](https://codecov.io/gh/ezSQL/ezSQL)
-[![Maintainability](https://api.codeclimate.com/v1/badges/8db71512a019ab280a16/maintainability)](https://codeclimate.com/github/techno-express/ezSQL/maintainability)
+[![Maintainability](https://api.codeclimate.com/v1/badges/0071eb99ab4f5ac5b1f2/maintainability)](https://codeclimate.com/github/ezSQL/ezSQL/maintainability)
 
 Installation
 ------
+
 `composer require ezsql/ezsql`
 
 `require 'vendor/autoload.php';`
 
-or 
+or
 
 `require_once "ez_sql_loader.php";`
 
 Author
 ------
+
 Justin Vincent - http://justinvincent.com/ezsql
 
 Description
 ------------
+
 Class to make it very easy to deal with database connections.
 
 License
 -------
+
 FREE / Donation (LGPL - You may do what you like with ezSQL - no exceptions.)
 
 Change Log
-==========
+----
+
 Note: This change log isn't being used any more due to automated github tracking
 
 3.08 - Merged fork https://github.com/sjstoelting/ezSQL3 to be current with this repo. 
