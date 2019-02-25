@@ -47,6 +47,7 @@ if (!\defined('CONSTANTS')) {
         'pgsql' => 'ez_pgsql',
         'sqlite' => 'ez_sqlite3',
         'sqlite3' => 'ez_sqlite3',
+        'sqlserver' => 'ez_sqlsrv',
         'msserver' => 'ez_sqlsrv',
         'mssql' => 'ez_sqlsrv',
         'sqlsrv' => 'ez_sqlsrv'

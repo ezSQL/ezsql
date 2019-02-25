@@ -42,7 +42,7 @@ class Configuration extends ConfigAbstract
                 $this->setupPdo($args);            
             } elseif (($sql == 'postgres') || ($sql == 'pgsql')) {
                 $this->setupPgsql($args);
-            } elseif (($sql == 'sqlsrv') || ($sql == 'mssql') || ($sql == 'msserver')) {
+            } elseif (($sql == 'sqlsrv') || ($sql == 'mssql') || ($sql == 'msserver') || ($sql == 'sqlserver')) {
                 $this->setupSqlsrv($args);
             } elseif (($sql == 'mysqli') || ($sql == 'mysql')) {
                 $this->setupMysqli($args);
