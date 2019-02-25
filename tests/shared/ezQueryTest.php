@@ -60,15 +60,7 @@ class ezQueryTest extends TestCase {
     {
         $this->assertEquals("' help", $this->object->clean("<?php echo 'foo' >' help</php?>"));
     } 
-    
-    /**
-     * @covers ezQuery::to_string
-     */
-    public function testTo_string()
-    {
-        $this->assertContains(',',$this->object->to_string(array('test','test2')));
-    }
-     
+
     /**
      * @covers ezQuery::where
      */
@@ -93,16 +85,8 @@ class ezQueryTest extends TestCase {
     public function testSelecting()
     {
         $this->assertFalse($this->object->selecting('',''));
-        $this->assertNotNull($this->object->select_sql('table','colums','WHERE','GROUP BY','HAVING','ORDER BY'));
+        $this->assertNotNull($this->object->selecting('table','columns','WHERE','GROUP BY','HAVING','ORDER BY','LIMIT'));
     }
-
-    /**
-     * @covers ezQuery::select_sql
-     */
-    public function testSelect_sql()
-    {
-        $this->assertNotNull($this->object->select_sql('table','colums','WHERE','GROUP BY','HAVING','ORDER BY'));
-    } 
     
     /**
      * @covers ezQuery::create_select

@@ -55,9 +55,14 @@ class ezQuery implements ezQueryInterface
     {
         $this->preparedValues = array();
         return false;
-	}
-    
-    public function to_string($arrays)  
+    }
+
+    /**
+    * Convert array to string, and attach '`, `' for separation.
+    *
+    * @return string
+    */  
+    private function to_string($arrays)  
     {        
         if (is_array( $arrays )) {
             $columns = '';
@@ -291,8 +296,12 @@ class ezQuery implements ezQueryInterface
             return $this->clearParameters();
         }             
     }
-	
-    public function select_sql($table = '', $fields = '*', ...$get_args) 
+
+    /**
+     * Get sql statement from selecting method instead of executing get_result
+     * @return string
+     */
+    private function select_sql($table = '', $fields = '*', ...$get_args)
     {
 		$this->select_result = false;
         return $this->selecting($table, $fields, ...$get_args);	            
@@ -387,6 +396,10 @@ class ezQuery implements ezQueryInterface
 		}  
     }
 
+	/**
+    * Helper does the actual insert or replace query with an array
+	* @return mixed bool/results - false for error
+	*/
     private function _query_insert_replace($table = '', $keyAndValue, $type = '', $execute = true) 
     {  
         if ((! is_array($keyAndValue) && ($execute)) || empty($table)) {
