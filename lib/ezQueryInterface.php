@@ -27,7 +27,12 @@
 namespace ezsql;
 
 interface ezQueryInterface
-{ 		        
+{	
+    /**
+    * Clean input of XSS, html, javascript, etc...
+    * @param string $string
+    * @return string cleaned string
+    */	        
     public function clean($string);
     
     /*
