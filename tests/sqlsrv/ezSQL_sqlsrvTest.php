@@ -82,7 +82,7 @@ class ezSQL_sqlsrvTest extends TestCase {
      * This method is called after a test is executed.
      */
     protected function tearDown() {
-        $this->object->query('DROP TABLE IF EXISTS unit_test');
+        $this->object->query('DROP TABLE unit_test');
         $this->object = null;
     } // tearDown
 
@@ -183,7 +183,7 @@ class ezSQL_sqlsrvTest extends TestCase {
     public function testUpdate()
     {
         $this->object->quick_connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME);  
-        $this->object->query('DROP TABLE IF EXISTS unit_test'); 
+        $this->object->query('DROP TABLE unit_test'); 
         $this->object->query('CREATE TABLE unit_test(id integer, test_key varchar(50), PRIMARY KEY (ID))'); 
         $this->assertNotFalse($this->object->insert('unit_test', array('id'=>1, 'test_key'=>'testUpdate() 1' )));
         $this->object->insert('unit_test', array('id'=>2, 'test_key'=>'testUpdate() 2' ));
