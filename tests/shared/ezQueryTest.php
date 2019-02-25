@@ -124,17 +124,6 @@ class ezQueryTest extends DBTestCase
     }
     
     /**
-     * @covers ezQuery::_query_insert_replace
-     */
-    public function test_Query_insert_replace() 
-    {        
-        $this->assertFalse($this->object->_query_insert_replace('', array('id'=>'2' ),'replace')); 
-        $this->assertFalse($this->object->_query_insert_replace('unit_table', array('id'=>'2' ),''));  
-        $this->assertContains('replace INTO unit_table',$this->object->_query_insert_replace('unit_table', 'id' ,'replace',false));   
-        $this->assertContains('(test, INSERT, INTO, SELECT)',$this->object->_query_insert_replace('unit_table', array('test','INSERT','INTO','SELECT') ,'insert',false)); 
-    }   
-        
-    /**
      * @covers ezQuery::__construct
      */
     public function test__Construct() {         

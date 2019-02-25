@@ -227,8 +227,6 @@ class pdo_sqlsrvTest extends DBTestCase
         ->disableOriginalConstructor()
         ->getMock();
         
-        $this->expectOutputRegex('/[constructor:]/');
-        $this->assertNull($pdo->__construct('sqlsrv:Server=' . self::TEST_DB_HOST . ';Database=' . self::TEST_DB_NAME, self::TEST_DB_USER, self::TEST_DB_PASSWORD));  
-    } 
-     
+        $this->assertNull($pdo->__construct('sqlsrv:Server=' . self::TEST_DB_HOST . ';Database=' . self::TEST_DB_NAME, self::TEST_DB_USER, self::TEST_DB_PASSWORD)); 
+    }     
 } // ezSQL_pdoTest
