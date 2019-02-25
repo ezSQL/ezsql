@@ -12,6 +12,7 @@
  * @license FREE / Donation (LGPL - You may do what you like with ezSQL - no exceptions.)
  *
  */
+
 class ezSQL_pdo extends ezSQLcore
 {
     /**
@@ -278,7 +279,7 @@ class ezSQL_pdo extends ezSQLcore
      */
     public function query($query, $use_prepare=false) {
         if ($use_prepare)
-            $param = &$this->getParamaters();
+            $param = &$this->getParameters();
         
 		// check for ezQuery placeholder tag and replace tags with proper prepare tag
 		$query = str_replace(_TAG, '?', $query);
@@ -328,7 +329,7 @@ class ezSQL_pdo extends ezSQLcore
             // Perform the query via std PDO query or PDO prepare function..
             if (!empty($param) && is_array($param) && ($this->getPrepare())) {
                 $this->_affectedRows = $this->query_prepared($query, $param, false);	
-				$this->setParamaters();
+				$this->clearParameters();
             } else
                 $this->_affectedRows = $this->dbh->exec($query);
 
@@ -354,7 +355,7 @@ class ezSQL_pdo extends ezSQLcore
             // Perform the query via std PDO query or PDO prepare function..
             if (!empty($param) && is_array($param) && ($this->getPrepare())) {
                 $sth = $this->query_prepared($query, $param, true);	
-				$this->setParamaters();
+				$this->clearParameters();
             } else
                 $sth = $this->dbh->query($query);
 

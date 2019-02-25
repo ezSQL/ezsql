@@ -30,6 +30,8 @@
         "php": ">5.6"
     },
     "autoload": {
+        "psr-4": {
+			"ezsql\\": "shared/"},
         "files": ["ez_sql_loader.php"]
     },
     "require-dev": {

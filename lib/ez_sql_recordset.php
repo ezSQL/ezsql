@@ -9,7 +9,7 @@
  * @license FREE / Donation (LGPL - You may do what you like with ezSQL - no exceptions.)
  *
  */
-class ezSQL_recordset implements Iterator
+class ezSQL_recordset implements \Iterator
 {
     /**
      * Returns the result as array

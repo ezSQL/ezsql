@@ -12,7 +12,8 @@
           * @package ezSQL
           * @license FREE / Donation (LGPL - You may do what you like with ezSQL - no exceptions.)
           *
-          */
+		  */
+
 	class ezSQL_postgresql extends ezSQLcore
 	{
 		
@@ -226,7 +227,7 @@
 		{
 			$param = [];
             if ($use_prepare)
-                $param = $this->getParamaters();
+                $param = $this->getParameters();
             
 			// check for ezQuery placeholder tag and replace tags with proper prepare tag
 			if (!empty($param) && is_array($param) && ($this->getPrepare()) && (strpos($query, _TAG) !== false))
@@ -273,7 +274,7 @@
 			// Perform the query via std postgresql_query function..
 			if (!empty($param) && is_array($param) && ($this->getPrepare())){
 				$this->result = @pg_query_params($this->dbh, $query, $param);		
-				$this->setParamaters();				
+				$this->clearParameters();				
 			} else 
 				$this->result = @pg_query($this->dbh, $query);
 

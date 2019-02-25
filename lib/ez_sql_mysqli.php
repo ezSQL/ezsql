@@ -12,6 +12,7 @@
  * @license FREE / Donation (LGPL - You may do what you like with ezSQL - no exceptions.)
  *
  */
+
 class ezSQL_mysqli extends ezSQLcore
 {
     /*
@@ -333,7 +334,7 @@ class ezSQL_mysqli extends ezSQLcore
         $stmt->free_result();
         $stmt->close();
         
-        $this->setParamaters();
+        $this->clearParameters();
         
         return $result;
     }
@@ -347,7 +348,7 @@ class ezSQL_mysqli extends ezSQLcore
     public function query($query, $use_prepare=false) {
         $param = [];
         if ($use_prepare)
-            $param = $this->getParamaters();
+            $param = $this->getParameters();
         
 		// check for ezQuery placeholder tag and replace tags with proper prepare tag
 		$query = str_replace(_TAG, '?', $query);

@@ -1,21 +1,11 @@
 <?php
-	/**********************************************************************
-	*  Author: Justin Vincent (jv@vip.ie)
-           * Author: Stefanie Janine Stoelting <mail@stefanie-stoelting.de>
-           * Contributor:  Lawrence Stubbs <technoexpressnet@gmail.com>
-	*  Web...: http://justinvincent.com
-	*  Name..: ezSQL
-	*  Desc..: ezSQL Core module - database abstraction library to make
-	*          it very easy to deal with databases. ezSQLcore can not be used by
-	*          itself (it is designed for use by database specific modules).
-           *
-	*/
 
+require_once('ezFunctions.php');
+require_once('ezQuery.php');
 	/**********************************************************************
 	*  ezSQL Constants
 	*/
-
-	defined('EZSQL_VERSION') or define('EZSQL_VERSION', '3.08');
+	defined('EZSQL_VERSION') or define('EZSQL_VERSION', '3.12');
 	defined('OBJECT') or define('OBJECT', 'OBJECT');
 	defined('ARRAY_A') or define('ARRAY_A', 'ARRAY_A');
 	defined('ARRAY_N') or define('ARRAY_N', 'ARRAY_N');
@@ -23,10 +13,7 @@
 	/**********************************************************************
 	*  Core class containing common functions to manipulate query result
 	*  sets once returned
-	*/
-
-    require_once('ezFunctions.php');
-    require_once('ezQuery.php');
+	*/	
 	class ezSQLcore extends ezQuery
 	{		
     
@@ -155,7 +142,7 @@
 			$this->col_info = null;
 			$this->last_query = null;
 			$this->from_disk_cache = false;
-            $this->setParamaters();
+            $this->clearParameters();
 		}
 
 		/**********************************************************************
