@@ -234,11 +234,11 @@ class ezQuery implements ezQueryInterface
         $columns = $this->to_string($fields);
         
 		if (isset($getFromTable) && ! $getIsInto) 
-			$sql="CREATE TABLE $table AS SELECT $columns FROM ".$getFromTable;
+			$sql = "CREATE TABLE $table AS SELECT $columns FROM ".$getFromTable;
         elseif (isset($getFromTable) && $getIsInto) 
-			$sql="SELECT $columns INTO $table FROM ".$getFromTable;
+			$sql = "SELECT $columns INTO $table FROM ".$getFromTable;
         else 
-			$sql="SELECT $columns FROM ".$table;
+			$sql = "SELECT $columns FROM ".$table;
 
         if (!empty($get_args)) {
 			if (is_string($get_args[0])) {
@@ -337,7 +337,7 @@ class ezQuery implements ezQueryInterface
 		}  
     }
 
-    public function update($table='', $keyAndValue, ...$WhereKeys) 
+    public function update($table = '', $keyAndValue, ...$WhereKeys) 
     {        
         if ( ! is_array( $keyAndValue ) || empty($table) ) {
 			return $this->clearParameters();
@@ -345,8 +345,8 @@ class ezQuery implements ezQueryInterface
         
         $sql = "UPDATE $table SET ";
         
-        foreach($keyAndValue as $key=>$val) {
-            if(strtolower($val)=='null') {
+        foreach($keyAndValue as $key => $val) {
+            if(strtolower($val) == 'null') {
 				$sql .= "$key = NULL, ";
             } elseif(in_array(strtolower($val), array( 'current_timestamp()', 'date()', 'now()' ))) {
 				$sql .= "$key = CURRENT_TIMESTAMP(), ";
@@ -364,13 +364,13 @@ class ezQuery implements ezQueryInterface
             $sql = rtrim($sql, ', ') . $where;
             return (($this->getPrepare()) && !empty($this->getParameters())) 
                 ? $this->query($sql, true) 
-                : $this->query($sql) ;       
+                : $this->query($sql);       
         } else {
 			return $this->clearParameters();
 		}
     }   
          
-    public function delete($table='', ...$WhereKeys) 
+    public function delete($table = '', ...$WhereKeys) 
     {   
         if ( empty($table) ) {
 			return $this->clearParameters();         			
@@ -383,7 +383,7 @@ class ezQuery implements ezQueryInterface
             $sql .= $where;						
             return (($this->getPrepare()) && !empty($this->getParameters())) 
                 ? $this->query($sql, true) 
-                : $this->query($sql) ;  
+                : $this->query($sql);  
         } else {
 			return $this->clearParameters();         			
 		}  
@@ -406,7 +406,7 @@ class ezQuery implements ezQueryInterface
         if ($execute) {
             foreach($keyAndValue as $key => $val) {
                 $index .= "$key, ";
-                if (strtolower($val)=='null') 
+                if (strtolower($val) == 'null') 
                     $value .= "NULL, ";
                 elseif (in_array(strtolower($val), array( 'current_timestamp()', 'date()', 'now()' ))) 
                     $value .= "CURRENT_TIMESTAMP(), ";
@@ -446,12 +446,12 @@ class ezQuery implements ezQueryInterface
         }
 	}
         
-    public function replace($table='', $keyAndValue) 
+    public function replace($table = '', $keyAndValue) 
     {
             return $this->_query_insert_replace($table, $keyAndValue, 'REPLACE');
         }
 
-    public function insert($table='', $keyAndValue) 
+    public function insert($table = '', $keyAndValue) 
     {
         return $this->_query_insert_replace($table, $keyAndValue, 'INSERT');
     }
