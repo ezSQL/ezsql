@@ -273,7 +273,7 @@ final class ez_pdo extends ezsqlModel
             // Perform the query via std PDO query or PDO prepare function..
             if (!empty($param) && is_array($param) && ($this->getPrepare())) {
                 $this->_affectedRows = $this->query_prepared($query, $param, false);	
-				$this->setParameters();
+				$this->clearParameters();
             } else
                 $this->_affectedRows = $this->dbh->exec($query);
 

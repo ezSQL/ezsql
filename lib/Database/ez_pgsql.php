@@ -218,7 +218,7 @@
 			if (!empty($param) && is_array($param) && ($this->getPrepare()))
 			{
 				$this->result = @pg_query_params($this->dbh, $query, $param);		
-				$this->setParameters();				
+				$this->clearParameters();				
 			} else 
 				$this->result = @pg_query($this->dbh, $query);
 

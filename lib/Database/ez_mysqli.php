@@ -283,7 +283,7 @@ final class ez_mysqli extends ezsqlModel
         $stmt->free_result();
         $stmt->close();
         
-        $this->setParameters();
+        $this->clearParameters();
         
         return $result;
     }

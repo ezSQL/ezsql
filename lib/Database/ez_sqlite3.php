@@ -183,7 +183,7 @@
 			if (!empty($param) && is_array($param) && ($this->getPrepare())) 
 			{
                 $this->result = $this->query_prepared($query, $param);	
-				$this->setParameters();
+				$this->clearParameters();
             } else 
                 $this->result = $this->dbh->query($query);
 			$this->count(true, true);
