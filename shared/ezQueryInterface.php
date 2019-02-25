@@ -117,7 +117,9 @@ interface ezQueryInterface
     public function orderBy($orderBy, $order);
 
     /**
-    * Specifies records from one or more tables in a database and limit the number of records returned.  
+    * Specifies records from one or more tables in a database and 
+    * limit the number of records returned.
+    *
     * @param int $numberOf - set limit number of records to be returned.
     * @param int $offset - Optional. The first row returned by LIMIT will be determined by offset value. 
     *
@@ -129,10 +131,12 @@ interface ezQueryInterface
     * Helper returns an WHERE sql clause string.
     *
     * format:
-    *   `where( array(x, =, y, and, extra) ) or where( "x  =  y  and  extra" );`
+    *   `where( array(x, =, y, and, extra) )` or 
+    *   `where( "x  =  y  and  extra" );`
     *
     * example: 
-    *   `where( array(key, operator, value, combine, extra) );` or `where( "key operator value combine extra" );`
+    *   `where( array(key, operator, value, combine, extra) );` or 
+    *   `where( "key operator value combine extra" );`
     *
     * @param array $whereKeyArray
     * @param $key, - table column  
