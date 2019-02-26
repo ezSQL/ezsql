@@ -277,6 +277,10 @@ use ezsql\ezQueryInterface;
         return $status;
     }
     
+    function setInstance($ezSQL = '') {
+        return \setQuery($ezSQL);
+    }
+
     function getInstance() {
         global $ezInstance;
 
@@ -290,21 +294,21 @@ use ezsql\ezQueryInterface;
             : false;
     } 
     
-    function selectInto($table, $columns = '*', $old = null, ...$args) {
+    function select_into($table, $columns = '*', $old = null, ...$args) {
         $ezQuery = \getInstance();
         return ($ezQuery instanceOf ezQueryInterface) 
             ? $ezQuery->select_into($table, $columns, $old, ...$args) 
             : false;
     } 
     
-    function insertSelect($totable = '', $columns = '*', $fromTable, $from = '*', ...$args) {
+    function insert_select($totable = '', $columns = '*', $fromTable, $from = '*', ...$args) {
         $ezQuery = \getInstance();
         return ($ezQuery instanceOf ezQueryInterface) 
             ? $ezQuery->insert_select($totable, $columns, $fromTable, $from, ...$args) 
             : false;
     }     
     
-    function createSelect($table, $from, $old = null, ...$args) {
+    function create_select($table, $from, $old = null, ...$args) {
         $ezQuery = \getInstance();
         return ($ezQuery instanceOf ezQueryInterface) 
             ? $ezQuery->create_select($table, $from, $old, ...$args) 
