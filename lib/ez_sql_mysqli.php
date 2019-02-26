@@ -110,8 +110,9 @@ class ezSQL_mysqli extends ezSQLcore
             $this->_charset = strtolower(str_replace('-', '', $charset));
         }
         
-        global $_ezMysqli;
-        $_ezMysqli = $this;
+        $GLOBALS['db_mysql'] = $this;        
+        $GLOBALS['db_mysqli'] = $this;
+        \setQuery($this);
     } // __construct
 
     /**

@@ -50,8 +50,8 @@
 				$this->connect($dbpath, $dbname);
 			}
             
-            global $_ezSqlite3;
-            $_ezSqlite3 = $this;
+			$GLOBALS['db_sqlite'] = $this;
+			\setQuery($this);
 		}
 
 		/**********************************************************************

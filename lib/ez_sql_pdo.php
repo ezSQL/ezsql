@@ -99,8 +99,8 @@ class ezSQL_pdo extends ezSQLcore
             $this->connect($dsn, $user, $password, $options, $isFileBased);
         }
         
-        global $_ezPdo;
-        $_ezPdo = $this;
+        $GLOBALS['db_pdo'] = $this;
+        \setQuery($this);
     } // __construct
 
     /**

@@ -77,8 +77,8 @@
 		protected $preparedvalues = array();
 
 		/**
-		* Constructor - allow the user to perform a qucik connect at the same time
-		* as initialising the ezSQL_postgresql class
+		* Constructor - allow the user to perform a quick connect at the same time
+		* as initializing the ezSQL_postgresql class
 		*
 		* @param string $dbuser The database user name
 		* @param string $dbpassword The database users password
@@ -104,8 +104,9 @@
 			$this->_dbhost = $dbhost;
 			$this->_dbport = $dbport;
             
-            global $_ezPostgresql;
-            $_ezPostgresql = $this;
+			$GLOBALS['db_pgsql'] = $this;
+			$GLOBALS['db_postgres'] = $this;
+			\setQuery($this);
 		} // __construct
 
 		/**
