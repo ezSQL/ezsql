@@ -36,7 +36,7 @@ class sqlsrvTest extends DBTestCase
      */
     protected function tearDown() 
     {
-        $this->object->query('DROP TABLE IF EXISTS unit_test');
+        $this->object->query('DROP TABLE unit_test');
         $this->object = null;
     } // tearDown
 

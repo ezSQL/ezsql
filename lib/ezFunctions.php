@@ -2,9 +2,10 @@
 
 use ezsql\ezQueryInterface;
 
+global $ezInstance;
+
 if (!function_exists('ezFunctions')) {
     // Global class instances, will be used to create and call methods directly.
-    global $_ezQuery;
 
 	/**
      * Creates an array from expressions in the following format
@@ -220,112 +221,121 @@ if (!function_exists('ezFunctions')) {
     
     /**
     * Using global class instances, setup functions to call class methods directly.
-    * @param $ezSQL - string, representing sql database class
+    * @param string|object $ezSQL - Representing a SQL database or class instance 
     * @return boolean
     */
-    function setQuery($ezSQL = '') {
-        global $_ezQuery;
+    function setInstance($ezSQL = ''): bool {
+        global $ezInstance;
         $status = false;
 
-        if (array_key_exists(strtolower($ezSQL), \VENDOR)) {
+        if ($ezSQL instanceOf ezQueryInterface) {
+			$ezInstance = $ezSQL;
+			$status = true;
+		} elseif (array_key_exists(strtolower($ezSQL), \VENDOR)) {
             if (!empty($GLOBALS['db_'.strtolower($ezSQL)]))
-                $_ezQuery = $GLOBALS['db_'.strtolower($ezSQL)];
-            $status = !empty($_ezQuery) ? true: false;            
-        } elseif (!empty($GLOBALS['_ezQuery'])) {
-            unset($GLOBALS['_ezQuery']);
+                $ezInstance = $GLOBALS['db_'.strtolower($ezSQL)];
+            $status = !empty($ezInstance);            
+        } elseif (!empty($GLOBALS['ezInstance'])) {
+            unset($GLOBALS['ezInstance']);
         }
 
         return $status;
+    }
+    
+    function getInstance() {
+        global $ezInstance;
+
+        return $ezInstance;
     }     
     
     function select($table = '', $columns = '*', ...$args) {
-        global $_ezQuery;
-        return (!empty($_ezQuery) && $_ezQuery instanceOf ezQueryInterface) 
-            ? $_ezQuery->selecting($table, $columns, ...$args) 
+        $ezQuery = \getInstance();
+        return ($ezQuery instanceOf ezQueryInterface) 
+            ? $ezQuery->selecting($table, $columns, ...$args) 
             : false;
     } 
     
     function selectInto($table, $columns = '*', $old = null, ...$args) {
-        global $_ezQuery;
-        return (!empty($_ezQuery) && $_ezQuery instanceOf ezQueryInterface) 
-            ? $_ezQuery->select_into($table, $columns, $old, ...$args) 
+        $ezQuery = \getInstance();
+        return ($ezQuery instanceOf ezQueryInterface) 
+            ? $ezQuery->select_into($table, $columns, $old, ...$args) 
             : false;
     } 
     
     function insertSelect($totable = '', $columns = '*', $fromTable, $from = '*', ...$args) {
-        global $_ezQuery;
-        return (!empty($_ezQuery) && $_ezQuery instanceOf ezQueryInterface) 
-            ? $_ezQuery->insert_select($totable, $columns, $fromTable, $from, ...$args) 
+        $ezQuery = \getInstance();
+        return ($ezQuery instanceOf ezQueryInterface) 
+            ? $ezQuery->insert_select($totable, $columns, $fromTable, $from, ...$args) 
             : false;
     }     
     
     function createSelect($table, $from, $old = null, ...$args) {
-        global $_ezQuery;
-        return (!empty($_ezQuery) && $_ezQuery instanceOf ezQueryInterface) 
-            ? $_ezQuery->create_select($table, $from, $old, ...$args) 
+        $ezQuery = \getInstance();
+        return ($ezQuery instanceOf ezQueryInterface) 
+            ? $ezQuery->create_select($table, $from, $old, ...$args) 
             : false;
     }  
     
     function where( ...$args) {
-        global $_ezQuery;
-        return (!empty($_ezQuery) && $_ezQuery instanceOf ezQueryInterface) 
-            ? $_ezQuery->where( ...$args) 
+        $ezQuery = \getInstance();
+        return ($ezQuery instanceOf ezQueryInterface) 
+            ? $ezQuery->where( ...$args) 
             : false;
     } 
     
     function groupBy($groupBy) {
-        global $_ezQuery;
-        return (!empty($_ezQuery) && $_ezQuery instanceOf ezQueryInterface) 
-            ? $_ezQuery->groupBy($groupBy) 
+        $ezQuery = \getInstance();
+        return ($ezQuery instanceOf ezQueryInterface) 
+            ? $ezQuery->groupBy($groupBy) 
             : false;
     } 
     
     function having( ...$args) {
-        global $_ezQuery;
-        return (!empty($_ezQuery) && $_ezQuery instanceOf ezQueryInterface) 
-            ? $_ezQuery->having( ...$args) 
+        $ezQuery = \getInstance();
+        return ($ezQuery instanceOf ezQueryInterface) 
+            ? $ezQuery->having( ...$args) 
             : false;
     }
     
     function orderBy($orderBy, $order) {
-        global $_ezQuery;
-        return (!empty($_ezQuery) && $_ezQuery instanceOf ezQueryInterface) 
-            ? $_ezQuery->orderBy($orderBy, $order) 
+        $ezQuery = \getInstance();
+        return ($ezQuery instanceOf ezQueryInterface) 
+            ? $ezQuery->orderBy($orderBy, $order) 
             : false;
     } 
 
     function limit($numberOf, $offset = null) {
-        global $_ezQuery;
-        return (!empty($_ezQuery) && $_ezQuery instanceOf ezQueryInterface) 
-            ? $_ezQuery->limit($numberOf, $offset) 
+        $ezQuery = \getInstance();
+        return ($ezQuery instanceOf ezQueryInterface) 
+            ? $ezQuery->limit($numberOf, $offset) 
             : false;
     } 
     
     function insert($table = '', $keyValue) {
-        global $_ezQuery;
-        return (!empty($_ezQuery) && $_ezQuery instanceOf ezQueryInterface) 
-            ? $_ezQuery->insert($table, $keyValue) 
+        $ezQuery = \getInstance();
+        return ($ezQuery instanceOf ezQueryInterface) 
+            ? $ezQuery->insert($table, $keyValue) 
             : false;
     } 
     
     function update($table = '', $keyValue, ...$args) {
-        global $_ezQuery;
-        return (!empty($_ezQuery) && $_ezQuery instanceOf ezQueryInterface) 
-            ? $_ezQuery->update($table, $keyValue, ...$args) 
+        $ezQuery = \getInstance();
+        return ($ezQuery instanceOf ezQueryInterface) 
+            ? $ezQuery->update($table, $keyValue, ...$args) 
             : false;
     } 
     
     function delete($table = '', ...$args) {
-        global $_ezQuery;
-        return (!empty($_ezQuery) && $_ezQuery instanceOf ezQueryInterface) 
-            ? $_ezQuery->delete($table, ...$args) 
+        $ezQuery = \getInstance();
+        return ($ezQuery instanceOf ezQueryInterface) 
+            ? $ezQuery->delete($table, ...$args) 
             : false;
     } 
         
     function replace($table = '', $keyValue) {
-        global $_ezQuery;
-        return (!empty($_ezQuery) && $_ezQuery instanceOf ezQueryInterface) 
-            ? $_ezQuery->replace($table, $keyValue) 
+        $ezQuery = \getInstance();
+        return ($ezQuery instanceOf ezQueryInterface) 
+            ? $ezQuery->replace($table, $keyValue) 
             : false;
     }  
 

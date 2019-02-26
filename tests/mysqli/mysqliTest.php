@@ -384,7 +384,7 @@ class ez_mysqliTest extends DBTestCase
         $this->object->query('CREATE TABLE new_select_test(id int(11) NOT NULL AUTO_INCREMENT, test_key varchar(50), PRIMARY KEY (ID))ENGINE=MyISAM  DEFAULT CHARSET=utf8');
 		
 		$this->assertEquals($this->object->insert_select('new_select_test','*','unit_test'),3);
-        setQuery('mySQLi');
+        setInstance('mySQLi');
 		$result = select('new_select_test');
         $i = 1;
         foreach ($result as $row) {
@@ -402,7 +402,7 @@ class ez_mysqliTest extends DBTestCase
     {
         $this->object->connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD);
         $this->object->select(self::TEST_DB_NAME);
-        setQuery('mySQLi');       
+        setInstance('mySQLi');       
         $this->object->setPrepare(false);
         $expect = where(
             between('where_test','testing 1','testing 2','bad'),
@@ -445,19 +445,7 @@ class ez_mysqliTest extends DBTestCase
 			);
 
         $this->assertContains('WHERE where_test BETWEEN '._TAG.' AND '._TAG.' AND test_null IS NULL',$expect);
-        setQuery();       
-    } 
-    
-    /**
-     * @covers ezQuery::_query_insert_replace
-     */
-    public function test_Query_insert_replace() 
-    {
-        $this->object->connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD);
-        $this->object->select(self::TEST_DB_NAME);
-        $this->object->query('CREATE TABLE unit_test(id int(11) NOT NULL AUTO_INCREMENT, test_key varchar(50), PRIMARY KEY (ID))ENGINE=MyISAM  DEFAULT CHARSET=utf8');
-        setQuery('mySQLi');
-        $this->assertEquals(insert('unit_test', array('id'=>'2', 'test_key'=>'test 2' )), 2); 
+        setInstance();       
     } 
     
     /**

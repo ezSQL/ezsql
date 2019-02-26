@@ -33,7 +33,7 @@ class ezQuery implements ezQueryInterface
         return htmlentities($string);
     }
     
-    public function getPrepare() 
+    public function isPrepareActive(): bool
     {
         return $this->prepareActive;
 	}
@@ -58,8 +58,13 @@ class ezQuery implements ezQueryInterface
         $this->preparedValues = array();
         return false;
 	}
-    
-    public function to_string($arrays)  
+
+    /**
+    * Convert array to string, and attach '`, `' for separation.
+    *
+    * @return string
+    */     
+    private function to_string($arrays)  
     {        
         if (is_array( $arrays )) {
             $columns = '';
@@ -170,7 +175,7 @@ class ezQuery implements ezQueryInterface
 						else 
                             $myCombineWith = _AND;
 
-						if ($this->getPrepare()) {
+						if ($this->isPrepareActive()) {
 							$where .= "$key ".$isCondition.' '._TAG." AND "._TAG." $myCombineWith ";
 							$this->setParameters($val);
 							$this->setParameters($combineWith);
@@ -181,7 +186,7 @@ class ezQuery implements ezQueryInterface
 					} elseif ($isCondition == 'IN') {
 						$value = '';
 						foreach ($val as $inValues) {
-							if ($this->getPrepare()) {
+							if ($this->isPrepareActive()) {
 								$value .= _TAG.', ';
 								$this->setParameters($inValues);
 							} else 
@@ -194,7 +199,7 @@ class ezQuery implements ezQueryInterface
                     } elseif ((($isCondition == 'LIKE') || ($isCondition == 'NOT LIKE')) && ! preg_match('/[_%?]/', $val)) {
                         return $this->clearParameters();
                     } else {
-						if ($this->getPrepare()) {
+						if ($this->isPrepareActive()) {
 							$where .= "$key ".$isCondition.' '._TAG." $combineWith ";
 							$this->setParameters($val);
 						} else 
@@ -207,7 +212,7 @@ class ezQuery implements ezQueryInterface
             $where = rtrim($where, " $combineWith ");
         }
 		
-        if (($this->getPrepare()) && !empty($this->getParameters()) && ($where != '1'))
+        if (($this->isPrepareActive()) && !empty($this->getParameters()) && ($where != '1'))
 			return " $whereOrHaving ".$where.' ';
 		else
 			return ($where != '1') ? " $whereOrHaving ".$where.' ' : ' ' ;
@@ -284,7 +289,7 @@ class ezQuery implements ezQueryInterface
         if (is_string($where)) {
             $sql .= $where;
             if ($getSelect_result) 
-                return (($this->getPrepare()) && !empty($this->getParameters())) 
+                return (($this->isPrepareActive()) && !empty($this->getParameters())) 
                     ? $this->get_results($sql, OBJECT, true) 
                     : $this->get_results($sql);     
             else 
@@ -293,8 +298,12 @@ class ezQuery implements ezQueryInterface
             return $this->clearParameters();
         }             
     }
-	
-    public function select_sql($table = '', $fields = '*', ...$get_args) 
+
+    /**
+     * Get sql statement from selecting method instead of executing get_result
+     * @return string
+     */	
+    private function select_sql($table = '', $fields = '*', ...$get_args) 
     {
 		$this->select_result = false;
         return $this->selecting($table, $fields, ...$get_args);	            
@@ -310,7 +319,7 @@ class ezQuery implements ezQueryInterface
 			
         $newTableFromTable = $this->select_sql($newTable, $fromColumns, ...$fromWhere);			
         if (is_string($newTableFromTable))
-            return (($this->getPrepare()) && !empty($this->getParameters())) 
+            return (($this->isPrepareActive()) && !empty($this->getParameters())) 
                 ? $this->query($newTableFromTable, true) 
                 : $this->query($newTableFromTable); 
         else {
@@ -329,7 +338,7 @@ class ezQuery implements ezQueryInterface
 			
         $newTableFromTable = $this->select_sql($newTable, $fromColumns, ...$fromWhere);
         if (is_string($newTableFromTable))
-            return (($this->getPrepare()) && !empty($this->getParameters())) 
+            return (($this->isPrepareActive()) && !empty($this->getParameters())) 
                 ? $this->query($newTableFromTable, true) 
                 : $this->query($newTableFromTable); 
         else {
@@ -351,7 +360,7 @@ class ezQuery implements ezQueryInterface
             } elseif(in_array(strtolower($val), array( 'current_timestamp()', 'date()', 'now()' ))) {
 				$sql .= "$key = CURRENT_TIMESTAMP(), ";
 			} else {
-				if ($this->getPrepare()) {
+				if ($this->isPrepareActive()) {
 					$sql .= "$key = "._TAG.", ";
 					$this->setParameters($val);
 				} else 
@@ -362,7 +371,7 @@ class ezQuery implements ezQueryInterface
         $where = $this->where(...$WhereKeys);
         if (is_string($where)) {   
             $sql = rtrim($sql, ', ') . $where;
-            return (($this->getPrepare()) && !empty($this->getParameters())) 
+            return (($this->isPrepareActive()) && !empty($this->getParameters())) 
                 ? $this->query($sql, true) 
                 : $this->query($sql);       
         } else {
@@ -381,7 +390,7 @@ class ezQuery implements ezQueryInterface
         $where = $this->where(...$WhereKeys);
         if (is_string($where)) {   
             $sql .= $where;						
-            return (($this->getPrepare()) && !empty($this->getParameters())) 
+            return (($this->isPrepareActive()) && !empty($this->getParameters())) 
                 ? $this->query($sql, true) 
                 : $this->query($sql);  
         } else {
@@ -389,6 +398,10 @@ class ezQuery implements ezQueryInterface
 		}  
     }
 
+	/**
+    * Helper does the actual insert or replace query with an array
+	* @return mixed bool/results - false for error
+	*/
     private function _query_insert_replace($table = '', $keyAndValue, $type = '', $execute = true) 
     {  
         if ((! is_array($keyAndValue) && ($execute)) || empty($table)) {
@@ -411,7 +424,7 @@ class ezQuery implements ezQueryInterface
                 elseif (in_array(strtolower($val), array( 'current_timestamp()', 'date()', 'now()' ))) 
                     $value .= "CURRENT_TIMESTAMP(), ";
                 else {
-					if ($this->getPrepare()) {
+					if ($this->isPrepareActive()) {
 						$value .= _TAG.", ";
 						$this->setParameters($val);
 					} else 
@@ -421,7 +434,7 @@ class ezQuery implements ezQueryInterface
             
             $sql .= "(". rtrim($index, ', ') .") VALUES (". rtrim($value, ', ') .");";
 
-			if (($this->getPrepare()) && !empty($this->getParameters())) 
+			if (($this->isPrepareActive()) && !empty($this->getParameters())) 
 				$ok = $this->query($sql, true);
 			else 
 				$ok = $this->query($sql);
@@ -462,7 +475,7 @@ class ezQuery implements ezQueryInterface
         $getFromTable = $this->select_sql($fromTable, $fromColumns, ...$fromWhere);
 
         if (is_string($putToTable) && is_string($getFromTable))
-            return (($this->getPrepare()) && !empty($this->getParameters())) 
+            return (($this->isPrepareActive()) && !empty($this->getParameters())) 
                 ? $this->query($putToTable." ".$getFromTable, true) 
                 : $this->query($putToTable." ".$getFromTable) ;
         else {

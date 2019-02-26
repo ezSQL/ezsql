@@ -48,7 +48,8 @@
             parent::__construct();
 			$this->database = $settings;
             
-            $GLOBALS['db_'.$this->database->getDriver()] = $this;      
+            $GLOBALS['db_'.$this->database->getDriver()] = $this;
+			\setInstance($this);
 		}
 
 		/**
@@ -163,7 +164,7 @@
 			}
 
 			// Perform the query via std sqlsrv_query function..
-			if (!empty($param) && is_array($param) && ($this->getPrepare())) {
+			if (!empty($param) && is_array($param) && ($this->isPrepareActive())) {
 				$this->result = @sqlsrv_query($this->dbh, $query, $param);
                 $this->clearParameters();                
             }

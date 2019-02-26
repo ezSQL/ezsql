@@ -1,18 +1,11 @@
 <?php
 /**
- * 
- * 
  * Originally:
- *  ezSQL Database specific class for working with query results
- *  Desc..: recordset component (part of ezSQL databse abstraction library)
- *  @author  Stefanie Janine Stoelting <mail@stefanie-stoelting.de>
- *  @name    ezSQL_recordset
- *  @package ezSQL
- *  @license FREE / Donation (LGPL - You may do what you like with ezSQL - no exceptions.) *
+ *  ezSQL Database specific class for working with query results record set component
  */
 namespace ezsql;
 
-class ezResultset implements Iterator
+class ezResultset implements \Iterator
 {
     /**
      * Returns the result as array
@@ -57,7 +50,8 @@ class ezResultset implements Iterator
      * @param array $query_result The result of an ezSQL query
      * @throws Exception When $query_result is not an array
      */
-    public function __construct($query_result) {
+    public function __construct($query_result) 
+    {
         if (!is_array($query_result)) {
             throw new Exception("$query_result is not valid.");
         }
@@ -68,7 +62,8 @@ class ezResultset implements Iterator
     /**
      * Sets the position to zero
      */
-    public function rewind() {
+    public function rewind() 
+    {
         $this->_position = 0;
     } // rewind
 
@@ -79,7 +74,8 @@ class ezResultset implements Iterator
      *                      Default is RESULT_AS_OBJECT
      * @return stdClass/array
      */
-    public function current($mode=self::RESULT_AS_OBJECT) {
+    public function current($mode=self::RESULT_AS_OBJECT) 
+    {
         $return_val = null;
         if (!in_array($mode, $this->_checkTypes)) {
             throw new Exception(sprintf('$mode is not in %s1 or %s2', self::RESULT_AS_OBJECT, self::RESULT_AS_ARRAY));
@@ -113,14 +109,16 @@ class ezResultset implements Iterator
      * Returns the current position in the resultset
      * @return int
      */
-    public function key() {
+    public function key() 
+    {
         return $this->_position;
     } // key
 
     /**
      * Sets the position of the resultset up by one
      */
-    public function next() {
+    public function next() 
+    {
         ++$this->_position;
     } // next
 
@@ -128,7 +126,8 @@ class ezResultset implements Iterator
      * Sets position of the resultset down by one, if the position is below the
      * start, the position is set to the start position
      */
-    public function previous() {
+    public function previous() 
+    {
         --$this->_position;
 
         if ($this->_position < 0) {
@@ -140,7 +139,8 @@ class ezResultset implements Iterator
      * Whether the current position contains a row, or not
      * @return boolean
      */
-    public function valid() {
+    public function valid() 
+    {
         return isset($this->_resultset[$this->_position]);
     } // valid
 
@@ -149,7 +149,8 @@ class ezResultset implements Iterator
      * Behaves like mysql_fetch_assoc
      * @return array
      */
-    public function fetch_assoc() {
+    public function fetch_assoc() 
+    {
         if ($this->valid()) {
             $return_val = $this->current(self::RESULT_AS_ARRAY);
             $this->next();
@@ -164,7 +165,8 @@ class ezResultset implements Iterator
      * Behaves like mysql_fetch_row
      * @return array
      */
-    public function fetch_row() {
+    public function fetch_row() 
+    {
         if ($this->valid()) {
             $return_val = $this->current(self::RESULT_AS_ROW);
             $this->next();
@@ -175,11 +177,12 @@ class ezResultset implements Iterator
     } // fetch_row
 
     /**
-     * Returns n object with properties that correspond to the fetched row and moves the internal data pointer ahead.
-     * Behaves like mysql_fetch_object
+     * Returns n object with properties that correspond to the fetched row and moves 
+     * the internal data pointer ahead. Behaves like mysql_fetch_object.
      * @return array
      */
-    public function fetch_object() {
+    public function fetch_object() 
+    {
         if ($this->valid()) {
             $return_val = $this->current(self::RESULT_AS_OBJECT);
             $this->next();
@@ -193,7 +196,8 @@ class ezResultset implements Iterator
      * Returns the current record as an json object and moves the internal data pointer ahead.
      * @return array
      */
-    public function fetch_json() {
+    public function fetch_json() 
+    {
         if ($this->valid()) {
             $return_val = $this->current(self::RESULT_AS_JSON);
             $this->next();
@@ -203,5 +207,4 @@ class ezResultset implements Iterator
         return $return_val;
     } // fetch_assoc
     //public function
-
 } // ezResultset

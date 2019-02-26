@@ -132,7 +132,7 @@ class ezsqlModelTest extends DBTestCase
     public function testGet_results() 
     {
         $this->assertNull($this->object->get_results());
-        $this->assertNotNull($this->object->get_results(null,ARRAY_A));
+        $this->assertNotNull($this->object->get_results(null, ARRAY_A));
        // $this->expectExceptionMessage('Call to undefined method ezsqlModel::query()');
         $this->assertNull($this->object->get_results('1'));
     } // testGet_results

@@ -2,8 +2,6 @@
 
 namespace ezsql\Tests;
 
-use ezsql\Configuration;
-use ezsql\ezFunctions;
 use ezsql\Tests\DBTestCase;
 
 class ezFunctionsTest extends DBTestCase 
@@ -144,12 +142,12 @@ class ezFunctionsTest extends DBTestCase
     }
 
     /**
-     * setQuery
+     * setInstance
      */
-    public function testsetQuery() {
-        $this->assertFalse(setQuery());
-        $this->assertTrue(setQuery('pdo'));
-        $this->assertFalse(setQuery(''));
+    public function testsetInstance() {
+        $this->assertFalse(setInstance());
+        $this->assertTrue(setInstance('pdo'));
+        $this->assertFalse(setInstance(''));
     }
 
     /**

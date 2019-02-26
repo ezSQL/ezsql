@@ -46,6 +46,7 @@ final class ez_pdo extends ezsqlModel
         }
         
         $GLOBALS['db_'.$this->database->getDriver()] = $this;
+        \setInstance($this);
     } // __construct
 
     /**
@@ -65,14 +66,14 @@ final class ez_pdo extends ezsqlModel
     *                  Default is false
     * @return boolean
     */
-    public function connect($dsn='', $dbuser='', $dbpassword='', $options=array(), $isFileBased=false) {
+    public function connect($dsn='', $user='', $password='', $options=array(), $isFile = false) {
         $this->_connected = false;
 
         $setDsn = empty($dsn) ? $this->database->getDsn() : $dsn;
-        $setUser = empty($dbuser) ? $this->database->getUser() : $dbuser;
-        $setPassword = empty($dbpassword) ? $this->database->getPassword() : $dbpassword; 
+        $setUser = empty($dbuser) ? $this->database->getUser() : $user;
+        $setPassword = empty($dbpassword) ? $this->database->getPassword() : $password; 
         $setOptions = empty($options) ? $this->database->getOptions() : $options;   
-        $IsFile = empty($IsFileBased) ? $this->database->getIsFile() : $IsFileBased;   
+        $IsFile = empty($isFile) ? $this->database->getIsFile() : $isFile;   
         
         if (!$IsFile) {                
             // Must have a user and a password if not file based
@@ -271,7 +272,7 @@ final class ez_pdo extends ezsqlModel
 
             // Perform the query and log number of affected rows
             // Perform the query via std PDO query or PDO prepare function..
-            if (!empty($param) && is_array($param) && ($this->getPrepare())) {
+            if (!empty($param) && is_array($param) && ($this->isPrepareActive())) {
                 $this->_affectedRows = $this->query_prepared($query, $param, false);	
 				$this->clearParameters();
             } else
@@ -297,7 +298,7 @@ final class ez_pdo extends ezsqlModel
 
             // Perform the query and log number of affected rows
             // Perform the query via std PDO query or PDO prepare function..
-            if (!empty($param) && is_array($param) && ($this->getPrepare())) {
+            if (!empty($param) && is_array($param) && ($this->isPrepareActive())) {
                 $sth = $this->query_prepared($query, $param, true);	
 				$this->setParameters();
             } else

@@ -48,8 +48,8 @@ final class ez_mysqli extends ezsqlModel
 
         parent::__construct();
         $this->database = $settings;
-
         $GLOBALS['db_'.$this->database->getDriver()] = $this;
+        \setInstance($this);
     } // __construct
 
     /**
@@ -105,7 +105,7 @@ final class ez_mysqli extends ezsqlModel
         if ( empty($user ) ) {
             $this->register_error($this->ezsql_mysql_str[1] . ' in ' . __FILE__ . ' on line ' . __LINE__);
             $this->show_errors ? trigger_error($this->ezsql_mysql_str[1], E_USER_WARNING) : null;
-        } else if ( ! $this->dbh = mysqli_connect($host, $user, $password, $name) ) {
+        } else if ( ! $this->dbh = mysqli_connect($host, $user, $password, $this->database->getName()) ) {
             // Try to establish the server database handle
             $this->register_error($this->ezsql_mysql_str[2] . ' in ' . __FILE__ . ' on line ' . __LINE__);
             $this->show_errors ? trigger_error($this->ezsql_mysql_str[2], E_USER_WARNING) : null;
@@ -335,7 +335,7 @@ final class ez_mysqli extends ezsqlModel
         }
 
         // Perform the query via std mysql_query function..
-		if (!empty($param) && is_array($param) && ($this->getPrepare()))		
+		if (!empty($param) && is_array($param) && ($this->isPrepareActive()))		
 			return $this->query_prepared($query, $param);
 		else 
 			$this->_result = mysqli_query($this->dbh, $query);

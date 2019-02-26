@@ -6,7 +6,6 @@ namespace ezsql;
 
 use ezsql\Configuration;
 use ezsql\DInjector;
-use const ezsql\Constants\VENDOR as VENDOR;
 
 class Database
 {
@@ -44,7 +43,7 @@ class Database
 
             if (empty($GLOBALS['db_'.$key])) {    
                 $di = new DInjector();
-                $GLOBALS['db_'.$key] = $di->autoWire( $value, self::$database); 
+                $GLOBALS['db_'.$key] = $di->autoWire($value, self::$database); 
             }
 
             return $GLOBALS['db_'.$key];

@@ -27,7 +27,7 @@
 namespace ezsql;
 
 interface ezQueryInterface
-{	
+{ 	
     /**
     * Clean input of XSS, html, javascript, etc...
     * @param string $string
@@ -35,12 +35,12 @@ interface ezQueryInterface
     */	        
     public function clean($string);
     
-    /*
+    /**
     * Return status of prepare function availability in method calls
     */
-    public function getPrepare();
+    public function isPrepareActive();
   	
-    /*
+    /**
     * Turn off/on prepare function availability in ezQuery method calls 
     */
     public function setPrepare($on = true);
@@ -66,13 +66,6 @@ interface ezQueryInterface
     */
     public function clearParameters();
 
-    /**
-    * Convert array to string, and attach '`, `' for separation.
-    *
-    * @return string
-    */  
-    public function to_string($arrays);
-            
     /**
     * Specifies a grouping over the results of the query.
     *<code>
@@ -117,7 +110,9 @@ interface ezQueryInterface
     public function orderBy($orderBy, $order);
 
     /**
-    * Specifies records from one or more tables in a database and limit the number of records returned.  
+    * Specifies records from one or more tables in a database and 
+    * limit the number of records returned.
+    *
     * @param int $numberOf - set limit number of records to be returned.
     * @param int $offset - Optional. The first row returned by LIMIT will be determined by offset value. 
     *
@@ -129,10 +124,12 @@ interface ezQueryInterface
     * Helper returns an WHERE sql clause string.
     *
     * format:
-    *   `where( array(x, =, y, and, extra) ) or where( "x  =  y  and  extra" );`
+    *   `where( array(x, =, y, and, extra) )` or 
+    *   `where( "x  =  y  and  extra" );`
     *
     * example: 
-    *   `where( array(key, operator, value, combine, extra) );` or `where( "key operator value combine extra" );`
+    *   `where( array(key, operator, value, combine, extra) );` or 
+    *   `where( "key operator value combine extra" );`
     *
     * @param array $whereKeyArray
     * @param $key, - table column  
@@ -175,13 +172,7 @@ interface ezQueryInterface
     * @return result set - see docs for more details, or false for error
 	*/
     public function selecting($table = '', $fields = '*', ...$get_args);
-	
-    /**
-     * Get sql statement from selecting method instead of executing get_result
-     * @return string
-     */
-    public function select_sql($table = '', $fields = '*', ...$get_args);
-    
+
 	/** 
     * Does an create select statement by calling selecting method
     *
@@ -221,13 +212,7 @@ interface ezQueryInterface
 	* @return mixed bool/results - false for error
 	*/
     public function delete($table = '', ...$WhereKeys);
-    
-	/**
-    * Helper does the actual insert or replace query with an array
-	* @return mixed bool/results - false for error
-	*/
-    //public function _query_insert_replace($table = '', $keyAndValue, $type = '', $execute = true);
-        
+
 	/**
     * Does an replace query with an array
     * @param $table, - database table to access
