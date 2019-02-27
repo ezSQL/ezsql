@@ -17,7 +17,7 @@ class ezQuery implements ezQueryInterface
     {
     }
 
-    public function clean($string) 
+    public static function clean($string) 
     {
         $patterns = array( // strip out:
                 '@<script[^>]*?>.*?</script>@si', // Strip out javascript
@@ -26,11 +26,11 @@ class ezQuery implements ezQueryInterface
                 '@<![\s\S]*?--[ \t\n\r]*>@'       // Strip multi-line comments
                 );
                 
-        $string = preg_replace($patterns,'',$string);
-        $string = trim($string);
-        $string = stripslashes($string);
+        $string = \preg_replace($patterns,'', $string);
+        $string = \trim($string);
+        $string = \stripslashes($string);
         
-        return htmlentities($string);
+        return \htmlentities($string);
     }
     
     public function isPrepareActive(): bool
