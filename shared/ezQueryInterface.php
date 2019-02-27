@@ -111,10 +111,10 @@ interface ezQueryInterface
     * Return all rows from multiple tables where the join condition is met.
     *
     * - Will perform an equal on tables by left column key, 
-    *           if `rightColumn` and `onConditions` is null.
+    *           if `rightColumn` and `extraConditions` is null.
     *
     * - Will perform an equal on tables by left column key, right column key, 
-    *           if `rightColumn` not null and `onConditions` is null.
+    *           if `rightColumn` not null and `extraConditions` is null.
     *
     * @param string $leftTable - 
     * @param string $rightTable - 
@@ -124,7 +124,6 @@ interface ezQueryInterface
     * @param string $leftColumn - 
     * @param string $rightColumn - 
     *
-    * @param array $onConditions -  
     * @param mixed $extraConditions -  
     *
     * @return mixed resultset - or false on error
@@ -132,8 +131,7 @@ interface ezQueryInterface
     public function innerJoin(
         string $leftTable = '', 
         string $rightTable = '', 
-        string $columnFields = '*', $leftColumn = null, $rightColumn = null, 
-        array $onConditions = null, ...$extraConditions);
+        string $columnFields = '*', $leftColumn = null, $rightColumn = null, ...$extraConditions);
 
     /**
     * This type of join returns all rows from the LEFT-hand table 
@@ -141,10 +139,10 @@ interface ezQueryInterface
     * where the joined fields are equal (join condition is met).
     *
     * - Will perform an equal on tables by left column key, 
-    *           if `rightColumn` and `onConditions` is null.
+    *           if `rightColumn` and `extraConditions` is null.
     *
     * - Will perform an equal on tables by left column key, right column key, 
-    *           if `rightColumn` not null and `onConditions` is null.
+    *           if `rightColumn` not null and `extraConditions` is null.
     *
     * @param string $leftTable - 
     * @param string $rightTable - 
@@ -154,7 +152,6 @@ interface ezQueryInterface
     * @param string $leftColumn - 
     * @param string $rightColumn - 
     *
-    * @param array $onConditions -  
     * @param mixed $extraConditions -  
     *
     * @return mixed resultset - or false on error
@@ -162,8 +159,7 @@ interface ezQueryInterface
     public function leftJoin(
         string $leftTable = '', 
         string $rightTable = '', 
-        string $columnFields = '*', $leftColumn = null, $rightColumn = null, 
-        array $onConditions = null, ...$extraConditions);
+        string $columnFields = '*', $leftColumn = null, $rightColumn = null, ...$extraConditions);
 
     /**
     * This type of join returns all rows from the RIGHT-hand table 
@@ -171,10 +167,10 @@ interface ezQueryInterface
     * where the joined fields are equal (join condition is met).
     *
     * - Will perform an equal on tables by left column key, 
-    *           if `rightColumn` and `onConditions` is null.
+    *           if `rightColumn` and `extraConditions` is null.
     *
     * - Will perform an equal on tables by left column key, right column key, 
-    *           if `rightColumn` not null and `onConditions` is null.
+    *           if `rightColumn` not null and `extraConditions` is null.
     *
     * @param string $leftTable - 
     * @param string $rightTable - 
@@ -184,7 +180,6 @@ interface ezQueryInterface
     * @param string $leftColumn - 
     * @param string $rightColumn - 
     *
-    * @param array $onConditions -  
     * @param mixed $extraConditions -  
     *
     * @return mixed resultset - or false on error
@@ -192,18 +187,17 @@ interface ezQueryInterface
     public function rightJoin(
         string $leftTable = '', 
         string $rightTable = '', 
-        string $columnFields = '*', $leftColumn = null, $rightColumn = null, 
-        array $onConditions = null, ...$extraConditions);
+        string $columnFields = '*', $leftColumn = null, $rightColumn = null, ...$extraConditions);
 
     /**
     * This type of join returns all rows from the LEFT-hand table and RIGHT-hand table 
     * with NULL values in place where the join condition is not met.
     *
     * - Will perform an equal on tables by left column key, 
-    *           if `rightColumn` and `onConditions` is null.
+    *           if `rightColumn` and `extraConditions` is null.
     *
     * - Will perform an equal on tables by left column key, right column key, 
-    *           if `rightColumn` not null and `onConditions` is null.
+    *           if `rightColumn` not null and `extraConditions` is null.
     *
     * @param string $leftTable - 
     * @param string $rightTable - 
@@ -213,7 +207,6 @@ interface ezQueryInterface
     * @param string $leftColumn - 
     * @param string $rightColumn - 
     *
-    * @param array $onConditions -  
     * @param mixed $extraConditions -  
     *
     * @return mixed resultset - or false on error
@@ -221,8 +214,7 @@ interface ezQueryInterface
     public function fullJoin(
         string $leftTable = '', 
         string $rightTable = '', 
-        string $columnFields = '*', $leftColumn = null, $rightColumn = null, 
-        array $onConditions = null, ...$extraConditions);
+        string $columnFields = '*', $leftColumn = null, $rightColumn = null, ...$extraConditions);
 
     /**
     * Specifies an ordering for the query results.  
