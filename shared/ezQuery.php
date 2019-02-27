@@ -10,28 +10,29 @@ class ezQuery implements ezQueryInterface
 	private $fromTable = null;
     private $isWhere = true;    
     private $isInto = false;
+    private $isOn = false;
     
     public function __construct() 
     {
     }
 
-    public function clean($string) 
+    public static function clean($string) 
     {
         $patterns = array( // strip out:
-                '@<script[^>]*?>.*?</script>@si', // Strip out javascript
-                '@<[\/\!]*?[^<>]*?>@si',          // HTML tags
-                '@<style[^>]*?>.*?</style>@siU',  // Strip style tags properly
-                '@<![\s\S]*?--[ \t\n\r]*>@'       // Strip multi-line comments
-                );
+            '@<script[^>]*?>.*?</script>@si', // Strip out javascript
+            '@<[\/\!]*?[^<>]*?>@si',          // HTML tags
+            '@<style[^>]*?>.*?</style>@siU',  // Strip style tags properly
+            '@<![\s\S]*?--[ \t\n\r]*>@'       // Strip multi-line comments
+        );
                 
-        $string = preg_replace($patterns,'',$string);
-        $string = trim($string);
-        $string = stripslashes($string);
+        $string = \preg_replace($patterns, '', $string);
+        $string = \trim($string);
+        $string = \stripslashes($string);
         
-        return htmlentities($string);
+        return \htmlentities($string);
     }
     
-    public function getPrepare() 
+    public function isPrepareActive() 
     {
         return $this->prepareActive;
 	}
@@ -91,7 +92,107 @@ class ezQuery implements ezQueryInterface
         $this->isWhere = false;
         return $this->where( ...$having);
     }
- 
+
+    public function innerJoin(
+        string $leftTable = '', 
+        string $rightTable = '', 
+        string $columnFields = '*', $leftColumn = null, $rightColumn = null, 
+        array $onConditions = null, ...$extraConditions) 
+    {
+        return $this->selectJoin(
+            'INNER', $leftTable, $rightTable, $columnFields, $leftColumn, $rightColumn, $onConditions, $extraConditions
+        );
+    }
+
+    public function leftJoin(
+        string $leftTable = '', 
+        string $rightTable = '', 
+        string $columnFields = '*', $leftColumn = null, $rightColumn = null, 
+        array $onConditions = null, ...$extraConditions) 
+    {
+        return $this->selectJoin(
+            'LEFT', $leftTable, $rightTable, $columnFields, $leftColumn, $rightColumn, $onConditions, $extraConditions
+        );
+    }
+
+    public function rightJoin(
+        string $leftTable = '', 
+        string $rightTable = '', 
+        string $columnFields = '*', $leftColumn = null, $rightColumn = null, 
+        array $onConditions = null, ...$extraConditions) 
+    {
+        return $this->selectJoin(
+            'RIGHT', $leftTable, $rightTable, $columnFields, $leftColumn, $rightColumn, $onConditions, $extraConditions
+        );
+    }
+
+    public function fullJoin(
+        string $leftTable = '', 
+        string $rightTable = '', 
+        string $columnFields = '*', $leftColumn = null, $rightColumn = null, 
+        array $onConditions = null, ...$extraConditions) 
+    {
+        return $this->selectJoin(
+            'FULL', $leftTable, $rightTable, $columnFields, $leftColumn, $rightColumn, $onConditions, $extraConditions
+        );
+    }
+
+    /**
+    * Helper combine rows from tables where `on` condition is met
+    *
+    * - Will perform an equal on tables by left column key, 
+    *           if `rightColumn` and `onConditions` is null.
+    *
+    * - Will perform an equal on tables by left column key, right column key, 
+    *           if `rightColumn` not null and `onConditions` is null.
+    *
+    * @param string $type - Either `INNER`, `LEFT`, `RIGHT`, `FULL`
+    * @param string $leftTable - 
+    * @param string $rightTable - 
+    *
+    * @param string $columnFields - 
+    *
+    * @param string $leftColumn - 
+    * @param string $rightColumn - 
+    *
+    * @param array $onConditions -  
+    * @param mixed $extraConditions -  
+    *
+    * @return mixed bool|resultset - or false on error
+    */
+    private function selectJoin(
+        String $type = 'INNER',
+        string $leftTable = '', 
+        string $rightTable = '', 
+        string $columnFields = '*', $leftColumn = null, $rightColumn = null, 
+        array $onConditions = null, ...$extraConditions) 
+    {
+        if (empty($leftTable) || empty($rightTable) || empty($columnFields) || empty($leftColumn)) {
+            return false;
+        }
+
+        if (empty($rightColumn) && empty($onConditions) && is_string($leftColumn))
+            $onCondition = ' ON '.$leftTable.$leftColumn.' = '.$rightTable.$leftColumn;
+        elseif (empty($onConditions) && is_string($leftColumn) && is_string($rightColumn))
+            $onCondition = ' ON '.$leftTable.$leftColumn.' = '.$rightTable.$rightColumn;
+        elseif (empty($onConditions) && \is_array($leftColumn) && empty($rightColumn))
+            $onCondition = $this->on( ...$leftColumn);
+        else
+            $onCondition = $this->on( $leftColumn, $rightColumn, ...$onConditions);
+
+        $join = ' '.$type.' JOIN '.$rightTable.$onCondition;
+        $conditions = !empty($extraConditions) ?  $extraConditions : '';
+
+        return $this->selecting($leftTable, $columnFields, $join, ...$conditions);
+    }
+
+    private function on(...$onConditions)
+    {
+        $this->isWhere = false;
+        $this->isOn = true;
+        return $this->where( ...$onConditions);
+    }
+
     public function orderBy($orderBy, $order)
     {
         if (empty($orderBy)) {
@@ -120,12 +221,17 @@ class ezQuery implements ezQueryInterface
 
     public function where( ...$whereKeyArray) 
     {      
-        $whereOrHaving = ($this->isWhere) ? 'WHERE' : 'HAVING';
+        $whereOrHavingOrOn = ($this->isWhere) ? 'WHERE' : 'HAVING';
+        $whereOrHavingOrOn = (($whereOrHavingOrOn == 'HAVING') && $this->isOn) ? 'ON' : $whereOrHavingOrOn;
         $this->isWhere = true;
+        $this->isOn = false;
         
 		if (!empty($whereKeyArray)) {
 			if (is_string($whereKeyArray[0])) {
-                if ((strpos($whereKeyArray[0], 'WHERE') !== false) || (strpos($whereKeyArray[0], 'HAVING') !== false))
+                if ((strpos($whereKeyArray[0], 'WHERE') !== false) 
+                    || (strpos($whereKeyArray[0], 'HAVING') !== false)
+                    || (strpos($whereKeyArray[0], 'ON') !== false)
+                )
                     return $whereKeyArray[0];
 				foreach ($whereKeyArray as $makeArray) 
 					$WhereKeys[] = explode('  ', $makeArray);	
@@ -173,7 +279,7 @@ class ezQuery implements ezQueryInterface
 						else 
                             $myCombineWith = _AND;
 
-						if ($this->getPrepare()) {
+						if ($this->isPrepareActive()) {
 							$where .= "$key ".$isCondition.' '._TAG." AND "._TAG." $myCombineWith ";
 							$this->setParameters($val);
 							$this->setParameters($combineWith);
@@ -184,7 +290,7 @@ class ezQuery implements ezQueryInterface
 					} elseif ($isCondition == 'IN') {
 						$value = '';
 						foreach ($val as $inValues) {
-							if ($this->getPrepare()) {
+							if ($this->isPrepareActive()) {
 								$value .= _TAG.', ';
 								$this->setParameters($inValues);
 							} else 
@@ -197,7 +303,7 @@ class ezQuery implements ezQueryInterface
                     } elseif ((($isCondition == 'LIKE') || ($isCondition == 'NOT LIKE')) && ! preg_match('/[_%?]/', $val)) {
                         return $this->clearParameters();
                     } else {
-						if ($this->getPrepare()) {
+						if ($this->isPrepareActive()) {
 							$where .= "$key ".$isCondition.' '._TAG." $combineWith ";
 							$this->setParameters($val);
 						} else 
@@ -210,13 +316,13 @@ class ezQuery implements ezQueryInterface
             $where = rtrim($where, " $combineWith ");
         }
 		
-        if (($this->getPrepare()) && !empty($this->getParameters()) && ($where != '1'))
-			return " $whereOrHaving ".$where.' ';
+        if (($this->isPrepareActive()) && !empty($this->getParameters()) && ($where != '1'))
+			return " $whereOrHavingOrOn ".$where.' ';
 		else
-			return ($where != '1') ? " $whereOrHaving ".$where.' ' : ' ' ;
+			return ($where != '1') ? " $whereOrHavingOrOn ".$where.' ' : ' ' ;
     }        
     
-    public function selecting($table ='', $fields = '*', ...$get_args) 
+    public function selecting($table ='', $fields = '*', ...$conditions) 
     {    
 		$getFromTable = $this->fromTable;
 		$getSelect_result = $this->select_result;       
@@ -227,7 +333,7 @@ class ezQuery implements ezQueryInterface
 		$this->isInto = false;	
         
         $skipWhere = false;
-        $WhereKeys = $get_args;
+        $WhereKeys = $conditions;
         $where = '';
 		
         if (empty($table)) {
@@ -243,36 +349,41 @@ class ezQuery implements ezQueryInterface
         else 
 			$sql="SELECT $columns FROM ".$table;
 
-        if (!empty($get_args)) {
-			if (is_string($get_args[0])) {
+        if (!empty($conditions)) {
+			if (is_string($conditions[0])) {
                 $args_by = '';
+                $joinSet = false;      
                 $groupBySet = false;      
                 $havingSet = false;             
                 $orderBySet = false;   
                 $limitSet = false;   
-				foreach ($get_args as $where_groupBy_having_orderby_limit) {
-                    if (strpos($where_groupBy_having_orderby_limit, 'WHERE') !== false ) {
-                        $args_by .= $where_groupBy_having_orderby_limit;
+				foreach ($conditions as $join_where_groupBy_having_orderby_limit) {
+                    if (strpos($join_where_groupBy_having_orderby_limit, 'JOIN') !== false ) {
+                        $args_by .= $join_where_groupBy_having_orderby_limit;
+                        $joinSet = true;
+                    } elseif (strpos($join_where_groupBy_having_orderby_limit, 'WHERE') !== false ) {
+                        $args_by .= $join_where_groupBy_having_orderby_limit;
                         $skipWhere = true;
-                    } elseif (strpos($where_groupBy_having_orderby_limit, 'GROUP BY') !== false ) {
-                        $args_by .= ' '.$where_groupBy_having_orderby_limit;
+                    } elseif (strpos($join_where_groupBy_having_orderby_limit, 'GROUP BY') !== false ) {
+                        $args_by .= ' '.$join_where_groupBy_having_orderby_limit;
                         $groupBySet = true;
-                    } elseif (strpos($where_groupBy_having_orderby_limit, 'HAVING') !== false ) {
+                    } elseif (strpos($join_where_groupBy_having_orderby_limit, 'HAVING') !== false ) {
                         if ($groupBySet) {
-                            $args_by .= ' '.$where_groupBy_having_orderby_limit;
+                            $args_by .= ' '.$join_where_groupBy_having_orderby_limit;
                             $havingSet = true;
                         } else {
                             return $this->clearParameters();
                         }
-                    } elseif (strpos($where_groupBy_having_orderby_limit, 'ORDER BY') !== false ) {
-                        $args_by .= ' '.$where_groupBy_having_orderby_limit;    
+                    } elseif (strpos($join_where_groupBy_having_orderby_limit, 'ORDER BY') !== false ) {
+                        $args_by .= ' '.$join_where_groupBy_having_orderby_limit;    
                         $orderBySet = true;
-                    } elseif (strpos($where_groupBy_having_orderby_limit, 'LIMIT') !== false ) {
-                        $args_by .= ' '.$where_groupBy_having_orderby_limit;    
+                    } elseif (strpos($join_where_groupBy_having_orderby_limit, 'LIMIT') !== false ) {
+                        $args_by .= ' '.$join_where_groupBy_having_orderby_limit;    
                         $limitSet = true;
                     }
                 }
-                if ($skipWhere || $groupBySet || $havingSet || $orderBySet || $limitSet) {
+
+                if ($joinSet || $skipWhere || $groupBySet || $havingSet || $orderBySet || $limitSet) {
                     $where = $args_by;
                     $skipWhere = true;
                 }
@@ -287,7 +398,7 @@ class ezQuery implements ezQueryInterface
         if (is_string($where)) {
             $sql .= $where;
             if ($getSelect_result) 
-                return (($this->getPrepare()) && !empty($this->getParameters())) 
+                return (($this->isPrepareActive()) && !empty($this->getParameters())) 
                     ? $this->get_results($sql, OBJECT, true) 
                     : $this->get_results($sql);     
             else 
@@ -301,10 +412,10 @@ class ezQuery implements ezQueryInterface
      * Get sql statement from selecting method instead of executing get_result
      * @return string
      */
-    private function select_sql($table = '', $fields = '*', ...$get_args)
+    private function select_sql($table = '', $fields = '*', ...$conditions)
     {
 		$this->select_result = false;
-        return $this->selecting($table, $fields, ...$get_args);	            
+        return $this->selecting($table, $fields, ...$conditions);	            
     }
    
     public function create_select($newTable, $fromColumns, $oldTable = null, ...$fromWhere) 
@@ -317,7 +428,7 @@ class ezQuery implements ezQueryInterface
 			
         $newTableFromTable = $this->select_sql($newTable, $fromColumns, ...$fromWhere);			
         if (is_string($newTableFromTable))
-            return (($this->getPrepare()) && !empty($this->getParameters())) 
+            return (($this->isPrepareActive()) && !empty($this->getParameters())) 
                 ? $this->query($newTableFromTable, true) 
                 : $this->query($newTableFromTable); 
         else {
@@ -336,7 +447,7 @@ class ezQuery implements ezQueryInterface
 			
         $newTableFromTable = $this->select_sql($newTable, $fromColumns, ...$fromWhere);
         if (is_string($newTableFromTable))
-            return (($this->getPrepare()) && !empty($this->getParameters())) 
+            return (($this->isPrepareActive()) && !empty($this->getParameters())) 
                 ? $this->query($newTableFromTable, true) 
                 : $this->query($newTableFromTable); 
         else {
@@ -358,7 +469,7 @@ class ezQuery implements ezQueryInterface
             } elseif(in_array(strtolower($val), array( 'current_timestamp()', 'date()', 'now()' ))) {
 				$sql .= "$key = CURRENT_TIMESTAMP(), ";
 			} else {
-				if ($this->getPrepare()) {
+				if ($this->isPrepareActive()) {
 					$sql .= "$key = "._TAG.", ";
 					$this->setParameters($val);
 				} else 
@@ -369,7 +480,7 @@ class ezQuery implements ezQueryInterface
         $where = $this->where(...$WhereKeys);
         if (is_string($where)) {   
             $sql = rtrim($sql, ', ') . $where;
-            return (($this->getPrepare()) && !empty($this->getParameters())) 
+            return (($this->isPrepareActive()) && !empty($this->getParameters())) 
                 ? $this->query($sql, true) 
                 : $this->query($sql) ;       
         } else {
@@ -388,7 +499,7 @@ class ezQuery implements ezQueryInterface
         $where = $this->where(...$WhereKeys);
         if (is_string($where)) {   
             $sql .= $where;						
-            return (($this->getPrepare()) && !empty($this->getParameters())) 
+            return (($this->isPrepareActive()) && !empty($this->getParameters())) 
                 ? $this->query($sql, true) 
                 : $this->query($sql);  
         } else {
@@ -422,7 +533,7 @@ class ezQuery implements ezQueryInterface
                 elseif (in_array(strtolower($val), array( 'current_timestamp()', 'date()', 'now()' ))) 
                     $value .= "CURRENT_TIMESTAMP(), ";
                 else {
-					if ($this->getPrepare()) {
+					if ($this->isPrepareActive()) {
 						$value .= _TAG.", ";
 						$this->setParameters($val);
 					} else 
@@ -432,7 +543,7 @@ class ezQuery implements ezQueryInterface
             
             $sql .= "(". rtrim($index, ', ') .") VALUES (". rtrim($value, ', ') .");";
 
-			if (($this->getPrepare()) && !empty($this->getParameters())) 
+			if (($this->isPrepareActive()) && !empty($this->getParameters())) 
 				$ok = $this->query($sql, true);
 			else 
 				$ok = $this->query($sql);
@@ -459,8 +570,8 @@ class ezQuery implements ezQueryInterface
         
     public function replace($table='', $keyAndValue) 
     {
-            return $this->_query_insert_replace($table, $keyAndValue, 'REPLACE');
-        }
+        return $this->_query_insert_replace($table, $keyAndValue, 'REPLACE');
+    }
 
     public function insert($table='', $keyAndValue) 
     {
@@ -473,7 +584,7 @@ class ezQuery implements ezQueryInterface
         $getFromTable = $this->select_sql($fromTable, $fromColumns, ...$fromWhere);
 
         if (is_string($putToTable) && is_string($getFromTable))
-            return (($this->getPrepare()) && !empty($this->getParameters())) 
+            return (($this->isPrepareActive()) && !empty($this->getParameters())) 
                 ? $this->query($putToTable." ".$getFromTable, true) 
                 : $this->query($putToTable." ".$getFromTable) ;
         else {
