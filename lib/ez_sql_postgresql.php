@@ -231,7 +231,7 @@
                 $param = $this->getParameters();
             
 			// check for ezQuery placeholder tag and replace tags with proper prepare tag
-			if (!empty($param) && is_array($param) && ($this->getPrepare()) && (strpos($query, _TAG) !== false))
+			if (!empty($param) && is_array($param) && ($this->isPrepareActive()) && (strpos($query, _TAG) !== false))
 			{
 				foreach ($param as $i => $value) {
 					$parametrize = $i + 1;
@@ -273,7 +273,7 @@
 			}
             
 			// Perform the query via std postgresql_query function..
-			if (!empty($param) && is_array($param) && ($this->getPrepare())){
+			if (!empty($param) && is_array($param) && ($this->isPrepareActive())){
 				$this->result = @pg_query_params($this->dbh, $query, $param);		
 				$this->clearParameters();				
 			} else 

@@ -384,7 +384,7 @@ class ezSQL_mysqli extends ezSQLcore
         }
 
         // Perform the query via std mysql_query function..
-		if (!empty($param) && is_array($param) && ($this->getPrepare()))		
+		if (!empty($param) && is_array($param) && ($this->isPrepareActive()))		
 			return $this->query_prepared($query, $param);
 		else 
 			$this->_result = mysqli_query($this->dbh, $query);

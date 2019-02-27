@@ -196,7 +196,7 @@
 			}
 
 			// Perform the query via std sqlsrv_query function..
-			if (!empty($param) && is_array($param) && ($this->getPrepare())) {
+			if (!empty($param) && is_array($param) && ($this->isPrepareActive())) {
 				$this->result = @sqlsrv_query($this->dbh, $query, $param);
                 $this->clearParameters();                
             }

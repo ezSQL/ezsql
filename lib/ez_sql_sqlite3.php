@@ -195,7 +195,7 @@
 			$this->last_query = $query;
 
 			// Perform the query via std SQLite3 query or SQLite3 prepare function..
-            if (!empty($param) && is_array($param) && ($this->getPrepare())) {
+            if (!empty($param) && is_array($param) && ($this->isPrepareActive())) {
                 $this->result = $this->query_prepared($query, $param);	
 				$this->clearParameters();
             } else 
@@ -261,7 +261,7 @@
 			
 			}
             
-            if (($param) && is_array($param) && ($this->getPrepare()))
+            if (($param) && is_array($param) && ($this->isPrepareActive()))
                 $this->result->finalize(); 
 
 			// If debug ALL queries

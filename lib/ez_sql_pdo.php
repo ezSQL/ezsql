@@ -327,7 +327,7 @@ class ezSQL_pdo extends ezSQLcore
 
             // Perform the query and log number of affected rows
             // Perform the query via std PDO query or PDO prepare function..
-            if (!empty($param) && is_array($param) && ($this->getPrepare())) {
+            if (!empty($param) && is_array($param) && ($this->isPrepareActive())) {
                 $this->_affectedRows = $this->query_prepared($query, $param, false);	
 				$this->clearParameters();
             } else
@@ -353,7 +353,7 @@ class ezSQL_pdo extends ezSQLcore
 
             // Perform the query and log number of affected rows
             // Perform the query via std PDO query or PDO prepare function..
-            if (!empty($param) && is_array($param) && ($this->getPrepare())) {
+            if (!empty($param) && is_array($param) && ($this->isPrepareActive())) {
                 $sth = $this->query_prepared($query, $param, true);	
 				$this->clearParameters();
             } else
