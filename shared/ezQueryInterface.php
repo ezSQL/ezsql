@@ -314,8 +314,8 @@ interface ezQueryInterface
     public function where( ...$whereKeyArray);
     
 	/**
-    * Returns an sql string or result set given the 
-    *   - table, column fields, joins, conditions or conditional array.
+    * Returns an SQL string or result set, given the 
+    *   - table, column fields, conditions or conditional array.
     *
     * In the following format:
     * ```
@@ -328,22 +328,26 @@ interface ezQueryInterface
     *   groupBy( columns ), 
     *   having( between( columns, values1, values2 ) ), 
     *   orderBy( columns, desc ),
-    *   limit( numberOfRecords, offset )
+    *   limit( numberOfRecords, offset ),
+    *   union(table, columnFields, conditions), // Returns an select SQL string with `UNION`
+    *   unionAll(table, columnFields, conditions) // Returns an select SQL string with `UNION ALL`
     *);
     * ``` 
-    *
     * @param $table, - database table to access
-    * @param $fields, - table columns, string or array
-    * @param $joins, - join clause (type, left table, right table, left column, right column, condition = EQ)
-    * @param $whereKey, - where clause ( array(x, =, y, and, extra) ) or ( "x  =  y  and  extra" )
-    * @param $groupBy, - grouping over the results
-    * @param $having, - having clause ( array(x, =, y, and, extra) ) or ( "x  =  y  and  extra" )
-    * @param $orderby - ordering for the query
-    * @param $limit - limit the number of records
+    * @param $columnFields, - table columns, string or array
+    * @param mixed $conditions - of the following parameters:
+    *
+    *   @param $joins, - join clause (type, left table, right table, left column, right column, condition = EQ)
+    *   @param $whereKey, - where clause ( array(x, =, y, and, extra) ) or ( "x  =  y  and  extra" )
+    *   @param $groupBy, - grouping over clause the results
+    *   @param $having, - having clause ( array(x, =, y, and, extra) ) or ( "x  =  y  and  extra" )
+    *   @param $orderby, - ordering by clause for the query
+    *   @param $limit, - limit clause the number of records
+    *   @param $union/$unionAll - union clause combine the result sets and removes duplicate rows/does not remove
     *   
-    * @return result set - see docs for more details, or false for error
+    * @return mixed result set - see docs for more details, or false for error
 	*/
-    public function selecting($table = '', $fields = '*', ...$conditions);
+    public function selecting($table = '', $columnFields = '*', ...$conditions);
 
 	/** 
     * Does an create select statement by calling selecting method
@@ -351,10 +355,9 @@ interface ezQueryInterface
     * @param $newTable, - new database table to be created 
     * @param $fromColumns - the columns from old database table
     * @param $oldTable - old database table 
-    * @param $WhereKey, - where clause ( array(x, =, y, and, extra) ) or ( "x  =  y  and  extra" )
-    *   example: where( array(key, operator, value, combine, extra) ); or where( "key operator value combine extra" );
+    * @param $fromWhere, - where clause ( array(x, =, y, and, extra) ) or ( "x  =  y  and  extra" )
     *
-    * @return mixed bool/result
+    * @return mixed bool/result - false for error
 	*/
     public function create_select($newTable, $fromColumns, $oldTable = null, ...$fromWhere);
     
@@ -363,9 +366,9 @@ interface ezQueryInterface
     * @param $newTable, - new database table to be created 
     * @param $fromColumns - the columns from old database table
     * @param $oldTable - old database table 
-    * @param $WhereKey, - where clause ( array(x, =, y, and, extra) ) or ( "x  =  y  and  extra" )
-	*   example: where( array(key, operator, value, combine, extra) ); or where( "key operator value combine extra" );
-    * @return mixed bool/result
+    * @param $fromWhere, - where clause ( array(x, =, y, and, extra) ) or ( "x  =  y  and  extra" )
+    *
+    * @return mixed bool/result - false for error
 	*/
     public function select_into($newTable, $fromColumns, $oldTable = null, ...$fromWhere);
 		
@@ -374,7 +377,7 @@ interface ezQueryInterface
 	* @param $table, - database table to access
 	* @param $keyAndValue, - table fields, assoc array with key = value (doesn't need escaped)
 	* @param $WhereKey, - where clause ( array(x, =, y, and, extra) ) or ( "x  =  y  and  extra" )
-	*   example: where( array(key, operator, value, combine, extra) ); or where( "key operator value combine extra" );
+	*
 	* @return mixed bool/results - false for error
 	*/
     public function update($table = '', $keyAndValue, ...$WhereKeys);
@@ -407,7 +410,6 @@ interface ezQueryInterface
     * @param $toColumns - the receiving columns from other table columns, leave blank for all or array of column fields
     * @param $WhereKey, - where clause ( array(x, =, y, and, extra) ) or ( "x = y and extra" )
     *
-    *   example: where( array(key, operator, value, combine, extra) ); or where( "key operator value combine extra" );
     * @return mixed bool/id of inserted record, or false for error
 	*/
     public function insert_select($toTable = '', $toColumns = '*', $fromTable = null, $fromColumns = '*', ...$fromWhere);

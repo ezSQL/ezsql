@@ -278,7 +278,7 @@ class ezQuery implements ezQueryInterface
 			return ($where != '1') ? " $whereOrHaving ".$where.' ' : ' ' ;
     }        
     
-    public function selecting($table ='', $fields = '*', ...$conditions) 
+    public function selecting($table ='', $columnFields = '*', ...$conditions) 
     {    
 		$getFromTable = $this->fromTable;
 		$getSelect_result = $this->select_result;       
@@ -296,7 +296,7 @@ class ezQuery implements ezQueryInterface
             return $this->clearParameters();
         }
         
-        $columns = $this->to_string($fields);
+        $columns = $this->to_string($columnFields);
         
 		if (isset($getFromTable) && ! $getIsInto) 
 			$sql="CREATE TABLE $table AS SELECT $columns FROM ".$getFromTable;
@@ -312,34 +312,38 @@ class ezQuery implements ezQueryInterface
                 $groupBySet = false;      
                 $havingSet = false;             
                 $orderBySet = false;   
-                $limitSet = false;   
-				foreach ($conditions as $join_where_groupBy_having_orderby_limit) {
-                    if (strpos($join_where_groupBy_having_orderby_limit, 'JOIN') !== false ) {
-                        $args_by .= $join_where_groupBy_having_orderby_limit;
+                $limitSet = false;     
+                $unionSet = false;
+				foreach ($conditions as $join_where_groupBy_having_orderby_limit_union) {
+                    if (strpos($join_where_groupBy_having_orderby_limit_union, 'JOIN') !== false ) {
+                        $args_by .= $join_where_groupBy_having_orderby_limit_union;
                         $joinSet = true;
-                    } elseif (strpos($join_where_groupBy_having_orderby_limit, 'WHERE') !== false ) {
-                        $args_by .= $join_where_groupBy_having_orderby_limit;
+                    } elseif (strpos($join_where_groupBy_having_orderby_limit_union, 'WHERE') !== false ) {
+                        $args_by .= $join_where_groupBy_having_orderby_limit_union;
                         $skipWhere = true;
-                    } elseif (strpos($join_where_groupBy_having_orderby_limit, 'GROUP BY') !== false ) {
-                        $args_by .= ' '.$join_where_groupBy_having_orderby_limit;
+                    } elseif (strpos($join_where_groupBy_having_orderby_limit_union, 'GROUP BY') !== false ) {
+                        $args_by .= ' '.$join_where_groupBy_having_orderby_limit_union;
                         $groupBySet = true;
-                    } elseif (strpos($join_where_groupBy_having_orderby_limit, 'HAVING') !== false ) {
+                    } elseif (strpos($join_where_groupBy_having_orderby_limit_union, 'HAVING') !== false ) {
                         if ($groupBySet) {
-                            $args_by .= ' '.$join_where_groupBy_having_orderby_limit;
+                            $args_by .= ' '.$join_where_groupBy_having_orderby_limit_union;
                             $havingSet = true;
                         } else {
                             return $this->clearParameters();
                         }
-                    } elseif (strpos($join_where_groupBy_having_orderby_limit, 'ORDER BY') !== false ) {
-                        $args_by .= ' '.$join_where_groupBy_having_orderby_limit;    
+                    } elseif (strpos($join_where_groupBy_having_orderby_limit_union, 'ORDER BY') !== false ) {
+                        $args_by .= ' '.$join_where_groupBy_having_orderby_limit_union;    
                         $orderBySet = true;
-                    } elseif (strpos($join_where_groupBy_having_orderby_limit, 'LIMIT') !== false ) {
-                        $args_by .= ' '.$join_where_groupBy_having_orderby_limit;    
+                    } elseif (strpos($join_where_groupBy_having_orderby_limit_union, 'LIMIT') !== false ) {
+                        $args_by .= ' '.$join_where_groupBy_having_orderby_limit_union;    
                         $limitSet = true;
+                    } elseif (strpos($join_where_groupBy_having_orderby_limit_union, 'UNION') !== false ) {
+                        $args_by .= ' '.$join_where_groupBy_having_orderby_limit_union;    
+                        $unionSet = true;
                     }
                 }
 
-                if ($joinSet || $skipWhere || $groupBySet || $havingSet || $orderBySet || $limitSet) {
+                if ($joinSet || $skipWhere || $groupBySet || $havingSet || $orderBySet || $limitSet || $unionSet) {
                     $where = $args_by;
                     $skipWhere = true;
                 }
@@ -365,15 +369,25 @@ class ezQuery implements ezQueryInterface
     }
 
     /**
-     * Get sql statement from selecting method instead of executing get_result
+     * Get SQL statement string from selecting method instead of executing get_result
      * @return string
      */
-    private function select_sql($table = '', $fields = '*', ...$conditions)
+    private function select_sql($table = '', $columnFields = '*', ...$conditions)
     {
 		$this->select_result = false;
-        return $this->selecting($table, $fields, ...$conditions);	            
+        return $this->selecting($table, $columnFields, ...$conditions);	            
     }
-   
+
+    public function union($table = '', $columnFields = '*', ...$conditions)
+    {
+        return 'UNION '.$this->select_sql($table, $columnFields, ...$conditions);           
+    }
+
+    public function unionAll($table = '', $columnFields = '*', ...$conditions)
+    {
+        return 'UNION ALL '.$this->select_sql($table, $columnFields, ...$conditions);             
+    }
+
     public function create_select($newTable, $fromColumns, $oldTable = null, ...$fromWhere) 
     {
 		if (isset($oldTable))

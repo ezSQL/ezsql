@@ -66,7 +66,7 @@ use ezsql\ezQueryInterface;
         const _COMBINERS = ['AND', 'OR', 'NOT', 'AND NOT'];
 
     /*
-     * for select_join joining shortcut methods.
+     * for joining shortcut methods.
      */    
 		const _INNER = 'INNER';
 		const _LEFT = 'LEFT';
