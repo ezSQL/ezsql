@@ -97,7 +97,7 @@ class ezQuery implements ezQueryInterface
         string $rightTable = '', 
         string $columnFields = '*', $leftColumn = null, $rightColumn = null, ...$extraConditions) 
     {
-        return $this->selectJoin(
+        return $this->select_join(
             'INNER', $leftTable, $rightTable, $columnFields, $leftColumn, $rightColumn, $extraConditions
         );
     }
@@ -107,7 +107,7 @@ class ezQuery implements ezQueryInterface
         string $rightTable = '', 
         string $columnFields = '*', $leftColumn = null, $rightColumn = null, ...$extraConditions) 
     {
-        return $this->selectJoin(
+        return $this->select_join(
             'LEFT', $leftTable, $rightTable, $columnFields, $leftColumn, $rightColumn, $extraConditions
         );
     }
@@ -117,7 +117,7 @@ class ezQuery implements ezQueryInterface
         string $rightTable = '', 
         string $columnFields = '*', $leftColumn = null, $rightColumn = null, ...$extraConditions) 
     {
-        return $this->selectJoin(
+        return $this->select_join(
             'RIGHT', $leftTable, $rightTable, $columnFields, $leftColumn, $rightColumn, $extraConditions
         );
     }
@@ -127,8 +127,8 @@ class ezQuery implements ezQueryInterface
         string $rightTable = '', 
         string $columnFields = '*', $leftColumn = null, $rightColumn = null, ...$extraConditions) 
     {
-        return $this->selectJoin(
-            'FULL', $leftTable, $rightTable, $columnFields, $leftColumn, $rightColumn, $$extraConditions
+        return $this->select_join(
+            'FULL', $leftTable, $rightTable, $columnFields, $leftColumn, $rightColumn, $extraConditions
         );
     }
 
@@ -136,10 +136,15 @@ class ezQuery implements ezQueryInterface
     * Helper combine rows from tables where `on` condition is met
     *
     * - Will perform an equal on tables by left column key, 
-    *           if `rightColumn` and `extraConditions` is null.
+    *       left column key and left table, left column key and right table, 
+    *           if `rightColumn` is null.
     *
-    * - Will perform an equal on tables by left column key, right column key, 
-    *           if `rightColumn` not null and `extraConditions` is null.
+    * - Will perform an equal on tables by, 
+    *       left column key and left table, right column key and right table, 
+    *           if `rightColumn` not null.
+    *
+    * - Will perform an equal on passed in arguments, for left column, and right column.
+    *           if array `extraConditions`, first array item is an boolean, `[true]`, `[false]`
     *
     * @param string $type - Either `INNER`, `LEFT`, `RIGHT`, `FULL`
     * @param string $leftTable - 
@@ -154,32 +159,45 @@ class ezQuery implements ezQueryInterface
     *
     * @return mixed bool|resultset - or false on error
     */
-    private function selectJoin(
-        String $type = 'INNER',
+    private function select_join(
+        String $type = \_INNER,
         string $leftTable = '', 
         string $rightTable = '', 
-        string $columnFields = '*', $leftColumn = null, $rightColumn = null, ...$extraConditions) 
+        string $columnFields = '*', 
+        string $leftColumn = null, string $rightColumn = null, ...$extraConditions) 
     {
         if (empty($leftTable) || empty($rightTable) || empty($columnFields) || empty($leftColumn)) {
             return false;
         }
 
-        $join = $this->joining($type, $leftTable, $rightTable, $leftColumn, $rightColumn, $extraConditions); 
-
-        return $this->selecting($leftTable, $columnFields, $join);
-    }
-
-    private function joining(
-        $type = 'INNER', $leftTable = '', $rightTable = '', $leftColumn = null, $rightColumn = null, ...$whereOnConditions)
-    {
         if (\is_string($leftColumn) && empty($rightColumn))
             $onCondition = ' ON '.$leftTable.$leftColumn.' = '.$rightTable.$leftColumn;
-        elseif (\is_string($leftColumn) && \is_string($rightColumn) && empty($whereOnConditions))
-            $onCondition = ' ON '.$leftTable.$leftColumn.' = '.$rightTable.$rightColumn;
-        elseif (\is_string($leftColumn) && \is_string($rightColumn) && is_array($whereOnConditions))
-            $onCondition = ' ON '.$leftTable.$leftColumn.' = '.$rightTable.$rightColumn.$this->where( ...$whereOnConditions);
-        else
+        elseif (\is_bool($extraConditions[0]))
             $onCondition = ' ON '.$leftColumn.' = '.$rightColumn;
+        else
+            $onCondition = ' ON '.$leftTable.$leftColumn.' = '.$rightTable.$rightColumn;
+
+        $join = ' '.$type.' JOIN '.$rightTable.$onCondition;
+
+        return $this->selecting($leftTable, $columnFields, $join, ...$extraConditions);
+    }
+
+    public function joining(
+        String $type = \_INNER,
+        string $leftTable = '', 
+        string $rightTable = '', 
+        string $leftColumn = null, string $rightColumn = null, bool $extra = false) 
+    {
+        if (empty($leftTable) || empty($rightTable) || empty($columnFields) || empty($leftColumn)) {
+            return false;
+        }
+
+        if (\is_string($leftColumn) && empty($rightColumn))
+            $onCondition = ' ON '.$leftTable.$leftColumn.' = '.$rightTable.$leftColumn;
+        elseif ($extra === true)
+            $onCondition = ' ON '.$leftColumn.' = '.$rightColumn;
+        else
+            $onCondition = ' ON '.$leftTable.$leftColumn.' = '.$rightTable.$rightColumn;
 
         return ' '.$type.' JOIN '.$rightTable.$onCondition;
     }

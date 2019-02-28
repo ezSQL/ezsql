@@ -61,6 +61,14 @@ use ezsql\ezQueryInterface;
 		const _NOT = 'NOT';
         const _andNOT = 'AND NOT'; 
         
+    /*
+     * for select_join joining shortcut methods.
+     */    
+		const _INNER = 'INNER';
+		const _LEFT = 'LEFT';
+		const _RIGHT = 'RIGHT';
+        const _FULL = 'FULL'; 
+        
         /**
         * Associative array of supported SQL Drivers, and library
         * @define(array)
