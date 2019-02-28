@@ -25,6 +25,7 @@
  * and is licensed under the MIT license.
  */
 
+use ezsql\ezQuery;
 use ezsql\ezQueryInterface;
 
 	// ezQuery prepare placeholder/positional tag
@@ -300,6 +301,10 @@ use ezsql\ezQueryInterface;
         return $ezInstance;
     }
    
+    function cleanInput($string) {
+        return ezQuery::clean($string);
+    } 
+
     function select($table = '', $columns = '*', ...$args) {
         $ezQuery = \getInstance();
         return ($ezQuery instanceOf ezQueryInterface) 
@@ -348,7 +353,73 @@ use ezsql\ezQueryInterface;
             ? $ezQuery->having( ...$args) 
             : false;
     }
-    
+
+    function innerJoin(
+        $leftTable = '',
+        $rightTable = '', 
+        $leftColumn = null, 
+        $rightColumn = null, 
+        $condition = \EQ
+    ) {
+        $ezQuery = \getInstance();
+        return ($ezQuery instanceOf ezQueryInterface) 
+            ? $ezQuery->innerJoin($leftTable, $rightTable, $leftColumn, $rightColumn, $condition) 
+            : false;
+    }
+
+    function leftJoin(
+        $leftTable = '',
+        $rightTable = '', 
+        $leftColumn = null, 
+        $rightColumn = null, 
+        $condition = \EQ
+    ) {
+        $ezQuery = \getInstance();
+        return ($ezQuery instanceOf ezQueryInterface) 
+            ? $ezQuery->leftJoin($leftTable, $rightTable, $leftColumn, $rightColumn, $condition) 
+            : false;
+    }
+
+    function rightJoin(
+        $leftTable = '',
+        $rightTable = '', 
+        $leftColumn = null, 
+        $rightColumn = null, 
+        $condition = \EQ
+    ) {
+        $ezQuery = \getInstance();
+        return ($ezQuery instanceOf ezQueryInterface) 
+            ? $ezQuery->rightJoin($leftTable, $rightTable, $leftColumn, $rightColumn, $condition) 
+            : false;
+    }
+
+    function fullJoin(
+        $leftTable = '',
+        $rightTable = '', 
+        $leftColumn = null, 
+        $rightColumn = null, 
+        $condition = \EQ
+    ) {
+        $ezQuery = \getInstance();
+        return ($ezQuery instanceOf ezQueryInterface) 
+            ? $ezQuery->fullJoin($leftTable, $rightTable, $leftColumn, $rightColumn, $condition) 
+            : false;
+    }
+
+    function union($table = '', $columnFields = '*', ...$conditions) {
+        $ezQuery = \getInstance();
+        return ($ezQuery instanceOf ezQueryInterface) 
+            ? $ezQuery->union($table, $columnFields, ...$conditions) 
+            : false;
+    } 
+
+    function unionAll($table = '', $columnFields = '*', ...$conditions) {
+        $ezQuery = \getInstance();
+        return ($ezQuery instanceOf ezQueryInterface) 
+            ? $ezQuery->unionAll($table, $columnFields, ...$conditions) 
+            : false;
+    } 
+
     function orderBy($orderBy, $order) {
         $ezQuery = \getInstance();
         return ($ezQuery instanceOf ezQueryInterface) 

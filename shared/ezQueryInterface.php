@@ -123,12 +123,8 @@ interface ezQueryInterface
     *
     * @param string $leftTable - 
     * @param string $rightTable - 
-    *
-    * @param string $columnFields - 
-    *
     * @param string $leftColumn - 
     * @param string $rightColumn - 
-    *
     * @param string $condition -  
     *
     * @return bool|string JOIN sql statement, false for error
@@ -156,12 +152,8 @@ interface ezQueryInterface
     *
     * @param string $leftTable - 
     * @param string $rightTable - 
-    *
-    * @param string $columnFields - 
-    *
     * @param string $leftColumn - 
     * @param string $rightColumn - 
-    *
     * @param string $condition -  
     *
     * @return bool|string JOIN sql statement, false for error
@@ -189,12 +181,8 @@ interface ezQueryInterface
     *
     * @param string $leftTable - 
     * @param string $rightTable - 
-    *
-    * @param string $columnFields - 
-    *
     * @param string $leftColumn - 
     * @param string $rightColumn - 
-    *
     * @param string $condition -  
     *
     * @return bool|string JOIN sql statement, false for error
@@ -221,12 +209,8 @@ interface ezQueryInterface
     *
     * @param string $leftTable - 
     * @param string $rightTable - 
-    *
-    * @param string $columnFields - 
-    *
     * @param string $leftColumn - 
     * @param string $rightColumn - 
-    *
     * @param string $condition -  
     *
     * @return bool|string JOIN sql statement, false for error
@@ -236,36 +220,57 @@ interface ezQueryInterface
         string $rightTable = '', 
         string $leftColumn = null, string $rightColumn = null, $condition = \EQ);
 
-    /**
-    * For multiple select joins, combine rows from tables where `on` condition is met
+	/**
+    * Returns an `UNION` SELECT SQL string, given the 
+    *   - table, column fields, conditions or conditional array.
     *
-    * - Will perform an equal on tables by left column key, 
-    *       left column key and left table, left column key and right table, 
-    *           if `rightColumn` is null.
+    * In the following format:
+    * ```
+    * union(
+    *   table,
+    *   columns, 
+    *   // innerJoin(), leftJoin(), rightJoin(), fullJoin() alias of
+    *   joining(inner|left|right|full, leftTable, rightTable, leftColumn, rightColumn, equal condition), 
+    *   where( eq( columns, values, _AND ), like( columns, _d ) ), 
+    *   groupBy( columns ), 
+    *   having( between( columns, values1, values2 ) ), 
+    *   orderBy( columns, desc ),
+    *   limit( numberOfRecords, offset )
+    *);
+    * ``` 
+    * @param $table, - database table to access
+    * @param $columnFields, - table columns, string or array
+    * @param mixed $conditions - same as selecting method.
+    *   
+    * @return bool|string - false for error
+	*/
+    public function union($table = '', $columnFields = '*', ...$conditions);
+
+	/**
+    * Returns an `UNION ALL` SELECT SQL string, given the 
+    *   - table, column fields, conditions or conditional array.
     *
-    * - Will perform an equal on tables by, 
-    *       left column key and left table, right column key and right table, 
-    *           if `rightColumn` not null, and `$condition` not changed.
-    *
-    * - Will perform the `condition` on passed in arguments, for left column, and right column.
-    *           if `$condition`,  is in the array
-    *
-    * @param string $type - Either `INNER`, `LEFT`, `RIGHT`, `FULL`
-    * @param string $leftTable - 
-    * @param string $rightTable - 
-    *
-    * @param string $leftColumn - 
-    * @param string $rightColumn - 
-    *
-    * @param string $condition -  
-    *
-    * @return bool|string JOIN sql statement, false for error
-    */
-    public function joining(
-            String $type = \_INNER,
-            string $leftTable = '', 
-            string $rightTable = '', 
-            string $leftColumn = null, string $rightColumn = null, $condition = \EQ);
+    * In the following format:
+    * ```
+    * unionAll(
+    *   table,
+    *   columns, 
+    *   // innerJoin(), leftJoin(), rightJoin(), fullJoin() alias of
+    *   joining(inner|left|right|full, leftTable, rightTable, leftColumn, rightColumn, equal condition), 
+    *   where( eq( columns, values, _AND ), like( columns, _d ) ), 
+    *   groupBy( columns ), 
+    *   having( between( columns, values1, values2 ) ), 
+    *   orderBy( columns, desc ),
+    *   limit( numberOfRecords, offset )
+    *);
+    * ``` 
+    * @param $table, - database table to access
+    * @param $columnFields, - table columns, string or array
+    * @param mixed $conditions - same as selecting method.
+    *   
+    * @return bool|string - false for error
+	*/
+    public function unionAll($table = '', $columnFields = '*', ...$conditions);
 
     /**
     * Specifies an ordering for the query results.  
