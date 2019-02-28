@@ -130,8 +130,8 @@ interface ezQueryInterface
     * @return bool|string JOIN sql statement, false for error
     */
     public function innerJoin(
-        string $leftTable = '', 
-        string $rightTable = '', 
+        string $leftTable = null, 
+        string $rightTable = null, 
         string $leftColumn = null, string $rightColumn = null, $condition = \EQ);
 
     /**
@@ -159,8 +159,8 @@ interface ezQueryInterface
     * @return bool|string JOIN sql statement, false for error
     */
     public function leftJoin(
-        string $leftTable = '', 
-        string $rightTable = '', 
+        string $leftTable = null, 
+        string $rightTable = null, 
         string $leftColumn = null, string $rightColumn = null, $condition = \EQ);
 
     /**
@@ -188,8 +188,8 @@ interface ezQueryInterface
     * @return bool|string JOIN sql statement, false for error
     */
     public function rightJoin(
-        string $leftTable = '', 
-        string $rightTable = '', 
+        string $leftTable = null, 
+        string $rightTable = null, 
         string $leftColumn = null, string $rightColumn = null, $condition = \EQ);
 
     /**
@@ -216,8 +216,8 @@ interface ezQueryInterface
     * @return bool|string JOIN sql statement, false for error
     */
     public function fullJoin(
-        string $leftTable = '', 
-        string $rightTable = '', 
+        string $leftTable = null, 
+        string $rightTable = null, 
         string $leftColumn = null, string $rightColumn = null, $condition = \EQ);
 
 	/**

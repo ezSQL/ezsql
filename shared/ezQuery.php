@@ -93,8 +93,8 @@ class ezQuery implements ezQueryInterface
     }
 
     public function innerJoin(
-        string $leftTable = '', 
-        string $rightTable = '', 
+        string $leftTable = null, 
+        string $rightTable = null, 
         string $leftColumn = null, string $rightColumn = null, $condition = \EQ)
     {
         return $this->joining(
@@ -102,8 +102,8 @@ class ezQuery implements ezQueryInterface
     }
 
     public function leftJoin(
-        string $leftTable = '', 
-        string $rightTable = '', 
+        string $leftTable = null, 
+        string $rightTable = null, 
         string $leftColumn = null, string $rightColumn = null, $condition = \EQ)
     {
         return $this->joining(
@@ -111,8 +111,8 @@ class ezQuery implements ezQueryInterface
     }
 
     public function rightJoin(
-        string $leftTable = '', 
-        string $rightTable = '', 
+        string $leftTable = null, 
+        string $rightTable = null, 
         string $leftColumn = null, string $rightColumn = null, $condition = \EQ)
     {
         return $this->joining(
@@ -120,8 +120,8 @@ class ezQuery implements ezQueryInterface
     }
 
     public function fullJoin(
-        string $leftTable = '', 
-        string $rightTable = '', 
+        string $leftTable = null, 
+        string $rightTable = null, 
         string $leftColumn = null, string $rightColumn = null, $condition = \EQ)
     {
         return $this->joining(
@@ -155,8 +155,8 @@ class ezQuery implements ezQueryInterface
     */
     private function joining(
         String $type = \_INNER,
-        string $leftTable = '', 
-        string $rightTable = '', 
+        string $leftTable = null, 
+        string $rightTable = null, 
         string $leftColumn = null, string $rightColumn = null, $condition = \EQ) 
     {
         if (!in_array($type, \_JOINERS) 
