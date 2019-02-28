@@ -116,10 +116,10 @@ interface ezQueryInterface
     *
     * - Will perform an equal on tables by, 
     *       left column key and left table, right column key and right table, 
-    *           if `rightColumn` not null.
+    *           if `rightColumn` not null, and `$condition` not changed.
     *
-    * - Will perform an equal on passed in arguments, for left column, and right column.
-    *           if array `extraConditions`, first array item is an boolean, `[true]`, `[false]`
+    * - Will perform the `condition` on passed in arguments, for left column, and right column.
+    *           if `$condition`,  is in the array
     *
     * @param string $leftTable - 
     * @param string $rightTable - 
@@ -129,14 +129,14 @@ interface ezQueryInterface
     * @param string $leftColumn - 
     * @param string $rightColumn - 
     *
-    * @param mixed $extraConditions -  
+    * @param string $condition -  
     *
-    * @return mixed resultset - or false on error
+    * @return bool|string JOIN sql statement, false for error
     */
     public function innerJoin(
         string $leftTable = '', 
         string $rightTable = '', 
-        string $columnFields = '*', $leftColumn = null, $rightColumn = null, ...$extraConditions);
+        string $leftColumn = null, string $rightColumn = null, $condition = \EQ);
 
     /**
     * This type of join returns all rows from the LEFT-hand table 
@@ -149,10 +149,10 @@ interface ezQueryInterface
     *
     * - Will perform an equal on tables by, 
     *       left column key and left table, right column key and right table, 
-    *           if `rightColumn` not null.
+    *           if `rightColumn` not null, and `$condition` not changed.
     *
-    * - Will perform an equal on passed in arguments, for left column, and right column.
-    *           if array `extraConditions`, first array item is an boolean, `[true]`, `[false]`
+    * - Will perform the `condition` on passed in arguments, for left column, and right column.
+    *           if `$condition`,  is in the array
     *
     * @param string $leftTable - 
     * @param string $rightTable - 
@@ -162,30 +162,30 @@ interface ezQueryInterface
     * @param string $leftColumn - 
     * @param string $rightColumn - 
     *
-    * @param mixed $extraConditions -  
+    * @param string $condition -  
     *
-    * @return mixed resultset - or false on error
+    * @return bool|string JOIN sql statement, false for error
     */
     public function leftJoin(
         string $leftTable = '', 
         string $rightTable = '', 
-        string $columnFields = '*', $leftColumn = null, $rightColumn = null, ...$extraConditions);
+        string $leftColumn = null, string $rightColumn = null, $condition = \EQ);
 
     /**
     * This type of join returns all rows from the RIGHT-hand table 
     * specified in the ON condition and only those rows from the other table 
     * where the joined fields are equal (join condition is met).
-
+    *
     * - Will perform an equal on tables by left column key, 
     *       left column key and left table, left column key and right table, 
     *           if `rightColumn` is null.
     *
     * - Will perform an equal on tables by, 
     *       left column key and left table, right column key and right table, 
-    *           if `rightColumn` not null.
+    *           if `rightColumn` not null, and `$condition` not changed.
     *
-    * - Will perform an equal on passed in arguments, for left column, and right column.
-    *           if array `extraConditions`, first array item is an boolean, `[true]`, `[false]`
+    * - Will perform the `condition` on passed in arguments, for left column, and right column.
+    *           if `$condition`,  is in the array
     *
     * @param string $leftTable - 
     * @param string $rightTable - 
@@ -195,29 +195,29 @@ interface ezQueryInterface
     * @param string $leftColumn - 
     * @param string $rightColumn - 
     *
-    * @param mixed $extraConditions -  
+    * @param string $condition -  
     *
-    * @return mixed resultset - or false on error
+    * @return bool|string JOIN sql statement, false for error
     */
     public function rightJoin(
         string $leftTable = '', 
         string $rightTable = '', 
-        string $columnFields = '*', $leftColumn = null, $rightColumn = null, ...$extraConditions);
+        string $leftColumn = null, string $rightColumn = null, $condition = \EQ);
 
     /**
     * This type of join returns all rows from the LEFT-hand table and RIGHT-hand table 
     * with NULL values in place where the join condition is not met.
-
+    *
     * - Will perform an equal on tables by left column key, 
     *       left column key and left table, left column key and right table, 
     *           if `rightColumn` is null.
     *
     * - Will perform an equal on tables by, 
     *       left column key and left table, right column key and right table, 
-    *           if `rightColumn` not null.
+    *           if `rightColumn` not null, and `$condition` not changed.
     *
-    * - Will perform an equal on passed in arguments, for left column, and right column.
-    *           if array `extraConditions`, first array item is an boolean, `[true]`, `[false]`
+    * - Will perform the `condition` on passed in arguments, for left column, and right column.
+    *           if `$condition`,  is in the array
     *
     * @param string $leftTable - 
     * @param string $rightTable - 
@@ -227,17 +227,17 @@ interface ezQueryInterface
     * @param string $leftColumn - 
     * @param string $rightColumn - 
     *
-    * @param mixed $extraConditions -  
+    * @param string $condition -  
     *
-    * @return mixed resultset - or false on error
+    * @return bool|string JOIN sql statement, false for error
     */
     public function fullJoin(
         string $leftTable = '', 
         string $rightTable = '', 
-        string $columnFields = '*', $leftColumn = null, $rightColumn = null, ...$extraConditions);
+        string $leftColumn = null, string $rightColumn = null, $condition = \EQ);
 
     /**
-    * For multiple select joins
+    * For multiple select joins, combine rows from tables where `on` condition is met
     *
     * - Will perform an equal on tables by left column key, 
     *       left column key and left table, left column key and right table, 
@@ -245,10 +245,10 @@ interface ezQueryInterface
     *
     * - Will perform an equal on tables by, 
     *       left column key and left table, right column key and right table, 
-    *           if `rightColumn` not null.
+    *           if `rightColumn` not null, and `$condition` not changed.
     *
-    * - Will perform an equal on passed in arguments, for left column, and right column.
-    *           if `extra`, is true.
+    * - Will perform the `condition` on passed in arguments, for left column, and right column.
+    *           if `$condition`,  is in the array
     *
     * @param string $type - Either `INNER`, `LEFT`, `RIGHT`, `FULL`
     * @param string $leftTable - 
@@ -257,15 +257,15 @@ interface ezQueryInterface
     * @param string $leftColumn - 
     * @param string $rightColumn - 
     *
-    * @param boolean $extra -  
+    * @param string $condition -  
     *
-    * @return string JOIN sql statement
+    * @return bool|string JOIN sql statement, false for error
     */
     public function joining(
             String $type = \_INNER,
             string $leftTable = '', 
             string $rightTable = '', 
-            string $leftColumn = null, string $rightColumn = null, bool $extra = false);
+            string $leftColumn = null, string $rightColumn = null, $condition = \EQ);
 
     /**
     * Specifies an ordering for the query results.  
@@ -314,14 +314,16 @@ interface ezQueryInterface
     public function where( ...$whereKeyArray);
     
 	/**
-    * Returns an sql string or result set given the table, fields, 
-    * by operator condition or conditional array.
+    * Returns an sql string or result set given the 
+    *   - table, column fields, joins, conditions or conditional array.
     *
+    * In the following format:
     * ```
     * selecting(
     *   table,
     *   columns, 
-    *   joining(inner|left|right|full, leftTable, rightTable, leftColumn, rightColumn), 
+    *   // innerJoin(), leftJoin(), rightJoin(), fullJoin() alias of
+    *   joining(inner|left|right|full, leftTable, rightTable, leftColumn, rightColumn, equal condition), 
     *   where( eq( columns, values, _AND ), like( columns, _d ) ), 
     *   groupBy( columns ), 
     *   having( between( columns, values1, values2 ) ), 
@@ -332,7 +334,7 @@ interface ezQueryInterface
     *
     * @param $table, - database table to access
     * @param $fields, - table columns, string or array
-    * @param $joins, - join clause not directly callable
+    * @param $joins, - join clause (type, left table, right table, left column, right column, condition = EQ)
     * @param $whereKey, - where clause ( array(x, =, y, and, extra) ) or ( "x  =  y  and  extra" )
     * @param $groupBy, - grouping over the results
     * @param $having, - having clause ( array(x, =, y, and, extra) ) or ( "x  =  y  and  extra" )

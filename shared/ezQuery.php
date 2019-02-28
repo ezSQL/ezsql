@@ -95,107 +95,57 @@ class ezQuery implements ezQueryInterface
     public function innerJoin(
         string $leftTable = '', 
         string $rightTable = '', 
-        string $columnFields = '*', $leftColumn = null, $rightColumn = null, ...$extraConditions) 
+        string $leftColumn = null, string $rightColumn = null, $condition = \EQ)
     {
-        return $this->select_join(
-            'INNER', $leftTable, $rightTable, $columnFields, $leftColumn, $rightColumn, $extraConditions
-        );
+        return $this->joining(
+            'INNER', $leftTable, $rightTable, $leftColumn, $rightColumn, $condition);
     }
 
     public function leftJoin(
         string $leftTable = '', 
         string $rightTable = '', 
-        string $columnFields = '*', $leftColumn = null, $rightColumn = null, ...$extraConditions) 
+        string $leftColumn = null, string $rightColumn = null, $condition = \EQ)
     {
-        return $this->select_join(
-            'LEFT', $leftTable, $rightTable, $columnFields, $leftColumn, $rightColumn, $extraConditions
-        );
+        return $this->joining(
+            'LEFT', $leftTable, $rightTable, $leftColumn, $rightColumn, $condition);
     }
 
     public function rightJoin(
         string $leftTable = '', 
         string $rightTable = '', 
-        string $columnFields = '*', $leftColumn = null, $rightColumn = null, ...$extraConditions) 
+        string $leftColumn = null, string $rightColumn = null, $condition = \EQ)
     {
-        return $this->select_join(
-            'RIGHT', $leftTable, $rightTable, $columnFields, $leftColumn, $rightColumn, $extraConditions
-        );
+        return $this->joining(
+            'RIGHT', $leftTable, $rightTable, $leftColumn, $rightColumn, $condition);
     }
 
     public function fullJoin(
         string $leftTable = '', 
         string $rightTable = '', 
-        string $columnFields = '*', $leftColumn = null, $rightColumn = null, ...$extraConditions) 
+        string $leftColumn = null, string $rightColumn = null, $condition = \EQ)
     {
-        return $this->select_join(
-            'FULL', $leftTable, $rightTable, $columnFields, $leftColumn, $rightColumn, $extraConditions
-        );
-    }
-
-    /**
-    * Helper combine rows from tables where `on` condition is met
-    *
-    * - Will perform an equal on tables by left column key, 
-    *       left column key and left table, left column key and right table, 
-    *           if `rightColumn` is null.
-    *
-    * - Will perform an equal on tables by, 
-    *       left column key and left table, right column key and right table, 
-    *           if `rightColumn` not null.
-    *
-    * - Will perform an equal on passed in arguments, for left column, and right column.
-    *           if array `extraConditions`, first array item is an boolean, `[true]`, `[false]`
-    *
-    * @param string $type - Either `INNER`, `LEFT`, `RIGHT`, `FULL`
-    * @param string $leftTable - 
-    * @param string $rightTable - 
-    *
-    * @param string $columnFields - 
-    *
-    * @param string $leftColumn - 
-    * @param string $rightColumn - 
-    *
-    * @param mixed $extraConditions -  
-    *
-    * @return mixed bool|resultset - or false on error
-    */
-    private function select_join(
-        String $type = \_INNER,
-        string $leftTable = '', 
-        string $rightTable = '', 
-        string $columnFields = '*', 
-        string $leftColumn = null, string $rightColumn = null, ...$extraConditions) 
-    {
-        if (empty($leftTable) || empty($rightTable) || empty($columnFields) || empty($leftColumn)) {
-            return false;
-        }
-
-        if (\is_string($leftColumn) && empty($rightColumn))
-            $onCondition = ' ON '.$leftTable.$leftColumn.' = '.$rightTable.$leftColumn;
-        elseif (\is_bool($extraConditions[0]))
-            $onCondition = ' ON '.$leftColumn.' = '.$rightColumn;
-        else
-            $onCondition = ' ON '.$leftTable.$leftColumn.' = '.$rightTable.$rightColumn;
-
-        $join = ' '.$type.' JOIN '.$rightTable.$onCondition;
-
-        return $this->selecting($leftTable, $columnFields, $join, ...$extraConditions);
+        return $this->joining(
+            'FULL', $leftTable, $rightTable, $$leftColumn, $rightColumn, $condition);
     }
 
     public function joining(
         String $type = \_INNER,
         string $leftTable = '', 
         string $rightTable = '', 
-        string $leftColumn = null, string $rightColumn = null, bool $extra = false) 
+        string $leftColumn = null, string $rightColumn = null, $condition = \EQ) 
     {
-        if (empty($leftTable) || empty($rightTable) || empty($columnFields) || empty($leftColumn)) {
+        if (!in_array($type, \_JOINERS) 
+            || !in_array($condition, \_BOOLEAN) 
+            || empty($leftTable) 
+            || empty($rightTable) || empty($columnFields) || empty($leftColumn)
+        ) {
             return false;
         }
 
         if (\is_string($leftColumn) && empty($rightColumn))
             $onCondition = ' ON '.$leftTable.$leftColumn.' = '.$rightTable.$leftColumn;
-        elseif ($extra === true)
-            $onCondition = ' ON '.$leftColumn.' = '.$rightColumn;
+        elseif ($condition !== \EQ)
+            $onCondition = ' ON '.$leftTable.$leftColumn." $condition ".$rightTable.$rightColumn;
         else
             $onCondition = ' ON '.$leftTable.$leftColumn.' = '.$rightTable.$rightColumn;
 
@@ -270,17 +220,17 @@ class ezQuery implements ezQueryInterface
             foreach($WhereKey as $key => $val) {
                 $isCondition = strtoupper($operator[$i]);
 				$combine = $combiner[$i];
-				if ( in_array(strtoupper($combine), array( 'AND', 'OR', 'NOT', 'AND NOT' )) || isset($extra[$i])) 
+				if ( in_array(strtoupper($combine), \_COMBINERS) || isset($extra[$i])) 
 					$combineWith = (isset($extra[$i])) ? $combine : strtoupper($combine);
 				else 
                     $combineWith = _AND;
 
-                if (! in_array( $isCondition, array( '<', '>', '=', '!=', '>=', '<=', '<>', 'IN', 'LIKE', 'NOT LIKE', 'BETWEEN', 'NOT BETWEEN', 'IS', 'IS NOT' ) )) {
+                if (! in_array( $isCondition, \_BOOLEANS)) {
                     return $this->clearParameters();
                 } else {
                     if (($isCondition == 'BETWEEN') || ($isCondition == 'NOT BETWEEN')) {
 						$value = $this->escape($combineWith);
-						if (in_array(strtoupper($extra[$i]), array( 'AND', 'OR', 'NOT', 'AND NOT' ))) 
+						if (in_array(strtoupper($extra[$i]), \_COMBINERS)) 
 							$myCombineWith = strtoupper($extra[$i]);
 						else 
                             $myCombineWith = _AND;

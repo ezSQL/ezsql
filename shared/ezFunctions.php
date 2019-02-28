@@ -42,6 +42,7 @@ use ezsql\ezQueryInterface;
 		const LTE = '<=';
 		const GT  = '>';
 		const GTE = '>=';
+        const _BOOLEAN = ['<', '>', '=', '!=', '>=', '<=', '<>'];
     
 		const _IN = 'IN';
 		const _notIN = 'NOT IN';
@@ -51,7 +52,9 @@ use ezsql\ezQueryInterface;
 		const _notBETWEEN = 'NOT BETWEEN';
         
 		const _isNULL = 'IS NULL';
-		const _notNULL  = 'IS NOT NULL';
+        const _notNULL  = 'IS NOT NULL';
+        const _BOOLEANS = [_BOOLEAN, 
+            'IN', 'LIKE', 'NOT LIKE', 'BETWEEN', 'NOT BETWEEN', 'IS', 'IS NOT'];
     
     /*
      * Combine operators .
@@ -60,7 +63,8 @@ use ezsql\ezQueryInterface;
 		const _OR = 'OR';
 		const _NOT = 'NOT';
         const _andNOT = 'AND NOT'; 
-        
+        const _COMBINERS = ['AND', 'OR', 'NOT', 'AND NOT'];
+
     /*
      * for select_join joining shortcut methods.
      */    
@@ -68,6 +72,7 @@ use ezsql\ezQueryInterface;
 		const _LEFT = 'LEFT';
 		const _RIGHT = 'RIGHT';
         const _FULL = 'FULL'; 
+        const _JOINERS = ['INNER', 'LEFT', 'RIGHT', 'FULL']; 
         
         /**
         * Associative array of supported SQL Drivers, and library
