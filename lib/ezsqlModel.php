@@ -102,8 +102,8 @@ class ezsqlModel extends ezQuery
 	public function get_host_port( $host, $default = false )
 	{
 		$port = $default;
-		if ( false !== strpos( $host, ':' ) ) {
-			list( $host, $port ) = explode( ':', $host );
+		if ( false !== \strpos( $host, ':' ) ) {
+			list( $host, $port ) = \explode( ':', $host );
 			$port = (int) $port;
 		}
 		return array( $host, $port );
@@ -179,7 +179,7 @@ class ezsqlModel extends ezQuery
 		
 		// Extract public out of cached results based x,y vals
 		if ( $this->last_result[$y] ) {
-			$values = array_values(get_object_vars($this->last_result[$y]));
+			$values = \array_values(\get_object_vars($this->last_result[$y]));
 		}
 		
 		// If there is a value return it else return null
@@ -204,13 +204,13 @@ class ezsqlModel extends ezQuery
 			return $this->last_result[$y]?$this->last_result[$y]:null;
 		} elseif ( $output == ARRAY_A ) {
 			// If the output is an associative array then return row as such..
-			return $this->last_result[$y]?get_object_vars($this->last_result[$y]):null;
+			return $this->last_result[$y] ? \get_object_vars($this->last_result[$y]) : null;
 		} elseif ( $output == ARRAY_N )	{
 			// If the output is an numerical array then return row as such..
-			return $this->last_result[$y]?array_values(get_object_vars($this->last_result[$y])):null;
+			return $this->last_result[$y] ? \array_values(\get_object_vars($this->last_result[$y])) : null;
 		} else {
 			// If invalid output type was specified..
-			$this->show_errors ? trigger_error(" \$db->get_row(string query, output type, int offset) -- Output type must be one of: OBJECT, ARRAY_A, ARRAY_N",E_USER_WARNING) : null;
+			$this->show_errors ? \trigger_error(" \$db->get_row(string query, output type, int offset) -- Output type must be one of: OBJECT, ARRAY_A, ARRAY_N",E_USER_WARNING) : null;
 		}
 	}
 	
@@ -228,7 +228,7 @@ class ezsqlModel extends ezQuery
 		}
 		
 		// Extract the column values
-		$j = count($this->last_result);
+		$j = \count($this->last_result);
 		for ( $i=0; $i < $j; $i++ ) {
 			$new_array[$i] = $this->get_var(null,$x,$i);
 		}
@@ -239,7 +239,7 @@ class ezsqlModel extends ezQuery
 	/**
 	* Return the the query as a result set, will use prepare statements if setup - see docs for more details
 	*/
-	public function get_results(string $query = null, $output = OBJECT, $use_prepare = false) 
+	public function get_results(string $query = null, $output = \OBJECT, $use_prepare = false) 
 	{
 		// Log how the function was called
 		$this->log_query("\$db->get_results(\"$query\", $output, $use_prepare)");
@@ -251,15 +251,15 @@ class ezsqlModel extends ezQuery
 		
 		if ( $output == OBJECT ) {
 			return $this->last_result;
-		} elseif ( $output == _JSON ) { 
-			return json_encode($this->last_result); // return as json output
+		} elseif ( $output == \_JSON ) { 
+			return \json_encode($this->last_result); // return as json output
 		} elseif ( $output == ARRAY_A || $output == ARRAY_N ) {
 			if ( $this->last_result ) {
 				$i=0;
 				foreach( $this->last_result as $row ) {
-					$new_array[$i] = get_object_vars($row);
+					$new_array[$i] = \get_object_vars($row);
 					if ( $output == ARRAY_N ) {
-						$new_array[$i] = array_values($new_array[$i]);
+						$new_array[$i] = \array_values($new_array[$i]);
 					}
 					$i++;
 				}
@@ -297,7 +297,7 @@ class ezsqlModel extends ezQuery
 	public function store_cache(string $query, $is_insert)
 	{
 		// The would be cache file for this query
-		$cache_file = $this->cache_dir.'/'.md5($query);
+		$cache_file = $this->cache_dir.'/'.\md5($query);
 		
 		// disk caching of queries
 		if ( $this->use_disk_cache 
@@ -306,7 +306,7 @@ class ezsqlModel extends ezQuery
 		) {
 			if ( ! is_dir($this->cache_dir) ) {
 				$this->register_error("Could not open cache dir: $this->cache_dir");
-				$this->show_errors ? trigger_error("Could not open cache dir: $this->cache_dir",E_USER_WARNING) : null;
+				$this->show_errors ? \trigger_error("Could not open cache dir: $this->cache_dir",E_USER_WARNING) : null;
 			} else {
 				// Cache all result values
 				$result_cache = array(
@@ -316,9 +316,9 @@ class ezsqlModel extends ezQuery
 					'return_value' => $this->num_rows,
 				);
 				
-				file_put_contents($cache_file, serialize($result_cache));
-				if( file_exists($cache_file . ".updating") )
-				unlink($cache_file . ".updating");
+				\file_put_contents($cache_file, \serialize($result_cache));
+				if( \file_exists($cache_file . ".updating") )
+				\unlink($cache_file . ".updating");
 			}
 		}
 	}
@@ -329,18 +329,18 @@ class ezsqlModel extends ezQuery
 	public function get_cache(string $query)
 	{
 		// The would be cache file for this query
-		$cache_file = $this->cache_dir.'/'.md5($query);
+		$cache_file = $this->cache_dir.'/'.\md5($query);
 		
 		// Try to get previously cached version
-		if ( $this->use_disk_cache && file_exists($cache_file) ) {
+		if ( $this->use_disk_cache && \file_exists($cache_file) ) {
 			// Only use this cache file if less than 'cache_timeout' (hours)
-			if ( (time() - filemtime($cache_file)) > ($this->cache_timeout*3600) 
-			&& !(file_exists($cache_file . ".updating") 
-			&& (time() - filemtime($cache_file . ".updating") < 60)) 
+			if ( (\time() - \filemtime($cache_file)) > ($this->cache_timeout*3600) 
+			&& !(\file_exists($cache_file . ".updating") 
+			&& (\time() - \filemtime($cache_file . ".updating") < 60)) 
 			) {
-				touch($cache_file . ".updating"); // Show that we in the process of updating the cache
+				\touch($cache_file . ".updating"); // Show that we in the process of updating the cache
 			} else {
-				$result_cache = unserialize(file_get_contents($cache_file));
+				$result_cache = \unserialize(\file_get_contents($cache_file));
 				
 				$this->col_info = $result_cache['col_info'];
 				$this->last_result = $result_cache['last_result'];
@@ -362,8 +362,8 @@ class ezsqlModel extends ezQuery
 	*/
 	public function vardump($mixed = '')
 	{
-		// Start outup buffering
-		ob_start();
+		// Start output buffering
+		\ob_start();
 		
 		echo "<p><table><tr><td bgcolor=ffffff><blockquote><font color=000090>";
 		echo "<pre><font face=arial>";
@@ -372,7 +372,7 @@ class ezsqlModel extends ezQuery
 			echo "<font color=800080><b>ezSQL</b> (v".EZSQL_VERSION.") <b>Variable Dump..</b></font>\n\n";
 		}
 		
-		$var_type = gettype ($mixed);
+		$var_type = \gettype ($mixed);
 		print_r(($mixed?$mixed:"<font color=red>No Value / False</font>"));
 		echo "\n\n<b>Type:</b> " . ucfirst($var_type) . "\n";
 		echo "<b>Last Query</b> [$this->num_queries]<b>:</b> ".($this->last_query?$this->last_query:"NULL")."\n";
@@ -389,8 +389,8 @@ class ezsqlModel extends ezQuery
 		echo "\n<hr size=1 noshade color=dddddd>";
 		
 		// Stop output buffering and capture debug HTML
-		$html = ob_get_contents();
-		ob_end_clean();
+		$html = \ob_get_contents();
+		\ob_end_clean();
 		
 		// Only echo output if it is turned on
 		if ( $this->debug_echo_is_on ) {
@@ -405,7 +405,7 @@ class ezsqlModel extends ezQuery
 	/**
 	*  Alias for the above function
 	*/
-	public function dumpvar($mixed)
+	public function dump_var($mixed)
 	{
 		return $this->vardump($mixed);
 	}
@@ -418,7 +418,7 @@ class ezsqlModel extends ezQuery
 	public function debug($print_to_screen = true)
 	{
 		// Start output buffering
-		ob_start();
+		\ob_start();
 		
 		echo "<blockquote>";
 		
@@ -485,8 +485,8 @@ class ezsqlModel extends ezQuery
 		echo "</blockquote></blockquote>".$this->donation()."<hr noshade color=dddddd size=1>";
 		
 		// Stop output buffering and capture debug HTML
-		$html = ob_get_contents();
-		ob_end_clean();
+		$html = \ob_get_contents();
+		\ob_end_clean();
 		
 		// Only echo output if it is turned on
 		if ( $this->debug_echo_is_on && $print_to_screen) {
@@ -511,7 +511,7 @@ class ezsqlModel extends ezQuery
 	*/
 	public function timer_get_cur()
 	{
-		list($usec, $sec) = explode(" ",microtime());
+		list($usec, $sec) = \explode(" ",microtime());
 		return ((float)$usec + (float)$sec);
 	}
 	
@@ -522,7 +522,7 @@ class ezsqlModel extends ezQuery
 	
 	public function timer_elapsed($timer_name)
 	{
-		return round($this->timer_get_cur() - $this->timers[$timer_name],2);
+		return \round($this->timer_get_cur() - $this->timers[$timer_name],2);
 	}
 	
 	public function timer_update_global($timer_name)
