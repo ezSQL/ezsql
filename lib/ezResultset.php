@@ -53,7 +53,7 @@ class ezResultset implements \Iterator
     public function __construct($query_result) 
     {
         if (!is_array($query_result)) {
-            throw new Exception("$query_result is not valid.");
+            throw new \Exception("$query_result is not valid.");
         }
         $this->_resultset = $query_result;
         $this->position = 0;
@@ -78,7 +78,7 @@ class ezResultset implements \Iterator
     {
         $return_val = null;
         if (!in_array($mode, $this->_checkTypes)) {
-            throw new Exception(sprintf('$mode is not in %s1 or %s2', self::RESULT_AS_OBJECT, self::RESULT_AS_ARRAY));
+            throw new \Exception(sprintf('$mode is not in %s1 or %s2', self::RESULT_AS_OBJECT, self::RESULT_AS_ARRAY));
         }
 
         if ($this->valid()) {
