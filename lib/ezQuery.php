@@ -341,31 +341,31 @@ class ezQuery implements ezQueryInterface
                 $orderBySet = false;   
                 $limitSet = false;     
                 $unionSet = false;
-				foreach ($conditions as $join_where_groupBy_having_orderby_limit_union) {
-                    if (strpos($join_where_groupBy_having_orderby_limit_union, 'JOIN') !== false ) {
-                        $args_by .= $join_where_groupBy_having_orderby_limit_union;
+				foreach ($conditions as $checkFor) {
+                    if (\strpos($checkFor, 'JOIN') !== false ) {
+                        $args_by .= $checkFor;
                         $joinSet = true;
-                    } elseif (strpos($join_where_groupBy_having_orderby_limit_union, 'WHERE') !== false ) {
-                        $args_by .= $join_where_groupBy_having_orderby_limit_union;
+                    } elseif (\strpos($checkFor, 'WHERE') !== false ) {
+                        $args_by .= $checkFor;
                         $skipWhere = true;
-                    } elseif (strpos($join_where_groupBy_having_orderby_limit_union, 'GROUP BY') !== false ) {
-                        $args_by .= ' '.$join_where_groupBy_having_orderby_limit_union;
+                    } elseif (\strpos($checkFor, 'GROUP BY') !== false ) {
+                        $args_by .= ' '.$checkFor;
                         $groupBySet = true;
-                    } elseif (strpos($join_where_groupBy_having_orderby_limit_union, 'HAVING') !== false ) {
+                    } elseif (\strpos($checkFor, 'HAVING') !== false ) {
                         if ($groupBySet) {
-                            $args_by .= ' '.$join_where_groupBy_having_orderby_limit_union;
+                            $args_by .= ' '.$checkFor;
                             $havingSet = true;
                         } else {
                             return $this->clearParameters();
                         }
-                    } elseif (strpos($join_where_groupBy_having_orderby_limit_union, 'ORDER BY') !== false ) {
-                        $args_by .= ' '.$join_where_groupBy_having_orderby_limit_union;    
+                    } elseif (\strpos($checkFor, 'ORDER BY') !== false ) {
+                        $args_by .= ' '.$checkFor;    
                         $orderBySet = true;
-                    } elseif (strpos($join_where_groupBy_having_orderby_limit_union, 'LIMIT') !== false ) {
-                        $args_by .= ' '.$join_where_groupBy_having_orderby_limit_union;    
+                    } elseif (\strpos($checkFor, 'LIMIT') !== false ) {
+                        $args_by .= ' '.$checkFor;    
                         $limitSet = true;
-                    } elseif (strpos($join_where_groupBy_having_orderby_limit_union, 'UNION') !== false ) {
-                        $args_by .= ' '.$join_where_groupBy_having_orderby_limit_union;    
+                    } elseif (\strpos($checkFor, 'UNION') !== false ) {
+                        $args_by .= ' '.$checkFor;    
                         $unionSet = true;
                     }
                 }
@@ -565,12 +565,12 @@ class ezQuery implements ezQueryInterface
         }
 	}
         
-    public function replace($table='', $keyAndValue) 
+    public function replace($table = '', $keyAndValue) 
     {
         return $this->_query_insert_replace($table, $keyAndValue, 'REPLACE');
     }
 
-    public function insert($table='', $keyAndValue) 
+    public function insert($table = '', $keyAndValue) 
     {
         return $this->_query_insert_replace($table, $keyAndValue, 'INSERT');
     }
