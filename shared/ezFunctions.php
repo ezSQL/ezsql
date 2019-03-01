@@ -54,7 +54,7 @@ use ezsql\ezQueryInterface;
         
 		const _isNULL = 'IS NULL';
         const _notNULL  = 'IS NOT NULL';
-        const _BOOLEANS = [_BOOLEAN, 
+        const _BOOLEANS = ['<', '>', '=', '!=', '>=', '<=', '<>', 
             'IN', 'LIKE', 'NOT LIKE', 'BETWEEN', 'NOT BETWEEN', 'IS', 'IS NOT'];
     
     /*
