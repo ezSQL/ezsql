@@ -44,42 +44,45 @@ require_once('ezQuery.php');
 		public $do_profile       = false;
 		
     /**
+     * The last query result
+     * @var object Default is null
+     */
+		public $last_result = null;
+		
+    /**
+     * Get data from disk cache
+     * @var boolean Default is false
+     */
+    public $from_disk_cache = false;
+
+		/**
+		 *  Needed for echo of debug function
+     * @var boolean Default is false
+     */
+		public $debug_echo_is_on = true;
+
+    /**
      * Whether the database connection is established, or not
-     * @protected boolean Default is false
+     * @var boolean Default is false
      */
     protected $_connected = false;    
     /**
      * Contains the number of affected rows of a query
-     * @protected int Default is 0
+     * @var int Default is 0
      */
     protected $_affectedRows = 0;
 
     /**
-     * The last query result
-     * @public object Default is null
-     */
-    public $last_result = null;
-
-    /**
-     * Get data from disk cache
-     * @public boolean Default is false
-     */
-    public $from_disk_cache = false;
-
-    /**
      * Function called
-     * @private string
+     * @var string
      */
     private $func_call; 
 
 	/**
      * All functions called
-     * @private array 
+     * @var array 
      */
     private $all_func_calls = array();
-
-		// == TJH == default now needed for echo of debug function
-		public $debug_echo_is_on = true;
 
 		/**
 		*  Constructor
