@@ -33,7 +33,7 @@ interface ezQueryInterface
     * @param string $string
     * @return string cleaned string
     */	        
-    public function clean($string);
+    public static function clean($string);
     
     /**
     * Return status of prepare function availability in method calls
@@ -84,8 +84,15 @@ interface ezQueryInterface
 
     /**
     * Specifies a restriction over the groups of the query. 
-    * format having( array(x, =, y, and, extra) ) or having( "x  =  y  and  extra" );    
-	* example: having( array(key, operator, value, combine, extra) ); or having( "key operator value combine extra" );
+    *
+    * format 
+    *   `having( array(x, =, y, and, extra) );` or 
+    *   `having( "x  =  y  and  extra" );`
+    *
+    * example: 
+    *   `having( array(key, operator, value, combine, extra) );`or 
+    *   `having( "key operator value combine extra" );`
+    *
     * @param array $having
     * @param string $key, - table column  
     * @param string $operator, - set the operator condition, 
@@ -99,7 +106,172 @@ interface ezQueryInterface
     * @return bool/string - HAVING SQL statement, or false on error
     */
     public function having(...$having);
- 
+
+    /**
+    * Return all rows from multiple tables where the join condition is met.
+    *
+    * - Will perform an equal on tables by left column key, 
+    *       left column key and left table, left column key and right table, 
+    *           if `rightColumn` is null.
+    *
+    * - Will perform an equal on tables by, 
+    *       left column key and left table, right column key and right table, 
+    *           if `rightColumn` not null, and `$condition` not changed.
+    *
+    * - Will perform the `condition` on passed in arguments, for left column, and right column.
+    *           if `$condition`,  is in the array
+    *
+    * @param string $leftTable - 
+    * @param string $rightTable - 
+    * @param string $leftColumn - 
+    * @param string $rightColumn - 
+    * @param string $condition -  
+    *
+    * @return bool|string JOIN sql statement, false for error
+    */
+    public function innerJoin(
+        string $leftTable = null, 
+        string $rightTable = null, 
+        string $leftColumn = null, string $rightColumn = null, $condition = \EQ);
+
+    /**
+    * This type of join returns all rows from the LEFT-hand table 
+    * specified in the ON condition and only those rows from the other table 
+    * where the joined fields are equal (join condition is met).
+    *
+    * - Will perform an equal on tables by left column key, 
+    *       left column key and left table, left column key and right table, 
+    *           if `rightColumn` is null.
+    *
+    * - Will perform an equal on tables by, 
+    *       left column key and left table, right column key and right table, 
+    *           if `rightColumn` not null, and `$condition` not changed.
+    *
+    * - Will perform the `condition` on passed in arguments, for left column, and right column.
+    *           if `$condition`,  is in the array
+    *
+    * @param string $leftTable - 
+    * @param string $rightTable - 
+    * @param string $leftColumn - 
+    * @param string $rightColumn - 
+    * @param string $condition -  
+    *
+    * @return bool|string JOIN sql statement, false for error
+    */
+    public function leftJoin(
+        string $leftTable = null, 
+        string $rightTable = null, 
+        string $leftColumn = null, string $rightColumn = null, $condition = \EQ);
+
+    /**
+    * This type of join returns all rows from the RIGHT-hand table 
+    * specified in the ON condition and only those rows from the other table 
+    * where the joined fields are equal (join condition is met).
+    *
+    * - Will perform an equal on tables by left column key, 
+    *       left column key and left table, left column key and right table, 
+    *           if `rightColumn` is null.
+    *
+    * - Will perform an equal on tables by, 
+    *       left column key and left table, right column key and right table, 
+    *           if `rightColumn` not null, and `$condition` not changed.
+    *
+    * - Will perform the `condition` on passed in arguments, for left column, and right column.
+    *           if `$condition`,  is in the array
+    *
+    * @param string $leftTable - 
+    * @param string $rightTable - 
+    * @param string $leftColumn - 
+    * @param string $rightColumn - 
+    * @param string $condition -  
+    *
+    * @return bool|string JOIN sql statement, false for error
+    */
+    public function rightJoin(
+        string $leftTable = null, 
+        string $rightTable = null, 
+        string $leftColumn = null, string $rightColumn = null, $condition = \EQ);
+
+    /**
+    * This type of join returns all rows from the LEFT-hand table and RIGHT-hand table 
+    * with NULL values in place where the join condition is not met.
+    *
+    * - Will perform an equal on tables by left column key, 
+    *       left column key and left table, left column key and right table, 
+    *           if `rightColumn` is null.
+    *
+    * - Will perform an equal on tables by, 
+    *       left column key and left table, right column key and right table, 
+    *           if `rightColumn` not null, and `$condition` not changed.
+    *
+    * - Will perform the `condition` on passed in arguments, for left column, and right column.
+    *           if `$condition`,  is in the array
+    *
+    * @param string $leftTable - 
+    * @param string $rightTable - 
+    * @param string $leftColumn - 
+    * @param string $rightColumn - 
+    * @param string $condition -  
+    *
+    * @return bool|string JOIN sql statement, false for error
+    */
+    public function fullJoin(
+        string $leftTable = null, 
+        string $rightTable = null, 
+        string $leftColumn = null, string $rightColumn = null, $condition = \EQ);
+
+	/**
+    * Returns an `UNION` SELECT SQL string, given the 
+    *   - table, column fields, conditions or conditional array.
+    *
+    * In the following format:
+    * ```
+    * union(
+    *   table,
+    *   columns, 
+    *   // innerJoin(), leftJoin(), rightJoin(), fullJoin() alias of
+    *   joining(inner|left|right|full, leftTable, rightTable, leftColumn, rightColumn, equal condition), 
+    *   where( eq( columns, values, _AND ), like( columns, _d ) ), 
+    *   groupBy( columns ), 
+    *   having( between( columns, values1, values2 ) ), 
+    *   orderBy( columns, desc ),
+    *   limit( numberOfRecords, offset )
+    *);
+    * ``` 
+    * @param $table, - database table to access
+    * @param $columnFields, - table columns, string or array
+    * @param mixed $conditions - same as selecting method.
+    *   
+    * @return bool|string - false for error
+	*/
+    public function union($table = '', $columnFields = '*', ...$conditions);
+
+	/**
+    * Returns an `UNION ALL` SELECT SQL string, given the 
+    *   - table, column fields, conditions or conditional array.
+    *
+    * In the following format:
+    * ```
+    * unionAll(
+    *   table,
+    *   columns, 
+    *   // innerJoin(), leftJoin(), rightJoin(), fullJoin() alias of
+    *   joining(inner|left|right|full, leftTable, rightTable, leftColumn, rightColumn, equal condition), 
+    *   where( eq( columns, values, _AND ), like( columns, _d ) ), 
+    *   groupBy( columns ), 
+    *   having( between( columns, values1, values2 ) ), 
+    *   orderBy( columns, desc ),
+    *   limit( numberOfRecords, offset )
+    *);
+    * ``` 
+    * @param $table, - database table to access
+    * @param $columnFields, - table columns, string or array
+    * @param mixed $conditions - same as selecting method.
+    *   
+    * @return bool|string - false for error
+	*/
+    public function unionAll($table = '', $columnFields = '*', ...$conditions);
+
     /**
     * Specifies an ordering for the query results.  
     * @param string $orderBy - The column. 
@@ -121,15 +293,15 @@ interface ezQueryInterface
     public function limit($numberOf, $offset = null);
 
  	/**
-    * Helper returns an WHERE sql clause string.
+    * Helper returns an WHERE sql clause string. 
     *
     * format:
     *   `where( array(x, =, y, and, extra) )` or 
-    *   `where( "x  =  y  and  extra" );`
+    *   `where( "x  =  y  and  extra" );` // Strings will need to be double spaced
     *
     * example: 
     *   `where( array(key, operator, value, combine, extra) );` or 
-    *   `where( "key operator value combine extra" );`
+    *   `where( "key  operator  value  combine  extra" );` // Strings will need to be double spaced
     *
     * @param array $whereKeyArray
     * @param $key, - table column  
@@ -147,31 +319,40 @@ interface ezQueryInterface
     public function where( ...$whereKeyArray);
     
 	/**
-    * Returns an sql string or result set given the table, fields, by operator condition or conditional array.
+    * Returns an SQL string or result set, given the 
+    *   - table, column fields, conditions or conditional array.
     *
+    * In the following format:
     * ```
     * selecting(
     *   table,
     *   columns, 
+    *   // innerJoin(), leftJoin(), rightJoin(), fullJoin() alias of
+    *   joining(inner|left|right|full, leftTable, rightTable, leftColumn, rightColumn, equal condition), 
     *   where( eq( columns, values, _AND ), like( columns, _d ) ), 
     *   groupBy( columns ), 
     *   having( between( columns, values1, values2 ) ), 
     *   orderBy( columns, desc ),
-    *   limit( numberOfRecords, offset )
+    *   limit( numberOfRecords, offset ),
+    *   union(table, columnFields, conditions), // Returns an select SQL string with `UNION`
+    *   unionAll(table, columnFields, conditions) // Returns an select SQL string with `UNION ALL`
     *);
     * ``` 
-    *
     * @param $table, - database table to access
-    * @param $fields, - table columns, string or array
-    * @param $WhereKey, - where clause ( array(x, =, y, and, extra) ) or ( "x  =  y  and  extra" )
-    * @param $groupBy, - grouping over the results
-    * @param $having, - having clause ( array(x, =, y, and, extra) ) or ( "x  =  y  and  extra" )
-    * @param $orderby - ordering for the query
-    * @param $limit - limit the number of records
+    * @param $columnFields, - table columns, string or array
+    * @param mixed $conditions - of the following parameters:
+    *
+    *   @param $joins, - join clause (type, left table, right table, left column, right column, condition = EQ)
+    *   @param $whereKey, - where clause ( array(x, =, y, and, extra) ) or ( "x  =  y  and  extra" )
+    *   @param $groupBy, - grouping over clause the results
+    *   @param $having, - having clause ( array(x, =, y, and, extra) ) or ( "x  =  y  and  extra" )
+    *   @param $orderby, - ordering by clause for the query
+    *   @param $limit, - limit clause the number of records
+    *   @param $union/$unionAll - union clause combine the result sets and removes duplicate rows/does not remove
     *   
-    * @return result set - see docs for more details, or false for error
+    * @return mixed result set - see docs for more details, or false for error
 	*/
-    public function selecting($table = '', $fields = '*', ...$get_args);
+    public function selecting($table = '', $columnFields = '*', ...$conditions);
 
 	/** 
     * Does an create select statement by calling selecting method
@@ -179,10 +360,9 @@ interface ezQueryInterface
     * @param $newTable, - new database table to be created 
     * @param $fromColumns - the columns from old database table
     * @param $oldTable - old database table 
-    * @param $WhereKey, - where clause ( array(x, =, y, and, extra) ) or ( "x  =  y  and  extra" )
-    *   example: where( array(key, operator, value, combine, extra) ); or where( "key operator value combine extra" );
+    * @param $fromWhere, - where clause ( array(x, =, y, and, extra) ) or ( "x  =  y  and  extra" )
     *
-    * @return mixed bool/result
+    * @return mixed bool/result - false for error
 	*/
     public function create_select($newTable, $fromColumns, $oldTable = null, ...$fromWhere);
     
@@ -191,9 +371,9 @@ interface ezQueryInterface
     * @param $newTable, - new database table to be created 
     * @param $fromColumns - the columns from old database table
     * @param $oldTable - old database table 
-    * @param $WhereKey, - where clause ( array(x, =, y, and, extra) ) or ( "x  =  y  and  extra" )
-	*   example: where( array(key, operator, value, combine, extra) ); or where( "key operator value combine extra" );
-    * @return mixed bool/result
+    * @param $fromWhere, - where clause ( array(x, =, y, and, extra) ) or ( "x  =  y  and  extra" )
+    *
+    * @return mixed bool/result - false for error
 	*/
     public function select_into($newTable, $fromColumns, $oldTable = null, ...$fromWhere);
 		
@@ -202,7 +382,7 @@ interface ezQueryInterface
 	* @param $table, - database table to access
 	* @param $keyAndValue, - table fields, assoc array with key = value (doesn't need escaped)
 	* @param $WhereKey, - where clause ( array(x, =, y, and, extra) ) or ( "x  =  y  and  extra" )
-	*   example: where( array(key, operator, value, combine, extra) ); or where( "key operator value combine extra" );
+	*
 	* @return mixed bool/results - false for error
 	*/
     public function update($table = '', $keyAndValue, ...$WhereKeys);
@@ -235,7 +415,6 @@ interface ezQueryInterface
     * @param $toColumns - the receiving columns from other table columns, leave blank for all or array of column fields
     * @param $WhereKey, - where clause ( array(x, =, y, and, extra) ) or ( "x = y and extra" )
     *
-    *   example: where( array(key, operator, value, combine, extra) ); or where( "key operator value combine extra" );
     * @return mixed bool/id of inserted record, or false for error
 	*/
     public function insert_select($toTable = '', $toColumns = '*', $fromTable = null, $fromColumns = '*', ...$fromWhere);

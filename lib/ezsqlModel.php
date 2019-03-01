@@ -18,81 +18,74 @@ defined('ARRAY_N') or define('ARRAY_N', 'ARRAY_N');
 */	
 class ezsqlModel extends ezQuery
 {
-	protected $trace            = false;  // same as $debug_all
-	protected $debug_all        = false;  // same as $trace
-	protected $debug_called     = false;
-	protected $vardump_called   = false;
-	protected $num_queries      = 0;
-	protected $conn_queries     = 0;
-	protected $captured_errors  = array();
-	protected $cache_dir        = false;
-	protected $cache_queries    = false;
-	protected $cache_inserts    = false;
-	protected $use_disk_cache   = false;
-	protected $cache_timeout    = 24; // hours
-	protected $db_connect_time  = 0;
-	protected $sql_log_file     = false;
-	protected $profile_times    = array();
-	protected $insert_id        = null;
-	
-	public $last_query       = null;
-	public $last_error       = null;
-	public $col_info         = null;
-	public $timers           = array();
-	public $total_query_time = 0;
-	public $trace_log        = array();
-	public $use_trace_log    = false;
-	public $do_profile       = false;
-	
-	/**
-	* Whether the database connection is established, or not
-	* @protected boolean Default is false
-	*/
-	protected $_connected = false;    
-	/**
-	* Contains the number of affected rows of a query
-	* @protected int Default is 0
-	*/
-	protected $_affectedRows = 0;
-	
+		protected $trace            = false;  // same as $debug_all
+		protected $debug_all        = false;  // same as $trace
+		protected $debug_called     = false;
+		protected $vardump_called   = false;
+		protected $show_errors      = true;
+		protected $num_queries      = 0;
+		protected $conn_queries     = 0;
+		protected $captured_errors  = array();
+		protected $cache_dir        = false;
+		protected $cache_queries    = false;
+		protected $cache_inserts    = false;
+		protected $use_disk_cache   = false;
+		protected $cache_timeout    = 24; // hours
+		protected $db_connect_time  = 0;
+		protected $sql_log_file     = false;
+		protected $profile_times    = array();
+		protected $insert_id        = null;
+
+		public $last_query       = null;
+		public $last_error       = null;
+		public $col_info         = null;
+		public $timers           = array();
+		public $total_query_time = 0;
+		public $trace_log        = array();
+		public $use_trace_log    = false;
+		public $do_profile       = false;
+		
 	/**
 	* The last query result
-	* @protected object Default is null
+	* @var object Default is null
 	*/
-	protected $last_result = null;
-	
+		public $last_result = null;
+		
 	/**
 	* Get data from disk cache
-	* @protected boolean Default is false
+	* @var boolean Default is false
 	*/
-	protected $from_disk_cache = false;
-	
+	public $from_disk_cache = false;
+
 	/**
-	* Database connection
-	* @var resource
+	*  Needed for echo of debug function
+	* @var boolean Default is false
 	*/
-	protected $dbh;
-	
+		public $debug_echo_is_on = true;
+
 	/**
-	* Show errors
-	* @var boolean Default is true
+	* Whether the database connection is established, or not
+	* @var boolean Default is false
 	*/
-	protected $show_errors = true;
-	
+	protected $_connected = false;    
+
+	/**
+	* Contains the number of affected rows of a query
+	* @var int Default is 0
+	*/
+	protected $_affectedRows = 0;
+
 	/**
 	* Function called
-	* @private string
+	* @var string
 	*/
-	private $func_call;
-	
+	private $func_call; 
+
 	/**
 	* All functions called
-	* @private array 
+	* @var array 
 	*/
-	private static $all_func_calls = array();
-	
-	// == TJH == default now needed for echo of debug function
-	protected $debug_echo_is_on = true;
+	private $all_func_calls = array();
 	
 	/**
 	* Constructor
@@ -420,11 +413,11 @@ class ezsqlModel extends ezQuery
 	/**
 	* Displays the last query string that was sent to the database & a
 	* table listing results (if there were any).
-	* (abstracted into a seperate file to save server overhead).
+	* (abstracted into a separate file to save server overhead).
 	*/
 	public function debug($print_to_screen = true)
 	{
-		// Start outup buffering
+		// Start output buffering
 		ob_start();
 		
 		echo "<blockquote>";
@@ -594,7 +587,7 @@ class ezsqlModel extends ezQuery
 	* @param bool $increase Set to true to increase query count (internal usage)
 	* @return int Returns query count base on $all
 	*/
-	public function count ($all = true, $increase = false) 
+	public function count($all = true, $increase = false) 
 	{
 		if ($increase) {
 			$this->num_queries++;
@@ -635,7 +628,7 @@ class ezsqlModel extends ezQuery
     } // affectedRows
 	
 	// query call template
-	public function query(string $query, $use_prepare=false) 
+	public function query(string $query, $use_prepare = false) 
 	{
 		return false;
 	}    
@@ -658,11 +651,11 @@ class ezsqlModel extends ezQuery
 		);
                 
         foreach ( $nonDisplayable as $regex )
-			$data = preg_replace( $regex, '', $data );
+			$data = \preg_replace( $regex, '', $data );
 
         $search = array("\\",  "\x00", "\n",  "\r",  "'",  '"', "\x1a");
         $replace = array("\\\\","\\0","\\n", "\\r", "\'", '\"', "\\Z");
 
-        return str_replace($search, $replace, $data);
+        return \str_replace($search, $replace, $data);
 	}        
 } // ezsqlModel

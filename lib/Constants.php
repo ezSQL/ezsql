@@ -16,6 +16,7 @@ if (!\defined('CONSTANTS')) {
     \define('LTE', '<=');
     \define('GT', '>');
     \define('GTE', '>=');
+    \define('_BOOLEAN', ['<', '>', '=', '!=', '>=', '<=', '<>']);
     
     \define('_IN', 'IN');
     \define('_notIN', 'NOT IN');
@@ -26,6 +27,8 @@ if (!\defined('CONSTANTS')) {
         
     \define('_isNULL', 'IS NULL');
     \define('_notNULL', 'IS NOT NULL');
+    \define('_BOOLEANS', ['<', '>', '=', '!=', '>=', '<=', '<>', 
+        'IN', 'LIKE', 'NOT LIKE', 'BETWEEN', 'NOT BETWEEN', 'IS', 'IS NOT']);
     
     /**
     * Combine operators.
@@ -34,6 +37,16 @@ if (!\defined('CONSTANTS')) {
     \define('_OR', 'OR');
     \define('_NOT', 'NOT');
     \define('_andNOT', 'AND NOT');
+    \define('_COMBINERS', ['AND', 'OR', 'NOT', 'AND NOT']);
+
+    /*
+    * for joining shortcut methods.
+    */    
+    \define('_INNER', 'INNER');
+    \define('_LEFT', 'LEFT');
+    \define('_RIGHT', 'RIGHT');
+    \define('_FULL', 'FULL'); 
+    \define('_JOINERS', ['INNER', 'LEFT', 'RIGHT', 'FULL']); 
  
     /**
     * Associative array of supported SQL Drivers, and library

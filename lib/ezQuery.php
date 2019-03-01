@@ -20,20 +20,20 @@ class ezQuery implements ezQueryInterface
     public static function clean($string) 
     {
         $patterns = array( // strip out:
-                '@<script[^>]*?>.*?</script>@si', // Strip out javascript
-                '@<[\/\!]*?[^<>]*?>@si',          // HTML tags
-                '@<style[^>]*?>.*?</style>@siU',  // Strip style tags properly
-                '@<![\s\S]*?--[ \t\n\r]*>@'       // Strip multi-line comments
-                );
+            '@<script[^>]*?>.*?</script>@si', // Strip out javascript
+            '@<[\/\!]*?[^<>]*?>@si',          // HTML tags
+            '@<style[^>]*?>.*?</style>@siU',  // Strip style tags properly
+            '@<![\s\S]*?--[ \t\n\r]*>@'       // Strip multi-line comments
+        );
                 
-        $string = \preg_replace($patterns,'', $string);
+        $string = \preg_replace($patterns, '', $string);
         $string = \trim($string);
         $string = \stripslashes($string);
         
         return \htmlentities($string);
     }
     
-    public function isPrepareActive(): bool
+    public function isPrepareActive() 
     {
         return $this->prepareActive;
 	}
@@ -57,13 +57,13 @@ class ezQuery implements ezQueryInterface
     {
         $this->preparedValues = array();
         return false;
-	}
+    }
 
     /**
     * Convert array to string, and attach '`, `' for separation.
     *
     * @return string
-    */     
+    */  
     private function to_string($arrays)  
     {        
         if (is_array( $arrays )) {
@@ -93,7 +93,92 @@ class ezQuery implements ezQueryInterface
         $this->isWhere = false;
         return $this->where( ...$having);
     }
- 
+
+    public function innerJoin(
+        string $leftTable = null, 
+        string $rightTable = null, 
+        string $leftColumn = null, string $rightColumn = null, $condition = \EQ)
+    {
+        return $this->joining(
+            'INNER', $leftTable, $rightTable, $leftColumn, $rightColumn, $condition);
+    }
+
+    public function leftJoin(
+        string $leftTable = null, 
+        string $rightTable = null, 
+        string $leftColumn = null, string $rightColumn = null, $condition = \EQ)
+    {
+        return $this->joining(
+            'LEFT', $leftTable, $rightTable, $leftColumn, $rightColumn, $condition);
+    }
+
+    public function rightJoin(
+        string $leftTable = null, 
+        string $rightTable = null, 
+        string $leftColumn = null, string $rightColumn = null, $condition = \EQ)
+    {
+        return $this->joining(
+            'RIGHT', $leftTable, $rightTable, $leftColumn, $rightColumn, $condition);
+    }
+
+    public function fullJoin(
+        string $leftTable = null, 
+        string $rightTable = null, 
+        string $leftColumn = null, string $rightColumn = null, $condition = \EQ)
+    {
+        return $this->joining(
+            'FULL', $leftTable, $rightTable, $$leftColumn, $rightColumn, $condition);
+    }
+
+    /**
+    * For multiple select joins, combine rows from tables where `on` condition is met
+    *
+    * - Will perform an equal on tables by left column key, 
+    *       left column key and left table, left column key and right table, 
+    *           if `rightColumn` is null.
+    *
+    * - Will perform an equal on tables by, 
+    *       left column key and left table, right column key and right table, 
+    *           if `rightColumn` not null, and `$condition` not changed.
+    *
+    * - Will perform the `condition` on passed in arguments, for left column, and right column.
+    *           if `$condition`,  is in the array
+    *
+    * @param string $type - Either `INNER`, `LEFT`, `RIGHT`, `FULL`
+    * @param string $leftTable - 
+    * @param string $rightTable - 
+    *
+    * @param string $leftColumn - 
+    * @param string $rightColumn - 
+    *
+    * @param string $condition -  
+    *
+    * @return bool|string JOIN sql statement, false for error
+    */
+    private function joining(
+        String $type = \_INNER,
+        string $leftTable = null, 
+        string $rightTable = null, 
+        string $leftColumn = null, string $rightColumn = null, $condition = \EQ) 
+    {
+        if (!in_array($type, \_JOINERS) 
+            || !in_array($condition, \_BOOLEAN) 
+            || empty($leftTable) 
+            || empty($rightTable) || empty($columnFields) || empty($leftColumn)
+        ) {
+            return false;
+        }
+
+        if (\is_string($leftColumn) && empty($rightColumn))
+            $onCondition = ' ON '.$leftTable.$leftColumn.' = '.$rightTable.$leftColumn;
+        elseif ($condition !== \EQ)
+            $onCondition = ' ON '.$leftTable.$leftColumn." $condition ".$rightTable.$rightColumn;
+        else
+            $onCondition = ' ON '.$leftTable.$leftColumn.' = '.$rightTable.$rightColumn;
+
+        return ' '.$type.' JOIN '.$rightTable.$onCondition;
+    }
+
     public function orderBy($orderBy, $order)
     {
         if (empty($orderBy)) {
@@ -127,7 +212,9 @@ class ezQuery implements ezQueryInterface
         
 		if (!empty($whereKeyArray)) {
 			if (is_string($whereKeyArray[0])) {
-                if ((strpos($whereKeyArray[0], 'WHERE') !== false) || (strpos($whereKeyArray[0], 'HAVING') !== false))
+                if ((strpos($whereKeyArray[0], 'WHERE') !== false) 
+                    || (strpos($whereKeyArray[0], 'HAVING') !== false)
+                )
                     return $whereKeyArray[0];
 				foreach ($whereKeyArray as $makeArray) 
 					$WhereKeys[] = explode('  ', $makeArray);	
@@ -160,17 +247,17 @@ class ezQuery implements ezQueryInterface
             foreach($WhereKey as $key => $val) {
                 $isCondition = strtoupper($operator[$i]);
 				$combine = $combiner[$i];
-				if ( in_array(strtoupper($combine), array( 'AND', 'OR', 'NOT', 'AND NOT' )) || isset($extra[$i])) 
+				if ( in_array(strtoupper($combine), \_COMBINERS) || isset($extra[$i])) 
 					$combineWith = (isset($extra[$i])) ? $combine : strtoupper($combine);
 				else 
                     $combineWith = _AND;
 
-                if (! in_array( $isCondition, array( '<', '>', '=', '!=', '>=', '<=', '<>', 'IN', 'LIKE', 'NOT LIKE', 'BETWEEN', 'NOT BETWEEN', 'IS', 'IS NOT' ) )) {
+                if (! in_array( $isCondition, \_BOOLEANS)) {
                     return $this->clearParameters();
                 } else {
                     if (($isCondition == 'BETWEEN') || ($isCondition == 'NOT BETWEEN')) {
 						$value = $this->escape($combineWith);
-						if (in_array(strtoupper($extra[$i]), array( 'AND', 'OR', 'NOT', 'AND NOT' ))) 
+						if (in_array(strtoupper($extra[$i]), \_COMBINERS)) 
 							$myCombineWith = strtoupper($extra[$i]);
 						else 
                             $myCombineWith = _AND;
@@ -218,7 +305,7 @@ class ezQuery implements ezQueryInterface
 			return ($where != '1') ? " $whereOrHaving ".$where.' ' : ' ' ;
     }        
     
-    public function selecting($table ='', $fields ='*', ...$get_args) 
+    public function selecting($table ='', $columnFields = '*', ...$conditions) 
     {    
 		$getFromTable = $this->fromTable;
 		$getSelect_result = $this->select_result;       
@@ -229,52 +316,61 @@ class ezQuery implements ezQueryInterface
 		$this->isInto = false;	
         
         $skipWhere = false;
-        $WhereKeys = $get_args;
+        $WhereKeys = $conditions;
         $where = '';
 		
         if (empty($table)) {
             return $this->clearParameters();
         }
         
-        $columns = $this->to_string($fields);
+        $columns = $this->to_string($columnFields);
         
 		if (isset($getFromTable) && ! $getIsInto) 
-			$sql = "CREATE TABLE $table AS SELECT $columns FROM ".$getFromTable;
+			$sql="CREATE TABLE $table AS SELECT $columns FROM ".$getFromTable;
         elseif (isset($getFromTable) && $getIsInto) 
-			$sql = "SELECT $columns INTO $table FROM ".$getFromTable;
+			$sql="SELECT $columns INTO $table FROM ".$getFromTable;
         else 
-			$sql = "SELECT $columns FROM ".$table;
+			$sql="SELECT $columns FROM ".$table;
 
-        if (!empty($get_args)) {
-			if (is_string($get_args[0])) {
+        if (!empty($conditions)) {
+			if (is_string($conditions[0])) {
                 $args_by = '';
+                $joinSet = false;      
                 $groupBySet = false;      
                 $havingSet = false;             
                 $orderBySet = false;   
-                $limitSet = false;   
-				foreach ($get_args as $where_groupBy_having_orderby_limit) {
-                    if (strpos($where_groupBy_having_orderby_limit, 'WHERE') !== false ) {
-                        $args_by .= $where_groupBy_having_orderby_limit;
+                $limitSet = false;     
+                $unionSet = false;
+				foreach ($conditions as $join_where_groupBy_having_orderby_limit_union) {
+                    if (strpos($join_where_groupBy_having_orderby_limit_union, 'JOIN') !== false ) {
+                        $args_by .= $join_where_groupBy_having_orderby_limit_union;
+                        $joinSet = true;
+                    } elseif (strpos($join_where_groupBy_having_orderby_limit_union, 'WHERE') !== false ) {
+                        $args_by .= $join_where_groupBy_having_orderby_limit_union;
                         $skipWhere = true;
-                    } elseif (strpos($where_groupBy_having_orderby_limit, 'GROUP BY') !== false ) {
-                        $args_by .= ' '.$where_groupBy_having_orderby_limit;
+                    } elseif (strpos($join_where_groupBy_having_orderby_limit_union, 'GROUP BY') !== false ) {
+                        $args_by .= ' '.$join_where_groupBy_having_orderby_limit_union;
                         $groupBySet = true;
-                    } elseif (strpos($where_groupBy_having_orderby_limit, 'HAVING') !== false ) {
+                    } elseif (strpos($join_where_groupBy_having_orderby_limit_union, 'HAVING') !== false ) {
                         if ($groupBySet) {
-                            $args_by .= ' '.$where_groupBy_having_orderby_limit;
+                            $args_by .= ' '.$join_where_groupBy_having_orderby_limit_union;
                             $havingSet = true;
                         } else {
                             return $this->clearParameters();
                         }
-                    } elseif (strpos($where_groupBy_having_orderby_limit, 'ORDER BY') !== false ) {
-                        $args_by .= ' '.$where_groupBy_having_orderby_limit;    
+                    } elseif (strpos($join_where_groupBy_having_orderby_limit_union, 'ORDER BY') !== false ) {
+                        $args_by .= ' '.$join_where_groupBy_having_orderby_limit_union;    
                         $orderBySet = true;
-                    } elseif (strpos($where_groupBy_having_orderby_limit, 'LIMIT') !== false ) {
-                        $args_by .= ' '.$where_groupBy_having_orderby_limit;    
+                    } elseif (strpos($join_where_groupBy_having_orderby_limit_union, 'LIMIT') !== false ) {
+                        $args_by .= ' '.$join_where_groupBy_having_orderby_limit_union;    
                         $limitSet = true;
+                    } elseif (strpos($join_where_groupBy_having_orderby_limit_union, 'UNION') !== false ) {
+                        $args_by .= ' '.$join_where_groupBy_having_orderby_limit_union;    
+                        $unionSet = true;
                     }
                 }
-                if ($skipWhere || $groupBySet || $havingSet || $orderBySet || $limitSet) {
+
+                if ($joinSet || $skipWhere || $groupBySet || $havingSet || $orderBySet || $limitSet || $unionSet) {
                     $where = $args_by;
                     $skipWhere = true;
                 }
@@ -300,15 +396,25 @@ class ezQuery implements ezQueryInterface
     }
 
     /**
-     * Get sql statement from selecting method instead of executing get_result
+     * Get SQL statement string from selecting method instead of executing get_result
      * @return string
-     */	
-    private function select_sql($table = '', $fields = '*', ...$get_args) 
+     */
+    private function select_sql($table = '', $columnFields = '*', ...$conditions)
     {
 		$this->select_result = false;
-        return $this->selecting($table, $fields, ...$get_args);	            
+        return $this->selecting($table, $columnFields, ...$conditions);	            
     }
-   
+
+    public function union($table = '', $columnFields = '*', ...$conditions)
+    {
+        return 'UNION '.$this->select_sql($table, $columnFields, ...$conditions);           
+    }
+
+    public function unionAll($table = '', $columnFields = '*', ...$conditions)
+    {
+        return 'UNION ALL '.$this->select_sql($table, $columnFields, ...$conditions);             
+    }
+
     public function create_select($newTable, $fromColumns, $oldTable = null, ...$fromWhere) 
     {
 		if (isset($oldTable))
@@ -355,7 +461,7 @@ class ezQuery implements ezQueryInterface
         $sql = "UPDATE $table SET ";
         
         foreach($keyAndValue as $key => $val) {
-            if(strtolower($val) == 'null') {
+            if(strtolower($val)=='null') {
 				$sql .= "$key = NULL, ";
             } elseif(in_array(strtolower($val), array( 'current_timestamp()', 'date()', 'now()' ))) {
 				$sql .= "$key = CURRENT_TIMESTAMP(), ";
@@ -373,7 +479,7 @@ class ezQuery implements ezQueryInterface
             $sql = rtrim($sql, ', ') . $where;
             return (($this->isPrepareActive()) && !empty($this->getParameters())) 
                 ? $this->query($sql, true) 
-                : $this->query($sql);       
+                : $this->query($sql) ;       
         } else {
 			return $this->clearParameters();
 		}
@@ -419,7 +525,7 @@ class ezQuery implements ezQueryInterface
         if ($execute) {
             foreach($keyAndValue as $key => $val) {
                 $index .= "$key, ";
-                if (strtolower($val) == 'null') 
+                if (strtolower($val)=='null') 
                     $value .= "NULL, ";
                 elseif (in_array(strtolower($val), array( 'current_timestamp()', 'date()', 'now()' ))) 
                     $value .= "CURRENT_TIMESTAMP(), ";
@@ -459,12 +565,12 @@ class ezQuery implements ezQueryInterface
         }
 	}
         
-    public function replace($table = '', $keyAndValue) 
+    public function replace($table='', $keyAndValue) 
     {
-            return $this->_query_insert_replace($table, $keyAndValue, 'REPLACE');
-        }
+        return $this->_query_insert_replace($table, $keyAndValue, 'REPLACE');
+    }
 
-    public function insert($table = '', $keyAndValue) 
+    public function insert($table='', $keyAndValue) 
     {
         return $this->_query_insert_replace($table, $keyAndValue, 'INSERT');
     }
