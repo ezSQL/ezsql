@@ -209,13 +209,13 @@ class ezQuery implements ezQueryInterface
         $this->isWhere = true;
         
 		if (!empty($whereKeyArray)) {
-			if (is_string($whereKeyArray[0])) {
-                if ((strpos($whereKeyArray[0], 'WHERE') !== false) 
-                    || (strpos($whereKeyArray[0], 'HAVING') !== false)
+			if (\is_string($whereKeyArray[0])) {
+                if ((\strpos($whereKeyArray[0], 'WHERE') !== false) 
+                    || (\strpos($whereKeyArray[0], 'HAVING') !== false)
                 )
                     return $whereKeyArray[0];
 				foreach ($whereKeyArray as $makeArray) 
-					$WhereKeys[] = explode('  ', $makeArray);	
+					$WhereKeys[] = \explode('  ', $makeArray);	
 			} else 
 				$WhereKeys = $whereKeyArray;			
 		} else 
@@ -224,8 +224,8 @@ class ezQuery implements ezQueryInterface
 		foreach ($WhereKeys as $values) {
 			$operator[] = (isset($values[1])) ? $values[1]: '';
 			if (!empty($values[1])){
-				if (strtoupper($values[1]) == 'IN') {
-					$WhereKey[ $values[0] ] = array_slice((array) $values, 2);
+				if (\strtoupper($values[1]) == 'IN') {
+					$WhereKey[ $values[0] ] = \array_slice((array) $values, 2);
 					$combiner[] = (isset($values[3])) ? $values[3]: _AND;
 					$extra[] = (isset($values[4])) ? $values[4]: null;				
 				} else {
@@ -243,20 +243,20 @@ class ezQuery implements ezQueryInterface
             $where = '';
             $i = 0;
             foreach($WhereKey as $key => $val) {
-                $isCondition = strtoupper($operator[$i]);
+                $isCondition = \strtoupper($operator[$i]);
 				$combine = $combiner[$i];
-				if ( in_array(strtoupper($combine), \_COMBINERS) || isset($extra[$i])) 
-					$combineWith = (isset($extra[$i])) ? $combine : strtoupper($combine);
+				if ( \in_array(\strtoupper($combine), \_COMBINERS) || isset($extra[$i])) 
+					$combineWith = (isset($extra[$i])) ? $combine : \strtoupper($combine);
 				else 
                     $combineWith = _AND;
 
-                if (! in_array( $isCondition, \_BOOLEANS)) {
+                if (! \in_array( $isCondition, \_BOOLEANS)) {
                     return $this->clearParameters();
                 } else {
                     if (($isCondition == 'BETWEEN') || ($isCondition == 'NOT BETWEEN')) {
 						$value = $this->escape($combineWith);
-						if (in_array(strtoupper($extra[$i]), \_COMBINERS)) 
-							$myCombineWith = strtoupper($extra[$i]);
+						if (\in_array(\strtoupper($extra[$i]), \_COMBINERS)) 
+							$myCombineWith = \strtoupper($extra[$i]);
 						else 
                             $myCombineWith = _AND;
 
@@ -277,11 +277,11 @@ class ezQuery implements ezQueryInterface
 							} else 
 								$value .= "'".$this->escape($inValues)."', ";
                         }                        
-						$where .= "$key ".$isCondition." ( ".rtrim($value, ', ')." ) $combineWith ";
-					} elseif (((strtolower($val) == 'null') || ($isCondition == 'IS') || ($isCondition == 'IS NOT'))) {
+						$where .= "$key ".$isCondition." ( ".\rtrim($value, ', ')." ) $combineWith ";
+					} elseif (((\strtolower($val) == 'null') || ($isCondition == 'IS') || ($isCondition == 'IS NOT'))) {
                         $isCondition = (($isCondition == 'IS') || ($isCondition == 'IS NOT')) ? $isCondition : 'IS';
                         $where .= "$key ".$isCondition." NULL $combineWith ";
-                    } elseif ((($isCondition == 'LIKE') || ($isCondition == 'NOT LIKE')) && ! preg_match('/[_%?]/', $val)) {
+                    } elseif ((($isCondition == 'LIKE') || ($isCondition == 'NOT LIKE')) && ! \preg_match('/[_%?]/', $val)) {
                         return $this->clearParameters();
                     } else {
 						if ($this->isPrepareActive()) {
@@ -294,7 +294,7 @@ class ezQuery implements ezQueryInterface
                     $i++;
                 }
             }
-            $where = rtrim($where, " $combineWith ");
+            $where = \rtrim($where, " $combineWith ");
         }
 		
         if (($this->isPrepareActive()) && !empty($this->getParameters()) && ($where != '1'))
@@ -331,7 +331,7 @@ class ezQuery implements ezQueryInterface
 			$sql="SELECT $columns FROM ".$table;
 
         if (!empty($conditions)) {
-			if (is_string($conditions[0])) {
+			if (\is_string($conditions[0])) {
                 $args_by = '';
                 $joinSet = false;      
                 $groupBySet = false;      
@@ -339,31 +339,31 @@ class ezQuery implements ezQueryInterface
                 $orderBySet = false;   
                 $limitSet = false;     
                 $unionSet = false;
-				foreach ($conditions as $join_where_groupBy_having_orderby_limit_union) {
-                    if (strpos($join_where_groupBy_having_orderby_limit_union, 'JOIN') !== false ) {
-                        $args_by .= $join_where_groupBy_having_orderby_limit_union;
+				foreach ($conditions as $checkFor) {
+                    if (\strpos($checkFor, 'JOIN') !== false ) {
+                        $args_by .= $checkFor;
                         $joinSet = true;
-                    } elseif (strpos($join_where_groupBy_having_orderby_limit_union, 'WHERE') !== false ) {
-                        $args_by .= $join_where_groupBy_having_orderby_limit_union;
+                    } elseif (\strpos($checkFor, 'WHERE') !== false ) {
+                        $args_by .= $checkFor;
                         $skipWhere = true;
-                    } elseif (strpos($join_where_groupBy_having_orderby_limit_union, 'GROUP BY') !== false ) {
-                        $args_by .= ' '.$join_where_groupBy_having_orderby_limit_union;
+                    } elseif (\strpos($checkFor, 'GROUP BY') !== false ) {
+                        $args_by .= ' '.$checkFor;
                         $groupBySet = true;
-                    } elseif (strpos($join_where_groupBy_having_orderby_limit_union, 'HAVING') !== false ) {
+                    } elseif (\strpos($checkFor, 'HAVING') !== false ) {
                         if ($groupBySet) {
-                            $args_by .= ' '.$join_where_groupBy_having_orderby_limit_union;
+                            $args_by .= ' '.$checkFor;
                             $havingSet = true;
                         } else {
                             return $this->clearParameters();
                         }
-                    } elseif (strpos($join_where_groupBy_having_orderby_limit_union, 'ORDER BY') !== false ) {
-                        $args_by .= ' '.$join_where_groupBy_having_orderby_limit_union;    
+                    } elseif (\strpos($checkFor, 'ORDER BY') !== false ) {
+                        $args_by .= ' '.$checkFor;    
                         $orderBySet = true;
-                    } elseif (strpos($join_where_groupBy_having_orderby_limit_union, 'LIMIT') !== false ) {
-                        $args_by .= ' '.$join_where_groupBy_having_orderby_limit_union;    
+                    } elseif (\strpos($checkFor, 'LIMIT') !== false ) {
+                        $args_by .= ' '.$checkFor;    
                         $limitSet = true;
-                    } elseif (strpos($join_where_groupBy_having_orderby_limit_union, 'UNION') !== false ) {
-                        $args_by .= ' '.$join_where_groupBy_having_orderby_limit_union;    
+                    } elseif (\strpos($checkFor, 'UNION') !== false ) {
+                        $args_by .= ' '.$checkFor;    
                         $unionSet = true;
                     }
                 }
@@ -380,7 +380,7 @@ class ezQuery implements ezQueryInterface
         if (! $skipWhere)
             $where = $this->where( ...$WhereKeys);
         
-        if (is_string($where)) {
+        if (\is_string($where)) {
             $sql .= $where;
             if ($getSelect_result) 
                 return (($this->isPrepareActive()) && !empty($this->getParameters())) 
@@ -459,9 +459,9 @@ class ezQuery implements ezQueryInterface
         $sql = "UPDATE $table SET ";
         
         foreach($keyAndValue as $key => $val) {
-            if(strtolower($val)=='null') {
+            if(\strtolower($val)=='null') {
 				$sql .= "$key = NULL, ";
-            } elseif(in_array(strtolower($val), array( 'current_timestamp()', 'date()', 'now()' ))) {
+            } elseif(\in_array(\strtolower($val), array( 'current_timestamp()', 'date()', 'now()' ))) {
 				$sql .= "$key = CURRENT_TIMESTAMP(), ";
 			} else {
 				if ($this->isPrepareActive()) {
@@ -473,8 +473,8 @@ class ezQuery implements ezQueryInterface
         }
         
         $where = $this->where(...$WhereKeys);
-        if (is_string($where)) {   
-            $sql = rtrim($sql, ', ') . $where;
+        if (\is_string($where)) {   
+            $sql = \rtrim($sql, ', ') . $where;
             return (($this->isPrepareActive()) && !empty($this->getParameters())) 
                 ? $this->query($sql, true) 
                 : $this->query($sql) ;       
@@ -492,7 +492,7 @@ class ezQuery implements ezQueryInterface
         $sql = "DELETE FROM $table";
         
         $where = $this->where(...$WhereKeys);
-        if (is_string($where)) {   
+        if (\is_string($where)) {   
             $sql .= $where;						
             return (($this->isPrepareActive()) && !empty($this->getParameters())) 
                 ? $this->query($sql, true) 
@@ -523,9 +523,9 @@ class ezQuery implements ezQueryInterface
         if ($execute) {
             foreach($keyAndValue as $key => $val) {
                 $index .= "$key, ";
-                if (strtolower($val)=='null') 
+                if (\strtolower($val) == 'null') 
                     $value .= "NULL, ";
-                elseif (in_array(strtolower($val), array( 'current_timestamp()', 'date()', 'now()' ))) 
+                elseif (\in_array(\strtolower($val), array( 'current_timestamp()', 'date()', 'now()' ))) 
                     $value .= "CURRENT_TIMESTAMP(), ";
                 else {
 					if ($this->isPrepareActive()) {
@@ -549,12 +549,12 @@ class ezQuery implements ezQueryInterface
 				return $this->clearParameters();          			
 			}  
         } else {
-            if (is_array($keyAndValue)) {
-                if (array_keys($keyAndValue) === range(0, count($keyAndValue) - 1)) {
+            if (\is_array($keyAndValue)) {
+                if (\array_keys($keyAndValue) === \range(0, \count($keyAndValue) - 1)) {
                     foreach($keyAndValue as $key) {
                         $index .= "$key, ";                
                     }
-                    $sql .= " (". rtrim($index, ', ') .") ";                         
+                    $sql .= " (". \rtrim($index, ', ') .") ";                         
                 } else {
 					return false;          			
 				}          
@@ -563,12 +563,12 @@ class ezQuery implements ezQueryInterface
         }
 	}
         
-    public function replace($table='', $keyAndValue) 
+    public function replace($table = '', $keyAndValue) 
     {
         return $this->_query_insert_replace($table, $keyAndValue, 'REPLACE');
     }
 
-    public function insert($table='', $keyAndValue) 
+    public function insert($table = '', $keyAndValue) 
     {
         return $this->_query_insert_replace($table, $keyAndValue, 'INSERT');
     }
@@ -578,7 +578,7 @@ class ezQuery implements ezQueryInterface
         $putToTable = $this->_query_insert_replace($toTable, $toColumns, 'INSERT', false);
         $getFromTable = $this->select_sql($fromTable, $fromColumns, ...$fromWhere);
 
-        if (is_string($putToTable) && is_string($getFromTable))
+        if (\is_string($putToTable) && \is_string($getFromTable))
             return (($this->isPrepareActive()) && !empty($this->getParameters())) 
                 ? $this->query($putToTable." ".$getFromTable, true) 
                 : $this->query($putToTable." ".$getFromTable) ;
