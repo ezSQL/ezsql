@@ -1,6 +1,7 @@
 <?php
 
 use ezsql\ezQueryInterface;
+use PHPUnit\Framework\Constraint\IsFalse;
 
 class ezQuery implements ezQueryInterface
 { 		
@@ -299,8 +300,8 @@ class ezQuery implements ezQueryInterface
 		
         if (($this->isPrepareActive()) && !empty($this->getParameters()) && ($where != '1'))
 			return " $whereOrHaving ".$where.' ';
-		else
-			return ($where != '1') ? " $whereOrHaving ".$where.' ' : ' ' ;
+        
+		return ($where != '1') ? " $whereOrHaving ".$where.' ' : ' ' ;
     }        
     
     public function selecting($table ='', $columnFields = '*', ...$conditions) 
@@ -386,11 +387,10 @@ class ezQuery implements ezQueryInterface
                 return (($this->isPrepareActive()) && !empty($this->getParameters())) 
                     ? $this->get_results($sql, OBJECT, true) 
                     : $this->get_results($sql);     
-            else 
-                return $sql;
-        } else {
-            return $this->clearParameters();
-        }             
+            return $sql;
+        }
+        
+        return $this->clearParameters();
     }
 
     /**
@@ -426,9 +426,8 @@ class ezQuery implements ezQueryInterface
             return (($this->isPrepareActive()) && !empty($this->getParameters())) 
                 ? $this->query($newTableFromTable, true) 
                 : $this->query($newTableFromTable); 
-        else {
-            return $this->clearParameters();   		
-        }
+
+        return $this->clearParameters();   
     }
     
     public function select_into($newTable, $fromColumns, $oldTable = null, ...$fromWhere) 
@@ -436,18 +435,16 @@ class ezQuery implements ezQueryInterface
 		$this->isInto = true;        
 		if (isset($oldTable))
 			$this->fromTable = $oldTable;
-		else {
-			return $this->clearParameters();          			
-		}  
+		else
+			return $this->clearParameters();
 			
         $newTableFromTable = $this->select_sql($newTable, $fromColumns, ...$fromWhere);
         if (is_string($newTableFromTable))
             return (($this->isPrepareActive()) && !empty($this->getParameters())) 
                 ? $this->query($newTableFromTable, true) 
                 : $this->query($newTableFromTable); 
-        else {
-			return $this->clearParameters();         			
-		}  
+        
+        return $this->clearParameters();     
     }
 
     public function update($table = '', $keyAndValue, ...$WhereKeys) 
@@ -478,9 +475,9 @@ class ezQuery implements ezQueryInterface
             return (($this->isPrepareActive()) && !empty($this->getParameters())) 
                 ? $this->query($sql, true) 
                 : $this->query($sql) ;       
-        } else {
-			return $this->clearParameters();
-		}
+        } 
+        
+        return $this->clearParameters();
     }   
          
     public function delete($table = '', ...$WhereKeys) 
@@ -497,9 +494,9 @@ class ezQuery implements ezQueryInterface
             return (($this->isPrepareActive()) && !empty($this->getParameters())) 
                 ? $this->query($sql, true) 
                 : $this->query($sql);  
-        } else {
-			return $this->clearParameters();         			
-		}  
+        }
+
+        return $this->clearParameters();       
     }
 
 	/**
@@ -545,9 +542,8 @@ class ezQuery implements ezQueryInterface
 				
             if ($ok)
                 return $this->insert_id;
-            else {
-				return $this->clearParameters();          			
-			}  
+
+            return $this->clearParameters();
         } else {
             if (\is_array($keyAndValue)) {
                 if (\array_keys($keyAndValue) === \range(0, \count($keyAndValue) - 1)) {
@@ -559,6 +555,7 @@ class ezQuery implements ezQueryInterface
 					return false;          			
 				}          
             } 
+
             return $sql;
         }
 	}
@@ -582,8 +579,7 @@ class ezQuery implements ezQueryInterface
             return (($this->isPrepareActive()) && !empty($this->getParameters())) 
                 ? $this->query($putToTable." ".$getFromTable, true) 
                 : $this->query($putToTable." ".$getFromTable) ;
-        else {
-			return $this->clearParameters();          			
-		}
-    }    
+
+		return $this->clearParameters();      
+    }
 }
