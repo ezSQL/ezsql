@@ -592,16 +592,15 @@ class ezQuery implements ezQueryInterface
         return false;
     }
 
-    public function dataString($store = 256, string $value = 'NULL', $default = null) 
+    public function dataString(int $store = 256, string $value = 'NULL', $default = null) 
     {
-        $sql = 'test';
-        if (\is_string($sql))
-            return $sql;
-
-        return false;
+        if ($store > 256)
+            // need to check each selection
+            
+        return $this->dataType('VARCHAR', $store, null, null, $value, $default);
     }
 
-    public function dataType($type = '*', $store = 256, $precision = 6, $scale = 2, string $value = 'NULL', $default = null) 
+    private function dataType($type = '*', $store = 256, $precision = null, $scale = null, string $value = 'NULL', $default = null) 
     {
         $sql = 'test';
         if (\is_string($sql))
@@ -612,18 +611,47 @@ class ezQuery implements ezQueryInterface
 
     public function schema(string $column = null, ...$datatype) 
     {
-        $sql = 'test';
-        if (\is_string($sql))
-            return $sql;
+        if (empty($column) || empty($datatype))
+            return false;
+
+        $sql = $column.' ';
+
+        $data = '';
+        foreach($datatype as $type) {
+            // need to check each selection
+            $data .= $type[0].' ';
+        }
+
+        $schemaColumn = !empty($data) ? $sql.$data : null;
+        if (\is_string($schemaColumn))
+            return $schemaColumn;
 
         return false;
     }
 
     public function create(string $table = null, ...$schema) 
     {
-        $sql = 'test';
-        if (\is_string($sql))
-            return $this->query($sql);
+        if (empty($table) || empty($schema))
+            return false;
+
+        $sql = 'CREATE TABLE '.$table.' ( ';
+
+        $allowed = \dataSTRING + \dataNUMERIC + \dataDATETIME + \dataOBJECT;
+        $allowed_pattern = implode('|', $allowed); 
+        $pattern = "/".$allowed_pattern."/i";
+
+        $data = '';
+        foreach($schema as $types) {
+            if (\is_string($types)) {
+                if (\preg_match($pattern, $types))
+                    // need to check each selection
+                    $data .= $types.', ';
+            }
+        }
+        
+        $createTable = (\strpos($data, ', ') !== false) ? $sql.\rtrim($data, ', ').' );' : null;
+        if (\is_string($createTable))
+            return $this->query($createTable);
 
         return false;
     }    

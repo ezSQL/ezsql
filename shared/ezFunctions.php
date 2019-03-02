@@ -93,6 +93,17 @@ use ezsql\ezQueryInterface;
             'sqlsrv' => 'ez_sqlsrv'
         ];
 
+        const dataSTRING = ['CHAR', 'VARCHAR', 'TINYTEXT', 'TEXT', 
+            'MEDIUMTEXT', 'LONGTEXT', 'BINARY', 'VARBINARY'];
+
+        const dataNUMERIC = ['BIT', 'TINYINT', 'SMALLINT', 'MEDIUMINT',' INT', 'INTEGER', 'BIGINT',
+            'DECIMAL', 'DEC', 'NUMERIC', 'FIXED',
+            'FLOAT', 'DOUBLE', 'DOUBLE PRECISION', 'REAL', 'FLOAT',
+            'BOOL', 'BOOLEAN'];
+
+        const dataDATETIME = ['DATE', 'DATETIME', 'TIMESTAMP', 'TIME', 'YEAR'];
+        const dataOBJECT  = ['TINYBLOB', 'BLOB', 'MEDIUMBLOB', 'LONGTEXT'];
+
         // Global class instances, will be used to create and call methods directly.        
         global $ezInstance;
  
