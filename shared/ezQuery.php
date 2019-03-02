@@ -582,4 +582,49 @@ class ezQuery implements ezQueryInterface
 
 		return $this->clearParameters();      
     }
+
+    public function dataNumeric($precision = 6, $scale = 2, string $value = 'NULL', $default = null) 
+    {
+        $sql = 'test';
+        if (\is_string($sql))
+            return $sql;
+
+        return false;
+    }
+
+    public function dataString($store = 256, string $value = 'NULL', $default = null) 
+    {
+        $sql = 'test';
+        if (\is_string($sql))
+            return $sql;
+
+        return false;
+    }
+
+    public function dataType($type = '*', $store = 256, $precision = 6, $scale = 2, string $value = 'NULL', $default = null) 
+    {
+        $sql = 'test';
+        if (\is_string($sql))
+            return $sql;
+
+        return false;
+    }
+
+    public function schema(string $column = null, ...$datatype) 
+    {
+        $sql = 'test';
+        if (\is_string($sql))
+            return $sql;
+
+        return false;
+    }
+
+    public function create(string $table = null, ...$schema) 
+    {
+        $sql = 'test';
+        if (\is_string($sql))
+            return $this->query($sql);
+
+        return false;
+    }    
 }
