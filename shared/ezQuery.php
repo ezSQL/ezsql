@@ -1,7 +1,7 @@
 <?php
 
+use ezsql\DT;
 use ezsql\ezQueryInterface;
-use PHPUnit\Framework\Constraint\IsFalse;
 
 class ezQuery implements ezQueryInterface
 { 		
@@ -59,18 +59,18 @@ class ezQuery implements ezQueryInterface
     }
 
     /**
-    * Convert array to string, and attach '`, `' for separation.
+    * Convert array to string, and attach '`, `' for separation, if none is provided.
     *
     * @return string
     */  
-    private function to_string($arrays)  
+    private function to_string($arrays, $separation = ',' )  
     {        
         if (is_array( $arrays )) {
             $columns = '';
             foreach($arrays as $val) {
-                $columns .= $val.', ';
+                $columns .= $val.$separation.' ';
             }
-            $columns = rtrim($columns, ', ');            
+            $columns = rtrim($columns, $separation.' ');
         } else
             $columns = $arrays;
         return $columns;
@@ -251,10 +251,10 @@ class ezQuery implements ezQueryInterface
 				else 
                     $combineWith = _AND;
 
-                if (! \in_array( $isCondition, \_BOOLEANS)) {
+                if (! \in_array( $isCondition, \_BOOLEAN_OPERATORS)) {
                     return $this->clearParameters();
                 } else {
-                    if (($isCondition == 'BETWEEN') || ($isCondition == 'NOT BETWEEN')) {
+                    if (($isCondition == \_BETWEEN) || ($isCondition == \_notBETWEEN)) {
 						$value = $this->escape($combineWith);
 						if (\in_array(\strtoupper($extra[$i]), \_COMBINERS)) 
 							$myCombineWith = \strtoupper($extra[$i]);
@@ -269,7 +269,7 @@ class ezQuery implements ezQueryInterface
                             $where .= "$key ".$isCondition." '".$this->escape($val)."' AND '".$value."' $myCombineWith ";
                             
 						$combineWith = $myCombineWith;
-					} elseif ($isCondition == 'IN') {
+					} elseif ($isCondition == \_IN) {
 						$value = '';
 						foreach ($val as $inValues) {
 							if ($this->isPrepareActive()) {
@@ -282,7 +282,7 @@ class ezQuery implements ezQueryInterface
 					} elseif (((\strtolower($val) == 'null') || ($isCondition == 'IS') || ($isCondition == 'IS NOT'))) {
                         $isCondition = (($isCondition == 'IS') || ($isCondition == 'IS NOT')) ? $isCondition : 'IS';
                         $where .= "$key ".$isCondition." NULL $combineWith ";
-                    } elseif ((($isCondition == 'LIKE') || ($isCondition == 'NOT LIKE')) && ! \preg_match('/[_%?]/', $val)) {
+                    } elseif ((($isCondition == \_LIKE) || ($isCondition == \_notLIKE)) && ! \preg_match('/[_%?]/', $val)) {
                         return $this->clearParameters();
                     } else {
 						if ($this->isPrepareActive()) {
@@ -583,76 +583,65 @@ class ezQuery implements ezQueryInterface
 		return $this->clearParameters();      
     }
 
-    public function dataNumeric($precision = 6, $scale = 2, string $value = 'NULL', $default = null) 
+    public function schema(array ...$columnDataOptions) 
     {
-        $sql = 'test';
-        if (\is_string($sql))
-            return $sql;
-
-        return false;
-    }
-
-    public function dataString(int $store = 256, string $value = 'NULL', $default = null) 
-    {
-        if ($store > 256)
-            // need to check each selection
-            
-        return $this->dataType('VARCHAR', $store, null, null, $value, $default);
-    }
-
-    private function dataType($type = '*', $store = 256, $precision = null, $scale = null, string $value = 'NULL', $default = null) 
-    {
-        $sql = 'test';
-        if (\is_string($sql))
-            return $sql;
-
-        return false;
-    }
-
-    public function schema(string $column = null, ...$datatype) 
-    {
-        if (empty($column) || empty($datatype))
+        if (empty($columnDataOptions))
             return false;
 
-        $sql = $column.' ';
-
-        $data = '';
-        foreach($datatype as $type) {
-            // need to check each selection
-            $data .= $type[0].' ';
+        $columnData = '';
+        foreach($columnDataOptions as $datatype) {
+            $column = array_shift($datatype);
+            $type = array_shift($datatype);
+            $data =  (new DT())->{$type}($datatype);
+            $columnData .= $column.' '.$data.', ';
         }
 
-        $schemaColumn = !empty($data) ? $sql.$data : null;
-        if (\is_string($schemaColumn))
-            return $schemaColumn;
+        $schemaColumns = !empty($columnData) ? $columnData : null;
+        if (\is_string($schemaColumns))
+            return $schemaColumns;
 
         return false;
     }
 
-    public function create(string $table = null, ...$schema) 
+    public function create(string $table = null, ...$schemas) 
     {
-        if (empty($table) || empty($schema))
+        if (empty($table) || empty($schemas))
             return false;
 
         $sql = 'CREATE TABLE '.$table.' ( ';
 
-        $allowed = \dataSTRING + \dataNUMERIC + \dataDATETIME + \dataOBJECT;
-        $allowed_pattern = implode('|', $allowed); 
-        $pattern = "/".$allowed_pattern."/i";
+        $vendor = DI::vendor();
+        $allowedTypes = DT::STRINGS['shared'];
+        $allowedTypes += DT::STRINGS[$vendor];
+        $allowedTypes += DT::NUMERICS['shared'];
+        $allowedTypes += DT::NUMERICS[$vendor];
+        $allowedTypes += DT::DATE_TIME['shared'];
+        $allowedTypes += DT::DATE_TIME[$vendor];
+        $allowedTypes += DT::OBJECTS[$vendor];
+
+        $pattern = "/".\implode('|', $allowedTypes)."/i";
 
         $data = '';
-        foreach($schema as $types) {
+        $skipSchema = false;
+        foreach($schemas as $types) {
             if (\is_string($types)) {
-                if (\preg_match($pattern, $types))
-                    // need to check each selection
-                    $data .= $types.', ';
+                if (\preg_match($pattern, $types)) {
+                    $data .= (\strpos($types, ', ') !== false) ? $types : $types.', ';
+                    $skipSchema = true;
+                }
             }
         }
-        
-        $createTable = (\strpos($data, ', ') !== false) ? $sql.\rtrim($data, ', ').' );' : null;
+
+        $schema = $skipSchema ? \rtrim($data, ', ') : $data;
+
+        if (! $skipSchema) {
+            $schema = $this->schema( ...$schemas);
+        }
+
+        $createTable = !empty($schema) ? $sql.$schema.' );' : null;
         if (\is_string($createTable))
             return $this->query($createTable);
 
         return false;
-    }    
+    }
 }

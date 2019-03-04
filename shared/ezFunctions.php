@@ -25,6 +25,7 @@
  * and is licensed under the MIT license.
  */
 
+use ezsql\DT;
 use ezsql\ezQuery;
 use ezsql\ezQueryInterface;
 
@@ -54,7 +55,7 @@ use ezsql\ezQueryInterface;
         
 		const _isNULL = 'IS NULL';
         const _notNULL  = 'IS NOT NULL';
-        const _BOOLEANS = ['<', '>', '=', '!=', '>=', '<=', '<>', 
+        const _BOOLEAN_OPERATORS = ['<', '>', '=', '!=', '>=', '<=', '<>', 
             'IN', 'LIKE', 'NOT LIKE', 'BETWEEN', 'NOT BETWEEN', 'IS', 'IS NOT'];
     
     /*
@@ -83,30 +84,127 @@ use ezsql\ezQueryInterface;
             'mysql' => 'ez_mysqli',
             'mysqli' => 'ez_mysqli',
             'pdo' => 'ez_pdo',
-            'postgres' => 'ez_pgsql',
+            'postgresql' => 'ez_pgsql',
             'pgsql' => 'ez_pgsql',
             'sqlite' => 'ez_sqlite3',
             'sqlite3' => 'ez_sqlite3',
             'sqlserver' => 'ez_sqlsrv',
-            'msserver' => 'ez_sqlsrv',
             'mssql' => 'ez_sqlsrv',
             'sqlsrv' => 'ez_sqlsrv'
         ];
 
-        const dataSTRING = ['CHAR', 'VARCHAR', 'TINYTEXT', 'TEXT', 
-            'MEDIUMTEXT', 'LONGTEXT', 'BINARY', 'VARBINARY'];
-
-        const dataNUMERIC = ['BIT', 'TINYINT', 'SMALLINT', 'MEDIUMINT',' INT', 'INTEGER', 'BIGINT',
-            'DECIMAL', 'DEC', 'NUMERIC', 'FIXED',
-            'FLOAT', 'DOUBLE', 'DOUBLE PRECISION', 'REAL', 'FLOAT',
-            'BOOL', 'BOOLEAN'];
-
-        const dataDATETIME = ['DATE', 'DATETIME', 'TIMESTAMP', 'TIME', 'YEAR'];
-        const dataOBJECT  = ['TINYBLOB', 'BLOB', 'MEDIUMBLOB', 'LONGTEXT'];
-
+        // String SQL data types
+        const CHAR = 'CHAR';
+        const VARC = 'VARCHAR';
+        const VARCHAR = 'VARCHAR';
+        const TEXT = 'TEXT';
+        const TINY = 'TINYTEXT';
+        const TINYTEXT = 'TINYTEXT';
+        const MEDIUM = 'MEDIUMTEXT';
+        const MEDIUMTEXT = 'MEDIUMTEXT';
+        const LONG = 'LONGTEXT';
+        const LONGTEXT = 'LONGTEXT';
+        const BINARY = 'BINARY';
+        const VARBINARY = 'VARBINARY';
+        const NCHAR = 'NCHAR';
+        const NVAR = 'NVARCHAR';
+        const NVARCHAR = 'NVARCHAR';
+        const NTEXT = 'NTEXT';
+        const IMAGE = 'IMAGE';
+        const CLOB = 'CLOB';
+        
+        // Numeric SQL data types
+        const INTS = 'INT';
+        const INT2 = 'INT2';
+        const INT4 = 'INT4';
+        const INT8 = 'INT8';
+        const NUMERIC = 'NUMERIC';
+        const DECIMAL = 'DECIMAL';
+        const BIT = 'BIT';
+        const VARBIT = 'VARBIT';
+        const INTEGERS = 'INTEGER';
+        const TINYINT = 'TINYINT';
+        const SMALLINT = 'SMALLINT';
+        const MEDIUMINT = 'MEDIUMINT';
+        const LARGE = 'BIGINT';
+        const BIGINT = 'BIGINT';
+        const DEC = 'DEC';
+        const FIXED = 'FIXED';
+        const FLOATS = 'FLOAT';
+        const DOUBLES = 'DOUBLE';
+        const REALS = 'REAL';
+        const BOOLS = 'BOOL';
+        const BOOLEANS = 'BOOLEAN';
+        const SMALLMONEY = 'SMALLMONEY';
+        const MONEY = 'MONEY';
+        const SMALLSERIAL = 'SMALLSERIAL';
+        const SERIAL = 'SERIAL';
+        const BIGSERIAL = 'BIGSERIAL';
+        
+        // Date/Time SQL data types	
+        const DATES = 'DATE';
+        const TIMESTAMP = 'TIMESTAMP';
+        const TIMES = 'TIME';
+        const DATETIME = 'DATETIME';
+        const YEAR = 'YEAR';
+        const DATETIME2 = 'DATETIME2';
+        const SMALLDATETIME = 'SMALLDATETIME';
+        const DATETIMEOFFSET = 'DATETIMEOFFSET';
+        
+        // Large Object SQL data types
+        const TINYBLOB = 'TINYBLOB';
+        const BLOB = 'BLOB';
+        const MEDIUMBLOB = 'MEDIUMBLOB';
+        
+        const NULLS = 'NULL';
+        const notNULL = 'NOT NULL';
+	
         // Global class instances, will be used to create and call methods directly.        
         global $ezInstance;
  
+    /**
+     * Creates an schema, column datatype with the given arguments.
+     * 
+     * @param string $column,
+     * @param string $type,
+     * @param int|array $size, 
+     * @param mixed $value, 
+     * @param mixed $default
+     * 
+     * @return array
+     */
+    function dt($column = null, $type = null, ...$args)
+    {
+        $datatype = array();
+        array_push($datatype, $column, $type, ...$args);
+        return $datatype;
+    }
+
+    function data($column = null, $type = null, ...$args)
+    {
+        return \dt($column, $type, $args);
+    }
+
+    /**
+     * Creates an datatype with given arguments.
+     * 
+     * @param string $type,
+     * @param int|array $size, 
+     * @param mixed $value, 
+     * @param mixed $default
+     * 
+     * @return string
+     */
+	function dType($type, ...$args)	
+    {
+        return (new DT())->{$type}($args);
+    }
+
+	function datatype($type, ...$args)	
+    {
+        return \dType($type, $args);
+    }
+
 	/**
      * Creates an array from expressions in the following format
      * @param  strings $x,  - The left expression.
