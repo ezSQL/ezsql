@@ -167,13 +167,13 @@ use ezsql\ezQueryInterface;
      * 
      * @param string $column,
      * @param string $type,
-     * @param int|array $size, 
+     * @param mixed $size, 
      * @param mixed $value, 
      * @param mixed $default
      * 
      * @return array
      */
-    function data($column = null, $type = null, ...$args)
+    function data(string $column = null, string $type = null, ...$args)
     {
         $datatype = array();
         \array_push($datatype, $column, $type, ...$args);
@@ -189,15 +189,16 @@ use ezsql\ezQueryInterface;
      * Creates an datatype with given arguments.
      * 
      * @param string $type,
-     * @param int|array $size, 
+     * @param mixed $size, 
      * @param mixed $value, 
      * @param mixed $default
      * 
      * @return string
      */
-	function datatype($type, ...$args)	
+	function datatype(string $type, ...$args)	
     {
-        return (new DT())->{$type}($args);
+        $data = new DI();
+        return $data->$type($args);
     }
 
 	function dType($type, ...$args)	
