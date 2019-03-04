@@ -89,22 +89,26 @@ class DT
 
 		if (\preg_match($stringPattern, $type)) {
 			// check for string data type
-			$size = !empty($args[0]) ? '('.$args[0].')' : '';
-			$value = !empty($args[1]) ? ' '.$args[1] : '';
-			$data = $type.$size.$value;
+			$store = !empty($args[0]) ? '('.$args[0].')' : '';
+			$value = !empty($args[1]) ? $args[1] : '';
+			$options = !empty($args[2]) ? $args[2] : '';
+			$data = $type.$store.' '.$value.' '.$options;
 		} elseif (\preg_match($numericPattern, $type)) {
 			// check for numeric data type
-			$size = !empty($type[1]) && is_array($type) ? '('.$type[1][0].','.$type[1][1].') ' : ' ';
-			$value = !empty($args[1]) ? ' '.$args[1] : '';
-			$data .= $type[0].$size.$value;
-			$data .= $type[0].' ';
+			$size = '('.(!empty($args[0]) ? $args[0] : '6').',';
+			$size .= (!empty($args[1]) ? $args[1] : '2').') ';
+			$value = !empty($args[1]) ? $args[1] : '';
+			$options = !empty($args[2]) ? $args[2] : '';
+			$data = $type.$size.' '.$value.' '.$options;
         } elseif (\preg_match($dateTimePattern, $type)) {
 			// check for date time data type
-			$data .= $type[0].' ';
+			$fraction = !empty($args[0]) ? '('.$args[0].')' : '';
+			$value = !empty($args[1]) ? $args[1] : '';
+			$options = !empty($args[2]) ? $args[2] : '';
+			$data = $type.$fraction.' '.$value.' '.$options;
         } elseif (\preg_match($objectPattern, $type)) {
 			// check for large object data type
 			$data = $type.(!empty($args[0]) ? ' '.$args[0] : '');
-			$data .= $type[0].' ';
         }
 
 		return $data;
