@@ -583,20 +583,21 @@ class ezQuery implements ezQueryInterface
 		return $this->clearParameters();      
     }
 
-    public function schema(array ...$columnDataOptions) 
+    private function schema(array ...$columnDataOptions) 
     {
         if (empty($columnDataOptions))
             return false;
 
         $columnData = '';
         foreach($columnDataOptions as $datatype) {
-            $column = array_shift($datatype);
-            $type = array_shift($datatype);
-            $data =  (new DT())->{$type}($datatype);
-            $columnData .= $column.' '.$data.', ';
+            $column = \array_shift($datatype);
+            $type = \array_shift($datatype);
+            $data =  \datatype($type, $datatype);
+            if (!empty($data))
+                $columnData .= $column.' '.$data.', ';
         }
 
-        $schemaColumns = !empty($columnData) ? $columnData : null;
+        $schemaColumns = !empty($columnData) ? \rtrim($columnData, ', ') : null;
         if (\is_string($schemaColumns))
             return $schemaColumns;
 
@@ -605,12 +606,12 @@ class ezQuery implements ezQueryInterface
 
     public function create(string $table = null, ...$schemas) 
     {
-        if (empty($table) || empty($schemas))
+        $vendor = DI::vendor();
+        if (empty($table) || empty($schemas) || empty($vendor))
             return false;
 
         $sql = 'CREATE TABLE '.$table.' ( ';
 
-        $vendor = DI::vendor();
         $allowedTypes = DT::STRINGS['shared'];
         $allowedTypes += DT::STRINGS[$vendor];
         $allowedTypes += DT::NUMERICS['shared'];

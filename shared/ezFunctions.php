@@ -163,7 +163,7 @@ use ezsql\ezQueryInterface;
         global $ezInstance;
  
     /**
-     * Creates an schema, column datatype with the given arguments.
+     * Creates an schema, column and datatype with the given arguments.
      * 
      * @param string $column,
      * @param string $type,
@@ -173,16 +173,16 @@ use ezsql\ezQueryInterface;
      * 
      * @return array
      */
-    function dt($column = null, $type = null, ...$args)
+    function data($column = null, $type = null, ...$args)
     {
         $datatype = array();
-        array_push($datatype, $column, $type, ...$args);
+        \array_push($datatype, $column, $type, ...$args);
         return $datatype;
     }
 
-    function data($column = null, $type = null, ...$args)
+    function dt($column = null, $type = null, ...$args)
     {
-        return \dt($column, $type, $args);
+        return \data($column, $type, $args);
     }
 
     /**
@@ -195,14 +195,14 @@ use ezsql\ezQueryInterface;
      * 
      * @return string
      */
-	function dType($type, ...$args)	
+	function datatype($type, ...$args)	
     {
         return (new DT())->{$type}($args);
     }
 
-	function datatype($type, ...$args)	
+	function dType($type, ...$args)	
     {
-        return \dType($type, $args);
+        return \datatype($type, $args);
     }
 
 	/**

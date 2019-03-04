@@ -44,9 +44,11 @@ class DT
 
     const OBJECTS  = [
         'mysql' => ['TINYBLOB', 'BLOB', 'MEDIUMBLOB', 'LONGTEXT'],
-        'sqlite3' => ['BLOB']
+        'sqlite3' => ['BLOB'],
+        'postgresql' => [],
+        'sqlserver' => []
     ];
-    
+
     public static function vendor() 
     {
         $type = null;
@@ -63,8 +65,16 @@ class DT
             $type = 'mysql';
         elseif ($dbMssql === \getInstance() && !empty($dbMssql))
             $type = 'sqlserver';
-        elseif ($dbPdo === \getInstance() && !empty($dbPdo))
-            $type = 'pdo';
+        elseif ($dbPdo === \getInstance() && !empty($dbPdo)) {
+            if (strpos($dbPdo->getAttribute(\PDO::ATTR_CLIENT_VERSION), 'mysql') !== false) 
+                $type = 'mysql';
+            elseif (strpos($dbPdo->getAttribute(\PDO::ATTR_CLIENT_VERSION), 'pgsql') !== false) 
+                $type = 'postgresql';
+            elseif (strpos($dbPdo->getAttribute(\PDO::ATTR_CLIENT_VERSION), 'sqlite') !== false) 
+                $type = 'sqlite3';
+            elseif (strpos($dbPdo->getAttribute(\PDO::ATTR_CLIENT_VERSION), 'sqlsrv') !== false) 
+                $type = 'sqlserver';
+        }
 
         return $type;
     }
@@ -72,6 +82,9 @@ class DT
 	public function __call($type, $args) 
 	{
         $vendor = DI::vendor();
+        if (empty($vendor))
+            return false;
+
         $stringTypes = DT::STRINGS['shared'];
         $stringTypes += DT::STRINGS[$vendor];
         $numericTypes = DT::NUMERICS['shared'];
@@ -107,8 +120,7 @@ class DT
 			$fraction = !empty($args[0]) ? '('.$args[0].')' : '';
 			$value = !empty($args[1]) ? $args[1] : '';
 			$options = !empty($args[2]) ? $args[2] : '';
-			$extra = !empty($args[3]) ? ' '.$args[3] : '';
-			$data = $type.$fraction.' '.$value.' '.$options.$extra;
+			$data = $type.$fraction.' '.$value.' '.$options;
         } elseif (\preg_match($objectPattern, $type)) {
 			// check for large object data type
 			$value = !empty($args[0]) ? ' '.$args[0] : '';
