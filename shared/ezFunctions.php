@@ -25,7 +25,7 @@
  * and is licensed under the MIT license.
  */
 
-use ezsql\DT;
+use ezsql\ezSchema;
 use ezsql\ezQuery;
 use ezsql\ezQueryInterface;
 
@@ -163,7 +163,7 @@ use ezsql\ezQueryInterface;
         global $ezInstance;
  
     /**
-     * Creates an schema, column and datatype with the given arguments.
+     * Creates an schema array, column, datatype, value/options with the given arguments.
      * 
      * @param string $column,
      * @param string $type,
@@ -195,10 +195,10 @@ use ezsql\ezQueryInterface;
      * 
      * @return string
      */
-	function datatype(string $type, ...$args)	
+    function datatype(string $type, ...$args)	
     {
-        $data = new DI();
-        return $data->$type($args);
+        $data = new ezSchema( ...$args);
+        return $data->$type();
     }
 
 	function dType($type, ...$args)	

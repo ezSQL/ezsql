@@ -1,6 +1,6 @@
 <?php
 
-use ezsql\DT;
+use ezsql\ezSchema;
 use ezsql\ezQueryInterface;
 
 class ezQuery implements ezQueryInterface
@@ -606,34 +606,33 @@ class ezQuery implements ezQueryInterface
 
     public function create(string $table = null, ...$schemas) 
     {
-        $vendor = DI::vendor();
+        $vendor = ezSchema::vendor();
         if (empty($table) || empty($schemas) || empty($vendor))
             return false;
 
         $sql = 'CREATE TABLE '.$table.' ( ';
 
-        $allowedTypes = DT::STRINGS['shared'];
-        $allowedTypes += DT::STRINGS[$vendor];
-        $allowedTypes += DT::NUMERICS['shared'];
-        $allowedTypes += DT::NUMERICS[$vendor];
-        $allowedTypes += DT::DATE_TIME['shared'];
-        $allowedTypes += DT::DATE_TIME[$vendor];
-        $allowedTypes += DT::OBJECTS[$vendor];
-
-        $pattern = "/".\implode('|', $allowedTypes)."/i";
-
-        $data = '';
         $skipSchema = false;
-        foreach($schemas as $types) {
-            if (\is_string($types)) {
-                if (\preg_match($pattern, $types)) {
-                    $data .= (\strpos($types, ', ') !== false) ? $types : $types.', ';
-                    $skipSchema = true;
+        if (! \is_array($schemas[0])) {
+            $data = '';
+            $allowedTypes = ezSchema::STRINGS['shared'];
+            $allowedTypes += ezSchema::STRINGS[$vendor];
+            $allowedTypes += ezSchema::NUMERICS['shared'];
+            $allowedTypes += ezSchema::NUMERICS[$vendor];
+            $allowedTypes += ezSchema::DATE_TIME['shared'];
+            $allowedTypes += ezSchema::DATE_TIME[$vendor];
+            $allowedTypes += ezSchema::OBJECTS[$vendor];
+            $pattern = "/".\implode('|', $allowedTypes)."/i";
+            foreach($schemas as $types) {
+                if (\is_string($types)) {
+                    if (\preg_match($pattern, $types)) {
+                        $data .= (\strpos($types, ', ') !== false) ? $types : $types.', ';
+                        $skipSchema = true;
+                    }
                 }
             }
+            $schema = $skipSchema ? \rtrim($data, ', ') : $data;
         }
-
-        $schema = $skipSchema ? \rtrim($data, ', ') : $data;
 
         if (! $skipSchema) {
             $schema = $this->schema( ...$schemas);

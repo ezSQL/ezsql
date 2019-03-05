@@ -376,7 +376,7 @@ require_once('ezQuery.php');
 			}
 			
 			echo "<b>Last Rows Returned:</b> ".(count($this->last_result)>0 ? $this->last_result : '')."\n";
-			echo "</font></pre></font></blockquote></td></tr></table>".$this->donation();
+			echo "</font></pre></font></blockquote></td></tr></table>";//.$this->donation()
 			echo "\n<hr size=1 noshade color=dddddd>";
 
 			// Stop output buffering and capture debug HTML
@@ -476,7 +476,7 @@ require_once('ezQuery.php');
 				echo "<font face=arial size=2>No Results</font>";
 			}
 
-			echo "</blockquote></blockquote>".$this->donation()."<hr noshade color=dddddd size=1>";
+			//echo "</blockquote></blockquote>".$this->donation()."<hr noshade color=dddddd size=1>";
 
 			// Stop output buffering and capture debug HTML
 			$html = ob_get_contents();

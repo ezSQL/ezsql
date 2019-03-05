@@ -1,7 +1,7 @@
 <?php
 namespace ezsql;
 
-class DT
+class ezSchema
 {
     const STRINGS = [
         'shared' => ['CHAR', 'VARCHAR', 'TEXT'],
@@ -49,6 +49,8 @@ class DT
         'sqlserver' => []
     ];
 
+    private $arguments = null;
+    
     public static function vendor() 
     {
         $type = null;
@@ -79,19 +81,25 @@ class DT
         return $type;
     }
 	
+	public function __construct( ...$args)
+    {
+        $this->arguments = $args;
+    }
+
 	public function __call($type, $args) 
 	{
-        $vendor = DI::vendor();
+        $vendor = self::vendor();
         if (empty($vendor))
             return false;
 
-        $stringTypes = DT::STRINGS['shared'];
-        $stringTypes += DT::STRINGS[$vendor];
-        $numericTypes = DT::NUMERICS['shared'];
-        $numericTypes += DT::NUMERICS[$vendor];
-        $dateTimeTypes = DT::DATE_TIME['shared'];
-        $dateTimeTypes += DT::DATE_TIME[$vendor];
-        $objectTypes = DT::OBJECTS[$vendor];
+        $args = $this->arguments;
+        $stringTypes = self::STRINGS['shared'];
+        $stringTypes += self::STRINGS[$vendor];
+        $numericTypes = self::NUMERICS['shared'];
+        $numericTypes += self::NUMERICS[$vendor];
+        $dateTimeTypes = self::DATE_TIME['shared'];
+        $dateTimeTypes += self::DATE_TIME[$vendor];
+        $objectTypes = self::OBJECTS[$vendor];
 
         $stringPattern = "/".\implode('|', $stringTypes)."/i";
         $numericPattern = "/".\implode('|', $numericTypes)."/i";
@@ -99,7 +107,6 @@ class DT
         $objectPattern = "/".\implode('|', $objectTypes)."/i";
 		
 		$data = null;
-
 		if (\preg_match($stringPattern, $type)) {
 			// check for string data type
 			$store = !empty($args[0]) ? '('.$args[0].')' : '';
