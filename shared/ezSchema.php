@@ -118,9 +118,9 @@ class ezSchema
 			// check for numeric data type
 			$size = '('.(!empty($args[0]) ? $args[0] : '6').',';
 			$size .= (!empty($args[1]) ? $args[1] : '2').') ';
-			$value = !empty($args[1]) ? $args[1] : '';
-			$options = !empty($args[2]) ? $args[2] : '';
-			$extra = !empty($args[3]) ? ' '.$args[3] : '';
+			$value = !empty($args[2]) ? $args[2] : '';
+			$options = !empty($args[3]) ? $args[3] : '';
+			$extra = !empty($args[4]) ? ' '.$args[4] : '';
 			$data = $type.$size.' '.$value.' '.$options.$extra;
         } elseif (\preg_match($dateTimePattern, $type)) {
 			// check for date time data type
