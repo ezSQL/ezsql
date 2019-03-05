@@ -1,5 +1,6 @@
 <?php
 
+require_once('ezSchema.php');
 require_once('ezFunctions.php');
 require_once('ezQuery.php');
 	/**
