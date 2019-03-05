@@ -592,7 +592,7 @@ class ezQuery implements ezQueryInterface
         foreach($columnDataOptions as $datatype) {
             $column = \array_shift($datatype);
             $type = \array_shift($datatype);
-            $data =  \datatype($type, $datatype);
+            $data =  ezSchema::datatype($type, $datatype);
             if (!empty($data))
                 $columnData .= $column.' '.$data.', ';
         }

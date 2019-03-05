@@ -180,30 +180,9 @@ use ezsql\ezQueryInterface;
         return $datatype;
     }
 
-    function dt($column = null, $type = null, ...$args)
-    {
-        return \data($column, $type, $args);
-    }
-
-    /**
-     * Creates an datatype with given arguments.
-     * 
-     * @param string $type,
-     * @param mixed $size, 
-     * @param mixed $value, 
-     * @param mixed $default
-     * 
-     * @return string
-     */
     function datatype(string $type, ...$args)	
     {
-        $data = new ezSchema( ...$args);
-        return $data->$type();
-    }
-
-	function dType($type, ...$args)	
-    {
-        return \datatype($type, $args);
+        return ezSchema::datatype($type, $args);
     }
 
 	/**

@@ -135,5 +135,21 @@ class ezSchema
         }
 
 		return $data;
-	}
+    }
+
+    /**
+    * Creates an datatype with given arguments.
+    * 
+    * @param string $type,
+    * @param mixed $size, 
+    * @param mixed $value, 
+    * @param mixed $default
+    * 
+    * @return string
+    */
+   public static function datatype(string $type, ...$args)	
+   {
+       $data = new self( ...$args);
+       return $data->$type();
+   }
 } 
