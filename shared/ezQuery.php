@@ -54,24 +54,6 @@ class ezQuery extends ezSchema implements ezQueryInterface
         return false;
     }
 
-    /**
-    * Convert array to string, and attach '`, `' for separation, if none is provided.
-    *
-    * @return string
-    */  
-    private function to_string($arrays, $separation = ',' )  
-    {        
-        if (is_array( $arrays )) {
-            $columns = '';
-            foreach($arrays as $val) {
-                $columns .= $val.$separation.' ';
-            }
-            $columns = rtrim($columns, $separation.' ');
-        } else
-            $columns = $arrays;
-        return $columns;
-    }
-
     public function groupBy($groupBy)
     {
         if (empty($groupBy)) {

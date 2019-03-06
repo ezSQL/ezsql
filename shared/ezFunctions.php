@@ -170,6 +170,11 @@ use ezsql\ezQueryInterface;
         return ezSchema::column($column, $type, ...$args);
     }
 
+    function primary(string $constraintLabel, ...$primaryKeys)
+    {
+        return ezSchema::column(\CONSTRAINT, $constraintLabel, $primaryKeys);
+    }
+
     function datatype(string $type, ...$args)	
     {
         return ezSchema::datatype($type, $args);
