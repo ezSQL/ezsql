@@ -3,7 +3,7 @@
 use ezsql\ezSchema;
 use ezsql\ezQueryInterface;
 
-class ezQuery implements ezQueryInterface
+class ezQuery extends ezSchema implements ezQueryInterface
 { 		
 	protected $select_result = true;
 	protected $prepareActive = false;
@@ -12,10 +12,6 @@ class ezQuery implements ezQueryInterface
     private $isWhere = true;    
     private $isInto = false;
     
-    public function __construct() 
-    {
-    }
-
     public static function clean($string) 
     {
         $patterns = array( // strip out:
@@ -581,67 +577,5 @@ class ezQuery implements ezQueryInterface
                 : $this->query($putToTable." ".$getFromTable) ;
 
 		return $this->clearParameters();      
-    }
-
-    private function schema(array ...$columnDataOptions) 
-    {
-        if (empty($columnDataOptions))
-            return false;
-
-        $columnData = '';
-        foreach($columnDataOptions as $datatype) {
-            $column = \array_shift($datatype);
-            $type = \array_shift($datatype);
-            $data =  ezSchema::datatype($type, $datatype);
-            if (!empty($data))
-                $columnData .= $column.' '.$data.', ';
-        }
-
-        $schemaColumns = !empty($columnData) ? \rtrim($columnData, ', ') : null;
-        if (\is_string($schemaColumns))
-            return $schemaColumns;
-
-        return false;
-    }
-
-    public function create(string $table = null, ...$schemas) 
-    {
-        $vendor = ezSchema::vendor();
-        if (empty($table) || empty($schemas) || empty($vendor))
-            return false;
-
-        $sql = 'CREATE TABLE '.$table.' ( ';
-
-        $skipSchema = false;
-        if (! \is_array($schemas[0])) {
-            $data = '';
-            $allowedTypes = ezSchema::STRINGS['shared'];
-            $allowedTypes += ezSchema::STRINGS[$vendor];
-            $allowedTypes += ezSchema::NUMERICS['shared'];
-            $allowedTypes += ezSchema::NUMERICS[$vendor];
-            $allowedTypes += ezSchema::DATE_TIME['shared'];
-            $allowedTypes += ezSchema::DATE_TIME[$vendor];
-            $allowedTypes += ezSchema::OBJECTS[$vendor];
-            $pattern = "/".\implode('|', $allowedTypes)."/i";
-            foreach($schemas as $types) {
-                if (\is_string($types)) {
-                    if (\preg_match($pattern, $types)) {
-                        $data .= (\strpos($types, ', ') !== false) ? $types : $types.', ';
-                        $skipSchema = true;
-                    }
-                }
-            }
-            $schema = $skipSchema ? \rtrim($data, ', ') : $data;
-        }
-
-        if (! $skipSchema) {
-            $schema = $this->schema( ...$schemas);
-        }
-
-        $createTable = !empty($schema) ? $sql.$schema.' );' : null;
-        if (\is_string($createTable))
-            return $this->query($createTable);
-
-        return false;
     }
 }

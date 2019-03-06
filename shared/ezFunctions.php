@@ -158,26 +158,16 @@ use ezsql\ezQueryInterface;
         
         const NULLS = 'NULL';
         const notNULL = 'NOT NULL';
+
+        const CONSTRAINT = 'CONSTRAINT';
+        const PRIMARY = 'PRIMARY KEY';
 	
         // Global class instances, will be used to create and call methods directly.        
         global $ezInstance;
  
-    /**
-     * Creates an schema array, column, datatype, value/options with the given arguments.
-     * 
-     * @param string $column,
-     * @param string $type,
-     * @param mixed $size, 
-     * @param mixed $value, 
-     * @param mixed $default
-     * 
-     * @return array
-     */
-    function data(string $column = null, string $type = null, ...$args)
+    function column(string $column = null, string $type = null, ...$args)
     {
-        $datatype = array();
-        \array_push($datatype, $column, $type, ...$args);
-        return $datatype;
+        return ezSchema::column($column, $type, ...$args);
     }
 
     function datatype(string $type, ...$args)	
