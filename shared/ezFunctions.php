@@ -161,6 +161,8 @@ use ezsql\ezQueryInterface;
 
         const CONSTRAINT = 'CONSTRAINT';
         const PRIMARY = 'PRIMARY KEY';
+        const FOREIGN = 'FOREIGN KEY';
+        const UNIQUE = 'UNIQUE';
 	
         // Global class instances, will be used to create and call methods directly.        
         global $ezInstance;
@@ -170,14 +172,25 @@ use ezsql\ezQueryInterface;
         return ezSchema::column($column, $type, ...$args);
     }
 
-    function primary(string $constraintLabel, ...$primaryKeys)
+    function primary(string $constraintName, ...$primaryKeys)
     {
-        return ezSchema::column(\CONSTRAINT, $constraintLabel, $primaryKeys);
+        $primary[] = \PRIMARY;
+        $primary += $primaryKeys;
+        return ezSchema::column(\CONSTRAINT, $constraintName, ...$primary);
     }
 
-    function datatype(string $type, ...$args)	
+    function foreign(string $constraintName, ...$foreignKeys)
     {
-        return ezSchema::datatype($type, $args);
+        $foreign[] = \FOREIGN;
+        $foreign += $foreignKeys;
+        return ezSchema::column(\CONSTRAINT, $constraintName, ...$foreignKeys);
+    }
+
+    function unique(string $constraintName, ...$uniqueKeys)
+    {
+        $unique[] = \UNIQUE;
+        $unique += $uniqueKeys;
+        return ezSchema::column(\CONSTRAINT, $constraintName, ...$unique);
     }
 
 	/**

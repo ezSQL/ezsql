@@ -86,9 +86,9 @@ class ezQueryTest extends TestCase {
     {
         $this->assertFalse($this->object->selecting('',''));
 
-       // $this->expectException(\Error::class);
-       // $this->expectExceptionMessageRegExp('/Call to undefined method ezQuery::get_results()/');
-        $this->assertFalse($this->object->selecting('table','columns','WHERE','GROUP BY','HAVING','ORDER BY','LIMIT'));
+        $this->expectException(\Error::class);
+        $this->expectExceptionMessageRegExp('/Call to undefined method ezQuery::get_results()/');
+        $this->assertNotNUll($this->object->selecting('table','columns','WHERE','GROUP BY','HAVING','ORDER BY','LIMIT'));
     }
     
     /**

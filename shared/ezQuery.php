@@ -3,7 +3,7 @@
 use ezsql\ezSchema;
 use ezsql\ezQueryInterface;
 
-class ezQuery extends ezSchema implements ezQueryInterface
+class ezQuery implements ezQueryInterface
 { 		
 	protected $select_result = true;
 	protected $prepareActive = false;
@@ -11,7 +11,11 @@ class ezQuery extends ezSchema implements ezQueryInterface
 	private $fromTable = null;
     private $isWhere = true;    
     private $isInto = false;
-    
+
+    public function __construct()
+    {
+    }
+ 
     public static function clean($string) 
     {
         $patterns = array( // strip out:
@@ -52,6 +56,24 @@ class ezQuery extends ezSchema implements ezQueryInterface
     {
         $this->preparedValues = array();
         return false;
+    }
+
+    /**
+    * Convert array to string, and attach '`, `' for separation, if none is provided.
+    *
+    * @return string
+    */  
+    private static function to_string($arrays, $separation = ',' )  
+    {        
+        if (is_array( $arrays )) {
+            $columns = '';
+            foreach($arrays as $val) {
+                $columns .= $val.$separation.' ';
+            }
+            $columns = rtrim($columns, $separation.' ');
+        } else
+            $columns = $arrays;
+        return $columns;
     }
 
     public function groupBy($groupBy)
@@ -560,4 +582,99 @@ class ezQuery extends ezSchema implements ezQueryInterface
 
 		return $this->clearParameters();      
     }
+    
+    /**
+     * Creates an database schema from array
+     *  - column, datatype, value/options with the given arguments.
+     * 
+     * @return string|bool - SQL schema string, or false for error
+     */
+   private function create_schema(array ...$columnDataOptions) 
+   {
+       if (empty($columnDataOptions))
+           return false;
+
+       $columnData = '';
+       foreach($columnDataOptions as $datatype) {
+           $column = \array_shift($datatype);
+           $type = \array_shift($datatype);
+           if ($column == \CONSTRAINT) {
+               if (empty($datatype[0]) || empty($datatype[1]))
+                    return false;
+               $keyType = \array_shift($datatype);     
+               $columnData .= $column.' '.$type.' '.$keyType.' ('.self::to_string($datatype).'), ';
+           } else {
+               $data = ezSchema::datatype($type, $datatype);
+                if (!empty($data))
+                    $columnData .= $column.' '.$data.', ';
+           }
+       }
+
+       $schemaColumns = !empty($columnData) ? \rtrim($columnData, ', ') : null;
+       if (\is_string($schemaColumns))
+           return $schemaColumns;
+
+       return false;
+   }
+
+   /**
+    * Creates an database table and columns, by either:
+    *  - array( column, datatype, ...value/options arguments ) // calls create_schema() 
+    *  - column( column, datatype, ...value/options arguments ) // returns string
+    *  - primary( primary_key_label, ...primaryKeys) // returns string
+    *  - foreign( foreign_key_label, ...foreignKeys) // returns string
+    *  - unique( unique_key_label, ...uniqueKeys) // returns string
+    * 
+    * @param string $table, - The name of the db table that you wish to create
+    * @param mixed $schemas, - An array of:
+    *
+    * @param string $column|CONSTRAINT, - column name/CONSTRAINT usage for PRIMARY|FOREIGN KEY
+    * @param string $type|$constraintName, - data type for column/primary|foreign constraint name
+    * @param mixed $size|...$primaryForeignKeys, 
+    * @param mixed $value, - column should be NULL or NOT NULL. If omitted, assumes NULL
+    * @param mixed $default - Optional. It is the value to assign to the column
+    * 
+    * @return mixed results of query() call
+    */
+   public function create(string $table = null, ...$schemas) 
+   {
+        $vendor = ezSchema::vendor();
+        if (empty($table) || empty($schemas) || empty($vendor))
+           return false;
+
+        $sql = 'CREATE TABLE '.$table.' ( ';
+
+        $skipSchema = false;
+        if (\is_string($schemas[0])) {
+            $data = '';
+            $allowedTypes = ezSchema::STRINGS['shared'];
+            $allowedTypes += ezSchema::STRINGS[$vendor];
+            $allowedTypes += ezSchema::NUMERICS['shared'];
+            $allowedTypes += ezSchema::NUMERICS[$vendor];
+            $allowedTypes += ezSchema::NUMBERS['shared'];
+            $allowedTypes += ezSchema::NUMBERS[$vendor];
+            $allowedTypes += ezSchema::DATE_TIME['shared'];
+            $allowedTypes += ezSchema::DATE_TIME[$vendor];
+            $allowedTypes += ezSchema::OBJECTS[$vendor];
+            $allowedTypes += ezSchema::OPTIONS;
+            $pattern = "/".\implode('|', $allowedTypes)."/i";
+            foreach($schemas as $types) {
+                if (\preg_match($pattern, $types)) {
+                    $data .= $types;
+                    $skipSchema = true;
+                }
+            }
+            $schema = $skipSchema ? \rtrim($data, ', ') : $data;
+        }
+
+        if (! $skipSchema) {
+            $schema = $this->create_schema( ...$schemas);
+        }
+
+        $createTable = !empty($schema) ? $sql.$schema.' );' : null;
+        if (\is_string($createTable))
+            return $this->query($createTable);
+
+        return false;
+   }
 }

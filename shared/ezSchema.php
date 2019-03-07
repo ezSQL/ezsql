@@ -50,39 +50,9 @@ class ezSchema
         'sqlserver' => []
     ];
 
-    const OPTIONS  = ['CONSTRAINT', 'PRIMARY KEY'];
+    const OPTIONS  = ['CONSTRAINT', 'PRIMARY KEY', 'FOREIGN KEY', 'UNIQUE'];
 
     private $arguments = null;
-    
-    public static function vendor() 
-    {
-        $type = null;
-        $dbSqlite = $GLOBALS['db_sqlite'];
-        $dbPgsql = $GLOBALS['db_pgsql'];
-        $dbMysqli = $GLOBALS['db_mysqli'];
-        $dbMssql = $GLOBALS['db_mssql'];
-        $dbPdo = $GLOBALS['db_pdo'];
-        if ($dbSqlite === \getInstance() && !empty($dbSqlite))
-            $type = 'sqlite3';
-        elseif ($dbPgsql === \getInstance() && !empty($dbPgsql)) 
-            $type = 'postgresql';
-        elseif ($dbMysqli === \getInstance() && !empty($dbMysqli))
-            $type = 'mysql';
-        elseif ($dbMssql === \getInstance() && !empty($dbMssql))
-            $type = 'sqlserver';
-        elseif ($dbPdo === \getInstance() && !empty($dbPdo)) {
-            if (strpos($dbPdo->getAttribute(\PDO::ATTR_CLIENT_VERSION), 'mysql') !== false) 
-                $type = 'mysql';
-            elseif (strpos($dbPdo->getAttribute(\PDO::ATTR_CLIENT_VERSION), 'pgsql') !== false) 
-                $type = 'postgresql';
-            elseif (strpos($dbPdo->getAttribute(\PDO::ATTR_CLIENT_VERSION), 'sqlite') !== false) 
-                $type = 'sqlite3';
-            elseif (strpos($dbPdo->getAttribute(\PDO::ATTR_CLIENT_VERSION), 'sqlsrv') !== false) 
-                $type = 'sqlserver';
-        }
-
-        return $type;
-    }
 	
 	public function __construct( ...$args)
     {
@@ -154,31 +124,43 @@ class ezSchema
 		return $data;
     }
 
-    /**
-    * Convert array to string, and attach '`, `' for separation, if none is provided.
-    *
-    * @return string
-    */  
-    private static function to_string($arrays, $separation = ',' )  
-    {        
-        if (is_array( $arrays )) {
-            $columns = '';
-            foreach($arrays as $val) {
-                $columns .= $val.$separation.' ';
-            }
-            $columns = rtrim($columns, $separation.' ');
-        } else
-            $columns = $arrays;
-        return $columns;
+    public static function vendor() 
+    {
+        $type = null;
+        $dbSqlite = $GLOBALS['db_sqlite'];
+        $dbPgsql = $GLOBALS['db_pgsql'];
+        $dbMysqli = $GLOBALS['db_mysqli'];
+        $dbMssql = $GLOBALS['db_mssql'];
+        $dbPdo = $GLOBALS['db_pdo'];
+        if ($dbSqlite === \getInstance() && !empty($dbSqlite))
+            $type = 'sqlite3';
+        elseif ($dbPgsql === \getInstance() && !empty($dbPgsql)) 
+            $type = 'postgresql';
+        elseif ($dbMysqli === \getInstance() && !empty($dbMysqli))
+            $type = 'mysql';
+        elseif ($dbMssql === \getInstance() && !empty($dbMssql))
+            $type = 'sqlserver';
+        elseif ($dbPdo === \getInstance() && !empty($dbPdo)) {
+            if (strpos($dbPdo->getAttribute(\PDO::ATTR_CLIENT_VERSION), 'mysql') !== false) 
+                $type = 'mysql';
+            elseif (strpos($dbPdo->getAttribute(\PDO::ATTR_CLIENT_VERSION), 'pgsql') !== false) 
+                $type = 'postgresql';
+            elseif (strpos($dbPdo->getAttribute(\PDO::ATTR_CLIENT_VERSION), 'sqlite') !== false) 
+                $type = 'sqlite3';
+            elseif (strpos($dbPdo->getAttribute(\PDO::ATTR_CLIENT_VERSION), 'sqlsrv') !== false) 
+                $type = 'sqlserver';
+        }
+
+        return $type;
     }
 
     /**
      * Creates an database column, 
      * - column, datatype, value/options with the given arguments.
      * 
-     * @param string $column, - or CONSTRAINT,
-     * @param string $type, - data type for the column
-     * @param mixed $size, 
+     * @param string $column|CONSTRAINT, - column name/CONSTRAINT usage for PRIMARY|FOREIGN KEY
+     * @param string $type|$constraintName, - data type for column/primary|foreign constraint name
+     * @param mixed $size|...$primaryForeignKeys, 
      * @param mixed $value, - column should be NULL or NOT NULL. If omitted, assumes NULL
      * @param mixed $default - Optional. It is the value to assign to the column
      * 
@@ -191,9 +173,10 @@ class ezSchema
 
         $columnData = '';
         if ($column == \CONSTRAINT) {
-            if (empty($args[0]))
+            if (empty($args[0]) || empty($args[1]))
                  return false;
-            $columnData = $column.' '.$type.' '.\PRIMARY.' ('.self::to_string($args).'), ';
+            $keyType = \array_shift($args);     
+            $columnData .= $column.' '.$type.' '.$keyType.' ('.ezQuery::to_string($args).'), ';
         } else {
             $data = self::datatype($type, $args);
             if (!empty($data))
@@ -221,102 +204,5 @@ class ezSchema
    {
        $data = new self( ...$args);
        return $data->$type();
-   }
-
-    /**
-     * Creates an database schema from array
-     *  - column, datatype, value/options with the given arguments.
-     * 
-     * @param string $column,
-     * @param string $type,
-     * @param mixed $size, 
-     * @param mixed $value, 
-     * @param mixed $default
-     * 
-     * @return string|bool - SQL schema string, or false for error
-     */
-   private function create_schema(array ...$columnDataOptions) 
-   {
-       if (empty($columnDataOptions))
-           return false;
-
-       $columnData = '';
-       foreach($columnDataOptions as $datatype) {
-           $column = \array_shift($datatype);
-           $type = \array_shift($datatype);
-           if ($column == \CONSTRAINT) {
-               if (empty($datatype[0]))
-                    return false;
-               $columnData .= $column.' '.$type.' '.\PRIMARY.' ('.self::to_string($datatype).'), ';
-           } else {
-               $data = self::datatype($type, $datatype);
-                if (!empty($data))
-                    $columnData .= $column.' '.$data.', ';
-           }
-       }
-
-       $schemaColumns = !empty($columnData) ? \rtrim($columnData, ', ') : null;
-       if (\is_string($schemaColumns))
-           return $schemaColumns;
-
-       return false;
-   }
-
-   /**
-    * Creates an database table and columns, by either:
-    *  - array( column, datatype, ...value/options arguments ) // calls create_schema() 
-    *  - column( column, datatype, ...value/options arguments ) // returns string
-    * 
-    * @param string $table, - The name of the db table that you wish to create
-    * @param mixed $schemas, - An array of:
-    *
-    * @param string $column, - or CONSTRAINT,
-    * @param string $type, - data type for the column
-    * @param mixed $size, 
-    * @param mixed $value, - column should be NULL or NOT NULL. If omitted, assumes NULL
-    * @param mixed $default - Optional. It is the value to assign to the column
-    * 
-    * @return mixed results of query() call
-    */
-   public function create(string $table = null, ...$schemas) 
-   {
-        $vendor = self::vendor();
-        if (empty($table) || empty($schemas) || empty($vendor))
-           return false;
-
-        $sql = 'CREATE TABLE '.$table.' ( ';
-
-        $skipSchema = false;
-        if (\is_string($schemas[0])) {
-            $data = '';
-            $allowedTypes = self::STRINGS['shared'];
-            $allowedTypes += self::STRINGS[$vendor];
-            $allowedTypes += self::NUMERICS['shared'];
-            $allowedTypes += self::NUMERICS[$vendor];
-            $allowedTypes += self::NUMBERS['shared'];
-            $allowedTypes += self::NUMBERS[$vendor];
-            $allowedTypes += self::DATE_TIME['shared'];
-            $allowedTypes += self::DATE_TIME[$vendor];
-            $allowedTypes += self::OBJECTS[$vendor];
-            $allowedTypes += self::OPTIONS;
-            $pattern = "/".\implode('|', $allowedTypes)."/i";
-            foreach($schemas as $types) {
-                if (\preg_match($pattern, $types)) {
-                    $data .= $types;
-                    $skipSchema = true;
-                }
-            }
-            $schema = $skipSchema ? \rtrim($data, ', ') : $data;
-        }
-
-        if (! $skipSchema) {
-            $schema = $this->create_schema( ...$schemas);
-        }
-
-        $createTable = !empty($schema) ? $sql.$schema.' );' : null;
-        if (\is_string($createTable))
-            return $this->query($createTable);
-
-        return false;
    }
 } 
