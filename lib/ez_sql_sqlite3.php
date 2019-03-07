@@ -50,8 +50,8 @@
 				$this->connect($dbpath, $dbname);
 			}
             
-            global $_ezSqlite3;
-            $_ezSqlite3 = $this;
+			$GLOBALS['db_sqlite'] = $this;
+			\setQuery($this);
 		}
 
 		/**********************************************************************
@@ -174,7 +174,7 @@
 		function query($query, $use_prepare=false)
         {
             if ($use_prepare)
-                $param = &$this->getParamaters();
+                $param = &$this->getParameters();
             
 			// check for ezQuery placeholder tag and replace tags with proper prepare tag
 			$query = str_replace(_TAG, '?', $query);
@@ -189,15 +189,15 @@
 			$this->flush();
 
 			// Log how the function was called
-			$this->func_call = "\$db->query(\"$query\")";
+			$this->log_query("\$db->query(\"$query\")");
 
 			// Keep track of the last query for debug..
 			$this->last_query = $query;
 
 			// Perform the query via std SQLite3 query or SQLite3 prepare function..
-            if (!empty($param) && is_array($param) && ($this->getPrepare())) {
+            if (!empty($param) && is_array($param) && ($this->isPrepareActive())) {
                 $this->result = $this->query_prepared($query, $param);	
-				$this->setParamaters();
+				$this->clearParameters();
             } else 
                 $this->result = $this->dbh->query($query);
 			$this->count(true, true);
@@ -261,7 +261,7 @@
 			
 			}
             
-            if (($param) && is_array($param) && ($this->getPrepare()))
+            if (($param) && is_array($param) && ($this->isPrepareActive()))
                 $this->result->finalize(); 
 
 			// If debug ALL queries

@@ -1,7 +1,7 @@
 {
-    "name": "dba/ezsql-3",
+    "name": "ezsql/ezsql",
     "description": "Advance database access layer PHP 5.6+ class. Make interacting with a database ridiculously easy.",
-    "keywords": ["mysqli","postgres","msserver","pdo","sqlite","database","abstraction","dba"],
+    "keywords": ["mysqli","postgres","mssql","pdo","sqlite","database","abstraction","dba"],
     "license": "LGPL-3.0-or-later",
     "authors": [
         {
@@ -33,10 +33,10 @@
         "files": ["ez_sql_loader.php"]
     },
     "require-dev": {
-        "phpunit/phpunit": ">5.7.0"
+        "phpunit/phpunit": ">5.7.0",
+        "php-coveralls/php-coveralls": "^2.1"
     },
     "scripts": {
         "test": "phpunit --bootstrap vendor/autoload.php tests"
     }
 }
-

@@ -12,6 +12,7 @@
  * @license FREE / Donation (LGPL - You may do what you like with ezSQL - no exceptions.)
  *
  */
+
 class ezSQL_mysqli extends ezSQLcore
 {
     /*
@@ -77,7 +78,7 @@ class ezSQL_mysqli extends ezSQLcore
      */
     public $dbh;
     
-	protected $preparedvalues = array();
+	protected $preparedvalues = [];
 	
     /**
      * Constructor - allow the user to perform a quick connect at the same time
@@ -109,8 +110,9 @@ class ezSQL_mysqli extends ezSQLcore
             $this->_charset = strtolower(str_replace('-', '', $charset));
         }
         
-        global $_ezMysqli;
-        $_ezMysqli = $this;
+        $GLOBALS['db_mysql'] = $this;        
+        $GLOBALS['db_mysqli'] = $this;
+        \setQuery($this);
     } // __construct
 
     /**
@@ -333,7 +335,7 @@ class ezSQL_mysqli extends ezSQLcore
         $stmt->free_result();
         $stmt->close();
         
-        $this->setParamaters();
+        $this->clearParameters();
         
         return $result;
     }
@@ -345,8 +347,9 @@ class ezSQL_mysqli extends ezSQLcore
      * @return boolean
      */
     public function query($query, $use_prepare=false) {
+        $param = [];
         if ($use_prepare)
-            $param = &$this->getParamaters();
+            $param = $this->getParameters();
         
 		// check for ezQuery placeholder tag and replace tags with proper prepare tag
 		$query = str_replace(_TAG, '?', $query);
@@ -361,7 +364,7 @@ class ezSQL_mysqli extends ezSQLcore
         $query = trim($query);
 
         // Log how the function was called
-        $this->func_call = "\$db->query(\"$query\")";
+        $this->log_query("\$db->query(\"$query\")");
 
         // Keep track of the last query for debug..
         $this->last_query = $query;
@@ -381,7 +384,7 @@ class ezSQL_mysqli extends ezSQLcore
         }
 
         // Perform the query via std mysql_query function..
-		if (!empty($param) && is_array($param) && ($this->getPrepare()))		
+		if (!empty($param) && is_array($param) && ($this->isPrepareActive()))		
 			return $this->query_prepared($query, $param);
 		else 
 			$this->_result = mysqli_query($this->dbh, $query);

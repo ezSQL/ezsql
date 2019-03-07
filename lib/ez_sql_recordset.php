@@ -9,7 +9,7 @@
  * @license FREE / Donation (LGPL - You may do what you like with ezSQL - no exceptions.)
  *
  */
-class ezSQL_recordset implements Iterator
+class ezSQL_recordset implements \Iterator
 {
     /**
      * Returns the result as array
@@ -63,8 +63,8 @@ class ezSQL_recordset implements Iterator
         $this->_recordset = $ezSQL_queryresult;
         $this->position = 0;
         
-        global $_ezRecordset;
-        $_ezRecordset = $this;
+        $GLOBALS['db_recordset'] = $this;
+        \setQuery($this);
     } // __construct
 
     /**

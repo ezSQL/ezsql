@@ -24,7 +24,11 @@
  * This software consists of voluntary contributions made by many individuals
  * and is licensed under the MIT license.
  */
- 
+
+use ezsql\ezSchema;
+use ezsql\ezQuery;
+use ezsql\ezQueryInterface;
+
 	// ezQuery prepare placeholder/positional tag
 		const _TAG = '__ez__';
     // Use to set get_result output as json 
@@ -40,6 +44,7 @@
 		const LTE = '<=';
 		const GT  = '>';
 		const GTE = '>=';
+        const _BOOLEAN = ['<', '>', '=', '!=', '>=', '<=', '<>'];
     
 		const _IN = 'IN';
 		const _notIN = 'NOT IN';
@@ -49,7 +54,9 @@
 		const _notBETWEEN = 'NOT BETWEEN';
         
 		const _isNULL = 'IS NULL';
-		const _notNULL  = 'IS NOT NULL';
+        const _notNULL  = 'IS NOT NULL';
+        const _BOOLEAN_OPERATORS = ['<', '>', '=', '!=', '>=', '<=', '<>', 
+            'IN', 'LIKE', 'NOT LIKE', 'BETWEEN', 'NOT BETWEEN', 'IS', 'IS NOT'];
     
     /*
      * Combine operators .
@@ -57,35 +64,153 @@
 		const _AND = 'AND';
 		const _OR = 'OR';
 		const _NOT = 'NOT';
-		const _andNOT = 'AND NOT'; 
-                
-        // Global class instances, will be used to create and call methods directly.
-        $_ezQuery = null;
-       // $_ezCubrid = null;
-        $_ezMysqli = null;
-       // $_ezOracle8_9 = null;
-       // $_ezOracleTNS = null;
-        $_ezPdo = null;
-        $_ezPostgresql = null;
-        $_ezRecordset = null;
-        $_ezSqlite3 = null;
-        $_ezSqlsrv = null;
+        const _andNOT = 'AND NOT'; 
+        const _COMBINERS = ['AND', 'OR', 'NOT', 'AND NOT'];
+
+    /*
+     * for joining shortcut methods.
+     */    
+		const _INNER = 'INNER';
+		const _LEFT = 'LEFT';
+		const _RIGHT = 'RIGHT';
+        const _FULL = 'FULL'; 
+        const _JOINERS = ['INNER', 'LEFT', 'RIGHT', 'FULL']; 
+        
+        /**
+        * Associative array of supported SQL Drivers, and library
+        * @define(array)
+        */
+        const VENDOR = [
+            'mysql' => 'ez_mysqli',
+            'mysqli' => 'ez_mysqli',
+            'pdo' => 'ez_pdo',
+            'postgresql' => 'ez_pgsql',
+            'pgsql' => 'ez_pgsql',
+            'sqlite' => 'ez_sqlite3',
+            'sqlite3' => 'ez_sqlite3',
+            'sqlserver' => 'ez_sqlsrv',
+            'mssql' => 'ez_sqlsrv',
+            'sqlsrv' => 'ez_sqlsrv'
+        ];
+
+        // String SQL data types
+        const CHAR = 'CHAR';
+        const VARC = 'VARCHAR';
+        const VARCHAR = 'VARCHAR';
+        const TEXT = 'TEXT';
+        const TINY = 'TINYTEXT';
+        const TINYTEXT = 'TINYTEXT';
+        const MEDIUM = 'MEDIUMTEXT';
+        const MEDIUMTEXT = 'MEDIUMTEXT';
+        const LONG = 'LONGTEXT';
+        const LONGTEXT = 'LONGTEXT';
+        const BINARY = 'BINARY';
+        const VARBINARY = 'VARBINARY';
+        const NCHAR = 'NCHAR';
+        const NVAR = 'NVARCHAR';
+        const NVARCHAR = 'NVARCHAR';
+        const NTEXT = 'NTEXT';
+        const IMAGE = 'IMAGE';
+        const CLOB = 'CLOB';
+        
+        // Numeric SQL data types
+        const INTS = 'INT';
+        const INT2 = 'INT2';
+        const INT4 = 'INT4';
+        const INT8 = 'INT8';
+        const NUMERIC = 'NUMERIC';
+        const DECIMAL = 'DECIMAL';
+        const BIT = 'BIT';
+        const VARBIT = 'VARBIT';
+        const INTEGERS = 'INTEGER';
+        const TINYINT = 'TINYINT';
+        const SMALLINT = 'SMALLINT';
+        const MEDIUMINT = 'MEDIUMINT';
+        const LARGE = 'BIGINT';
+        const BIGINT = 'BIGINT';
+        const DEC = 'DEC';
+        const FIXED = 'FIXED';
+        const FLOATS = 'FLOAT';
+        const DOUBLES = 'DOUBLE';
+        const REALS = 'REAL';
+        const BOOLS = 'BOOL';
+        const BOOLEANS = 'BOOLEAN';
+        const SMALLMONEY = 'SMALLMONEY';
+        const MONEY = 'MONEY';
+        const SMALLSERIAL = 'SMALLSERIAL';
+        const SERIAL = 'SERIAL';
+        const BIGSERIAL = 'BIGSERIAL';
+        
+        // Date/Time SQL data types	
+        const DATES = 'DATE';
+        const TIMESTAMP = 'TIMESTAMP';
+        const TIMES = 'TIME';
+        const DATETIME = 'DATETIME';
+        const YEAR = 'YEAR';
+        const DATETIME2 = 'DATETIME2';
+        const SMALLDATETIME = 'SMALLDATETIME';
+        const DATETIMEOFFSET = 'DATETIMEOFFSET';
+        
+        // Large Object SQL data types
+        const TINYBLOB = 'TINYBLOB';
+        const BLOB = 'BLOB';
+        const MEDIUMBLOB = 'MEDIUMBLOB';
+        
+        const NULLS = 'NULL';
+        const notNULL = 'NOT NULL';
+
+        const CONSTRAINT = 'CONSTRAINT';
+        const PRIMARY = 'PRIMARY KEY';
+        const FOREIGN = 'FOREIGN KEY';
+        const UNIQUE = 'UNIQUE';
+	
+        // Global class instances, will be used to create and call methods directly.        
+        global $ezInstance;
  
-	/**********************************************************************
-     * Creates an array from expressions in the following formate
-     * param:  strings @x,        The left expression.
-     *                 @operator, One of '<', '>', '=', '!=', '>=', '<=', '<>', 'IN',, 'NOT IN', 'LIKE', 
-     *                              'NOT LIKE', 'BETWEEN', 'NOT BETWEEN', 'IS', 'IS NOT', or  the constants above.
-     *                 @y,        The right expression.
-     *                 @and,        combine additional expressions with,  'AND','OR', 'NOT', 'AND NOT'.
-     *                 @args          for any extras
+    function column(string $column = null, string $type = null, ...$args)
+    {
+        return ezSchema::column($column, $type, ...$args);
+    }
+
+    function primary(string $constraintName, ...$primaryKeys)
+    {
+        $primary[] = \PRIMARY;
+        $primary += $primaryKeys;
+        return ezSchema::column(\CONSTRAINT, $constraintName, ...$primary);
+    }
+
+    function foreign(string $constraintName, ...$foreignKeys)
+    {
+        $foreign[] = \FOREIGN;
+        $foreign += $foreignKeys;
+        return ezSchema::column(\CONSTRAINT, $constraintName, ...$foreignKeys);
+    }
+
+    function unique(string $constraintName, ...$uniqueKeys)
+    {
+        $unique[] = \UNIQUE;
+        $unique += $uniqueKeys;
+        return ezSchema::column(\CONSTRAINT, $constraintName, ...$unique);
+    }
+
+	/**
+     * Creates an array from expressions in the following format
+     * @param  strings $x,  - The left expression.
+     * @param  strings $operator,   - One of 
+     *      '<', '>', '=', '!=', '>=', '<=', '<>', 'IN',, 'NOT IN', 'LIKE', 
+     *      'NOT LIKE', 'BETWEEN', 'NOT BETWEEN', 'IS', 'IS NOT', or  the constants above.
+     * 
+     * @param  strings $y,  - The right expression.
+     * @param  strings $and,    - combine additional expressions with,  'AND','OR', 'NOT', 'AND NOT'.
+     * @param  strings $args    - for any extras
      *
      * function comparison($x, $operator, $y, $and=null, ...$args)
      *  {
      *          return array($x, $operator, $y, $and, ...$args);
-     * }    
-     * @returns: array
-     ***********************************************************************/
+     * }
+     * 
+     * @return array
+     */
     
     /**
      * Creates an equality comparison expression with the given arguments.
@@ -238,108 +363,202 @@
     }
     
     /**
-       * desc: Using global class instances, setup functions to call class methods directly.
-       * param: @ezSQL - string, representing class  'cubrid', 'mysqli', 'oracle8_9', 'oracletns', 'pdo', 'postgresql', 'recordset', 'sqlite3', 'sqlsrv'
-       * returns: boolean - true, or false for error
-       */
-    function setQuery($ezSQL='') {
-        global $_ezQuery, $_ezMysqli;// $_ezCubrid, $_ezOracle8_9, $_ezOracleTNS; 'recordset' ,'oracle8_9', 'oracletns',
-        global $_ezPdo, $_ezPostgresql, $_ezRecordset, $_ezSqlite3, $_ezSqlsrv;
-        if (in_array(strtolower($ezSQL), array( 'cubrid', 'mysqli', 'pdo', 'postgresql', 'sqlite3', 'sqlsrv' ))) {
-            switch(strtolower($ezSQL)) {
-            //    case 'cubrid':
-            //        $_ezQuery = $_ezCubrid;
-            //        break;
-                case 'mysqli':
-                    $_ezQuery = $_ezMysqli;
-                    break;
-            //    case 'oracle8_9':
-            //        $_ezQuery = $_ezOracle8_9;
-            //        break;
-            //    case 'oracletns':
-            //        $_ezQuery = $_ezOracleTNS;
-            //        break;
-                case 'pdo':
-                    $_ezQuery = $_ezPdo;
-                    break;
-                case 'postgresql':
-                    $_ezQuery = $_ezPostgresql;
-                    break;
-                case 'recordset':
-                    $_ezQuery = $_ezRecordset;
-                    break;
-                case 'sqlite3':
-                    $_ezQuery = $_ezSqlite3;
-                    break;
-                case 'sqlsrv':
-                    $_ezQuery = $_ezSqlsrv;
-                    break;                    
-            }
-            return (!empty($_ezQuery)) ? true: false;            
-        } else {
-			$_ezQuery = null;
-            unset($_ezQuery);
-            return false;            
+    * Using global class instances, setup functions to call class methods directly.
+    *
+    * @param string| object $ezSQL - representing class 
+    *   'mysql', 'mysqli', 'pdo', 'postgres', 'sqlite3', 'sqlsrv'
+    *
+    * @return boolean - true, or false for error
+    */
+    function setQuery($ezSQL = '') {
+        global $ezInstance;
+        $status = false;
+
+        if ($ezSQL instanceOf ezQueryInterface) {
+			$ezInstance = $ezSQL;
+			$status = true;
+		} elseif (array_key_exists(strtolower($ezSQL), VENDOR)) {
+            if (!empty($GLOBALS['db_'.strtolower($ezSQL)]))
+                $ezInstance = $GLOBALS['db_'.strtolower($ezSQL)];
+            $status = !empty($ezInstance);            
+        } elseif (!empty($GLOBALS['ezInstance'])) {
+            unset($GLOBALS['ezInstance']);
         }
-    }     
+
+        return $status;
+    }
     
-    function select($table='', $columns='*', ...$args) {
-        global $_ezQuery;
-        return ($_ezQuery) ? $_ezQuery->selecting($table, $columns, ...$args) : false;
+    function setInstance($ezSQL = '') {
+        return \setQuery($ezSQL);
+    }
+
+    function getInstance() {
+        global $ezInstance;
+
+        return $ezInstance;
+    }
+   
+    function cleanInput($string) {
+        return ezQuery::clean($string);
+    } 
+
+    function select($table = '', $columns = '*', ...$args) {
+        $ezQuery = \getInstance();
+        return ($ezQuery instanceOf ezQueryInterface) 
+            ? $ezQuery->selecting($table, $columns, ...$args) 
+            : false;
     } 
     
-    function select_into($newtable, $fromcolumns='*', $oldtable=null, ...$args) {
-        global $_ezQuery;
-        return ($_ezQuery) ? $_ezQuery->select_into($newtable, $fromcolumns, $oldtable, ...$args) : false;
+    function select_into($table, $columns = '*', $old = null, ...$args) {
+        $ezQuery = \getInstance();
+        return ($ezQuery instanceOf ezQueryInterface) 
+            ? $ezQuery->select_into($table, $columns, $old, ...$args) 
+            : false;
     } 
     
-    function insert_select($totable='', $tocolumns='*', $fromtable, $fromcolumns='*', ...$args) {
-        global $_ezQuery;
-        return ($_ezQuery) ? $_ezQuery->insert_select($totable, $tocolumns, $fromtable, $fromcolumns, ...$args) : false;
+    function insert_select($totable = '', $columns = '*', $fromTable, $from = '*', ...$args) {
+        $ezQuery = \getInstance();
+        return ($ezQuery instanceOf ezQueryInterface) 
+            ? $ezQuery->insert_select($totable, $columns, $fromTable, $from, ...$args) 
+            : false;
     }     
     
-    function create_select($newtable, $fromcolumns, $oldtable=null, ...$args) {
-        global $_ezQuery;
-        return ($_ezQuery) ? $_ezQuery->create_select($newtable, $fromcolumns, $oldtable, ...$args) : false;
+    function create_select($table, $from, $old = null, ...$args) {
+        $ezQuery = \getInstance();
+        return ($ezQuery instanceOf ezQueryInterface) 
+            ? $ezQuery->create_select($table, $from, $old, ...$args) 
+            : false;
     }  
     
     function where( ...$args) {
-        global $_ezQuery;
-        return ($_ezQuery) ? $_ezQuery->where( ...$args) : false;
+        $ezQuery = \getInstance();
+        return ($ezQuery instanceOf ezQueryInterface) 
+            ? $ezQuery->where( ...$args) 
+            : false;
     } 
     
     function groupBy($groupBy) {
-        global $_ezQuery;
-        return ($_ezQuery) ? $_ezQuery->groupBy($groupBy) : false;
+        $ezQuery = \getInstance();
+        return ($ezQuery instanceOf ezQueryInterface) 
+            ? $ezQuery->groupBy($groupBy) 
+            : false;
     } 
     
     function having( ...$args) {
-        global $_ezQuery;
-        return ($_ezQuery) ? $_ezQuery->having( ...$args) : false;
+        $ezQuery = \getInstance();
+        return ($ezQuery instanceOf ezQueryInterface) 
+            ? $ezQuery->having( ...$args) 
+            : false;
     }
-    
+
+    function innerJoin(
+        $leftTable = '',
+        $rightTable = '', 
+        $leftColumn = null, 
+        $rightColumn = null, 
+        $condition = \EQ
+    ) {
+        $ezQuery = \getInstance();
+        return ($ezQuery instanceOf ezQueryInterface) 
+            ? $ezQuery->innerJoin($leftTable, $rightTable, $leftColumn, $rightColumn, $condition) 
+            : false;
+    }
+
+    function leftJoin(
+        $leftTable = '',
+        $rightTable = '', 
+        $leftColumn = null, 
+        $rightColumn = null, 
+        $condition = \EQ
+    ) {
+        $ezQuery = \getInstance();
+        return ($ezQuery instanceOf ezQueryInterface) 
+            ? $ezQuery->leftJoin($leftTable, $rightTable, $leftColumn, $rightColumn, $condition) 
+            : false;
+    }
+
+    function rightJoin(
+        $leftTable = '',
+        $rightTable = '', 
+        $leftColumn = null, 
+        $rightColumn = null, 
+        $condition = \EQ
+    ) {
+        $ezQuery = \getInstance();
+        return ($ezQuery instanceOf ezQueryInterface) 
+            ? $ezQuery->rightJoin($leftTable, $rightTable, $leftColumn, $rightColumn, $condition) 
+            : false;
+    }
+
+    function fullJoin(
+        $leftTable = '',
+        $rightTable = '', 
+        $leftColumn = null, 
+        $rightColumn = null, 
+        $condition = \EQ
+    ) {
+        $ezQuery = \getInstance();
+        return ($ezQuery instanceOf ezQueryInterface) 
+            ? $ezQuery->fullJoin($leftTable, $rightTable, $leftColumn, $rightColumn, $condition) 
+            : false;
+    }
+
+    function union($table = '', $columnFields = '*', ...$conditions) {
+        $ezQuery = \getInstance();
+        return ($ezQuery instanceOf ezQueryInterface) 
+            ? $ezQuery->union($table, $columnFields, ...$conditions) 
+            : false;
+    } 
+
+    function unionAll($table = '', $columnFields = '*', ...$conditions) {
+        $ezQuery = \getInstance();
+        return ($ezQuery instanceOf ezQueryInterface) 
+            ? $ezQuery->unionAll($table, $columnFields, ...$conditions) 
+            : false;
+    } 
+
     function orderBy($orderBy, $order) {
-        global $_ezQuery;
-        return ($_ezQuery) ? $_ezQuery->orderBy($orderBy, $order) : false;
+        $ezQuery = \getInstance();
+        return ($ezQuery instanceOf ezQueryInterface) 
+            ? $ezQuery->orderBy($orderBy, $order) 
+            : false;
+    } 
+
+    function limit($numberOf, $offset = null) {
+        $ezQuery = \getInstance();
+        return ($ezQuery instanceOf ezQueryInterface) 
+            ? $ezQuery->limit($numberOf, $offset) 
+            : false;
     } 
     
-    function insert($table='', $keyvalue) {
-        global $_ezQuery;
-        return ($_ezQuery) ? $_ezQuery->insert($table, $keyvalue) : false;
+    function insert($table = '', $keyValue) {
+        $ezQuery = \getInstance();
+        return ($ezQuery instanceOf ezQueryInterface) 
+            ? $ezQuery->insert($table, $keyValue) 
+            : false;
     } 
     
-    function update($table='', $keyvalue, ...$args) {
-        global $_ezQuery;
-        return ($_ezQuery) ? $_ezQuery->update($table, $keyvalue, ...$args) : false;
+    function update($table = '', $keyValue, ...$args) {
+        $ezQuery = \getInstance();
+        return ($ezQuery instanceOf ezQueryInterface) 
+            ? $ezQuery->update($table, $keyValue, ...$args) 
+            : false;
     } 
     
-    function delete($table='', ...$args) {
-        global $_ezQuery;
-        return ($_ezQuery) ? $_ezQuery->delete($table, ...$args) : false;
+    function delete($table = '', ...$args) {
+        $ezQuery = \getInstance();
+        return ($ezQuery instanceOf ezQueryInterface) 
+            ? $ezQuery->delete($table, ...$args) 
+            : false;
     } 
         
-    function replace($table='', $keyvalue) {
-        global $_ezQuery;
-        return ($_ezQuery) ? $_ezQuery->replace($table, $keyvalue) : false;
+    function replace($table = '', $keyValue) {
+        $ezQuery = \getInstance();
+        return ($ezQuery instanceOf ezQueryInterface) 
+            ? $ezQuery->replace($table, $keyValue) 
+            : false;
     }  
 
+    function ezFunctions() {
+        return true;
+    }

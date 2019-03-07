@@ -12,7 +12,8 @@
           * @package ezSQL
           * @license FREE / Donation (LGPL - You may do what you like with ezSQL - no exceptions.)
           *
-          */
+		  */
+
 	class ezSQL_postgresql extends ezSQLcore
 	{
 		
@@ -76,8 +77,8 @@
 		protected $preparedvalues = array();
 
 		/**
-		* Constructor - allow the user to perform a qucik connect at the same time
-		* as initialising the ezSQL_postgresql class
+		* Constructor - allow the user to perform a quick connect at the same time
+		* as initializing the ezSQL_postgresql class
 		*
 		* @param string $dbuser The database user name
 		* @param string $dbpassword The database users password
@@ -103,8 +104,9 @@
 			$this->_dbhost = $dbhost;
 			$this->_dbport = $dbport;
             
-            global $_ezPostgresql;
-            $_ezPostgresql = $this;
+			$GLOBALS['db_pgsql'] = $this;
+			$GLOBALS['db_postgres'] = $this;
+			\setQuery($this);
 		} // __construct
 
 		/**
@@ -224,11 +226,12 @@
 
 		function query($query, $use_prepare=false)
 		{
+			$param = [];
             if ($use_prepare)
-                $param = &$this->getParamaters();
+                $param = $this->getParameters();
             
 			// check for ezQuery placeholder tag and replace tags with proper prepare tag
-			if (!empty($param) && is_array($param) && ($this->getPrepare()) && (strpos($query, _TAG) !== false))
+			if (!empty($param) && is_array($param) && ($this->isPrepareActive()) && (strpos($query, _TAG) !== false))
 			{
 				foreach ($param as $i => $value) {
 					$parametrize = $i + 1;
@@ -249,7 +252,7 @@
 			$query = trim($query);
 
 			// Log how the function was called
-			$this->func_call = "\$db->query(\"$query\")";
+			$this->log_query("\$db->query(\"$query\")");
 
 			// Keep track of the last query for debug..
 			$this->last_query = $query;
@@ -270,9 +273,9 @@
 			}
             
 			// Perform the query via std postgresql_query function..
-			if (!empty($param) && is_array($param) && ($this->getPrepare())){
+			if (!empty($param) && is_array($param) && ($this->isPrepareActive())){
 				$this->result = @pg_query_params($this->dbh, $query, $param);		
-				$this->setParamaters();				
+				$this->clearParameters();				
 			} else 
 				$this->result = @pg_query($this->dbh, $query);
 
