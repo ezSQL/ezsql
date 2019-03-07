@@ -11,3 +11,4 @@ build/logs/clover.xml
 tests/pdo/ez_test.sqlite
 tests/sqlite/ez_test.sqlite
 tests/sqlite/ez_test.sqlite3
+.vscode/settings.json
