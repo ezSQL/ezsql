@@ -215,7 +215,7 @@ class ezSQLcoreTest extends TestCase {
         $this->assertNotEmpty($this->object->debug(false));
         
         // In addition of getting a result, it fills the console
-        $this->expectOutputRegex('/[make a donation]/');
+        //$this->expectOutputRegex('/[make a donation]/');
         $this->object->debug(true);
         $this->object->last_error = "test last";
         $this->expectOutputRegex('/[test last]/');

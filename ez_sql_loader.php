@@ -1,4 +1,5 @@
 <?php
+require_once(__DIR__ .DIRECTORY_SEPARATOR.'shared'.DIRECTORY_SEPARATOR.'ezQueryInterface.php');
 require_once(__DIR__ .DIRECTORY_SEPARATOR.'shared'.DIRECTORY_SEPARATOR.'ez_sql_core.php');
 function ezsql_autoloader($class) {    
 	$foldername = ltrim($class, 'ezSQL_');

@@ -1,7 +1,7 @@
 <?php
 /**
  * ezSQL class - PDO
- * Desc..: PDO component (part of ezSQL databse abstraction library)
+ * Desc..: PDO component (part of ezSQL database abstraction library)
  *
  * @author  Justin Vincent (jv@jvmultimedia.com)
  * @author  Stefanie Janine Stoelting <mail@stefanie-stoelting.de>
@@ -12,6 +12,7 @@
  * @license FREE / Donation (LGPL - You may do what you like with ezSQL - no exceptions.)
  *
  */
+
 class ezSQL_pdo extends ezSQLcore
 {
     /**
@@ -95,12 +96,11 @@ class ezSQL_pdo extends ezSQLcore
         ini_set('track_errors', 1);
 
         if ( !empty($dsn) && !empty($user) && !empty($password) ) {
-            print "<p>constructor: $dsn</p>";
             $this->connect($dsn, $user, $password, $options, $isFileBased);
         }
         
-        global $_ezPdo;
-        $_ezPdo = $this;
+        $GLOBALS['db_pdo'] = $this;
+        \setQuery($this);
     } // __construct
 
     /**
@@ -150,7 +150,7 @@ class ezSQL_pdo extends ezSQLcore
         // Establish PDO connection
         try  {
             if ($this->_isFileBased) {
-                $this->dbh = new PDO($this->_dsn);
+                $this->dbh = new PDO($this->_dsn, null, null, null);
                 $this->_connected = true;
             } else {
                 $this->dbh = new PDO($this->_dsn, $this->_dbuser, $this->_dbpassword, $this->_options);
@@ -279,7 +279,7 @@ class ezSQL_pdo extends ezSQLcore
      */
     public function query($query, $use_prepare=false) {
         if ($use_prepare)
-            $param = &$this->getParamaters();
+            $param = &$this->getParameters();
         
 		// check for ezQuery placeholder tag and replace tags with proper prepare tag
 		$query = str_replace(_TAG, '?', $query);
@@ -294,7 +294,7 @@ class ezSQL_pdo extends ezSQLcore
         $this->flush();
 
         // Log how the function was called
-        $this->func_call = "\$db->query(\"$query\")";
+        $this->log_query("\$db->query(\"$query\")");
 
         // Keep track of the last query for debug..
         $this->last_query = $query;
@@ -327,9 +327,9 @@ class ezSQL_pdo extends ezSQLcore
 
             // Perform the query and log number of affected rows
             // Perform the query via std PDO query or PDO prepare function..
-            if (!empty($param) && is_array($param) && ($this->getPrepare())) {
+            if (!empty($param) && is_array($param) && ($this->isPrepareActive())) {
                 $this->_affectedRows = $this->query_prepared($query, $param, false);	
-				$this->setParamaters();
+				$this->clearParameters();
             } else
                 $this->_affectedRows = $this->dbh->exec($query);
 
@@ -353,9 +353,9 @@ class ezSQL_pdo extends ezSQLcore
 
             // Perform the query and log number of affected rows
             // Perform the query via std PDO query or PDO prepare function..
-            if (!empty($param) && is_array($param) && ($this->getPrepare())) {
+            if (!empty($param) && is_array($param) && ($this->isPrepareActive())) {
                 $sth = $this->query_prepared($query, $param, true);	
-				$this->setParamaters();
+				$this->clearParameters();
             } else
                 $sth = $this->dbh->query($query);
 
@@ -366,7 +366,10 @@ class ezSQL_pdo extends ezSQLcore
 
             $col_count = $sth->columnCount();
 
-            for ( $i=0 ; $i < $col_count ; $i++ ) {
+            for ( $i=0 ; $i < $col_count ; $i++ ) {                
+                // Start DEBUG by psc!
+                $this->col_info[$i] = new stdClass();
+                // End DEBUG by psc
                 if ( $meta = $sth->getColumnMeta($i) ) {
                     $this->col_info[$i]->name =  $meta['name'];
                     $this->col_info[$i]->type =  $meta['native_type'];

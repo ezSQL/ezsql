@@ -183,7 +183,8 @@ class ezSQL_sqlsrvTest extends TestCase {
     public function testUpdate()
     {
         $this->object->quick_connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME);  
-        $this->object->query('CREATE TABLE unit_test(id integer, test_key varchar(50), PRIMARY KEY (ID))');  
+        $this->object->query('DROP TABLE unit_test'); 
+        $this->object->query('CREATE TABLE unit_test(id integer, test_key varchar(50), PRIMARY KEY (ID))'); 
         $this->assertNotFalse($this->object->insert('unit_test', array('id'=>1, 'test_key'=>'testUpdate() 1' )));
         $this->object->insert('unit_test', array('id'=>2, 'test_key'=>'testUpdate() 2' ));
         $this->object->insert('unit_test', array('id'=>3, 'test_key'=>'testUpdate() 3' ));
@@ -229,6 +230,7 @@ class ezSQL_sqlsrvTest extends TestCase {
     public function testSelecting()
     {
         $this->object->quick_connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME);   
+        $this->object->query('DROP TABLE unit_test');
         $this->object->query('CREATE TABLE unit_test(id integer, test_key varchar(50), PRIMARY KEY (ID))');
         $this->object->insert('unit_test', array('id'=>8, 'test_key'=>'testing 8' ));
         $this->object->insert('unit_test', array('id'=>9, 'test_key'=>'testing 9' ));

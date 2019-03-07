@@ -60,15 +60,7 @@ class ezQueryTest extends TestCase {
     {
         $this->assertEquals("' help", $this->object->clean("<?php echo 'foo' >' help</php?>"));
     } 
-    
-    /**
-     * @covers ezQuery::to_string
-     */
-    public function testTo_string()
-    {
-        $this->assertContains(',',$this->object->to_string(array('test','test2')));
-    }
-     
+
     /**
      * @covers ezQuery::where
      */
@@ -93,16 +85,11 @@ class ezQueryTest extends TestCase {
     public function testSelecting()
     {
         $this->assertFalse($this->object->selecting('',''));
-        $this->assertNotNull($this->object->select_sql('table','colums','WHERE','GROUP BY','HAVING','ORDER BY'));
-    }
 
-    /**
-     * @covers ezQuery::select_sql
-     */
-    public function testSelect_sql()
-    {
-        $this->assertNotNull($this->object->select_sql('table','colums','WHERE','GROUP BY','HAVING','ORDER BY'));
-    } 
+        $this->expectException(\Error::class);
+        $this->expectExceptionMessageRegExp('/Call to undefined method ezQuery::get_results()/');
+        $this->assertNotNUll($this->object->selecting('table','columns','WHERE','GROUP BY','HAVING','ORDER BY','LIMIT'));
+    }
     
     /**
      * @covers ezQuery::create_select
@@ -144,18 +131,7 @@ class ezQueryTest extends TestCase {
     {
         $this->assertFalse($this->object->replace('',''));
     }
-    
-    /**
-     * @covers ezQuery::_query_insert_replace
-     */
-    public function test_Query_insert_replace() 
-    {        
-        $this->assertFalse($this->object->_query_insert_replace('', array('id'=>'2' ),'replace')); 
-        $this->assertFalse($this->object->_query_insert_replace('unit_table', array('id'=>'2' ),''));  
-        $this->assertContains('replace INTO unit_table',$this->object->_query_insert_replace('unit_table', 'id' ,'replace',false));   
-        $this->assertContains('(test, INSERT, INTO, SELECT)',$this->object->_query_insert_replace('unit_table', array('test','INSERT','INTO','SELECT') ,'insert',false)); 
-    }   
-        
+
     /**
      * @covers ezQuery::__construct
      */

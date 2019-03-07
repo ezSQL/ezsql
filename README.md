@@ -1,24 +1,39 @@
 ezSQL
 =====
-[![Build Status](https://travis-ci.org/ezSQL/ezSQL.svg?branch=v3)](https://travis-ci.org/ezSQL/ezSQL)
-[![Build status](https://ci.appveyor.com/api/projects/status/6s8oqnoxa2i5k04f/branch/v3?svg=true)](https://ci.appveyor.com/project/jv2222/ezsql/branch/v3)
-[![codecov](https://codecov.io/gh/ezSQL/ezSQL/branch/v3/graph/badge.svg)](https://codecov.io/gh/ezSQL/ezSQL)
-[![Maintainability](https://api.codeclimate.com/v1/badges/8db71512a019ab280a16/maintainability)](https://codeclimate.com/github/techno-express/ezSQL/maintainability)
+[![Build Status](https://travis-ci.org/ezSQL/ezSQL.svg?branch=master)](https://travis-ci.org/ezSQL/ezSQL)
+[![Build status](https://ci.appveyor.com/api/projects/status/6s8oqnoxa2i5k04f?svg=true)](https://ci.appveyor.com/project/jv2222/ezsql)
+[![codecov](https://codecov.io/gh/ezSQL/ezSQL/branch/master/graph/badge.svg)](https://codecov.io/gh/ezSQL/ezSQL)
+[![Maintainability](https://api.codeclimate.com/v1/badges/0071eb99ab4f5ac5b1f2/maintainability)](https://codeclimate.com/github/ezSQL/ezSQL/maintainability)
+
+Installation
+------
+
+`composer require ezsql/ezsql`
+
+`require 'vendor/autoload.php';`
+
+or
+
+`require_once "ez_sql_loader.php";`
 
 Author
 ------
+
 Justin Vincent - http://justinvincent.com/ezsql
 
 Description
 ------------
+
 Class to make it very easy to deal with database connections.
 
 License
 -------
+
 FREE / Donation (LGPL - You may do what you like with ezSQL - no exceptions.)
 
 Change Log
-==========
+----
+
 Note: This change log isn't being used any more due to automated github tracking
 
 3.08 - Merged fork https://github.com/sjstoelting/ezSQL3 to be current with this repo. 
@@ -29,7 +44,8 @@ Note: This change log isn't being used any more due to automated github tracking
   These are part of the new ezQuery SQL builder class. They are shortcut calls, these new methods will create proper SQL statements, from supplied arguments variable or array, prevent injections, then execute guery, in case of `selecting` execute get_results. 
 * Added many additional functions to support ezQuery builder and to easily process SQL prepare statements. Supplied arguments will be replace with necessary placeholder and values added to parameter array.
 * All new methods has been fully PHPunit tested under current supported database systems, and should be able to handle most use cases as is.
-* Todo: Implement WHERE IN sub selection and shortcut method calls for the remainder of SQL standard statements.
+
+Todo: Implement WHERE IN sub query SELECT and shortcut method calls for the remainder of SQL standard statements.
 
 ```
 ezSQL3 - From Author: Stefanie Janine Stoelting - http://stefanie-stoelting.de

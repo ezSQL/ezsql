@@ -75,8 +75,8 @@
 			$this->dbhost = $dbhost;
 			$this->convertMySqlToMSSqlQuery = $convertMySqlToMSSqlQuery;
             
-            global $_ezSqlsrv;
-            $_ezSqlsrv = $this;        
+			$GLOBALS['db_mssql'] = $this;
+			\setQuery($this);
 		}
 
 		/**********************************************************************
@@ -152,7 +152,7 @@
 		function query($query, $use_prepare=false)
 		{
             if ($use_prepare) 
-                $param = &$this->getParamaters();
+                $param = $this->getParameters();
             
 			// check for ezQuery placeholder tag and replace tags with proper prepare tag
 			$query = str_replace(_TAG, '?', $query);
@@ -174,7 +174,7 @@
 			$query = trim($query);
 
 			// Log how the function was called
-			$this->func_call = "\$db->query(\"$query\")";
+			$this->log_query("\$db->query(\"$query\")");
 
 			// Keep track of the last query for debug..
 			$this->last_query = $query;
@@ -196,9 +196,9 @@
 			}
 
 			// Perform the query via std sqlsrv_query function..
-			if (!empty($param) && is_array($param) && ($this->getPrepare())) {
+			if (!empty($param) && is_array($param) && ($this->isPrepareActive())) {
 				$this->result = @sqlsrv_query($this->dbh, $query, $param);
-                $this->setParamaters();                
+                $this->clearParameters();                
             }
 			else 
 				$this->result = @sqlsrv_query($this->dbh, $query);
@@ -325,6 +325,7 @@
 					0 => "getdate()", 
 					1 => "\\1", 
 					2 => "");
+			$regs = null;
 			preg_match($limit_str, $query, $regs);
 			$query = preg_replace($patterns, $replacements, $query);
 			
