@@ -598,12 +598,13 @@ class ezQuery implements ezQueryInterface
        foreach($columnDataOptions as $datatype) {
            $column = \array_shift($datatype);
            $type = \array_shift($datatype);
-           if ($column == \CONSTRAINT) {
+           if (($column == \CONSTRAINT) || ($column == \INDEX)) {
                if (empty($datatype[0]) || empty($datatype[1]))
                     return false;
-               $keyType = \array_shift($datatype);     
-               $columnData .= $column.' '.$type.' '.$keyType.' ('.self::to_string($datatype).'), ';
-           } else {
+               $keyType = ($column != \INDEX) ? \array_shift($datatype).' ' : ' ';
+               $key = $keyType.'('.self::to_string($datatype).'), ';
+               $columnData .= $column.' '.$type.' '.$key;
+            } else {
                $data = ezSchema::datatype($type, $datatype);
                 if (!empty($data))
                     $columnData .= $column.' '.$data.', ';

@@ -50,7 +50,7 @@ class ezSchema
         'sqlserver' => []
     ];
 
-    const OPTIONS  = ['CONSTRAINT', 'PRIMARY KEY', 'FOREIGN KEY', 'UNIQUE'];
+    const OPTIONS  = ['CONSTRAINT', 'PRIMARY KEY', 'FOREIGN KEY', 'UNIQUE', 'INDEX'];
 
     private $arguments = null;
 	
@@ -172,11 +172,13 @@ class ezSchema
             return false;
 
         $columnData = '';
-        if ($column == \CONSTRAINT) {
+        if (($column == \CONSTRAINT) || ($column == \INDEX)) {
             if (empty($args[0]) || empty($args[1]))
-                 return false;
-            $keyType = \array_shift($args);     
-            $columnData .= $column.' '.$type.' '.$keyType.' ('.ezQuery::to_string($args).'), ';
+                return false;
+
+            $keyType = ($column != \INDEX) ? \array_shift($args).' ' : ' ';
+            $keys = $keyType.'('.self::to_string($args).'), ';
+            $columnData .= $column.' '.$type.' '.$keys;
         } else {
             $data = self::datatype($type, $args);
             if (!empty($data))

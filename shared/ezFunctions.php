@@ -163,6 +163,7 @@ use ezsql\ezQueryInterface;
         const PRIMARY = 'PRIMARY KEY';
         const FOREIGN = 'FOREIGN KEY';
         const UNIQUE = 'UNIQUE';
+        const INDEX = 'INDEX';
 	
         // Global class instances, will be used to create and call methods directly.        
         global $ezInstance;
@@ -191,6 +192,11 @@ use ezsql\ezQueryInterface;
         $unique[] = \UNIQUE;
         $unique += $uniqueKeys;
         return ezSchema::column(\CONSTRAINT, $constraintName, ...$unique);
+    }
+
+    function index(string $indexName, ...$indexKeys)
+    {
+        return ezSchema::column(\INDEX, $indexName, ...$indexKeys);
     }
 
 	/**
