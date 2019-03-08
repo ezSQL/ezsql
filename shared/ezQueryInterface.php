@@ -52,14 +52,6 @@ interface ezQueryInterface
     public function getParameters();
     
     /**
-    * Add parameter values to class array variable for prepare function.
-    * @param mixed $valueToAdd
-    *
-    * @return int array count
-    */
-    public function setParameters($valueToAdd = null);
-    
-    /**
     * Clear parameter values
     *
     * @return bool false

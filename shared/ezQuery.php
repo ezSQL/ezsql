@@ -47,7 +47,13 @@ class ezQuery implements ezQueryInterface
 		return $this->preparedValues;
 	}
     
-    public function setParameters($valueToAdd = null) 
+    /**
+    * Add parameter values to class array variable for prepare function.
+    * @param mixed $valueToAdd
+    *
+    * @return int array count
+    */
+    private function setParameters($valueToAdd = null) 
     {
         return \array_push($this->preparedValues, $valueToAdd); 
     }
