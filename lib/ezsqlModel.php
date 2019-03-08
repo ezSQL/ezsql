@@ -160,7 +160,7 @@ class ezsqlModel extends ezQuery
 		$this->func_call = $query;
 		
 		// Keep an running Log of all functions called
-		array_push($this->all_func_calls, $this->func_call);
+		\array_push($this->all_func_calls, $this->func_call);
 	}
 	
 	/**
@@ -304,7 +304,7 @@ class ezsqlModel extends ezQuery
 		&& ( $this->cache_queries && ! $is_insert ) 
 		|| ( $this->cache_inserts && $is_insert )
 		) {
-			if ( ! is_dir($this->cache_dir) ) {
+			if ( ! \is_dir($this->cache_dir) ) {
 				$this->register_error("Could not open cache dir: $this->cache_dir");
 				$this->show_errors ? \trigger_error("Could not open cache dir: $this->cache_dir",E_USER_WARNING) : null;
 			} else {
@@ -373,8 +373,8 @@ class ezsqlModel extends ezQuery
 		}
 		
 		$var_type = \gettype ($mixed);
-		print_r(($mixed?$mixed:"<font color=red>No Value / False</font>"));
-		echo "\n\n<b>Type:</b> " . ucfirst($var_type) . "\n";
+		\print_r(($mixed?$mixed:"<font color=red>No Value / False</font>"));
+		echo "\n\n<b>Type:</b> " . \ucfirst($var_type) . "\n";
 		echo "<b>Last Query</b> [$this->num_queries]<b>:</b> ".($this->last_query?$this->last_query:"NULL")."\n";
 		echo "<b>Last Function Call:</b> " . ($this->func_call?$this->func_call:"None")."\n";
 		
@@ -385,7 +385,7 @@ class ezsqlModel extends ezQuery
 		}
 		
 		echo "<b>Last Rows Returned:</b> ".(count($this->last_result)>0 ? $this->last_result : '')."\n";
-		echo "</font></pre></font></blockquote></td></tr></table>".$this->donation();
+		echo "</font></pre></font></blockquote></td></tr></table>";//.$this->donation();
 		echo "\n<hr size=1 noshade color=dddddd>";
 		
 		// Stop output buffering and capture debug HTML
@@ -473,7 +473,7 @@ class ezsqlModel extends ezQuery
 				}
 			} else {
 				// if last result 
-				echo "<tr bgcolor=ffffff><td colspan=".(count($this->col_info)+1)."><font face=arial size=2>No Results</font></td></tr>";
+				echo "<tr bgcolor=ffffff><td colspan=".(\count($this->col_info)+1)."><font face=arial size=2>No Results</font></td></tr>";
 			}
 			
 			echo "</table>";
@@ -482,7 +482,7 @@ class ezsqlModel extends ezQuery
 			echo "<font face=arial size=2>No Results</font>";
 		}
 		
-		echo "</blockquote></blockquote>".$this->donation()."<hr noshade color=dddddd size=1>";
+		//echo "</blockquote></blockquote>".$this->donation()."<hr noshade color=dddddd size=1>";
 		
 		// Stop output buffering and capture debug HTML
 		$html = \ob_get_contents();
@@ -511,7 +511,7 @@ class ezsqlModel extends ezQuery
 	*/
 	public function timer_get_cur()
 	{
-		list($usec, $sec) = \explode(" ",microtime());
+		list($usec, $sec) = \explode(" ",\microtime());
 		return ((float)$usec + (float)$sec);
 	}
 	
@@ -555,7 +555,7 @@ class ezsqlModel extends ezQuery
 	*/
 	public function get_set($params)
 	{
-		if( !is_array( $params ) ) {
+		if( !\is_array( $params ) ) {
 			$this->register_error( 'get_set() parameter invalid. Expected array in '.__FILE__.' on line '.__LINE__);
 			return;
 		}
@@ -577,7 +577,7 @@ class ezsqlModel extends ezQuery
 			}
 		}
 		
-		return implode( ', ' , $sql );
+		return \implode( ', ' , $sql );
 	}
 	
 	/**
@@ -638,7 +638,7 @@ class ezsqlModel extends ezQuery
 	{
 		if ( !isset($data) ) 
 			return '';
-		if ( is_numeric($data) ) 
+		if ( \is_numeric($data) ) 
 			return $data;
 
         $nonDisplayable = array(
