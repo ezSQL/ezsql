@@ -27,7 +27,7 @@ if (!\defined('CONSTANTS')) {
         
     \define('_isNULL', 'IS NULL');
     \define('_notNULL', 'IS NOT NULL');
-    \define('_BOOLEANS', ['<', '>', '=', '!=', '>=', '<=', '<>', 
+    \define('_BOOLEAN_OPERATORS', ['<', '>', '=', '!=', '>=', '<=', '<>', 
         'IN', 'LIKE', 'NOT LIKE', 'BETWEEN', 'NOT BETWEEN', 'IS', 'IS NOT']);
     
     /**
@@ -56,12 +56,11 @@ if (!\defined('CONSTANTS')) {
         'mysql' => 'ez_mysqli',
         'mysqli' => 'ez_mysqli',
         'pdo' => 'ez_pdo',
-        'postgres' => 'ez_pgsql',
+        'postgresql' => 'ez_pgsql',
         'pgsql' => 'ez_pgsql',
         'sqlite' => 'ez_sqlite3',
         'sqlite3' => 'ez_sqlite3',
         'sqlserver' => 'ez_sqlsrv',
-        'msserver' => 'ez_sqlsrv',
         'mssql' => 'ez_sqlsrv',
         'sqlsrv' => 'ez_sqlsrv'
     ]);
@@ -108,6 +107,78 @@ if (!\defined('CONSTANTS')) {
         'nomysql' => 'toMysql',
         'options' => 'options'
     ]);
+
+    // String SQL data types
+    \define('CHAR', 'CHAR');
+    \define('VARC', 'VARCHAR');
+    \define('VARCHAR', 'VARCHAR');
+    \define('TEXT', 'TEXT');
+    \define('TINY', 'TINYTEXT');
+    \define('TINYTEXT', 'TINYTEXT');
+    \define('MEDIUM', 'MEDIUMTEXT');
+    \define('MEDIUMTEXT', 'MEDIUMTEXT');
+    \define('LONG', 'LONGTEXT');
+    \define('LONGTEXT', 'LONGTEXT');
+    \define('BINARY', 'BINARY');
+    \define('VARBINARY', 'VARBINARY');
+    \define('NCHAR', 'NCHAR');
+    \define('NVAR', 'NVARCHAR');
+    \define('NVARCHAR', 'NVARCHAR');
+    \define('NTEXT', 'NTEXT');
+    \define('IMAGE', 'IMAGE');
+    \define('CLOB', 'CLOB');
+        
+    // Numeric SQL data types
+    \define('INTS', 'INT');
+    \define('INT2', 'INT2');
+    \define('INT4', 'INT4');
+    \define('INT8', 'INT8');
+    \define('NUMERIC', 'NUMERIC');
+    \define('DECIMAL', 'DECIMAL');
+    \define('BIT', 'BIT');
+    \define('VARBIT', 'VARBIT');
+    \define('INTEGERS', 'INTEGER');
+    \define('TINYINT', 'TINYINT');
+    \define('SMALLINT', 'SMALLINT');
+    \define('MEDIUMINT', 'MEDIUMINT');
+    \define('LARGE', 'BIGINT');
+    \define('BIGINT', 'BIGINT');
+    \define('DEC', 'DEC');
+    \define('FIXED', 'FIXED');
+    \define('FLOATS', 'FLOAT');
+    \define('DOUBLES', 'DOUBLE');
+    \define('REALS', 'REAL');
+    \define('BOOLS', 'BOOL');
+    \define('BOOLEANS', 'BOOLEAN');
+    \define('SMALLMONEY', 'SMALLMONEY');
+    \define('MONEY', 'MONEY');
+    \define('SMALLSERIAL', 'SMALLSERIAL');
+    \define('SERIAL', 'SERIAL');
+    \define('BIGSERIAL', 'BIGSERIAL');
+        
+    // Date/Time SQL data types	
+    \define('DATES', 'DATE');
+    \define('TIMESTAMP', 'TIMESTAMP');
+    \define('TIMES', 'TIME');
+    \define('DATETIME', 'DATETIME');
+    \define('YEAR', 'YEAR');
+    \define('DATETIME2', 'DATETIME2');
+    \define('SMALLDATETIME', 'SMALLDATETIME');
+    \define('DATETIMEOFFSET', 'DATETIMEOFFSET');
+        
+    // Large Object SQL data types
+    \define('TINYBLOB', 'TINYBLOB');
+    \define('BLOB', 'BLOB');
+    \define('MEDIUMBLOB', 'MEDIUMBLOB');
+        
+    \define('NULLS', 'NULL');
+    \define('notNULL', 'NOT NULL');
+
+    \define('CONSTRAINT', 'CONSTRAINT');
+    \define('PRIMARY', 'PRIMARY KEY');
+    \define('FOREIGN', 'FOREIGN KEY');
+    \define('UNIQUE', 'UNIQUE');
+    \define('INDEX', 'INDEX');
 
     \define('CONSTANTS', true);
 }

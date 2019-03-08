@@ -36,35 +36,9 @@ interface ezQueryInterface
     public static function clean($string);
     
     /**
-    * Return status of prepare function availability in method calls
-    */
-    public function isPrepareActive();
-  	
-    /**
     * Turn off/on prepare function availability in ezQuery method calls 
     */
     public function setPrepare($on = true);
-    
-    /**
-     * Returns array of parameter values for prepare function 
-     * @return array
-     */
-    public function getParameters();
-    
-    /**
-    * Add parameter values to class array variable for prepare function.
-    * @param mixed $valueToAdd
-    *
-    * @return int array count
-    */
-    public function setParameters($valueToAdd = null);
-    
-    /**
-    * Clear parameter values
-    *
-    * @return bool false
-    */
-    public function clearParameters();
 
     /**
     * Specifies a grouping over the results of the query.
