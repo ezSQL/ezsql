@@ -31,22 +31,22 @@ class Configuration extends ConfigAbstract
      */
     public function __construct(string $driver, ...$args)
     {
-        $sql = strtolower($driver);
-        if ( ! class_exists ('ezsqlModel') ) {
+        $sql = \strtolower($driver);
+        if ( ! \class_exists ('ezsqlModel') ) {
             throw new Exception('<b>Fatal Error:</b> This configuration requires ezsqlModel (ezsqlModel.php) to be included/loaded before it can be used');
-        } elseif (!array_key_exists($sql, VENDOR) || empty($sql) || empty($args)) {
+        } elseif (!\array_key_exists($sql, \VENDOR) || empty($sql) || empty($args)) {
                 throw new Exception('<b>Fatal Error:</b> Missing configuration details to connect to database');
         } else {
             $this->driver = $sql;
             if ($sql == 'pdo') {    
                 $this->setupPdo($args);            
-            } elseif (($sql == 'postgres') || ($sql == 'pgsql')) {
+            } elseif (($sql == 'postgressql') || ($sql == 'pgsql')) {
                 $this->setupPgsql($args);
-            } elseif (($sql == 'sqlsrv') || ($sql == 'mssql') || ($sql == 'msserver') || ($sql == 'sqlserver')) {
+            } elseif (($sql == 'sqlsrv') || ($sql == 'mssql') || ($sql == 'sqlserver')) {
                 $this->setupSqlsrv($args);
             } elseif (($sql == 'mysqli') || ($sql == 'mysql')) {
                 $this->setupMysqli($args);
-            } elseif ((($sql == 'sqlite3') || ($sql == 'sqlite')) && count($args)==2) {
+            } elseif ((($sql == 'sqlite3') || ($sql == 'sqlite')) && count($args) == 2) {
                 $this->setupSqlite3($args);
             }
         }
@@ -54,28 +54,28 @@ class Configuration extends ConfigAbstract
 
     private function setupMysqli($args) 
     {
-        if ( ! function_exists ('mysqli_connect') ) 
+        if ( ! \function_exists ('mysqli_connect') ) 
             throw new Exception('<b>Fatal Error:</b> ez_mysql requires mySQLi Lib to be compiled and or linked in to the PHP engine');
-        elseif (is_string($args))
+        elseif (\is_string($args))
             $this->parseConnectionString($args, ['path', 'name']);
-        elseif (count($args)>=3) {
+        elseif (\count($args)>=3) {
             $this->user = empty($args[0]) ? $this->getUser() : $args[0];
             $this->password = empty($args[1]) ? $this->getPassword() : $args[1];
             $this->name = empty($args[2]) ? $this->getName() : $args[2];
             $this->host = empty($args[3]) ? $this->getHost() : $args[3];
             $charset = !empty($args[4]) ? $args[4] : '';
-            $this->charset = empty($charset) ? $this->getCharset() : strtolower(str_replace('-', '', $charset));
+            $this->charset = empty($charset) ? $this->getCharset() : \strtolower(\str_replace('-', '', $charset));
         } else
             throw new Exception('<b>Fatal Error:</b> Missing configuration details to connect to database');
     }
 
     private function setupPdo($args) 
     {
-        if ( ! class_exists ('PDO') )
+        if ( ! \class_exists ('PDO') )
             throw new Exception('<b>Fatal Error:</b> ez_pdo requires PDO Lib to be compiled and or linked in to the PHP engine');           
-        elseif (is_string($args))
+        elseif (\is_string($args))
             $this->parseConnectionString($args, ['user', 'dsn', 'password']);
-        elseif (count($args)>=3) {
+        elseif (\count($args)>=3) {
             $this->dsn = empty($args[0]) ? $this->getDsn() : $args[0];
             $this->user = empty($args[1]) ? $this->getUser() : $args[1];
             $this->password = empty($args[2]) ? $this->getPassword() : $args[2];
@@ -87,11 +87,11 @@ class Configuration extends ConfigAbstract
 
     private function setupSqlsrv($args) 
     {
-        if ( ! function_exists ('sqlsrv_connect') ) 
+        if ( ! \function_exists ('sqlsrv_connect') ) 
             throw new Exception('<b>Fatal Error:</b> ez_sqlsrv requires the php_sqlsrv.dll or php_pdo_sqlsrv.dll to be installed. Also enable MS-SQL extension in PHP.ini file ');
-        elseif (is_string($args))
+        elseif (\is_string($args))
             $this->parseConnectionString($args, ['user', 'name', 'password']);
-        elseif (count($args)>=3) {
+        elseif (\count($args)>=3) {
             $this->user = empty($args[0]) ? $this->getUser() : $args[0];
             $this->password = empty($args[1]) ? $this->getPassword() : $args[1];
             $this->name = empty($args[2]) ? $this->getName() : $args[2];
@@ -103,9 +103,9 @@ class Configuration extends ConfigAbstract
 
     private function setupPgsql($args) 
     {
-        if ( ! function_exists ('pg_connect') )
+        if ( ! \function_exists ('pg_connect') )
             throw new Exception('<b>Fatal Error:</b> ez_pgsql requires PostgreSQL Lib to be compiled and or linked in to the PHP engine');
-        elseif (is_string($args))
+        elseif (\is_string($args))
             $this->parseConnectionString($args, ['user', 'name', 'password']);
         elseif (count($args)>=3) {
             $this->user = empty($args[0]) ? $this->getUser() : $args[0];
@@ -118,11 +118,11 @@ class Configuration extends ConfigAbstract
     }
 
     private function setupSqlite3($args) {
-        if ( ! class_exists ('SQLite3') ) 
+        if ( ! \class_exists ('SQLite3') ) 
             throw new Exception('<b>Fatal Error:</b> ez_sqlite3 requires SQLite3 Lib to be compiled and or linked in to the PHP engine');
-        elseif (is_string($args))
+        elseif (\is_string($args))
             $this->parseConnectionString($args, ['path', 'name']);
-        elseif (count($args)==2) {
+        elseif (\count($args)==2) {
             $this->path = empty($args[0]) ? $this->getPath() : $args[0];
             $this->name = empty($args[1]) ? $this->getName() : $args[1];
         } else
@@ -135,20 +135,20 @@ class Configuration extends ConfigAbstract
     */
     public function parseConnectionString(string $connectionString, array $check_for) 
     {
-        $params = explode(";", $connectionString);
+        $params = \explode(";", $connectionString);
 
-        if (count($params) === 1) { // Attempt to explode on a space if no ';' are found.
-            $params = explode(" ", $connectionString);
+        if (\count($params) === 1) { // Attempt to explode on a space if no ';' are found.
+            $params = \explode(" ", $connectionString);
         }
 
         foreach ($params as $param) {
-            list($key, $value) = array_map("trim", explode("=", $param, 2) + [1 => null]);
+            list($key, $value) = \array_map("trim", \explode("=", $param, 2) + [1 => null]);
 
-            if (isset(KEY_MAP[$key])) {
-                $key = KEY_MAP[$key];
+            if (isset(\KEY_MAP[$key])) {
+                $key = \KEY_MAP[$key];
             }
 
-            if (!in_array($key, ALLOWED_KEYS, true)) {
+            if (!in_array($key, \ALLOWED_KEYS, true)) {
                 throw new Exception("Invalid key in connection string: " . $key);
             }
 
