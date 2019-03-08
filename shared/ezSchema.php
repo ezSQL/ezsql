@@ -177,7 +177,7 @@ class ezSchema
                 return false;
 
             $keyType = ($column != \INDEX) ? \array_shift($args).' ' : ' ';
-            $keys = $keyType.'('.self::to_string($args).'), ';
+            $keys = $keyType.'('.ezQuery::to_string($args).'), ';
             $columnData .= $column.' '.$type.' '.$keys;
         } else {
             $data = self::datatype($type, $args);

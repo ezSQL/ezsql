@@ -49,7 +49,7 @@ class ezQuery implements ezQueryInterface
     
     public function setParameters($valueToAdd = null) 
     {
-        return array_push($this->preparedValues, $valueToAdd); 
+        return \array_push($this->preparedValues, $valueToAdd); 
     }
     
     public function clearParameters() 
@@ -65,12 +65,12 @@ class ezQuery implements ezQueryInterface
     */  
     private static function to_string($arrays, $separation = ',' )  
     {        
-        if (is_array( $arrays )) {
+        if (\is_array( $arrays )) {
             $columns = '';
             foreach($arrays as $val) {
                 $columns .= $val.$separation.' ';
             }
-            $columns = rtrim($columns, $separation.' ');
+            $columns = \rtrim($columns, $separation.' ');
         } else
             $columns = $arrays;
         return $columns;
@@ -160,8 +160,8 @@ class ezQuery implements ezQueryInterface
         string $rightTable = null, 
         string $leftColumn = null, string $rightColumn = null, $condition = \EQ) 
     {
-        if (!in_array($type, \_JOINERS) 
-            || !in_array($condition, \_BOOLEAN) 
+        if (!\in_array($type, \_JOINERS) 
+            || !\in_array($condition, \_BOOLEAN) 
             || empty($leftTable) 
             || empty($rightTable) || empty($columnFields) || empty($leftColumn)
         ) {
@@ -186,7 +186,7 @@ class ezQuery implements ezQueryInterface
         
         $columns = $this->to_string($orderBy);
         
-        $order = (in_array(strtoupper($order), array( 'ASC', 'DESC'))) ? strtoupper($order) : 'ASC';
+        $order = (\in_array(\strtoupper($order), array( 'ASC', 'DESC'))) ? \strtoupper($order) : 'ASC';
         
         return 'ORDER BY '.$columns.' '. $order;
     }
@@ -227,11 +227,11 @@ class ezQuery implements ezQueryInterface
 			if (!empty($values[1])){
 				if (\strtoupper($values[1]) == 'IN') {
 					$WhereKey[ $values[0] ] = \array_slice((array) $values, 2);
-					$combiner[] = (isset($values[3])) ? $values[3]: _AND;
+					$combiner[] = (isset($values[3])) ? $values[3]: \_AND;
 					$extra[] = (isset($values[4])) ? $values[4]: null;				
 				} else {
 					$WhereKey[ (isset($values[0])) ? $values[0] : '1' ] = (isset($values[2])) ? $values[2] : '' ;
-					$combiner[] = (isset($values[3])) ? $values[3]: _AND;
+					$combiner[] = (isset($values[3])) ? $values[3]: \_AND;
 					$extra[] = (isset($values[4])) ? $values[4]: null;
 				}				
 			} else {
@@ -249,7 +249,7 @@ class ezQuery implements ezQueryInterface
 				if ( \in_array(\strtoupper($combine), \_COMBINERS) || isset($extra[$i])) 
 					$combineWith = (isset($extra[$i])) ? $combine : \strtoupper($combine);
 				else 
-                    $combineWith = _AND;
+                    $combineWith = \_AND;
 
                 if (! \in_array( $isCondition, \_BOOLEAN_OPERATORS)) {
                     return $this->clearParameters();
@@ -259,10 +259,10 @@ class ezQuery implements ezQueryInterface
 						if (\in_array(\strtoupper($extra[$i]), \_COMBINERS)) 
 							$myCombineWith = \strtoupper($extra[$i]);
 						else 
-                            $myCombineWith = _AND;
+                            $myCombineWith = \_AND;
 
 						if ($this->isPrepareActive()) {
-							$where .= "$key ".$isCondition.' '._TAG." AND "._TAG." $myCombineWith ";
+							$where .= "$key ".$isCondition.' '.\_TAG." AND ".\_TAG." $myCombineWith ";
 							$this->setParameters($val);
 							$this->setParameters($combineWith);
 						} else 
@@ -273,7 +273,7 @@ class ezQuery implements ezQueryInterface
 						$value = '';
 						foreach ($val as $inValues) {
 							if ($this->isPrepareActive()) {
-								$value .= _TAG.', ';
+								$value .= \_TAG.', ';
 								$this->setParameters($inValues);
 							} else 
 								$value .= "'".$this->escape($inValues)."', ";
@@ -286,7 +286,7 @@ class ezQuery implements ezQueryInterface
                         return $this->clearParameters();
                     } else {
 						if ($this->isPrepareActive()) {
-							$where .= "$key ".$isCondition.' '._TAG." $combineWith ";
+							$where .= "$key ".$isCondition.' '.\_TAG." $combineWith ";
 							$this->setParameters($val);
 						} else 
 							$where .= "$key ".$isCondition." '".$this->escape($val)."' $combineWith ";
@@ -462,7 +462,7 @@ class ezQuery implements ezQueryInterface
 				$sql .= "$key = CURRENT_TIMESTAMP(), ";
 			} else {
 				if ($this->isPrepareActive()) {
-					$sql .= "$key = "._TAG.", ";
+					$sql .= "$key = ".\_TAG.", ";
 					$this->setParameters($val);
 				} else 
 					$sql .= "$key = '".$this->escape($val)."', ";
@@ -505,11 +505,11 @@ class ezQuery implements ezQueryInterface
 	*/
     private function _query_insert_replace($table = '', $keyAndValue, $type = '', $execute = true) 
     {  
-        if ((! is_array($keyAndValue) && ($execute)) || empty($table)) {
+        if ((! \is_array($keyAndValue) && ($execute)) || empty($table)) {
 			return $this->clearParameters();          			
 		}  
         
-        if ( ! in_array( strtoupper( $type ), array( 'REPLACE', 'INSERT' ))) {
+        if ( ! \in_array( strtoupper( $type ), array( 'REPLACE', 'INSERT' ))) {
 			return $this->clearParameters();          			
 		}  
             
@@ -533,7 +533,7 @@ class ezQuery implements ezQueryInterface
 				}               
             }
             
-            $sql .= "(". rtrim($index, ', ') .") VALUES (". rtrim($value, ', ') .");";
+            $sql .= "(". \rtrim($index, ', ') .") VALUES (". \rtrim($value, ', ') .");";
 
 			if (($this->isPrepareActive()) && !empty($this->getParameters())) 
 				$ok = $this->query($sql, true);
@@ -585,31 +585,22 @@ class ezQuery implements ezQueryInterface
     
     /**
      * Creates an database schema from array
-     *  - column, datatype, value/options with the given arguments.
+     *  - column, datatype, value/options/key arguments.
      * 
      * @return string|bool - SQL schema string, or false for error
      */
    private function create_schema(array ...$columnDataOptions) 
    {
-       if (empty($columnDataOptions))
+        if (empty($columnDataOptions))
            return false;
 
-       $columnData = '';
-       foreach($columnDataOptions as $datatype) {
-           $column = \array_shift($datatype);
-           $type = \array_shift($datatype);
-           if (($column == \CONSTRAINT) || ($column == \INDEX)) {
-               if (empty($datatype[0]) || empty($datatype[1]))
-                    return false;
-               $keyType = ($column != \INDEX) ? \array_shift($datatype).' ' : ' ';
-               $key = $keyType.'('.self::to_string($datatype).'), ';
-               $columnData .= $column.' '.$type.' '.$key;
-            } else {
-               $data = ezSchema::datatype($type, $datatype);
-                if (!empty($data))
-                    $columnData .= $column.' '.$data.', ';
-           }
-       }
+        $columnData = '';
+        foreach($columnDataOptions as $datatype) {
+            $column = \array_shift($datatype);
+            $type = \array_shift($datatype);
+            if (!empty($column) && !empty($type))
+                $columnData .= \column($column, $type, ...$datatype);
+        }
 
        $schemaColumns = !empty($columnData) ? \rtrim($columnData, ', ') : null;
        if (\is_string($schemaColumns))
