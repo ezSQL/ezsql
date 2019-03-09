@@ -111,10 +111,10 @@
 			}
 			$connectionOptions = array("UID" => $dbuser, "PWD" => $dbpassword, "Database" => $dbname, "ReturnDatesAsStrings" => true);
 
-			if ( ( $this->dbh = @sqlsrv_connect($dbhost, $connectionOptions) ) === false )
+			if ( ( $this->dbh = @\sqlsrv_connect($dbhost, $connectionOptions) ) === false )
 			{
 				$this->register_error($ezsql_sqlsrv_str[2].' in '.__FILE__.' on line '.__LINE__);
-				$this->show_errors ? trigger_error($ezsql_sqlsrv_str[2],E_USER_WARNING) : null;
+				$this->show_errors ? \trigger_error($ezsql_sqlsrv_str[2], \E_USER_WARNING) : null;
                 return false;
 			}
 			else
@@ -152,10 +152,10 @@
 		function query($query, $use_prepare=false)
 		{
             if ($use_prepare) 
-                $param = $this->getParameters();
+                $param = $this->prepareValues();
             
 			// check for ezQuery placeholder tag and replace tags with proper prepare tag
-			$query = str_replace(_TAG, '?', $query);
+			$query = \str_replace(\_TAG, '?', $query);
 
 			//if flag to convert query from MySql syntax to MS-Sql syntax is true
 			//convert the query
@@ -171,7 +171,7 @@
 			$this->flush();
 
 			// For reg expressions
-			$query = trim($query);
+			$query = \trim($query);
 
 			// Log how the function was called
 			$this->log_query("\$db->query(\"$query\")");
@@ -196,22 +196,22 @@
 			}
 
 			// Perform the query via std sqlsrv_query function..
-			if (!empty($param) && is_array($param) && ($this->isPrepareActive())) {
-				$this->result = @sqlsrv_query($this->dbh, $query, $param);
-                $this->clearParameters();                
+			if (!empty($param) && \is_array($param) && ($this->isPrepareActive())) {
+				$this->result = @\sqlsrv_query($this->dbh, $query, $param);
+                $this->clearPrepare();                
             }
 			else 
-				$this->result = @sqlsrv_query($this->dbh, $query);
+				$this->result = @\sqlsrv_query($this->dbh, $query);
 
 			// If there is an error then take note of it..
 			if ($this->result === false )
 			{
-				$errors = sqlsrv_errors();
+				$errors = \sqlsrv_errors();
 				if (!empty($errors)) {
 					foreach ($errors as $error) {
 						$sqlError = "ErrorCode: ".$error['code']." ### State: ".$error['SQLSTATE']." ### Error Message: ".$error['message']." ### Query: ".$query;
 						$this->register_error($sqlError);
-						$this->show_errors ? trigger_error($sqlError ,E_USER_WARNING) : null;  
+						$this->show_errors ? \trigger_error($sqlError , \E_USER_WARNING) : null;  
 					}
 				}
 				return false;
@@ -219,20 +219,20 @@
 
 			// Query was an insert, delete, update, replace
 			$is_insert = false;
-			if ( preg_match("/^(insert|delete|update|replace)\s+/i",$query) )
+			if ( \preg_match("/^(insert|delete|update|replace)\s+/i", $query) )
 			{
 				$is_insert = true;
-				$this->rows_affected = @sqlsrv_rows_affected($this->result);
+				$this->rows_affected = @\sqlsrv_rows_affected($this->result);
 
 				// Take note of the insert_id
-				if ( preg_match("/^(insert|replace)\s+/i",$query) )
+				if ( \preg_match("/^(insert|replace)\s+/i",$query) )
 				{
 
-					$identityresultset = @sqlsrv_query($this->dbh, "select SCOPE_IDENTITY()");
+					$identityresultset = @\sqlsrv_query($this->dbh, "select SCOPE_IDENTITY()");
 
 					if ($identityresultset != false )
 					{
-						$identityrow = @sqlsrv_fetch($identityresultset);
+						$identityrow = @\sqlsrv_fetch($identityresultset);
 						$this->insert_id = $identityrow[0];
 					}
 
@@ -247,9 +247,9 @@
 
 				// Take note of column info
 				$i=0;
-				foreach ( @sqlsrv_field_metadata( $this->result) as $field ) {
+				foreach ( @\sqlsrv_field_metadata( $this->result) as $field ) {
 					foreach ($field as $name => $value) {
-						$name = strtolower($name);
+						$name = \strtolower($name);
 						if ($name == "size") $name = "max_length";
 						else if ($name == "type") $name = "typeid";
 						//DEFINED FOR E_STRICT
@@ -263,9 +263,9 @@
 				}
 
 				// Store Query Results
-				$num_rows=0;
+				$num_rows = 0;
 
-				while ( $row = @sqlsrv_fetch_object($this->result) )
+				while ( $row = @\sqlsrv_fetch_object($this->result) )
 				{
 
 					// Store results as an objects within main array
@@ -273,7 +273,7 @@
 					$num_rows++;
 				}
 
-				@sqlsrv_free_stmt($this->result);
+				@\sqlsrv_free_stmt($this->result);
 
 				// Log number of rows the query returned
 				$this->num_rows = $num_rows;
@@ -291,8 +291,6 @@
 			return $return_val;
 
 		}
-
-
 
 		/**********************************************************************
 		*  Convert a Query From MySql Syntax to MS-Sql syntax
@@ -315,7 +313,7 @@
 			//replace the '`' character used for MySql queries, but not
 			//supported in MS-Sql
 
-			$query = str_replace("`", "", $query);
+			$query = \str_replace("`", "", $query);
 			$limit_str = "/LIMIT[^\w]{1,}([0-9]{1,})([\,]{0,})([0-9]{0,})/i";
 			$patterns = array(
 					0 => "/FROM_UNIXTIME\(([^\/]{0,})\)/i", 	//replace From UnixTime command in MS-Sql, doesn't work
@@ -326,13 +324,13 @@
 					1 => "\\1", 
 					2 => "");
 			$regs = null;
-			preg_match($limit_str, $query, $regs);
-			$query = preg_replace($patterns, $replacements, $query);
+			\preg_match($limit_str, $query, $regs);
+			$query = \preg_replace($patterns, $replacements, $query);
 			
 			if(isset($regs[2]))
-				$query = str_ireplace("SELECT ", "SELECT TOP ".$regs[3]." ", $query);
+				$query = \str_ireplace("SELECT ", "SELECT TOP ".$regs[3]." ", $query);
 			else if(isset($regs[1]))
-				$query  = str_ireplace("SELECT ", "SELECT TOP ".$regs[1]." ", $query);
+				$query  = \str_ireplace("SELECT ", "SELECT TOP ".$regs[1]." ", $query);
 
 			return $query;
 
@@ -384,7 +382,7 @@
 		function disconnect()
 		{
 			$this->conn_queries = 0;
-			@sqlsrv_close($this->dbh);
+			@\sqlsrv_close($this->dbh);
 			$this->_connected = false;
 		}
 

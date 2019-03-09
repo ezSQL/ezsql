@@ -1,7 +1,7 @@
 {
     "name": "ezsql/ezsql",
     "description": "Advance database access layer PHP 5.6+ class. Make interacting with a database ridiculously easy.",
-    "keywords": ["mysqli","postgres","mssql","pdo","sqlite","database","abstraction","dba"],
+    "keywords": ["mysql", "postgresql", "sqlserver", "pdo", "sqlite3", "database", "abstraction", "dba"],
     "license": "LGPL-3.0-or-later",
     "authors": [
         {
@@ -20,12 +20,6 @@
     "support": {
         "issues": "https://github.com/ezSQL/ezSQL/issues"
     },
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "https://github.com/ezSQL/ezSQL"
-        }
-    ],
     "require": {
         "php": ">5.6"
     },

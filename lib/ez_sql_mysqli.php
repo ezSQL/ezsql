@@ -93,10 +93,10 @@ class ezSQL_mysqli extends ezSQLcore
      *                        Default is empty string
      */
     public function __construct($dbuser='', $dbpassword='', $dbname='', $dbhost='localhost', $charset='') {
-        if ( ! function_exists ('mysqli_connect') ) {
+        if ( ! \function_exists ('mysqli_connect') ) {
             throw new Exception('<b>Fatal Error:</b> ezSQL_mysql requires mySQL Lib to be compiled and or linked in to the PHP engine');
         }
-        if ( ! class_exists ('ezSQLcore') ) {
+        if ( ! \class_exists ('ezSQLcore') ) {
             throw new Exception('<b>Fatal Error:</b> ezSQL_mysql requires ezSQLcore (ez_sql_core.php) to be included/loaded before it can be used');
         }
 
@@ -107,7 +107,7 @@ class ezSQL_mysqli extends ezSQLcore
         $this->_dbname = $dbname;
         $this->_dbhost = $dbhost;
         if ( ! empty($charset) ) {
-            $this->_charset = strtolower(str_replace('-', '', $charset));
+            $this->_charset = \strtolower(\str_replace('-', '', $charset));
         }
         
         $GLOBALS['db_mysql'] = $this;        
@@ -156,13 +156,13 @@ class ezSQL_mysqli extends ezSQLcore
         // Must have a user and a password
         if ( empty($this->_dbuser) ) {
             $this->register_error($this->ezsql_mysql_str[1] . ' in ' . __FILE__ . ' on line ' . __LINE__);
-            $this->show_errors ? trigger_error($this->ezsql_mysql_str[1], E_USER_WARNING) : null;
-        } else if ( ! $this->dbh = mysqli_connect($this->_dbhost, $this->_dbuser, $this->_dbpassword, $this->_dbname) ) {
+            $this->show_errors ? \trigger_error($this->ezsql_mysql_str[1], \E_USER_WARNING) : null;
+        } else if ( ! $this->dbh = \mysqli_connect($this->_dbhost, $this->_dbuser, $this->_dbpassword, $this->_dbname) ) {
             // Try to establish the server database handle
             $this->register_error($this->ezsql_mysql_str[2] . ' in ' . __FILE__ . ' on line ' . __LINE__);
-            $this->show_errors ? trigger_error($this->ezsql_mysql_str[2], E_USER_WARNING) : null;
+            $this->show_errors ? \trigger_error($this->ezsql_mysql_str[2], \E_USER_WARNING) : null;
         } else {
-            mysqli_set_charset($this->dbh, $this->_charset);
+            \mysqli_set_charset($this->dbh, $this->_charset);
             $this->_connected = true;
         }
 
@@ -180,22 +180,22 @@ class ezSQL_mysqli extends ezSQLcore
         if ( ! $dbname ) {
             // Must have a database name
             $this->register_error($this->ezsql_mysql_str[3] . ' in ' . __FILE__ . ' on line ' . __LINE__);
-            $this->show_errors ? trigger_error($this->ezsql_mysql_str[3], E_USER_WARNING) : null;
+            $this->show_errors ? \trigger_error($this->ezsql_mysql_str[3], \E_USER_WARNING) : null;
             return false;
         } else if ( ! $this->dbh ) {
             // Must have an active database connection
             $this->register_error($this->ezsql_mysql_str[4] . ' in ' . __FILE__ . ' on line ' . __LINE__);
-            $this->show_errors ? trigger_error($this->ezsql_mysql_str[4], E_USER_WARNING) : null;
+            $this->show_errors ? \trigger_error($this->ezsql_mysql_str[4], \E_USER_WARNING) : null;
             return false;
-        } else if ( !mysqli_select_db($this->dbh, $dbname) ) {
+        } else if ( !\mysqli_select_db($this->dbh, $dbname) ) {
             // Try to connect to the database
             // Try to get error supplied by mysql if not use our own
-            if ( !$str = mysqli_error($this->dbh)) {
+            if ( !$str = \mysqli_error($this->dbh)) {
                 $str = $this->ezsql_mysql_str[5];
             }
 
             $this->register_error($str . ' in ' .__FILE__ . ' on line ' . __LINE__);
-            $this->show_errors ? trigger_error($str, E_USER_WARNING) : null;
+            $this->show_errors ? \trigger_error($str, \E_USER_WARNING) : null;
             return false;
         } else {
             $this->_dbname = $dbname;
@@ -203,14 +203,14 @@ class ezSQL_mysqli extends ezSQLcore
                 $charset = $this->_charset;
             }
              if ( $charset != '' ) {
-                $encoding = strtolower(str_replace('-', '', $charset));
+                $encoding = \strtolower(\str_replace('-', '', $charset));
                 $charsets = array();
-                $recordset = mysqli_query($this->dbh, 'SHOW CHARACTER SET');
-                while ( $row = mysqli_fetch_array($recordset, MYSQLI_ASSOC) ) {
+                $recordset = \mysqli_query($this->dbh, 'SHOW CHARACTER SET');
+                while ( $row = \mysqli_fetch_array($recordset, \MYSQLI_ASSOC) ) {
                         $charsets[] = $row['Charset'];
                 }
-                if ( in_array($charset, $charsets) ) {
-                    mysqli_query($this->dbh, 'SET NAMES \'' . $encoding . '\'');
+                if ( \in_array($charset, $charsets) ) {
+                    \mysqli_query($this->dbh, 'SET NAMES \'' . $encoding . '\'');
                 }
             }
             $this->_connected = true;
@@ -227,7 +227,7 @@ class ezSQL_mysqli extends ezSQLcore
      * @return string
      */
     public function escape($str) {
-        return mysqli_real_escape_string($this->dbh, stripslashes($str));
+        return \mysqli_real_escape_string($this->dbh, \stripslashes($str));
     } // escape
 
     /**
@@ -247,11 +247,11 @@ class ezSQL_mysqli extends ezSQLcore
             $stmt->store_result();       
             $variables = array();
             $is_insert = false;
-            if ( preg_match("/^(insert|delete|update|replace)\s+/i", $query) ) {
-                $this->_affectedRows = mysqli_stmt_affected_rows($stmt);
+            if ( \preg_match("/^(insert|delete|update|replace)\s+/i", $query) ) {
+                $this->_affectedRows = \mysqli_stmt_affected_rows($stmt);
 
                 // Take note of the insert_id
-                if ( preg_match("/^(insert|replace)\s+/i", $query) ){
+                if ( \preg_match("/^(insert|replace)\s+/i", $query) ){
                     $this->insert_id = $stmt->insert_id;
                 }
             } else {
@@ -263,7 +263,7 @@ class ezSQL_mysqli extends ezSQLcore
                     $variables[] = &$this->col_info[$field->name]; // pass by reference
                 
                 // Binds variables to a prepared statement for result storage
-                call_user_func_array([$stmt, 'bind_result'], $variables);
+                \call_user_func_array([$stmt, 'bind_result'], $variables);
        
                 $i=0;
                 // Store Query Results
@@ -279,7 +279,7 @@ class ezSQL_mysqli extends ezSQLcore
             if ( $str = $stmt->error ) {
                 $is_insert = true;
                 $this->register_error($str);
-                $this->show_errors ? trigger_error($str,E_USER_WARNING) : null;
+                $this->show_errors ? \trigger_error($str, \E_USER_WARNING) : null;
                 
                 // If debug ALL queries
                 $this->trace || $this->debug_all ? $this->debug() : null ;
@@ -311,23 +311,24 @@ class ezSQL_mysqli extends ezSQLcore
     {
         $stmt   = $this->dbh->prepare($query);
         $params = [];
-        $types  = array_reduce($args, 
-                    function ($string, &$arg) use (&$params) {
-                        $params[] = &$arg;
-                        if (is_float($arg))
-                            $string .= 'd';
-                        elseif (is_integer($arg))
-                            $string .= 'i';
-                        elseif (is_string($arg))
-                            $string .= 's';
-                        else    
-                            $string .= 'b';
-                        return $string;
-                    }, '');
+        $types  = \array_reduce($args,
+            function ($string, &$arg) use (&$params) {
+                $params[] = &$arg;
+                if (\is_float($arg))
+                    $string .= 'd';
+                elseif (\is_integer($arg))
+                    $string .= 'i';
+                elseif (\is_string($arg))
+                    $string .= 's';
+                else    
+                    $string .= 'b';
+                return $string;
+            }, ''
+        );
         
-        array_unshift($params, $types);
+        \array_unshift($params, $types);
             
-        call_user_func_array([$stmt, 'bind_param'], $params);
+        \call_user_func_array([$stmt, 'bind_param'], $params);
         
         $result = ($stmt->execute()) ? $this->fetch_prepared_result($stmt, $query) : false;  
         
@@ -335,7 +336,7 @@ class ezSQL_mysqli extends ezSQLcore
         $stmt->free_result();
         $stmt->close();
         
-        $this->clearParameters();
+        $this->clearPrepare();
         
         return $result;
     }
@@ -349,10 +350,10 @@ class ezSQL_mysqli extends ezSQLcore
     public function query($query, $use_prepare=false) {
         $param = [];
         if ($use_prepare)
-            $param = $this->getParameters();
+            $param = $this->prepareValues();
         
 		// check for ezQuery placeholder tag and replace tags with proper prepare tag
-		$query = str_replace(_TAG, '?', $query);
+		$query = \str_replace(\_TAG, '?', $query);
 		
         // Initialize return
         $return_val = 0;
@@ -361,7 +362,7 @@ class ezSQL_mysqli extends ezSQLcore
         $this->flush();
 
         // For reg expressions
-        $query = trim($query);
+        $query = \trim($query);
 
         // Log how the function was called
         $this->log_query("\$db->query(\"$query\")");
@@ -384,16 +385,16 @@ class ezSQL_mysqli extends ezSQLcore
         }
 
         // Perform the query via std mysql_query function..
-		if (!empty($param) && is_array($param) && ($this->isPrepareActive()))		
+		if (!empty($param) && \is_array($param) && ($this->isPrepareActive()))		
 			return $this->query_prepared($query, $param);
 		else 
-			$this->_result = mysqli_query($this->dbh, $query);
+			$this->_result = \mysqli_query($this->dbh, $query);
 
         // If there is an error then take note of it..
-        if ( $str = mysqli_error($this->dbh) ) {
+        if ( $str = \mysqli_error($this->dbh) ) {
             $is_insert = true;
             $this->register_error($str);
-            $this->show_errors ? trigger_error($str,E_USER_WARNING) : null;
+            $this->show_errors ? \trigger_error($str, \E_USER_WARNING) : null;
             
             // If debug ALL queries
             $this->trace || $this->debug_all ? $this->debug() : null ;
@@ -402,36 +403,36 @@ class ezSQL_mysqli extends ezSQLcore
 
         // Query was an insert, delete, update, replace
         $is_insert = false;
-        if ( preg_match("/^(insert|delete|update|replace)\s+/i", $query) ) {
-            $this->_affectedRows = mysqli_affected_rows($this->dbh);
+        if ( \preg_match("/^(insert|delete|update|replace)\s+/i", $query) ) {
+            $this->_affectedRows = \mysqli_affected_rows($this->dbh);
 
             // Take note of the insert_id
-            if ( preg_match("/^(insert|replace)\s+/i", $query) ) {
-                $this->insert_id = mysqli_insert_id($this->dbh);
+            if ( \preg_match("/^(insert|replace)\s+/i", $query) ) {
+                $this->insert_id = \mysqli_insert_id($this->dbh);
             }
 
             // Return number of rows affected
             $return_val = $this->_affectedRows;
         } else {
-            if ( !is_numeric($this->_result) && !is_bool($this->_result)) {
+            if ( !\is_numeric($this->_result) && !\is_bool($this->_result)) {
                 // Query was a select
 
                 // Take note of column info
                 $i=0;
-                while ($i < mysqli_num_fields($this->_result)) {
-                    $this->col_info[$i] = mysqli_fetch_field($this->_result);
+                while ($i < \mysqli_num_fields($this->_result)) {
+                    $this->col_info[$i] = \mysqli_fetch_field($this->_result);
                     $i++;
                 }
 
                 // Store Query Results
                 $num_rows=0;
-                while ( $row = mysqli_fetch_object($this->_result) ) {
+                while ( $row = \mysqli_fetch_object($this->_result) ) {
                     // Store results as an objects within main array
                     $this->last_result[$num_rows] = $row;
                     $num_rows++;
                 }
 
-                mysqli_free_result($this->_result);
+                \mysqli_free_result($this->_result);
 
                 // Log number of rows the query returned
                 $this->num_rows = $num_rows;
@@ -455,7 +456,7 @@ class ezSQL_mysqli extends ezSQLcore
      */
     public function disconnect() {
         if ( $this->dbh ) {
-            mysqli_close($this->dbh);
+            \mysqli_close($this->dbh);
             $this->_connected = false;
         }
 
@@ -486,7 +487,7 @@ class ezSQL_mysqli extends ezSQLcore
      * @return int
      */
     public function getInsertId() {
-        return mysqli_insert_id($this->dbh);
+        return \mysqli_insert_id($this->dbh);
     } // getInsertId
 
 } // ezSQL_mysqli

@@ -83,10 +83,10 @@ class ezSQL_pdo extends ezSQLcore
      *                             Default is false
      */
     public function __construct($dsn='', $user='', $password='', $options=array(), $isFileBased=false) {
-        if ( ! class_exists ('PDO') ) {
+        if ( ! \class_exists ('PDO') ) {
             throw new Exception('<b>Fatal Error:</b> ezSQL_pdo requires PDO Lib to be compiled and or linked in to the PHP engine');
         }
-        if ( ! class_exists ('ezSQLcore') ) {
+        if ( ! \class_exists ('ezSQLcore') ) {
             throw new Exception('<b>Fatal Error:</b> ezSQL_pdo requires ezSQLcore (ez_sql_core.php) to be included/loaded before it can be used');
         }
 
@@ -135,13 +135,13 @@ class ezSQL_pdo extends ezSQLcore
             // Must have a user and a password if not file based
             if ( empty($this->_dsn) || empty($this->_dbuser) || empty($this->_dbpassword) ) {
                 $this->register_error($this->_ezsql_pdo_str[1] . ' in ' . __FILE__ . ' on line ' . __LINE__);
-                $this->show_errors ? trigger_error($this->_ezsql_pdo_str[1], E_USER_WARNING) : null;
+                $this->show_errors ? \trigger_error($this->_ezsql_pdo_str[1], \E_USER_WARNING) : null;
                 return false;
             }
         } elseif (empty($this->_dsn)) {
             // Must have a dsn
             $this->register_error($this->_ezsql_pdo_str[2] . ' in ' . __FILE__ . ' on line ' . __LINE__);
-            $this->show_errors ? trigger_error($this->_ezsql_pdo_str[2], E_USER_WARNING) : null;
+            $this->show_errors ? \trigger_error($this->_ezsql_pdo_str[2], \E_USER_WARNING) : null;
             return false;
         
         }
@@ -150,16 +150,16 @@ class ezSQL_pdo extends ezSQLcore
         // Establish PDO connection
         try  {
             if ($this->_isFileBased) {
-                $this->dbh = new PDO($this->_dsn, null, null, null);
+                $this->dbh = new \PDO($this->_dsn, null, null, null);
                 $this->_connected = true;
             } else {
-                $this->dbh = new PDO($this->_dsn, $this->_dbuser, $this->_dbpassword, $this->_options);
+                $this->dbh = new \PDO($this->_dsn, $this->_dbuser, $this->_dbpassword, $this->_options);
                 $this->_connected = true;
             }
         }
-        catch (PDOException $e) {
+        catch (\PDOException $e) {
             $this->register_error($e->getMessage());
-            $this->show_errors ? trigger_error($e->getMessage() . '- $dsn: ' . $dsn, E_USER_WARNING) : null;
+            $this->show_errors ? \trigger_error($e->getMessage() . '- $dsn: ' . $dsn, \E_USER_WARNING) : null;
             return false;
         }
 
@@ -241,10 +241,10 @@ class ezSQL_pdo extends ezSQLcore
                 $error_str .= $entry . ', ';
             }
 
-            $error_str = substr($error_str, 0, -2);
+            $error_str = \substr($error_str, 0, -2);
 
             $this->register_error($error_str);
-            $this->show_errors ? trigger_error($error_str . ' ' . $this->last_query, E_USER_WARNING) : null;
+            $this->show_errors ? \trigger_error($error_str . ' ' . $this->last_query, \E_USER_WARNING) : null;
 
             return true;
         }
@@ -259,13 +259,13 @@ class ezSQL_pdo extends ezSQLcore
       * @param boolean $isselect - return \PDOStatement if select statement otherwise int
       * @return bool \ int \PDOStatement 
       */
-    public function query_prepared($query, $param=null, $isselect=false)
+    public function query_prepared($query, $param = null, $isselect = false)
     { 
         $stmt = $this->dbh->prepare($query);
         $result = false;
         if( $stmt && $stmt->execute($param) ) {
             $result = $stmt->rowCount();
-            while( $stmt->fetch(PDO::FETCH_ASSOC) ) {
+            while( $stmt->fetch(\PDO::FETCH_ASSOC) ) {
             }
         }
         return ($isselect) ? $stmt : $result; 
@@ -277,15 +277,15 @@ class ezSQL_pdo extends ezSQLcore
      * @param type $query
      * @return object
      */
-    public function query($query, $use_prepare=false) {
+    public function query($query, $use_prepare = false) {
         if ($use_prepare)
-            $param = &$this->getParameters();
+            $param = $this->prepareValues();
         
 		// check for ezQuery placeholder tag and replace tags with proper prepare tag
-		$query = str_replace(_TAG, '?', $query);
+		$query = \str_replace(\_TAG, '?', $query);
             
         // For reg expressions
-        $query = str_replace("/[\n\r]/", '', trim($query));
+        $query = \str_replace("/[\n\r]/", '', \trim($query));
 
         // Initialize return
         $return_val = 0;
@@ -323,13 +323,13 @@ class ezSQL_pdo extends ezSQLcore
         }
 
         // Query was an insert, delete, update, replace
-        if ( preg_match("/^(insert|delete|update|replace|drop|create)\s+/i", $query) ) {
+        if ( \preg_match("/^(insert|delete|update|replace|drop|create)\s+/i", $query) ) {
 
             // Perform the query and log number of affected rows
             // Perform the query via std PDO query or PDO prepare function..
-            if (!empty($param) && is_array($param) && ($this->isPrepareActive())) {
+            if (!empty($param) && \is_array($param) && ($this->isPrepareActive())) {
                 $this->_affectedRows = $this->query_prepared($query, $param, false);	
-				$this->clearParameters();
+				$this->clearPrepare();
             } else
                 $this->_affectedRows = $this->dbh->exec($query);
 
@@ -341,7 +341,7 @@ class ezSQL_pdo extends ezSQLcore
             $is_insert = true;
 
             // Take note of the insert_id
-            if ( preg_match("/^(insert|replace)\s+/i", $query) ) {
+            if ( \preg_match("/^(insert|replace)\s+/i", $query) ) {
                 $this->insert_id = @$this->dbh->lastInsertId();
             }
 
@@ -353,9 +353,9 @@ class ezSQL_pdo extends ezSQLcore
 
             // Perform the query and log number of affected rows
             // Perform the query via std PDO query or PDO prepare function..
-            if (!empty($param) && is_array($param) && ($this->isPrepareActive())) {
+            if (!empty($param) && \is_array($param) && ($this->isPrepareActive())) {
                 $sth = $this->query_prepared($query, $param, true);	
-				$this->clearParameters();
+				$this->clearPrepare();
             } else
                 $sth = $this->dbh->query($query);
 
