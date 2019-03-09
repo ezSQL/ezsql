@@ -154,14 +154,14 @@ class ezSQL_pdo extends ezSQLcore
         if (self::$isSecure)
             $this->_dsn = empty($dsn) ? $this->_dsn.$this->secure : $dsn.$this->secure;
         else
-            $this->_dsn = empty($dsn) ?: $dsn;
+            $this->_dsn = empty($dsn) ? $this->_dsn : $dsn;
 
         $this->_isFileBased = $isFileBased;
         
         if (!$isFileBased) {
-            $this->_dbuser = empty($dbuser) ?: $dbuser;
-            $this->_dbpassword = empty($dbpassword) ?: $dbpassword;
-            $this->_options = empty($options) ?: $options;        
+            $this->_dbuser = empty($dbuser) ? $this->_dbuser : $dbuser;
+            $this->_dbpassword = empty($dbpassword) ? $this->_dbpassword : $dbpassword;
+            $this->_options = empty($options) ? $this->_options : $options;        
 
             // Must have a user and a password if not file based
             if ( empty($this->_dsn) || empty($this->_dbuser) || empty($this->_dbpassword) ) {
