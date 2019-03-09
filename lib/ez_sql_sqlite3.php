@@ -43,7 +43,7 @@
 		{
             parent::__construct();
 			// Turn on track errors 
-			ini_set('track_errors',1);
+			\ini_set('track_errors',1);
 			
 			if ( $dbpath && $dbname )
 			{
@@ -58,7 +58,7 @@
 		*  Try to connect to SQLite database server
 		*/
 
-		function connect($dbpath='', $dbname='')
+		function connect($dbpath = '', $dbname = '')
 		{
 			global $ezsql_sqlite3_str; 
             $return_val = false;
@@ -68,14 +68,14 @@
 			if ( ! $dbpath || ! $dbname )
 			{
 				$this->register_error($ezsql_sqlite3_str[1].' in '.__FILE__.' on line '.__LINE__);
-				$this->show_errors ? trigger_error($ezsql_sqlite3_str[1],E_USER_WARNING) : null;
+				$this->show_errors ? \trigger_error($ezsql_sqlite3_str[1], \E_USER_WARNING) : null;
 				return false;
 			}
 			// Try to establish the server database handle
 			else if ( ! $this->dbh = @new SQLite3($dbpath.$dbname) )
 			{
 				$this->register_error($php_errormsg);
-				$this->show_errors ? trigger_error($php_errormsg,E_USER_WARNING) : null;
+				$this->show_errors ? \trigger_error($php_errormsg, \E_USER_WARNING) : null;
 				return false;
 			}
 			else
@@ -94,7 +94,7 @@
 		*  but for the sake of consistency it has been included
 		*/
 
-		function quick_connect($dbpath='', $dbname='')
+		function quick_connect($dbpath = '', $dbname = '')
 		{
 			return $this->connect($dbpath, $dbname);
 		}
@@ -106,7 +106,7 @@
 
 		function escape($str)
 		{
-			return $this->dbh->escapeString(stripslashes(preg_replace("/[\r\n]/",'',$str)));				
+			return $this->dbh->escapeString(\stripslashes(\preg_replace("/[\r\n]/", '', $str)));				
 		}
 
 		/**********************************************************************
@@ -121,17 +121,17 @@
         
         // Get the data type of the value to bind. 
         function getArgType($arg) {
-            switch (gettype($arg)) {
-                case 'double':  return SQLITE3_FLOAT;
-                case 'integer': return SQLITE3_INTEGER;
-                case 'boolean': return SQLITE3_INTEGER;
-                case 'NULL':    return SQLITE3_NULL;
-                case 'string':  return SQLITE3_TEXT;
-                case 'string':  return SQLITE3_TEXT;
+            switch (\gettype($arg)) {
+                case 'double':  return \SQLITE3_FLOAT;
+                case 'integer': return \SQLITE3_INTEGER;
+                case 'boolean': return \SQLITE3_INTEGER;
+                case 'NULL':    return \SQLITE3_NULL;
+                case 'string':  return \SQLITE3_TEXT;
+                case 'string':  return \SQLITE3_TEXT;
                 default: 
-                    $type_error = 'Argument is of invalid type '.gettype($arg);
+                    $type_error = 'Argument is of invalid type '.\gettype($arg);
                     $this->register_error($type_error);
-                    $this->show_errors ? trigger_error($type_error,E_USER_WARNING) : null;
+                    $this->show_errors ? \trigger_error($type_error, \E_USER_WARNING) : null;
                     return false;
             }
         }
@@ -147,7 +147,7 @@
             $stmt = $this->dbh->prepare($query);
             foreach ($param as $index => $val) {
                 // indexing start from 1 in Sqlite3 statement
-                if (is_array($val)) {
+                if (\is_array($val)) {
                     $ok = $stmt->bindParam($index + 1, $val);
                 } else {
                     $ok = $stmt->bindValue($index + 1, $val, $this->getArgType($val));
@@ -156,7 +156,7 @@
                 if (!$ok) {
                     $type_error = "Unable to bind param: $val";
                     $this->register_error($type_error);
-                    $this->show_errors ? trigger_error($type_error,E_USER_WARNING) : null;
+                    $this->show_errors ? \trigger_error($type_error, \E_USER_WARNING) : null;
                     return false;
                 }
             }
@@ -174,13 +174,13 @@
 		function query($query, $use_prepare=false)
         {
             if ($use_prepare)
-                $param = &$this->getParameters();
+                $param = $this->prepareValues();
             
 			// check for ezQuery placeholder tag and replace tags with proper prepare tag
-			$query = str_replace(_TAG, '?', $query);
+			$query = \str_replace(\_TAG, '?', $query);
             
 			// For reg expressions
-			$query = str_replace("/[\n\r]/",'',trim($query)); 
+			$query = \str_replace("/[\n\r]/", '', \trim($query)); 
 
 			// initialize return
 			$return_val = 0;
@@ -195,9 +195,9 @@
 			$this->last_query = $query;
 
 			// Perform the query via std SQLite3 query or SQLite3 prepare function..
-            if (!empty($param) && is_array($param) && ($this->isPrepareActive())) {
+            if (!empty($param) && \is_array($param) && ($this->isPrepareActive())) {
                 $this->result = $this->query_prepared($query, $param);	
-				$this->clearParameters();
+				$this->clearPrepare();
             } else 
                 $this->result = $this->dbh->query($query);
 			$this->count(true, true);
@@ -207,17 +207,17 @@
 			{
 				$err_str = $this->dbh->lastErrorMsg();
 				$this->register_error($err_str);
-				$this->show_errors ? trigger_error($err_str,E_USER_WARNING) : null;
+				$this->show_errors ? \trigger_error($err_str, \E_USER_WARNING) : null;
 				return false;
 			}
 			
 			// Query was an insert, delete, update, replace
-			if ( preg_match("/^(insert|delete|update|replace)\s+/i",$query) )
+			if ( \preg_match("/^(insert|delete|update|replace)\s+/i", $query) )
 			{
 				$this->rows_affected = @$this->dbh->changes();
 				
 				// Take note of the insert_id
-				if ( preg_match("/^(insert|replace)\s+/i",$query) )
+				if ( \preg_match("/^(insert|replace)\s+/i", $query) )
 				{
 					$this->insert_id = @$this->dbh->lastInsertRowID();	
 				}
@@ -261,7 +261,7 @@
 			
 			}
             
-            if (($param) && is_array($param) && ($this->isPrepareActive()))
+            if (($param) && \is_array($param) && ($this->isPrepareActive()))
                 $this->result->finalize(); 
 
 			// If debug ALL queries
