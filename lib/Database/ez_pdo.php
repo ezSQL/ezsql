@@ -18,13 +18,16 @@ final class ez_pdo extends ezsqlModel
             2 => 'File based databases require $dsn to create a connection'
         );
     
-    protected $preparedValues = array(); 
+    protected $preparedValues = array();
+
+    private static $isSecure = false;
+    private static $secure = null;
 
     /**
     * Database configuration setting 
     * @var Configuration instance
     */
-    private $database;
+    private static $database;
 
     public function __construct(Configuration $settings) {
         if (empty($settings) || (!$settings instanceof Configuration)) {
@@ -49,6 +52,35 @@ final class ez_pdo extends ezsqlModel
         \setInstance($this);
     } // __construct
 
+    public static function securePDO(
+        $vendor = null, 
+        $key = 'certificate.key', 
+        $cert = 'certificate.crt', 
+        $ca = 'cacert.pem', 
+        $path = '.'.\_DS) 
+    {
+        if (\array_key_exists(\strtolower($vendor), \VENDOR) 
+            && (! \file_exists($path.$cert) || ! \file_exists($path.$key)))
+            ezQuery::createCertificate();
+
+        if (($vendor == 'pgsql') || ($vendor == 'postgresql')) {
+            self::$secure = "sslmode=require;sslcert=".$path.$cert.";sslkey=".$path.$key.";sslrootcert=".$path.$ca.";";
+            self::$isSecure = true;
+        } elseif (($vendor == 'mysql') || ($vendor == 'mysqli')) {
+            self::$options = array(
+                \PDO::MYSQL_ATTR_SSL_KEY => $path.$key,
+                \PDO::MYSQL_ATTR_SSL_CERT => $path.$cert,
+                \PDO::MYSQL_ATTR_SSL_CA => $path.$ca,
+                \PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT => false,
+            );
+            
+            self::$database->setOptions(self::$options);
+        } elseif (($vendor == 'sqlserver') || ($vendor == 'mssql') || ($vendor == 'sqlsrv')) {
+            self::$secure = ";Encrypt=true;TrustServerCertificate=true";
+            self::$isSecure = true;
+        }
+    }
+
     /**
     * Try to connect to the database server in the DSN parameters
     *
@@ -66,40 +98,45 @@ final class ez_pdo extends ezsqlModel
     *                  Default is false
     * @return boolean
     */
-    public function connect($dsn='', $user='', $password='', $options=array(), $isFile = false) {
+    public function connect($dsn = '', $user = '', $password = '', $options = array(), $isFile = false) 
+    {
         $this->_connected = false;
 
-        $setDsn = empty($dsn) ? $this->database->getDsn() : $dsn;
+        if (self::$isSecure)
+            $setDsn = empty($dsn) ? $this->database->getDsn().$this->secure : $dsn.$this->secure;
+        else
+            $setDsn = empty($dsn) ? $this->database->getDsn() : $dsn;
+
         $setUser = empty($dbuser) ? $this->database->getUser() : $user;
         $setPassword = empty($dbpassword) ? $this->database->getPassword() : $password; 
-        $setOptions = empty($options) ? $this->database->getOptions() : $options;   
+        $setOptions = empty($options) ? $this->database->getOptions() : $options;
+        
         $IsFile = empty($isFile) ? $this->database->getIsFile() : $isFile;   
         
         if (!$IsFile) {                
             // Must have a user and a password if not file based
             if ( empty($setDsn) || empty($setUser) || empty($setPassword )) {
                 $this->register_error($this->_ezsql_pdo_str[1] . ' in ' . __FILE__ . ' on line ' . __LINE__);
-                $this->show_errors ? trigger_error($this->_ezsql_pdo_str[1], E_USER_WARNING) : null;
+                $this->show_errors ? \trigger_error($this->_ezsql_pdo_str[1], \E_USER_WARNING) : null;
             }
         } elseif (empty($setDsn)) {
             // Must have a dsn
             $this->register_error($this->_ezsql_pdo_str[2] . ' in ' . __FILE__ . ' on line ' . __LINE__);
-            $this->show_errors ? trigger_error($this->_ezsql_pdo_str[2], E_USER_WARNING) : null;        
+            $this->show_errors ? \trigger_error($this->_ezsql_pdo_str[2], \E_USER_WARNING) : null;        
         }        
 
         // Establish PDO connection
         try  {
             if ($IsFile) {
-                $this->dbh = new PDO($setDsn);
+                $this->dbh = new \PDO($setDsn, null, null, null);
                 $this->_connected = true;
             } else {
-                $this->dbh = new PDO($setDsn, $setUser, $setPassword, $setOptions);
+                $this->dbh = new \PDO($setDsn, $setUser, $setPassword, $setOptions);
                 $this->_connected = true;
             }
-        }
-        catch (PDOException $e) {
+        } catch (\PDOException $e) {
             $this->register_error($e->getMessage());
-            $this->show_errors ? trigger_error($e->getMessage() . '- $dsn: ' . $dsn, E_USER_WARNING) : null;
+            $this->show_errors ? \trigger_error($e->getMessage() . '- $dsn: ' . $dsn, \E_USER_WARNING) : null;
         }
         $this->isConnected = $this->_connected;
 
@@ -124,7 +161,8 @@ final class ez_pdo extends ezsqlModel
     *                             Default is false
     * @return boolean
     */
-    public function quick_connect($dsn='', $user='', $password='', $options=array(), $isFileBased=false) {
+    public function quick_connect($dsn = '', $user = '', $password = '', $options = array(), $isFileBased = false) 
+    {
         return $this->connect($dsn, $user, $password, $options, $isFileBased);
     } // quick_connect
 
@@ -139,7 +177,8 @@ final class ez_pdo extends ezsqlModel
     * @param string $str
     * @return string
     */
-    public function escape($str) {
+    public function escape($str) 
+    {
         // If there is no existing database connection then try to connect
         if ( ! isset($this->dbh) || ! $this->dbh ) {
             $this->connect($this->database->getDsn(), 
@@ -161,7 +200,8 @@ final class ez_pdo extends ezsqlModel
     *
     * @return string
     */
-    public function sysdate() {
+    public function sysdate() 
+    {
         return "datetime('now')";
     } // sysdate
 
@@ -170,7 +210,8 @@ final class ez_pdo extends ezsqlModel
     *
     * @return string
     */
-    public function catch_error(){
+    public function catch_error()
+    {
         $error_str = 'No error info';
 
         $err_array = $this->dbh->errorInfo();
@@ -183,10 +224,10 @@ final class ez_pdo extends ezsqlModel
                 $error_str .= $entry . ', ';
             }
 
-            $error_str = substr($error_str, 0, -2);
+            $error_str = \substr($error_str, 0, -2);
 
             $this->register_error($error_str);
-            $this->show_errors ? trigger_error($error_str . ' ' . $this->last_query, E_USER_WARNING) : null;
+            $this->show_errors ? \trigger_error($error_str . ' ' . $this->last_query, \E_USER_WARNING) : null;
 
             return true;
         }
@@ -194,21 +235,22 @@ final class ez_pdo extends ezsqlModel
     
     /**
     * Creates a prepared query, binds the given parameters and returns the result of the executed
+    *
     * @param string $query
     * @param array $param
-    * @param boolean $isselect - return \PDOStatement if select statement otherwise int
-    * @return bool \ int \PDOStatement 
+    * @param boolean $isSelect - return \PDOStatement, if SELECT SQL statement, otherwise int
+    * @return bool|int|PDOStatement 
     */
-    public function query_prepared(string $query, $param=null, $isselect=false)
+    public function query_prepared(string $query, $param = null, $isSelect = false)
     { 
         $stmt = $this->dbh->prepare($query);
         $result = false;
         if( $stmt && $stmt->execute($param) ) {
             $result = $stmt->rowCount();
-            while( $stmt->fetch(PDO::FETCH_ASSOC) ) {
+            while( $stmt->fetch(\PDO::FETCH_ASSOC) ) {
             }
         }
-        return ($isselect) ? $stmt : $result; 
+        return ($isSelect) ? $stmt : $result; 
     }
         
     /**
@@ -217,16 +259,17 @@ final class ez_pdo extends ezsqlModel
      * @param type $query
      * @return object
      */
-    public function query(string $query, $use_prepare=false)
+    public function query(string $query, $use_prepare = false)
      {
+        $param = [];
         if ($use_prepare)
-            $param = &$this->getParameters();
+            $param = $this->prepareValues();
         
 		// check for ezQuery placeholder tag and replace tags with proper prepare tag
-		$query = str_replace(_TAG, '?', $query);
+		$query = \str_replace(_TAG, '?', $query);
             
         // For reg expressions
-        $query = str_replace("/[\n\r]/", '', trim($query));
+        $query = \str_replace("/[\n\r]/", '', \trim($query));
 
         // Initialize return
         $return_val = 0;
@@ -268,13 +311,12 @@ final class ez_pdo extends ezsqlModel
         }
 
         // Query was an insert, delete, update, replace
-        if ( preg_match("/^(insert|delete|update|replace|drop|create)\s+/i", $query) ) {
+        if ( \preg_match("/^(insert|delete|update|replace|drop|create)\s+/i", $query) ) {
 
             // Perform the query and log number of affected rows
             // Perform the query via std PDO query or PDO prepare function..
             if (!empty($param) && is_array($param) && ($this->isPrepareActive())) {
-                $this->_affectedRows = $this->query_prepared($query, $param, false);	
-				$this->clearParameters();
+                $this->_affectedRows = $this->query_prepared($query, $param, false);
             } else
                 $this->_affectedRows = $this->dbh->exec($query);
 
@@ -286,7 +328,7 @@ final class ez_pdo extends ezsqlModel
             $is_insert = true;
 
             // Take note of the insert_id
-            if ( preg_match("/^(insert|replace)\s+/i", $query) ) {
+            if ( \preg_match("/^(insert|replace)\s+/i", $query) ) {
                 $this->insert_id = @$this->dbh->lastInsertId();
             }
 
@@ -298,9 +340,8 @@ final class ez_pdo extends ezsqlModel
 
             // Perform the query and log number of affected rows
             // Perform the query via std PDO query or PDO prepare function..
-            if (!empty($param) && is_array($param) && ($this->isPrepareActive())) {
-                $sth = $this->query_prepared($query, $param, true);	
-				$this->setParameters();
+            if (!empty($param) && \is_array($param) && ($this->isPrepareActive())) {
+                $sth = $this->query_prepared($query, $param, true);
             } else
                 $sth = $this->dbh->query($query);
 
@@ -328,7 +369,7 @@ final class ez_pdo extends ezsqlModel
 
             // Store Query Results
             $num_rows=0;
-            while ( $row = @$sth->fetch(PDO::FETCH_ASSOC) ) {
+            while ( $row = @$sth->fetch(\PDO::FETCH_ASSOC) ) {
                 // Store results as an objects within main array
                 $this->last_result[$num_rows] = (object) $row;
                 $num_rows++;
@@ -362,7 +403,8 @@ final class ez_pdo extends ezsqlModel
     /**
      * Close the database connection
      */
-    public function disconnect(){
+    public function disconnect()
+    {
         if ($this->dbh) {
             $this->dbh = null;
             $this->_connected = false;

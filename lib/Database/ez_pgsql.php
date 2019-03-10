@@ -13,7 +13,7 @@
 		*/
 		private $_ezsql_postgresql_str = array
 			(
-				1 => 'Require $dbuser and $dbpassword to connect to a database server',
+				1 => 'Require $user and $password to connect to a database server',
 				2 => 'Error establishing PostgreSQL database connection. Correct user/password? Correct hostname? Database server running?',
 				3 => 'Require $dbname to select a database',
 				4 => 'mySQL database connection is not active',
@@ -23,6 +23,9 @@
 		private $rows_affected = false;
         
 		protected $preparedValues = array();
+
+		private static $isSecure = false;
+		private static $secure = null;
 
 		/**
 		 * Database configuration setting 
@@ -48,53 +51,53 @@
 		* connect already does what quick connect does - but for the sake of
 		* consistency it has been included
 		*
-		* @param string $dbuser The database user name
-		* @param string $dbpassword The database users password
-		* @param string $dbname The name of the database
-		* @param string $dbhost The host name or IP address of the database server.
+		* @param string $user The database user name
+		* @param string $password The database users password
+		* @param string $name The name of the database
+		* @param string $host The host name or IP address of the database server.
 		*			Default is localhost
-		* @param string $dbport The database TCP/IP port
+		* @param string $port The database TCP/IP port
 		*		  Default is PostgreSQL default port 5432
 		* @return boolean
 		*/
-		function quick_connect($dbuser='', $dbpassword='', $dbname='', $dbhost='localhost', $dbport='5432')
+		function quick_connect($user='', $password = '', $name = '', $host = 'localhost', $port = '5432')
 		{
-			if ( ! $this->connect($dbuser, $dbpassword, $dbname, $dbhost, $dbport, true) ) ;						
+			if ( ! $this->connect($user, $password, $name, $host, $port, true) ) ;						
 			return $this->_connected;
 		} // quick_connect
 
 		/**
 		* Try to connect to PostgreSQL database server
 		*
-		* @param string $dbuser The database user name
-		* @param string $dbpassword The database users password
-		* @param string $dbname The name of the database
-		* @param string $dbhost The host name or IP address of the database server.
+		* @param string $user The database user name
+		* @param string $password The database users password
+		* @param string $name The name of the database
+		* @param string $host The host name or IP address of the database server.
 		*			Default is localhost
-		* @param string $dbport The database TCP/IP port
+		* @param string $port The database TCP/IP port
 		*						Default is PostgreSQL default port 5432
 		* @return boolean
 		*/
-		public function connect($dbuser='', $dbpassword='', $dbname='', $dbhost='localhost', $dbport='5432') 
+		public function connect($user = '', $password = '', $name = '', $host = 'localhost', $port = '5432') 
 		{
 			$this->_connected = false;
 						
-			$user = empty($dbuser) ? $this->database->getUser() : $dbuser;
-			$password = empty($dbpassword) ? $this->database->getPassword() : $dbpassword;
-			$name = empty($dbname) ? $this->database->getName() : $dbname;
-			$host = ($dbhost!='localhost') ? $this->database->getHost() : $dbhost;
-			$port = ($dbport!='5432') ? $dbport : $this->database->getPort();
+			$user = empty($user) ? $this->database->getUser() : $user;
+			$password = empty($password) ? $this->database->getPassword() : $password;
+			$name = empty($name) ? $this->database->getName() : $name;
+			$host = ($host != 'localhost') ? $this->database->getHost() : $host;
+			$port = ($port != '5432') ? $port : $this->database->getPort();
 
 			$connect_string = "host=".$host." port=".$port." dbname=".$name." user=".$user." password=".$password;
 
 			if ( !$user ) {
 				// Must have a user and a password
 				$this->register_error($this->_ezsql_postgresql_str[1] . ' in ' . __FILE__ . ' on line ' . __LINE__);
-				$this->show_errors ? trigger_error($this->_ezsql_postgresql_str[1], E_USER_WARNING) : null;
-			} else if ( ! $this->dbh = pg_connect( $connect_string, true) ) {
+				$this->show_errors ? \trigger_error($this->_ezsql_postgresql_str[1], \E_USER_WARNING) : null;
+			} else if ( ! $this->dbh = \g_connect( $connect_string, true) ) {
 				// Try to establish the server database handle
 				$this->register_error($this->_ezsql_postgresql_str[2] . ' in ' . __FILE__ . ' on line ' . __LINE__);
-				$this->show_errors ? trigger_error($this->_ezsql_postgresql_str[2], E_USER_WARNING) : null;
+				$this->show_errors ? \trigger_error($this->_ezsql_postgresql_str[2], \E_USER_WARNING) : null;
 			} else {
 				$this->_connected = true;
 			}
@@ -111,7 +114,7 @@
 		*/
 		public function escape($str) 
 		{
-			return pg_escape_string(stripslashes($str));
+			return \pg_escape_string(\stripslashes($str));
 		} // escape
 
 		/**
@@ -163,21 +166,20 @@
 		* @param bool
 		* @return object 
 		*/
-		function query(string $query, $use_prepare=false)
+		function query(string $query, $use_prepare = false)
 		{
 			$param  = [];
             if ($use_prepare)
-                $param = $this->getParameters();
+                $param = $this->prepareValues();
             
 			// check for ezQuery placeholder tag and replace tags with proper prepare tag
-			if (!empty($param) && is_array($param) && ($this->isPrepareActive()) && (strpos($query, _TAG) !== false))
-			{
+			if (!empty($param) && \is_array($param) && ($this->isPrepareActive()) && (\strpos($query, \_TAG) !== false)) {
 				foreach ($param as $i => $value) {
-					$parametrize = $i + 1;
-					$needle = _TAG;
-					$pos = strpos($query, $needle);
+					$parameterized = $i + 1;
+					$needle = \_TAG;
+					$pos = \strpos($query, $needle);
 					if ($pos !== false) 
-						$query = substr_replace($query, '$'.$parametrize, $pos, strlen($needle));
+						$query = \substr_replace($query, '$'.$parameterized, $pos, \strlen($needle));
 				}
 			}				
 
@@ -188,7 +190,7 @@
 			$this->flush();
 
 			// For reg expressions
-			$query = trim($query);
+			$query = \trim($query);
 
 			// Log how the function was called
 			$this->log_query("\$db->query(\"$query\")");
@@ -200,95 +202,84 @@
 			$this->count(true, true);
 
 			// Use core file cache function
-			if ( $cache = $this->get_cache($query) )
-			{
+			if ( $cache = $this->get_cache($query) ) {
 				return $cache;
 			}
 
 			// If there is no existing database connection then try to connect
-			if ( ! isset($this->dbh) || ! $this->dbh )
-			{	
+			if ( ! isset($this->dbh) || ! $this->dbh ) {	
 				$this->connect($this->database->getUser(), 
-						$this->database->getPassword(), 
-						$this->database->getName(), 
-						$this->database->getHost(), 
-						$this->database->getPort());
+				$this->database->getPassword(), 
+				$this->database->getName(), 
+				$this->database->getHost(), 
+				$this->database->getPort());
 			}
             
 			// Perform the query via std postgresql_query function..
-			if (!empty($param) && is_array($param) && ($this->isPrepareActive()))
-			{
-				$this->result = @pg_query_params($this->dbh, $query, $param);		
-				$this->clearParameters();				
-			} else 
-				$this->result = @pg_query($this->dbh, $query);
+			if (!empty($param) && \is_array($param) && ($this->isPrepareActive()))
+				$this->result = @\pg_query_params($this->dbh, $query, $param);
+			else 
+				$this->result = @\pg_query($this->dbh, $query);
 
 
 			// If there is an error then take note of it..
-			if ( $str = @pg_last_error($this->dbh) )
-			{
+			if ( $str = @\pg_last_error($this->dbh) ) {
 				$this->register_error($str);
-				$this->show_errors ? trigger_error($str,E_USER_WARNING) : null;
+				$this->show_errors ? \trigger_error($str, \E_USER_WARNING) : null;
 				return false;
 			}
 			// Query was an insert, delete, update, replace
 			$is_insert = false;
-			if ( preg_match("/^(insert|delete|update|replace)\s+/i",$query) )
-			{
+			if ( \preg_match("/^(insert|delete|update|replace)\s+/i", $query) ) {
 				$is_insert = true;
-				$this->rows_affected = @pg_affected_rows($this->result);
+				$this->rows_affected = @\pg_affected_rows($this->result);
 
 				// Take note of the insert_id
-				if ( preg_match("/^(insert|replace)\s+/i",$query) )
-				{
+				if ( \preg_match("/^(insert|replace)\s+/i", $query) ) {
 					//$this->insert_id = @postgresql_insert_id($this->dbh);
 					//$this->insert_id = pg_last_oid($this->result);
 
 					// Thx. Rafael Bernal
-					$insert_query = pg_query("SELECT lastval();");
-					$insert_row = pg_fetch_row($insert_query);
+					$insert_query = \pg_query("SELECT lastval();");
+					$insert_row = \pg_fetch_row($insert_query);
 					$this->insert_id = $insert_row[0];
 				}
 
 				// Return number for rows affected
  				$return_val = $this->rows_affected;
 				
-				if ( preg_match("/returning/smi",$query) )
-				{
-					while ( $row = @pg_fetch_object($this->result) )
-					{
+				if ( \preg_match("/returning/smi", $query) ) {
+					while ( $row = @\pg_fetch_object($this->result) ) {
 						$return_valx[] = $row;
 					}
 					$return_val = $return_valx;
 				}
 			// Query was a select	
 			} else { 
-				$num_rows=0;
-				if ( $this->result )	//may be needed but my tests did not
-				{								
+				$num_rows = 0;
+				//may be needed but my tests did not
+				if ( $this->result ) {								
 					// Take note of column info
-					$i=0;
-					while ($i < @pg_num_fields($this->result))
-						{
-							$this->col_info[$i]->name = pg_field_name($this->result,$i);
-							$this->col_info[$i]->type = pg_field_type($this->result,$i);
-							$this->col_info[$i]->size = pg_field_size($this->result,$i);
-							$i++;
-						}
+					$i = 0;
+					while ($i < @\pg_num_fields($this->result)) {
+						$this->col_info[$i]->name = \pg_field_name($this->result,$i);
+						$this->col_info[$i]->type = \pg_field_type($this->result,$i);
+						$this->col_info[$i]->size = \pg_field_size($this->result,$i);
+						$i++;
+					}
 
 					/**
 					 * Store Query Results 
 					 * while ( $row = @pg_fetch_object($this->result, $i, PGSQL_ASSOC) ) doesn't work? donno
 					 * while ( $row = @pg_fetch_object($this->result,$num_rows) ) does work
 					 */
-					while ( $row = @pg_fetch_object($this->result) )
-						{
-							// Store results as an objects within main array
-							$this->last_result[$num_rows] = $row ;
-							$num_rows++;
-						}
+					while ( $row = @\pg_fetch_object($this->result) ) {
+						// Store results as an objects within main array
+						$this->last_result[$num_rows] = $row;
+						$num_rows++;
+					}
 
-					@pg_free_result($this->result);
+					@\pg_free_result($this->result);
 				}
 				// Log number of rows the query returned
 				$this->num_rows = $num_rows;
@@ -298,13 +289,12 @@
 			}
 
 			// disk caching of queries
-			$this->store_cache($query,$is_insert);
+			$this->store_cache($query, $is_insert);
 
 			// If debug ALL queries
-			$this->trace || $this->debug_all ? $this->debug() : null ;
+			$this->trace || $this->debug_all ? $this->debug() : null;
 
 			return $return_val;
-
 		} // query
 
 		/**
@@ -313,7 +303,7 @@
 		public function disconnect() 
 		{
 			if ( $this->dbh ) {
-				pg_close($this->dbh);
+				\pg_close($this->dbh);
 				$this->_connected = false;
 			}
 		} // disconnect

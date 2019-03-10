@@ -2,6 +2,7 @@
 
 use ezsql\ezSchema;
 use ezsql\ezQuery;
+use ezsql\Database\ez_pdo;
 use ezsql\ezQueryInterface;
 
 // Global class instances, will be used to create and call methods directly.
@@ -37,6 +38,37 @@ if (!function_exists('ezFunctions')) {
     function index(string $indexName, ...$indexKeys)
     {
         return \column(\INDEX, $indexName, ...$indexKeys);
+    }
+
+    function createCertificate(
+        string $privatekeyFile = 'certificate.key', 
+        string $certificateFile = 'certificate.crt', 
+        string $signingFile = 'certificate.csr', 
+        // string $caCertificate = null, 
+        string $ssl_path = null, 
+        array $details = ["commonName" => "localhost"]
+    ) 
+    {
+        ezQuery::createCertificate($privatekeyFile, $certificateFile, $signingFile, $ssl_path, $details);
+    }
+
+    function securePDO(
+        $vendor = null, 
+        $key = 'certificate.key', 
+        $cert = 'certificate.crt', 
+        $ca = 'cacert.pem', 
+        $path = '.'.\_DS) 
+    {
+        ez_pdo::securePDO($vendor, $key, $cert, $ca, $path);
+    }
+
+    function secureSQL(
+        $key = 'certificate.key', 
+        $cert = 'certificate.crt', 
+        $ca = 'cacert.pem', 
+        $path = '.'.\_DS) 
+    {
+        // todo
     }
 
 	/**
@@ -243,7 +275,7 @@ if (!function_exists('ezFunctions')) {
 
         return $ezInstance;
     }
-
+   
     function cleanInput($string) {
         return ezQuery::clean($string);
     } 

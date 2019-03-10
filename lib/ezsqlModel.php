@@ -147,7 +147,7 @@ class ezsqlModel extends ezQuery
 		$this->col_info = null;
 		$this->last_query = null;
 		$this->from_disk_cache = false;
-		$this->clearParameters();
+		$this->clearPrepare();
 	}
 	
 	/**

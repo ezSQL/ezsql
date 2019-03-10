@@ -11,3 +11,7 @@ tests/sqlite/ez_test.sqlite
 tests/sqlite/ez_test.sqlite3
 .DS_Store
 .vscode/settings.json
+test.php
+*.csr
+*.key
+*.crt

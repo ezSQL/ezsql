@@ -17,7 +17,7 @@ class ezQuery implements ezQueryInterface
     public function __construct()
     {
     }
-
+ 
     public static function clean($string) 
     {
         $patterns = array( // strip out:
@@ -35,48 +35,106 @@ class ezQuery implements ezQueryInterface
     }
 
     /**
-    * Return status of prepare function availability in method calls
-    */
+     * Creates self signed certificate
+     * 
+     * @param string $privatekeyFile
+     * @param string $certificateFile
+     * @param string $signingFile
+     * // param string $caCertificate
+     * @param string $ssl_path
+     * @param array $details - certificate details 
+     * 
+     * Example: 
+     *  array $details = [
+     *      "countryName" =>  '',
+     *      "stateOrProvinceName" => '',
+     *      "localityName" => '',
+     *      "organizationName" => '',
+     *      "organizationalUnitName" => '',
+     *      "commonName" => '',
+     *      "emailAddress" => ''
+     *  ];
+     * 
+     */
+    public static function createCertificate(
+        string $privatekeyFile = 'certificate.key', 
+        string $certificateFile = 'certificate.crt', 
+        string $signingFile = 'certificate.csr', 
+        // string $caCertificate = null, 
+        string $ssl_path = null, 
+        array $details = ["commonName" => "localhost"]
+    ) 
+    {
+        if (empty($ssl_path) || ! \is_dir($ssl_path)) {
+            $ssl_path = \getcwd();
+            $ssl_path = \preg_replace('/\\\/', \_DS, $ssl_path). \_DS;
+        } else
+            $ssl_path = $ssl_path. \_DS;
+        
+        $opensslConfig = array("config" => $ssl_path.'openssl.cnf');
+        
+        // Generate a new private (and public) key pair
+        $privatekey = \openssl_pkey_new($opensslConfig);
+            
+        // Generate a certificate signing request
+        $csr = \openssl_csr_new($details, $privatekey, $opensslConfig);
+    
+        // Create a self-signed certificate valid for 365 days
+        $sslcert = \openssl_csr_sign($csr, null, $privatekey, 365, $opensslConfig);
+    
+        // Create key file. Note no passphrase
+        \openssl_pkey_export_to_file($privatekey, $ssl_path.$privatekeyFile, null, $opensslConfig);
+    
+        // Create server certificate 
+        \openssl_x509_export_to_file($sslcert, $ssl_path.$certificateFile, false);
+        
+        // Create a signing request file 
+        \openssl_csr_export_to_file($csr, $ssl_path.$signingFile);
+    }
+
+    /**
+    * Return status of prepare function availability in shortcut method calls
+    */    
     protected function isPrepareActive() 
     {
         return $this->prepareActive;
 	}
   	
-    public function setPrepare($on = true) 
-    {
-        $this->prepareActive = ($on) ? true : false;
-	}  	
-    
     /**
      * Returns array of parameter values for prepare function 
      * @return array
-     */
-    protected function getParameters() 
+     */    
+    protected function prepareValues() 
     {
 		return $this->preparedValues;
 	}
-    
+           
     /**
-    * Add parameter values to class array variable for prepare function.
-    * @param mixed $valueToAdd
+    * Add values to array variable for prepare function.
+    * @param mixed $value
     *
     * @return int array count
     */
-    private function setParameters($valueToAdd = null) 
+    protected function addPrepare($value = null) 
     {
-        return \array_push($this->preparedValues, $valueToAdd); 
+        return \array_push($this->preparedValues, $value); 
     }
-
+    
     /**
-    * Clear parameter values
+    * Clear out prepare parameter values
     *
     * @return bool false
     */
-    protected function clearParameters() 
+    protected function clearPrepare() 
     {
         $this->preparedValues = array();
         return false;
     }
+
+    public function setPrepare($on = true) 
+    {
+        $this->prepareActive = ($on) ? true : false;
+    }  	
 
     /**
     * Convert array to string, and attach '`, `' for separation, if none is provided.
@@ -225,45 +283,46 @@ class ezQuery implements ezQueryInterface
     }
 
     public function where( ...$whereKeyArray) 
-    {      
+    {
+        if (empty($whereKeyArray))
+			return false;
+
         $whereOrHaving = ($this->isWhere) ? 'WHERE' : 'HAVING';
         $this->isWhere = true;
         
-		if (!empty($whereKeyArray)) {
-			if (\is_string($whereKeyArray[0])) {
-                if ((\strpos($whereKeyArray[0], 'WHERE') !== false) 
-                    || (\strpos($whereKeyArray[0], 'HAVING') !== false)
-                )
-                    return $whereKeyArray[0];
-				foreach ($whereKeyArray as $makeArray) 
-					$WhereKeys[] = \explode('  ', $makeArray);	
-			} else 
-				$WhereKeys = $whereKeyArray;			
+		if (\is_string($whereKeyArray[0])) {
+            if ((\strpos($whereKeyArray[0], 'WHERE') !== false) 
+                || (\strpos($whereKeyArray[0], 'HAVING') !== false)
+            )
+                return $whereKeyArray[0];
+
+			foreach ($whereKeyArray as $makeArray)
+				$whereKeys[] = \explode('  ', $makeArray);	
 		} else 
-			return '';
-		
-		foreach ($WhereKeys as $values) {
+			$whereKeys = $whereKeyArray;	
+        
+		foreach ($whereKeys as $values) {
 			$operator[] = (isset($values[1])) ? $values[1]: '';
 			if (!empty($values[1])){
 				if (\strtoupper($values[1]) == 'IN') {
-					$WhereKey[ $values[0] ] = \array_slice((array) $values, 2);
+					$whereKey[ $values[0] ] = \array_slice((array) $values, 2);
 					$combiner[] = (isset($values[3])) ? $values[3]: \_AND;
 					$extra[] = (isset($values[4])) ? $values[4]: null;				
 				} else {
-					$WhereKey[ (isset($values[0])) ? $values[0] : '1' ] = (isset($values[2])) ? $values[2] : '' ;
+					$whereKey[ (isset($values[0])) ? $values[0] : '1' ] = (isset($values[2])) ? $values[2] : '' ;
 					$combiner[] = (isset($values[3])) ? $values[3]: \_AND;
 					$extra[] = (isset($values[4])) ? $values[4]: null;
 				}				
 			} else {
-                return $this->clearParameters();
+                return $this->clearPrepare();
             }                
 		}
         
         $where = '1';    
-        if (! isset($WhereKey['1'])) {
+        if (! isset($whereKey['1'])) {
             $where = '';
             $i = 0;
-            foreach($WhereKey as $key => $val) {
+            foreach($whereKey as $key => $val) {
                 $isCondition = \strtoupper($operator[$i]);
 				$combine = $combiner[$i];
 				if ( \in_array(\strtoupper($combine), \_COMBINERS) || isset($extra[$i])) 
@@ -272,7 +331,7 @@ class ezQuery implements ezQueryInterface
                     $combineWith = \_AND;
 
                 if (! \in_array( $isCondition, \_BOOLEAN_OPERATORS)) {
-                    return $this->clearParameters();
+                    return $this->clearPrepare();
                 } else {
                     if (($isCondition == \_BETWEEN) || ($isCondition == \_notBETWEEN)) {
 						$value = $this->escape($combineWith);
@@ -283,8 +342,8 @@ class ezQuery implements ezQueryInterface
 
 						if ($this->isPrepareActive()) {
 							$where .= "$key ".$isCondition.' '.\_TAG." AND ".\_TAG." $myCombineWith ";
-							$this->setParameters($val);
-							$this->setParameters($combineWith);
+							$this->addPrepare($val);
+							$this->addPrepare($combineWith);
 						} else 
                             $where .= "$key ".$isCondition." '".$this->escape($val)."' AND '".$value."' $myCombineWith ";
                             
@@ -294,7 +353,7 @@ class ezQuery implements ezQueryInterface
 						foreach ($val as $inValues) {
 							if ($this->isPrepareActive()) {
 								$value .= \_TAG.', ';
-								$this->setParameters($inValues);
+								$this->addPrepare($inValues);
 							} else 
 								$value .= "'".$this->escape($inValues)."', ";
                         }                        
@@ -303,11 +362,11 @@ class ezQuery implements ezQueryInterface
                         $isCondition = (($isCondition == 'IS') || ($isCondition == 'IS NOT')) ? $isCondition : 'IS';
                         $where .= "$key ".$isCondition." NULL $combineWith ";
                     } elseif ((($isCondition == \_LIKE) || ($isCondition == \_notLIKE)) && ! \preg_match('/[_%?]/', $val)) {
-                        return $this->clearParameters();
+                        return $this->clearPrepare();
                     } else {
 						if ($this->isPrepareActive()) {
 							$where .= "$key ".$isCondition.' '.\_TAG." $combineWith ";
-							$this->setParameters($val);
+							$this->addPrepare($val);
 						} else 
 							$where .= "$key ".$isCondition." '".$this->escape($val)."' $combineWith ";
                     }
@@ -318,7 +377,7 @@ class ezQuery implements ezQueryInterface
             $where = \rtrim($where, " $combineWith ");
         }
 		
-        if (($this->isPrepareActive()) && !empty($this->getParameters()) && ($where != '1'))
+        if (($this->isPrepareActive()) && !empty($this->prepareValues()) && ($where != '1'))
 			return " $whereOrHaving ".$where.' ';
         
 		return ($where != '1') ? " $whereOrHaving ".$where.' ' : ' ' ;
@@ -335,11 +394,11 @@ class ezQuery implements ezQueryInterface
 		$this->isInto = false;	
         
         $skipWhere = false;
-        $WhereKeys = $conditions;
+        $whereKeys = $conditions;
         $where = '';
 		
         if (empty($table)) {
-            return $this->clearParameters();
+            return $this->clearPrepare();
         }
         
         $columns = $this->to_string($columnFields);
@@ -375,7 +434,7 @@ class ezQuery implements ezQueryInterface
                             $args_by .= ' '.$checkFor;
                             $havingSet = true;
                         } else {
-                            return $this->clearParameters();
+                            return $this->clearPrepare();
                         }
                     } elseif (\strpos($checkFor, 'ORDER BY') !== false ) {
                         $args_by .= ' '.$checkFor;    
@@ -399,18 +458,18 @@ class ezQuery implements ezQueryInterface
         }        
         
         if (! $skipWhere)
-            $where = $this->where( ...$WhereKeys);
+            $where = $this->where( ...$whereKeys);
         
         if (\is_string($where)) {
             $sql .= $where;
             if ($getSelect_result) 
-                return (($this->isPrepareActive()) && !empty($this->getParameters())) 
+                return (($this->isPrepareActive()) && !empty($this->prepareValues())) 
                     ? $this->get_results($sql, OBJECT, true) 
                     : $this->get_results($sql);     
             return $sql;
         }
         
-        return $this->clearParameters();
+        return $this->clearPrepare();
     }
 
     /**
@@ -438,16 +497,16 @@ class ezQuery implements ezQueryInterface
 		if (isset($oldTable))
 			$this->fromTable = $oldTable;
 		else {
-            return $this->clearParameters();            
+            return $this->clearPrepare();            
         }
 			
         $newTableFromTable = $this->select_sql($newTable, $fromColumns, ...$fromWhere);			
         if (is_string($newTableFromTable))
-            return (($this->isPrepareActive()) && !empty($this->getParameters())) 
+            return (($this->isPrepareActive()) && !empty($this->prepareValues())) 
                 ? $this->query($newTableFromTable, true) 
                 : $this->query($newTableFromTable); 
 
-        return $this->clearParameters();   
+        return $this->clearPrepare();   
     }
     
     public function select_into($newTable, $fromColumns, $oldTable = null, ...$fromWhere) 
@@ -456,21 +515,21 @@ class ezQuery implements ezQueryInterface
 		if (isset($oldTable))
 			$this->fromTable = $oldTable;
 		else
-			return $this->clearParameters();
+			return $this->clearPrepare();
 			
         $newTableFromTable = $this->select_sql($newTable, $fromColumns, ...$fromWhere);
         if (is_string($newTableFromTable))
-            return (($this->isPrepareActive()) && !empty($this->getParameters())) 
+            return (($this->isPrepareActive()) && !empty($this->prepareValues())) 
                 ? $this->query($newTableFromTable, true) 
                 : $this->query($newTableFromTable); 
         
-        return $this->clearParameters();     
+        return $this->clearPrepare();     
     }
 
-    public function update($table = '', $keyAndValue, ...$WhereKeys) 
+    public function update($table = '', $keyAndValue, ...$whereKeys) 
     {        
         if ( ! is_array( $keyAndValue ) || empty($table) ) {
-			return $this->clearParameters();
+			return $this->clearPrepare();
         }
         
         $sql = "UPDATE $table SET ";
@@ -483,40 +542,40 @@ class ezQuery implements ezQueryInterface
 			} else {
 				if ($this->isPrepareActive()) {
 					$sql .= "$key = ".\_TAG.", ";
-					$this->setParameters($val);
+					$this->addPrepare($val);
 				} else 
 					$sql .= "$key = '".$this->escape($val)."', ";
 			}
         }
         
-        $where = $this->where(...$WhereKeys);
+        $where = $this->where(...$whereKeys);
         if (\is_string($where)) {   
             $sql = \rtrim($sql, ', ') . $where;
-            return (($this->isPrepareActive()) && !empty($this->getParameters())) 
+            return (($this->isPrepareActive()) && !empty($this->prepareValues())) 
                 ? $this->query($sql, true) 
                 : $this->query($sql) ;       
         } 
         
-        return $this->clearParameters();
+        return $this->clearPrepare();
     }   
          
-    public function delete($table = '', ...$WhereKeys) 
+    public function delete($table = '', ...$whereKeys) 
     {   
         if ( empty($table) ) {
-			return $this->clearParameters();         			
+			return $this->clearPrepare();         			
 		}  
 		
         $sql = "DELETE FROM $table";
         
-        $where = $this->where(...$WhereKeys);
+        $where = $this->where(...$whereKeys);
         if (\is_string($where)) {   
             $sql .= $where;						
-            return (($this->isPrepareActive()) && !empty($this->getParameters())) 
+            return (($this->isPrepareActive()) && !empty($this->prepareValues())) 
                 ? $this->query($sql, true) 
                 : $this->query($sql);  
         }
 
-        return $this->clearParameters();       
+        return $this->clearPrepare();       
     }
 
 	/**
@@ -526,11 +585,11 @@ class ezQuery implements ezQueryInterface
     private function _query_insert_replace($table = '', $keyAndValue, $type = '', $execute = true) 
     {  
         if ((! \is_array($keyAndValue) && ($execute)) || empty($table)) {
-			return $this->clearParameters();          			
+			return $this->clearPrepare();          			
 		}  
         
         if ( ! \in_array( strtoupper( $type ), array( 'REPLACE', 'INSERT' ))) {
-			return $this->clearParameters();          			
+			return $this->clearPrepare();          			
 		}  
             
         $sql = "$type INTO $table";
@@ -547,7 +606,7 @@ class ezQuery implements ezQueryInterface
                 else {
 					if ($this->isPrepareActive()) {
 						$value .= _TAG.", ";
-						$this->setParameters($val);
+						$this->addPrepare($val);
 					} else 
 						$value .= "'".$this->escape($val)."', ";
 				}               
@@ -555,7 +614,7 @@ class ezQuery implements ezQueryInterface
             
             $sql .= "(". \rtrim($index, ', ') .") VALUES (". \rtrim($value, ', ') .");";
 
-			if (($this->isPrepareActive()) && !empty($this->getParameters())) 
+			if (($this->isPrepareActive()) && !empty($this->prepareValues())) 
 				$ok = $this->query($sql, true);
 			else 
 				$ok = $this->query($sql);
@@ -563,7 +622,7 @@ class ezQuery implements ezQueryInterface
             if ($ok)
                 return $this->insert_id;
 
-            return $this->clearParameters();
+            return $this->clearPrepare();
         } else {
             if (\is_array($keyAndValue)) {
                 if (\array_keys($keyAndValue) === \range(0, \count($keyAndValue) - 1)) {
@@ -596,11 +655,11 @@ class ezQuery implements ezQueryInterface
         $getFromTable = $this->select_sql($fromTable, $fromColumns, ...$fromWhere);
 
         if (\is_string($putToTable) && \is_string($getFromTable))
-            return (($this->isPrepareActive()) && !empty($this->getParameters())) 
+            return (($this->isPrepareActive()) && !empty($this->prepareValues())) 
                 ? $this->query($putToTable." ".$getFromTable, true) 
                 : $this->query($putToTable." ".$getFromTable) ;
 
-		return $this->clearParameters();      
+		return $this->clearPrepare();      
     }
     
     /**

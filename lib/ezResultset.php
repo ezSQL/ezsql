@@ -77,8 +77,8 @@ class ezResultset implements \Iterator
     public function current($mode=self::RESULT_AS_OBJECT) 
     {
         $return_val = null;
-        if (!in_array($mode, $this->_checkTypes)) {
-            throw new \Exception(sprintf('$mode is not in %s1 or %s2', self::RESULT_AS_OBJECT, self::RESULT_AS_ARRAY));
+        if (!\in_array($mode, $this->_checkTypes)) {
+            throw new \Exception(\sprintf('$mode is not in %s1 or %s2', self::RESULT_AS_OBJECT, self::RESULT_AS_ARRAY));
         }
 
         if ($this->valid()) {
@@ -88,13 +88,13 @@ class ezResultset implements \Iterator
                     $return_val = $this->_resultset[$this->_position];
                     break;
                 case self::RESULT_AS_ARRAY:
-                    $return_val = get_object_vars($this->_resultset[$this->_position]);
+                    $return_val = \get_object_vars($this->_resultset[$this->_position]);
                     break;
                 case self::RESULT_AS_ROW:
-                    $return_val = array_values(get_object_vars($this->_resultset[$this->_position]));                    
+                    $return_val = \array_values(\get_object_vars($this->_resultset[$this->_position]));                    
                     break;
                 case self::RESULT_AS_JSON:
-                    $return_val = json_encode($this->_resultset[$this->_position]);                    
+                    $return_val = \json_encode($this->_resultset[$this->_position]);                    
                     break;
                 default:
                     throw new \Error("Invalid result fetch type");

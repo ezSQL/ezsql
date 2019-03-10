@@ -180,5 +180,8 @@ if (!\defined('CONSTANTS')) {
     \define('UNIQUE', 'UNIQUE');
     \define('INDEX', 'INDEX');
 
+    if (!\defined('_DS'))
+        \define('_DS', \DIRECTORY_SEPARATOR);
+
     \define('CONSTANTS', true);
 }

@@ -34,9 +34,9 @@ interface ezQueryInterface
     * @return string cleaned string
     */	        
     public static function clean($string);
-    
+      	
     /**
-    * Turn off/on prepare function availability in ezQuery method calls 
+    * Turn off/on prepare function availability in ezQuery shortcut method calls 
     */
     public function setPrepare($on = true);
 
@@ -359,13 +359,13 @@ interface ezQueryInterface
 	*
 	* @return mixed bool/results - false for error
 	*/
-    public function update($table = '', $keyAndValue, ...$WhereKeys);
+    public function update($table = '', $keyAndValue, ...$whereKeys);
          
 	/** 
     * Helper does the actual delete query with an array
 	* @return mixed bool/results - false for error
 	*/
-    public function delete($table = '', ...$WhereKeys);
+    public function delete($table = '', ...$whereKeys);
 
 	/**
     * Does an replace query with an array

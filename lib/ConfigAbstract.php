@@ -69,7 +69,7 @@ abstract class ConfigAbstract
     * The PDO array for connection options, MySQL connection charset, for example
     * @var array
     */
-    private $options = array();
+    private static $options = array();
     
     /**
     * Check PDO for whether it is a file based database connection, for example to a SQLite
@@ -104,8 +104,8 @@ abstract class ConfigAbstract
         $prefix = substr($function, 0, 3);
         $property = strtolower(substr($function, 3, strlen($function)));
         if ($prefix == 'set') {
-            $this->$property= $args[0];
-        } else if ($prefix == 'get') {
+            $this->$property = $args[0];
+        } elseif ($prefix == 'get') {
             return $this->$property;
         } else {
             throw new Exception("$function does not exist");
