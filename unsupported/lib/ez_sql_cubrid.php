@@ -1,17 +1,5 @@
 <?php
 
-	/**********************************************************************
-	*  Author: Justin Vincent (jv@jvmultimedia.com)
-	*  Web...: http://twitter.com/justinvincent
-	*  Name..: ezSQL_cubrid
-	*  Desc..: CUBRID component (part of ezSQL databse abstraction library)
-	*
-	*/
-
-	/**********************************************************************
-	*  ezSQL error strings - CUBRID
-	*/
-
 	global $ezSQL_cubrid_str;
 	
 	$ezSQL_cubrid_str = array

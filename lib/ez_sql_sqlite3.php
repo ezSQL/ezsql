@@ -1,15 +1,6 @@
 <?php
 
 	/**********************************************************************
-	*  Author: Justin Vincent (jv@jvmultimedia.com) / Silvio Wanka 
-	* Contributor:  Lawrence Stubbs <technoexpressnet@gmail.com>
-	*  Web...: http://twitter.com/justinvincent
-	*  Name..: ezSQL_sqlite3
-	*  Desc..: SQLite3 component (part of ezSQL database abstraction library)
-	*
-	*/
-
-	/**********************************************************************
 	*  ezSQL error strings - SQLite
 	*/
 

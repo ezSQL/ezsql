@@ -1,17 +1,4 @@
 <?php
-/**
- * ezSQL Database specific class - mySQL
- * Desc..: mySQL component (part of ezSQL database abstraction library)
- *
- * @author  Justin Vincent (jv@jvmultimedia.com)
- * @author  Stefanie Janine Stoelting <mail@stefanie-stoelting.de>
- * Contributor:  Lawrence Stubbs <technoexpressnet@gmail.com>
- * @link    http://twitter.com/justinvincent
- * @name    ezSQL_mysql
- * @package ezSQL
- * @license FREE / Donation (LGPL - You may do what you like with ezSQL - no exceptions.)
- *
- */
 
 class ezSQL_mysqli extends ezSQLcore
 {

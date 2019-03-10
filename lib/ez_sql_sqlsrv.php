@@ -1,15 +1,5 @@
 <?php
 
-
-	/**********************************************************************
-	*  Author: davisjw (davisjw@gmail.com)
-           * Contributor:  Lawrence Stubbs <technoexpressnet@gmail.com>
-	*  Web...: http://twitter.com/justinvincent
-	*  Name..: ezSQL_sqlsrv
-	*  Desc..: Microsoft Sql Server component (MS drivers) (part of ezSQL database abstraction library) - based on ezSql_msSql library class.
-	*
-	*/
-
 	/**********************************************************************
 	*  ezSQL error strings - sqlsrv
 	*/
