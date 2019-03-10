@@ -5,7 +5,7 @@
 	* Contributor:  Lawrence Stubbs <technoexpressnet@gmail.com>
 	*  Web...: http://twitter.com/justinvincent
 	*  Name..: ezSQL_sqlite3
-	*  Desc..: SQLite3 component (part of ezSQL databse abstraction library)
+	*  Desc..: SQLite3 component (part of ezSQL database abstraction library)
 	*
 	*/
 
@@ -32,7 +32,7 @@
 
 		private $rows_affected = false;
         
-		protected $preparedvalues = array();
+		protected $preparedValues = array();
 
 		/**********************************************************************
 		*  Constructor - allow the user to perform a quick connect at the 

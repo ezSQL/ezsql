@@ -164,7 +164,9 @@ use ezsql\ezQueryInterface;
         const FOREIGN = 'FOREIGN KEY';
         const UNIQUE = 'UNIQUE';
         const INDEX = 'INDEX';
-	
+
+        const _DS = \DIRECTORY_SEPARATOR;
+
         // Global class instances, will be used to create and call methods directly.        
         global $ezInstance;
  
@@ -197,6 +199,37 @@ use ezsql\ezQueryInterface;
     function index(string $indexName, ...$indexKeys)
     {
         return \column(\INDEX, $indexName, ...$indexKeys);
+    }
+
+    function createCertificate(
+        string $privatekeyFile = 'certificate.key', 
+        string $certificateFile = 'certificate.crt', 
+        string $signingFile = 'certificate.csr', 
+        // string $caCertificate = null, 
+        string $ssl_path = null, 
+        array $details = ["commonName" => "localhost"]
+    ) 
+    {
+        ezQuery::createCertificate($privatekeyFile, $certificateFile, $signingFile, $ssl_path, $details);
+    }
+
+    function securePDO(
+        $vendor = null, 
+        $key = 'certificate.key', 
+        $cert = 'certificate.crt', 
+        $ca = 'cacert.pem', 
+        $path = '.'.\_DS) 
+    {
+        ezSQL_pdo::securePDO($vendor, $key, $cert, $ca, $path);
+    }
+
+    function secureSQL(
+        $key = 'certificate.key', 
+        $cert = 'certificate.crt', 
+        $ca = 'cacert.pem', 
+        $path = '.'.\_DS) 
+    {
+        // todo
     }
 
 	/**

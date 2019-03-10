@@ -1,7 +1,7 @@
 <?php
 /**
  * ezSQL Database specific class for working with query results
- * Desc..: recordset component (part of ezSQL databse abstraction library)
+ * Desc..: recordset component (part of ezSQL database abstraction library)
  *
  * @author  Stefanie Janine Stoelting <mail@stefanie-stoelting.de>
  * @name    ezSQL_recordset

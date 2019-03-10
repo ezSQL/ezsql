@@ -2,7 +2,7 @@
 
 	/**********************************************************************
           * ezSQL Database specific class - PostgreSQL
-          * Desc..: PostgreSQL component (part of ezSQL databse abstraction library)
+          * Desc..: PostgreSQL component (part of ezSQL database abstraction library)
           *
           * @author  Justin Vincent (jv@jvmultimedia.com)
           * @author  Stefanie Janine Stoelting <mail@stefanie-stoelting.de>
@@ -74,8 +74,11 @@
         
 		private $rows_affected = false;
         
-		protected $preparedvalues = array();
-
+		protected $preparedValues = array();
+	
+		private static $isSecure = false;
+		private static $secure = null;
+		
 		/**
 		* Constructor - allow the user to perform a quick connect at the same time
 		* as initializing the ezSQL_postgresql class
