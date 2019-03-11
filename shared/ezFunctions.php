@@ -204,6 +204,16 @@ use ezsql\ezQueryInterface;
         return \column(\INDEX, $indexName, ...$indexKeys);
     }
 
+    function addColumn(string $columnName, ...$datatype)
+    {
+        return \column(\ADD, $columnName, ...$datatype);
+    }
+
+    function dropColumn(string $columnName, ...$data)
+    {
+        return \column(\DROP, $columnName, ...$data);
+    }
+
     function createCertificate(
         string $privatekeyFile = 'certificate.key', 
         string $certificateFile = 'certificate.crt', 
