@@ -165,6 +165,9 @@ use ezsql\ezQueryInterface;
         const UNIQUE = 'UNIQUE';
         const INDEX = 'INDEX';
 
+        const ADD = 'ADD';
+        const DROP = 'DROP COLUMN';
+
         const _DS = \DIRECTORY_SEPARATOR;
 
         // Global class instances, will be used to create and call methods directly.        

@@ -716,13 +716,13 @@ class ezQuery implements ezQueryInterface
         $skipSchema = false;
         if (\is_string($schemas[0])) {
             $data = '';
-            $allowedTypes = ezSchema::STRINGS['shared'];
+            $allowedTypes = ezSchema::STRINGS['common'];
             $allowedTypes += ezSchema::STRINGS[$vendor];
-            $allowedTypes += ezSchema::NUMERICS['shared'];
+            $allowedTypes += ezSchema::NUMERICS['common'];
             $allowedTypes += ezSchema::NUMERICS[$vendor];
-            $allowedTypes += ezSchema::NUMBERS['shared'];
+            $allowedTypes += ezSchema::NUMBERS['common'];
             $allowedTypes += ezSchema::NUMBERS[$vendor];
-            $allowedTypes += ezSchema::DATE_TIME['shared'];
+            $allowedTypes += ezSchema::DATE_TIME['common'];
             $allowedTypes += ezSchema::DATE_TIME[$vendor];
             $allowedTypes += ezSchema::OBJECTS[$vendor];
             $allowedTypes += ezSchema::OPTIONS;
@@ -743,6 +743,50 @@ class ezQuery implements ezQueryInterface
         $createTable = !empty($schema) ? $sql.$schema.' );' : null;
         if (\is_string($createTable))
             return $this->query($createTable);
+
+        return false;
+   }
+
+   public function alter(string $table = null, ...$schemas) 
+   {
+        if (empty($table) || empty($schemas))
+           return false;
+
+        $sql = 'ALTER TABLE '.$table.' ';
+
+        $skipSchema = false;
+        if (\is_string($schemas[0])) {
+            $data = '';
+            $allowedTypes = ezSchema::CHANGES;
+            $pattern = "/".\implode('|', $allowedTypes)."/i";
+            foreach($schemas as $types) {
+                if (\preg_match($pattern, $types)) {
+                    $data .= $types;
+                    $skipSchema = true;
+                }
+            }
+            $schema = $skipSchema ? \rtrim($data, ', ') : $data;
+        }
+
+        if (! $skipSchema)
+            $schema = $this->create_schema( ...$schemas);
+
+        $alterTable = !empty($schema) ? $sql.$schema.';' : null;
+        if (\is_string($alterTable))
+            return $this->query($alterTable);
+
+        return false;
+   }
+
+   public function drop(string $table = null) 
+   {
+        if (empty($table))
+           return false;
+
+        $drop = 'DROP TABLE '.$table.';';
+
+        if (\is_string($drop))
+            return $this->query($drop);
 
         return false;
    }

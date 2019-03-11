@@ -4,7 +4,7 @@ namespace ezsql;
 class ezSchema
 {
     const STRINGS = [
-        'shared' => ['CHAR', 'VARCHAR', 'TEXT'],
+        'common' => ['CHAR', 'VARCHAR', 'TEXT'],
         'mysql' => ['TINYTEXT', 'MEDIUMTEXT', 'LONGTEXT', 'BINARY', 'VARBINARY'],
         'postgresql' => ['character', 'character varying'],
         'sqlserver' => ['NCHAR', 'NVARCHAR', 'NTEXT', 'BINARY', 'VARBINARY', 'IMAGE'],
@@ -12,7 +12,7 @@ class ezSchema
     ];    
 
     const NUMBERS = [
-		'shared' => ['INT'],
+		'common' => ['INT'],
         'mysql' => ['BIT', 'INTEGER', 'TINYINT', 'SMALLINT', 'MEDIUMINT', 'BIGINT', 'FLOAT',
 			'BOOL', 'BOOLEAN'],
         'postgresql' => ['bit', 'varbit', 'bit varying', 'smallint', 'int', 'integer', 
@@ -25,7 +25,7 @@ class ezSchema
     ];
 
     const NUMERICS = [
-        'shared' => ['NUMERIC', 'DECIMAL'],
+        'common' => ['NUMERIC', 'DECIMAL'],
         'mysql' => ['DEC', 'FIXED', 'FLOAT', 'DOUBLE', 'DOUBLE PRECISION', 'REAL'],
         'postgresql' => [],
         'sqlserver' => ['DEC'],
@@ -33,7 +33,7 @@ class ezSchema
     ];
 
     const DATE_TIME = [
-        'shared' => ['DATE', 'TIMESTAMP', 'TIME'],
+        'common' => ['DATE', 'TIMESTAMP', 'TIME'],
         'mysql' => ['DATETIME', 'YEAR'],            
         'postgresql' => [
             'timestamp without time zone', 'timestamp with time zone', 
@@ -51,6 +51,7 @@ class ezSchema
     ];
 
     const OPTIONS  = ['CONSTRAINT', 'PRIMARY KEY', 'FOREIGN KEY', 'UNIQUE', 'INDEX'];
+    const CHANGES  = ['ADD', 'ALTER COLUMN', 'DROP COLUMN', 'MODIFY', 'RENAME COLUMN', 'CHANGE COLUMN', 'RENAME TO'];
 
     private $arguments = null;
 	
@@ -66,13 +67,13 @@ class ezSchema
             return false;
 
         $args = $this->arguments;
-        $stringTypes = self::STRINGS['shared'];
+        $stringTypes = self::STRINGS['common'];
         $stringTypes += self::STRINGS[$vendor];
-        $numericTypes = self::NUMERICS['shared'];
+        $numericTypes = self::NUMERICS['common'];
         $numericTypes += self::NUMERICS[$vendor];
-        $numberTypes = self::NUMBERS['shared'];
+        $numberTypes = self::NUMBERS['common'];
         $numberTypes += self::NUMBERS[$vendor];
-        $dateTimeTypes = self::DATE_TIME['shared'];
+        $dateTimeTypes = self::DATE_TIME['common'];
         $dateTimeTypes += self::DATE_TIME[$vendor];
         $objectTypes = self::OBJECTS[$vendor];
 
@@ -85,15 +86,17 @@ class ezSchema
 		$data = null;
 		if (\preg_match($stringPattern, $type)) {
 			// check for string data type
-			$store = !empty($args[0]) ? '('.$args[0].')' : '';
+            $numberOrString = $args[0];
+			$store = \is_int($numberOrString) ? '('.$numberOrString.')' : '';
+			$store = empty($store) && !empty($numberOrString) ? $numberOrString : $store;
 			$value = !empty($args[1]) ? $args[1] : '';
 			$options = !empty($args[2]) ? $args[2] : '';
 			$extra = !empty($args[3]) ? ' '.$args[3] : '';
 			$data = $type.$store.' '.$value.' '.$options.$extra;
 		} elseif (\preg_match($numericPattern, $type)) {
 			// check for numeric data type
-			$size = '('.(!empty($args[0]) ? $args[0] : '6').',';
-			$size .= (!empty($args[1]) ? $args[1] : '2').') ';
+			$size = '('.(!empty($args[0]) ? $args[0] : 10 ).',';
+			$size .= (!empty($args[1]) ? $args[1] : 2 ).')';
 			$value = !empty($args[2]) ? $args[2] : '';
 			$options = !empty($args[3]) ? $args[3] : '';
 			$extra = !empty($args[4]) ? ' '.$args[4] : '';
@@ -109,7 +112,9 @@ class ezSchema
 			$data = $type.$store.' '.$value.' '.$options.$extra;
         } elseif (\preg_match($dateTimePattern, $type)) {
 			// check for date time data type
-			$fraction = !empty($args[0]) ? '('.$args[0].')' : '';
+            $numberOrString = $args[0];
+			$store = \is_int($numberOrString) ? '('.$numberOrString.')' : '';
+			$fraction = empty($store) && !empty($numberOrString) ? $numberOrString : $store;
 			$value = !empty($args[1]) ? $args[1] : '';
 			$options = !empty($args[2]) ? $args[2] : '';
 			$data = $type.$fraction.' '.$value.' '.$options;
@@ -130,7 +135,7 @@ class ezSchema
         $dbSqlite = $GLOBALS['db_sqlite'];
         $dbPgsql = $GLOBALS['db_pgsql'];
         $dbMysqli = $GLOBALS['db_mysqli'];
-        $dbMssql = $GLOBALS['db_mssql'];
+        $dbMssql = $GLOBALS['db_sqlsrv'];
         $dbPdo = $GLOBALS['db_pdo'];
         if ($dbSqlite === \getInstance() && !empty($dbSqlite))
             $type = 'sqlite3';
@@ -179,6 +184,12 @@ class ezSchema
             $keyType = ($column != \INDEX) ? \array_shift($args).' ' : ' ';
             $keys = $keyType.'('.ezQuery::to_string($args).'), ';
             $columnData .= $column.' '.$type.' '.$keys;
+        } elseif (($column == \ADD) || ($column == \ALTER)) {
+            $column = $column.' '.$type;
+            $type2 = \array_shift($args);
+            $data = self::datatype($type2, $args);
+            if (!empty($data))
+                $columnData = $column.' '.$data.', ';
         } else {
             $data = self::datatype($type, $args);
             if (!empty($data))
