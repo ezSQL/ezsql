@@ -204,12 +204,12 @@ use ezsql\ezQueryInterface;
         return \column(\INDEX, $indexName, ...$indexKeys);
     }
 
-    function addColumn(string $columnName, ...$datatype)
+    function add(string $columnName, ...$datatype)
     {
         return \column(\ADD, $columnName, ...$datatype);
     }
 
-    function dropColumn(string $columnName, ...$data)
+    function drop(string $columnName, ...$data)
     {
         return \column(\DROP, $columnName, ...$data);
     }
