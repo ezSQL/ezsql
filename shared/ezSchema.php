@@ -50,8 +50,13 @@ class ezSchema
         'sqlserver' => []
     ];
 
-    const OPTIONS  = ['CONSTRAINT', 'PRIMARY KEY', 'FOREIGN KEY', 'UNIQUE', 'INDEX'];
-    const CHANGES  = ['ADD', 'ALTER COLUMN', 'DROP COLUMN', 'MODIFY', 'RENAME COLUMN', 'CHANGE COLUMN', 'RENAME TO'];
+    const OPTIONS  = ['CONSTRAINT', 'PRIMARY KEY', 'FOREIGN KEY', 'UNIQUE', 'INDEX', 'REFERENCES'];
+    const CHANGES  = [
+        'mysql' => ['MODIFY'],
+        'postgresql' => ['ALTER COLUMN'],
+        'sqlserver' => ['ALTER COLUMN'],
+        'sqlite3' => []
+     ];
 
     private $arguments = null;
 	
