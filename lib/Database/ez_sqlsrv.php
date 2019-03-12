@@ -1,361 +1,370 @@
 <?php
-	declare(strict_types=1);
+declare (strict_types = 1);
 
-	namespace ezsql\Database;
-	
-	use ezsql\Configuration;
-	use ezsql\ezsqlModel;
+namespace ezsql\Database;
 
-	final class ez_sqlsrv extends ezsqlModel
-	{
+use ezsql\Configuration;
+use ezsql\ezsqlModel;
 
-		/**
-		* ezSQL error strings - sqlsrv
-		*/
-		private $ezsql_sqlsrv_str = array
-		(
-			1 => 'Require $user and $password to connect to a database server',
-			2 => 'Error establishing sqlsrv database connection. Correct user/password? Correct hostname? Database server running?',
-			3 => 'Require $name to select a database',
-			4 => 'SQL Server database connection is not active',
-			5 => 'Unexpected error while trying to select database'
-		);
-		
-		/**
-		* ezSQL non duplicating data type id's; converting type ids to str
-		*/		
-		private $ezsql_sqlsrv_type2str_non_dup = array
-		(
-			-5 => 'bigint', -7 => 'bit', 1 => 'char', 91 => 'date', -155 => 'datetimeoffset', 6 => 'float', -4 => 'image', 4 => 'int', -8 => 'nchar',
-			-10 => 'ntext', 2 => 'numeric', -9 => 'nvarchar', 7 => 'real', 5 => 'smallint', -1 => 'text', -154 => 'time', -6 => 'tinyint', -151 => 'udt', 
-			-11 => 'uniqueidentifier', -3 => 'varbinary', 12 => 'varchar', -152 => 'xml'
-		);
+final class ez_sqlsrv extends ezsqlModel
+{
+    /**
+     * ezSQL error strings - sqlsrv
+     */
+    private $ezsql_sqlsrv_str = array
+        (
+        1 => 'Require $user and $password to connect to a database server',
+        2 => 'Error establishing sqlsrv database connection. Correct user/password? Correct hostname? Database server running?',
+        3 => 'Require $name to select a database',
+        4 => 'SQL Server database connection is not active',
+        5 => 'Unexpected error while trying to select database',
+    );
 
-		private $rows_affected = false;
-        
-		protected $preparedValues = array();
+    /**
+     * ezSQL non duplicating data type id's; converting type ids to str
+     */
+    private $ezsql_sqlsrv_type2str_non_dup = array
+        (
+        -5 => 'bigint', -7 => 'bit', 1 => 'char', 91 => 'date', -155 => 'datetimeoffset', 6 => 'float', -4 => 'image', 4 => 'int', -8 => 'nchar',
+        -10 => 'ntext', 2 => 'numeric', -9 => 'nvarchar', 7 => 'real', 5 => 'smallint', -1 => 'text', -154 => 'time', -6 => 'tinyint', -151 => 'udt',
+        -11 => 'uniqueidentifier', -3 => 'varbinary', 12 => 'varchar', -152 => 'xml',
+    );
 
-		private static $isSecure = false;
-		private static $secure = null;
+    private $rows_affected = false;
 
-		/**
-		 * Database configuration setting 
-		 * @var Configuration instance
-		 */
-		private $database;
+    protected $preparedValues = array();
 
-		public function __construct(Configuration $settings) {
-			if (empty($settings) || (!$settings instanceof Configuration)) {
-				throw new Exception('<b>Fatal Error:</b> Missing configuration details to connect to database');
-			}
-            parent::__construct();
-			$this->database = $settings;
-            
-            $GLOBALS['db_'.$this->database->getDriver()] = $this;
-			\setInstance($this);
-		}
+    private static $isSecure = false;
 
-		/**
-		*  Short hand way to connect to sqlsrv database server
-		*  and select a sqlsrv database at the same time
-		*/
-		public function quick_connect($user = '', $password = '', $name = '', $host = 'localhost')
-		{
-			$return_val = false;
-            $this->_connected = false;
-			if ( ! $this->connect($user, $password, $name, $host) ) ;
-			else { $return_val = true;
-                $this->_connected = true; }
-			return $return_val;
-		}
+    /**
+     * Database configuration setting
+     * @var Configuration instance
+     */
+    private $database;
 
-		/**
-		*  Try to connect to sqlsrv database server
-		*/
-		public function connect($user = '', $password = '', $name = '', $host = 'localhost')
-		{
-			$return_val = false;
-            $this->_connected = false;
-						
-			$user = empty($user) ? $this->database->getUser() : $user;
-			$password = empty($password) ? $this->database->getPassword() : $password;
-			$name = empty($name) ? $this->database->getName() : $name;
-			$host = ($host!='localhost') ? $this->database->getHost() : $host;
+    public function __construct(Configuration $settings)
+    {
+        if (empty($settings) || (!$settings instanceof Configuration)) {
+            throw new Exception('<b>Fatal Error:</b> Missing configuration details to connect to database');
+        }
+        parent::__construct();
+        $this->database = $settings;
 
-			// Blank user assumes Windows Authentication
-			if (self::$isSecure)
-				$connectionOptions = array(
-					"UID" => $user, 
-					"PWD" => $password, 
-					"Database" => $name, 
-					"ReturnDatesAsStrings" => true, 
-					"Encrypt" => true,
-					"TrustServerCertificate" => true
-				);
-        	else
-				$connectionOptions = array(
-					"UID" => $user, 
-					"PWD" => $password, 
-					"Database" => $name, 
-					"ReturnDatesAsStrings" => true
-				);
+        $GLOBALS['db_' . $this->database->getDriver()] = $this;
+        \setInstance($this);
+    }
 
-			if ( ( $this->dbh = @\sqlsrv_connect($host, $connectionOptions) ) === false )
-			{
-				$this->register_error($this->ezsql_sqlsrv_str[2].' in '.__FILE__.' on line '.__LINE__);
-				$this->show_errors ? \trigger_error($this->ezsql_sqlsrv_str[2], \E_USER_WARNING) : null;
-			} else {
-				$return_val = true;
-                $this->_connected = true;
-				$this->conn_queries = 0;
-			}
+    /**
+     *  Short hand way to connect to sqlsrv database server
+     *  and select a sqlsrv database at the same time
+     */
+    public function quick_connect($user = '', $password = '', $name = '', $host = 'localhost')
+    {
+        $return_val = false;
+        $this->_connected = false;
+        if (!$this->connect($user, $password, $name, $host));
+        else{ $return_val = true;
+            $this->_connected = true;}
+        return $return_val;
+    }
 
-			return $return_val;
-		}                
+    /**
+     *  Try to connect to sqlsrv database server
+     */
+    public function connect($user = '', $password = '', $name = '', $host = 'localhost')
+    {
+        $return_val = false;
+        $this->_connected = false;
 
-		/**
-		*  Return sqlsrv specific system date syntax
-		*  i.e. Oracle: SYSDATE sqlsrv: NOW(), MS-SQL : getDate()
-		*
-		*  The SQLSRV drivers pull back the data into a Date class.  Converted
-		*   it to a string inside of SQL in order to prevent this from ocurring
-		*  ** make sure to use " AS <label>" after calling this...
-		*/
-		public function sysdate()
-		{
-			return "GETDATE()";
-		}
+        $user = empty($user) ? $this->database->getUser() : $user;
+        $password = empty($password) ? $this->database->getPassword() : $password;
+        $name = empty($name) ? $this->database->getName() : $name;
+        $host = ($host != 'localhost') ? $this->database->getHost() : $host;
 
-		/**
-		* Perform sqlsrv query and try to determine result value	
-		* @param string
-		* @param bool
-		* @return object 
-		*/
-		public function query(string $query, $use_prepare=false)
-		{
-			$param = [];
-            if ($use_prepare) 
-                $param = &$this->prepareValues();
-            
-			// check for ezQuery placeholder tag and replace tags with proper prepare tag
-			$query = \str_replace(\_TAG, '?', $query);
+        // Blank user assumes Windows Authentication
+        if (self::$isSecure) {
+            $connectionOptions = array(
+                "UID" => $user,
+                "PWD" => $password,
+                "Database" => $name,
+                "ReturnDatesAsStrings" => true,
+                "Encrypt" => true,
+                "TrustServerCertificate" => true,
+            );
+        } else {
+            $connectionOptions = array(
+                "UID" => $user,
+                "PWD" => $password,
+                "Database" => $name,
+                "ReturnDatesAsStrings" => true,
+            );
+        }
 
-			//if flag to convert query from MySql syntax to MS-Sql syntax is true
-			//convert the query
-			if($this->database->getToMySql())
-				$query = $this->mySqlto($query);
+        if (($this->dbh = @\sqlsrv_connect($host, $connectionOptions)) === false) {
+            $this->register_error($this->ezsql_sqlsrv_str[2] . ' in ' . __FILE__ . ' on line ' . __LINE__);
+            $this->show_errors ? \trigger_error($this->ezsql_sqlsrv_str[2], \E_USER_WARNING) : null;
+        } else {
+            $return_val = true;
+            $this->_connected = true;
+            $this->conn_queries = 0;
+        }
 
-			// Initialize return
-			$return_val = 0;
+        return $return_val;
+    }
 
-			// Flush cached values..
-			$this->flush();
+    /**
+     *  Return sqlsrv specific system date syntax
+     *  i.e. Oracle: SYSDATE sqlsrv: NOW(), MS-SQL : getDate()
+     *
+     *  The SQLSRV drivers pull back the data into a Date class.  Converted
+     *   it to a string inside of SQL in order to prevent this from ocurring
+     *  ** make sure to use " AS <label>" after calling this...
+     */
+    public function sysDate()
+    {
+        return "GETDATE()";
+    }
 
-			// For reg expressions
-			$query = \trim($query);
+    /**
+     * Perform sqlsrv query and try to determine result value
+     * @param string
+     * @param bool
+     * @return object
+     */
+    public function query(string $query, $use_prepare = false)
+    {
+        $param = [];
+        if ($use_prepare) {
+            $param = &$this->prepareValues();
+        }
 
-			// Log how the function was called
-			$this->log_query("\$db->query(\"$query\")");
+        // check for ezQuery placeholder tag and replace tags with proper prepare tag
+        $query = \str_replace(\_TAG, '?', $query);
 
-			// Keep track of the last query for debug..
-			$this->last_query = $query;
+        //if flag to convert query from MySql syntax to MS-Sql syntax is true
+        //convert the query
+        if ($this->database->getToMySql()) {
+            $query = $this->mySqlto($query);
+        }
 
-			// Count how many queries there have been
-			$this->count(true, true);
+        // Initialize return
+        $return_val = 0;
 
-			// Use core file cache function
-			if ( $cache = $this->get_cache($query) ) {
-				return $cache;
-			}
+        // Flush cached values..
+        $this->flush();
 
-			// If there is no existing database connection then try to connect
-			if ( ! isset($this->dbh) || ! $this->dbh ) {
-				$this->connect($this->database->getUser(), 
-								$this->database->getPassword(), 
-								$this->database->getName(), 
-								$this->database->getHost());
-			}
+        // For reg expressions
+        $query = \trim($query);
 
-			// Perform the query via std sqlsrv_query function..
-			if (!empty($param) && \is_array($param) && ($this->isPrepareActive()))
-				$this->result = @\sqlsrv_query($this->dbh, $query, $param);
-            else 
-				$this->result = @\sqlsrv_query($this->dbh, $query);
+        // Log how the function was called
+        $this->log_query("\$db->query(\"$query\")");
 
-			// If there is an error then take note of it..
-			if ($this->result === false ) {
-				$errors = \sqlsrv_errors();
-				if (!empty($errors)) {
-					foreach ($errors as $error) {
-						$sqlError = "ErrorCode: ".$error['code']." ### State: ".$error['SQLSTATE']." ### Error Message: ".$error['message']." ### Query: ".$query;
-						$this->register_error($sqlError);
-						$this->show_errors ? \trigger_error($sqlError, \E_USER_WARNING) : null;  
-					}
-				}
+        // Keep track of the last query for debug..
+        $this->last_query = $query;
 
-				return false;
-			}
+        // Count how many queries there have been
+        $this->count(true, true);
 
-			// Query was an insert, delete, update, replace
-			$is_insert = false;
-			if ( \preg_match("/^(insert|delete|update|replace)\s+/i", $query) ) {
-				$is_insert = true;
-				$this->rows_affected = @\sqlsrv_rows_affected($this->result);
+        // Use core file cache function
+        if ($cache = $this->get_cache($query)) {
+            return $cache;
+        }
 
-				// Take note of the insert_id
-				if ( \preg_match("/^(insert|replace)\s+/i", $query) ) {
-					$identityResultset = @\sqlsrv_query($this->dbh, "select SCOPE_IDENTITY()");
+        // If there is no existing database connection then try to connect
+        if (!isset($this->dbh) || !$this->dbh) {
+            $this->connect($this->database->getUser(),
+                $this->database->getPassword(),
+                $this->database->getName(),
+                $this->database->getHost());
+        }
 
-					if ($identityResultset != false ) {
-						$identityRow = @\sqlsrv_fetch($identityResultset);
-						$this->insert_id = $identityRow[0];
-					}
+        // Perform the query via std sqlsrv_query function..
+        if (!empty($param) && \is_array($param) && ($this->isPrepareActive())) {
+            $this->result = @\sqlsrv_query($this->dbh, $query, $param);
+        } else {
+            $this->result = @\sqlsrv_query($this->dbh, $query);
+        }
 
-				}
-				// Return number of rows affected
-				$return_val = $this->rows_affected;
-			} else { // Query was a select
-				// Take note of column info
-				$i = 0;
-				foreach ( @\sqlsrv_field_metadata( $this->result) as $field ) {
-					foreach ($field as $name => $value) {
-						$name = \strtolower($name);
-						if ($name == "size") 
-							$name = "max_length";
-						elseif ($name == "type") 
-							$name = "typeid";
-						//DEFINED FOR E_STRICT
-						$col = new StdClass();
-						$col->{$name} = $value;
-					}
+        // If there is an error then take note of it..
+        if ($this->result === false) {
+            $errors = \sqlsrv_errors();
+            if (!empty($errors)) {
+                foreach ($errors as $error) {
+                    $sqlError = "ErrorCode: " . $error['code'] . " ### State: " . $error['SQLSTATE'] . " ### Error Message: " . $error['message'] . " ### Query: " . $query;
+                    $this->register_error($sqlError);
+                    $this->show_errors ? \trigger_error($sqlError, \E_USER_WARNING) : null;
+                }
+            }
 
-					$col->type = $this->get_datatype($col);
-					$this->col_info[$i++] = $col;
-					unset($col);
-				}
+            return false;
+        }
 
-				// Store Query Results
-				$num_rows = 0;
+        // Query was an insert, delete, update, replace
+        $is_insert = false;
+        if (\preg_match("/^(insert|delete|update|replace)\s+/i", $query)) {
+            $is_insert = true;
+            $this->rows_affected = @\sqlsrv_rows_affected($this->result);
 
-				while ( $row = @\sqlsrv_fetch_object($this->result) ) {
+            // Take note of the insert_id
+            if (\preg_match("/^(insert|replace)\s+/i", $query)) {
+                $identityResultset = @\sqlsrv_query($this->dbh, "select SCOPE_IDENTITY()");
 
-					// Store results as an objects within main array
-					$this->last_result[$num_rows] = $row;
-					$num_rows++;
-				}
+                if ($identityResultset != false) {
+                    $identityRow = @\sqlsrv_fetch($identityResultset);
+                    $this->insert_id = $identityRow[0];
+                }
 
-				@\sqlsrv_free_stmt($this->result);
+            }
+            // Return number of rows affected
+            $return_val = $this->rows_affected;
+        } else { // Query was a select
+            // Take note of column info
+            $i = 0;
+            foreach (@\sqlsrv_field_metadata($this->result) as $field) {
+                foreach ($field as $name => $value) {
+                    $name = \strtolower($name);
+                    if ($name == "size") {
+                        $name = "max_length";
+                    } elseif ($name == "type") {
+                        $name = "typeid";
+                    }
 
-				// Log number of rows the query returned
-				$this->num_rows = $num_rows;
+                    //DEFINED FOR E_STRICT
+                    $col = new StdClass();
+                    $col->{$name} = $value;
+                }
 
-				// Return number of rows selected
-				$return_val = $this->num_rows;
-			}
+                $col->type = $this->get_datatype($col);
+                $this->col_info[$i++] = $col;
+                unset($col);
+            }
 
-			// disk caching of queries
-			$this->store_cache($query,$is_insert);
+            // Store Query Results
+            $num_rows = 0;
 
-			// If debug ALL queries
-			$this->trace || $this->debug_all ? $this->debug() : null ;
+            while ($row = @\sqlsrv_fetch_object($this->result)) {
 
-			return $return_val;
-		}
+                // Store results as an objects within main array
+                $this->last_result[$num_rows] = $row;
+                $num_rows++;
+            }
 
-		/**
-		* Convert a Query From MySql Syntax to MS-Sql syntax
-		* Following conversions are made:-
-		* 1. The '`' character used for MySql queries is not supported - the character is removed.
-		* 2. FROM_UNIXTIME method is not supported. The Function is removed.It is replaced with
-		*      getDate(). Warning: This logic may not be right.
-		* 3. unix_timestamp function is removed.
-		* 4. LIMIT keyword is replaced with TOP keyword. Warning: Logic not fully tested.
-		* Note: This method is only a small attempt to convert the syntax. There are many aspects which are not covered here.
-		*		This method doesn't at all guarantee complete conversion. Certain queries will still
-		*		not work. e.g. MS SQL requires all columns in Select Clause to be present in 'group by' clause.
-		*		There is no such restriction in MySql.
-		*/
-		public function mySqlto($query)
-		{
-			//replace the '`' character used for MySql queries, but not
-			//supported in MS-Sql
-			$query = \str_replace("`", "", $query);
+            @\sqlsrv_free_stmt($this->result);
 
-			$limit_str = "/LIMIT[^\w]{1,}([0-9]{1,})([\,]{0,})([0-9]{0,})/i";
+            // Log number of rows the query returned
+            $this->num_rows = $num_rows;
 
-			$patterns = array(
-				//replace From UnixTime command in MS-Sql, doesn't work
-				0 => "/FROM_UNIXTIME\(([^\/]{0,})\)/i", 
-				//replace unix_timestamp function. Doesn't work in MS-Sql
-				1 => "/unix_timestamp\(([^\/]{0,})\)/i",
-				//replace LIMIT keyword. Works only on MySql not on MS-Sql with TOP keyword
-				2 => $limit_str
-			);
+            // Return number of rows selected
+            $return_val = $this->num_rows;
+        }
 
-			$replacements = array(
-				0 => "getdate()", 
-				1 => "\\1", 
-				2 => ""
-			);
+        // disk caching of queries
+        $this->store_cache($query, $is_insert);
 
-			$regs = null;
-			\preg_match($limit_str, $query, $regs);
-			$query = \preg_replace($patterns, $replacements, $query);
-			
-			if(isset($regs[2]))
-				$query = \str_ireplace("SELECT ", "SELECT TOP ".$regs[3]." ", $query);
-			else if(isset($regs[1]))
-				$query  = \str_ireplace("SELECT ", "SELECT TOP ".$regs[1]." ", $query);
+        // If debug ALL queries
+        $this->trace || $this->debug_all ? $this->debug() : null;
 
-			return $query;
-		}
+        return $return_val;
+    }
 
-		public function get_datatype($col)
-		{
-			$datatype = "dt not defined";
-			if(isset($col->typeid))
-			{
-				switch ($col->typeid) {
-					case -2 :
-						if ($col->max_length < 8000)
-							$datatype = "binary";
-						else
-							$datatype = "timestamp";
-						break;
-					case 3 :
-						if (($col->scale == 4) && ($col->precision == 19))
-							$datatype = "money";
-						else if (($col->scale == 4) && ($col->precision == 10))
-							$datatype = "smallmoney";
-						else
-							$datatype = "decimal";
-						break;
-					case 93 :
-						if (($col->precision == 16) && ($col->scale == 0))
-							$datatype = "smalldatetime";
-						else if (($col->precision == 23) && ($col->scale == 3))
-							$datatype = "datetime";
-						else
-							$datatype = "datetime2";
-						break;
-					default :
-						$datatype = $this->ezsql_sqlsrv_type2str_non_dup[$col->typeid];
-						break;
-				}
-			}
-			
-			return $datatype;
-		}
+    /**
+     * Convert a Query From MySql Syntax to MS-Sql syntax
+     * Following conversions are made:-
+     * 1. The '`' character used for MySql queries is not supported - the character is removed.
+     * 2. FROM_UNIXTIME method is not supported. The Function is removed.It is replaced with
+     *      getDate(). Warning: This logic may not be right.
+     * 3. unix_timestamp function is removed.
+     * 4. LIMIT keyword is replaced with TOP keyword. Warning: Logic not fully tested.
+     * Note: This method is only a small attempt to convert the syntax. There are many aspects which are not covered here.
+     *        This method doesn't at all guarantee complete conversion. Certain queries will still
+     *        not work. e.g. MS SQL requires all columns in Select Clause to be present in 'group by' clause.
+     *        There is no such restriction in MySql.
+     */
+    public function mySqlto($query)
+    {
+        //replace the '`' character used for MySql queries, but not
+        //supported in MS-Sql
+        $query = \str_replace("`", "", $query);
 
-		/**
-		*  Close the active SQLSRV connection
-		*/
-		public function disconnect()
-		{
-			$this->conn_queries = 0;
-			@\sqlsrv_close($this->dbh);
-			$this->_connected = false;
-		}
+        $limit_str = "/LIMIT[^\w]{1,}([0-9]{1,})([\,]{0,})([0-9]{0,})/i";
 
-	} // end class	
+        $patterns = array(
+            //replace From UnixTime command in MS-Sql, doesn't work
+            0 => "/FROM_UNIXTIME\(([^\/]{0,})\)/i",
+            //replace unix_timestamp function. Doesn't work in MS-Sql
+            1 => "/unix_timestamp\(([^\/]{0,})\)/i",
+            //replace LIMIT keyword. Works only on MySql not on MS-Sql with TOP keyword
+            2 => $limit_str,
+        );
+
+        $replacements = array(
+            0 => "getdate()",
+            1 => "\\1",
+            2 => "",
+        );
+
+        $regs = null;
+        \preg_match($limit_str, $query, $regs);
+        $query = \preg_replace($patterns, $replacements, $query);
+
+        if (isset($regs[2])) {
+            $query = \str_ireplace("SELECT ", "SELECT TOP " . $regs[3] . " ", $query);
+        } else if (isset($regs[1])) {
+            $query = \str_ireplace("SELECT ", "SELECT TOP " . $regs[1] . " ", $query);
+        }
+
+        return $query;
+    }
+
+    public function get_datatype($col)
+    {
+        $datatype = "dt not defined";
+        if (isset($col->typeid)) {
+            switch ($col->typeid) {
+                case -2:
+                    if ($col->max_length < 8000) {
+                        $datatype = "binary";
+                    } else {
+                        $datatype = "timestamp";
+                    }
+
+                    break;
+                case 3:
+                    if (($col->scale == 4) && ($col->precision == 19)) {
+                        $datatype = "money";
+                    } else if (($col->scale == 4) && ($col->precision == 10)) {
+                        $datatype = "smallmoney";
+                    } else {
+                        $datatype = "decimal";
+                    }
+
+                    break;
+                case 93:
+                    if (($col->precision == 16) && ($col->scale == 0)) {
+                        $datatype = "smalldatetime";
+                    } else if (($col->precision == 23) && ($col->scale == 3)) {
+                        $datatype = "datetime";
+                    } else {
+                        $datatype = "datetime2";
+                    }
+
+                    break;
+                default:
+                    $datatype = $this->ezsql_sqlsrv_type2str_non_dup[$col->typeid];
+                    break;
+            }
+        }
+
+        return $datatype;
+    }
+
+    /**
+     *  Close the active SQLSRV connection
+     */
+    public function disconnect()
+    {
+        $this->conn_queries = 0;
+        @\sqlsrv_close($this->dbh);
+        $this->_connected = false;
+    }
+} // end class
