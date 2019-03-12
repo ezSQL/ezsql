@@ -114,6 +114,7 @@ use ezsql\ezQueryInterface;
         const CLOB = 'CLOB';
         
         // Numeric SQL data types
+        const INTR = 'INT';
         const INT0 = 'INT';
         const INT2 = 'INT2';
         const INT4 = 'INT4';
@@ -164,11 +165,14 @@ use ezsql\ezQueryInterface;
         const FOREIGN = 'FOREIGN KEY';
         const UNIQUE = 'UNIQUE';
         const INDEX = 'INDEX';
+        const REFERENCES = 'REFERENCES';
 
         const AUTO = 'AUTO_INCREMENT';
+        const IDENTITY = 'IDENTITY(1,1)';
 
         const ADD = 'ADD';
         const DROP = 'DROP COLUMN';
+        const CHANGE = 'CHANGE';
 
         const _DS = \DIRECTORY_SEPARATOR;
 
