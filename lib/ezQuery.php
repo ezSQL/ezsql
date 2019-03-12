@@ -141,7 +141,7 @@ class ezQuery implements ezQueryInterface
     *
     * @return string
     */  
-    public static function to_string($arrays, $separation = ',' )  
+    public static function to_string($arrays, $separation = ',')  
     {        
         if (\is_array( $arrays )) {
             $columns = '';
@@ -713,24 +713,45 @@ class ezQuery implements ezQueryInterface
         if (empty($table) || empty($schemas) || empty($vendor))
            return false;
 
-        $sql = 'CREATE TABLE '.$table.' ( ';
+        $sql = 'CREATE TABLE '.$table.'( ';
 
         $skipSchema = false;
         if (\is_string($schemas[0])) {
-            $data = '';
-            $allowedTypes = ezSchema::STRINGS['shared'];
-            $allowedTypes += ezSchema::STRINGS[$vendor];
-            $allowedTypes += ezSchema::NUMERICS['shared'];
-            $allowedTypes += ezSchema::NUMERICS[$vendor];
-            $allowedTypes += ezSchema::NUMBERS['shared'];
-            $allowedTypes += ezSchema::NUMBERS[$vendor];
-            $allowedTypes += ezSchema::DATE_TIME['shared'];
-            $allowedTypes += ezSchema::DATE_TIME[$vendor];
-            $allowedTypes += ezSchema::OBJECTS[$vendor];
-            $allowedTypes += ezSchema::OPTIONS;
-            $pattern = "/".\implode('|', $allowedTypes)."/i";
-            foreach($schemas as $types) {
-                if (\preg_match($pattern, $types)) {
+            $data = '';            
+            $stringTypes = ezSchema::STRINGS['common'];
+            $stringTypes += ezSchema::STRINGS[$vendor];
+            $numericTypes = ezSchema::NUMERICS['common'];
+            $numericTypes += ezSchema::NUMERICS[$vendor];
+            $numberTypes = ezSchema::NUMBERS['common'];
+            $numberTypes += ezSchema::NUMBERS[$vendor];
+            $dateTimeTypes = ezSchema::DATE_TIME['common'];
+            $dateTimeTypes += ezSchema::DATE_TIME[$vendor];
+            $objectTypes = ezSchema::OBJECTS[$vendor];
+            $allowedTypes = ezSchema::OPTIONS;
+
+            $stringPattern = "/".\implode('|', $stringTypes)."/i";
+            $numericPattern = "/".\implode('|', $numericTypes)."/i";
+            $numberPattern = "/".\implode('|', $numberTypes)."/i";
+            $dateTimePattern = "/".\implode('|', $dateTimeTypes)."/i";
+            $objectPattern = "/".\implode('|', $objectTypes)."/i";        
+            $patternOther = "/".\implode('|', $allowedTypes)."/i";
+            foreach($schemas as $types) {                
+                if (\preg_match($stringPattern, $types)) {
+                    $data .= $types;
+                    $skipSchema = true;
+                } elseif (\preg_match($numericPattern, $types)) {
+                    $data .= $types;
+                    $skipSchema = true;
+                } elseif (\preg_match($numberPattern, $types)) {
+                    $data .= $types;
+                    $skipSchema = true;
+                } elseif (\preg_match($dateTimePattern, $types)) {
+                    $data .= $types;
+                    $skipSchema = true;
+                } elseif (\preg_match($objectPattern, $types)) {
+                    $data .= $types;
+                    $skipSchema = true;
+                } elseif (\preg_match($patternOther, $types)) {
                     $data .= $types;
                     $skipSchema = true;
                 }
@@ -745,6 +766,50 @@ class ezQuery implements ezQueryInterface
         $createTable = !empty($schema) ? $sql.$schema.' );' : null;
         if (\is_string($createTable))
             return $this->query($createTable);
+
+        return false;
+   }
+
+   public function alter(string $table = null, ...$schemas) 
+   {
+        if (empty($table) || empty($schemas))
+           return false;
+
+        $sql = 'ALTER TABLE '.$table.' ';
+
+        $skipSchema = false;
+        if (\is_string($schemas[0])) {
+            $data = '';
+            $allowedTypes = ezSchema::CHANGES;
+            $pattern = "/".\implode('|', $allowedTypes)."/i";
+            foreach($schemas as $types) {
+                if (\preg_match($pattern, $types)) {
+                    $data .= $types;
+                    $skipSchema = true;
+                }
+            }
+            $schema = $skipSchema ? \rtrim($data, ', ') : $data;
+        }
+
+        if (! $skipSchema)
+            $schema = $this->create_schema( ...$schemas);
+
+        $alterTable = !empty($schema) ? $sql.$schema.';' : null;
+        if (\is_string($alterTable))
+            return $this->query($alterTable);
+
+        return false;
+   }
+
+   public function drop(string $table = null) 
+   {
+        if (empty($table))
+           return false;
+
+        $drop = 'DROP TABLE '.$table.';';
+
+        if (\is_string($drop))
+            return $this->query($drop);
 
         return false;
    }

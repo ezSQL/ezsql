@@ -200,10 +200,10 @@ final class ez_pdo extends ezsqlModel
     *
     * @return string
     */
-    public function sysdate() 
+    public function sysDate() 
     {
         return "datetime('now')";
-    } // sysdate
+    }
 
     /**
     * Hooks into PDO error system and reports it to user

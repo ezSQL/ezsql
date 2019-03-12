@@ -189,9 +189,9 @@ final class ez_mysqli extends ezsqlModel
      *
      * @return string
      */
-    public function sysdate() {
+    public function sysDate() {
         return 'NOW()';
-    } // sysdate
+    }
     
     /**
      * Helper fetches rows from a prepared result set 

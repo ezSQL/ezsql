@@ -38,7 +38,7 @@ interface ezQueryInterface
     /**
     * Turn off/on prepare function availability in ezQuery shortcut method calls 
     */
-    public function setPrepare($on = true);
+    public function setPrepare($on = true);    
 
     /**
     * Specifies a grouping over the results of the query.

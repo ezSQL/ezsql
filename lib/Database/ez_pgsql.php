@@ -125,7 +125,7 @@ final class ez_pgsql extends ezsqlModel
     public function sysDate()
     {
         return 'NOW()';
-    } // sysdate
+    }
 
     /**
      * Return PostgreSQL specific values: Return all tables of the current schema

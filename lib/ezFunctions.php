@@ -8,7 +8,12 @@ use ezsql\ezQueryInterface;
 // Global class instances, will be used to create and call methods directly.
 global $ezInstance;
 
-if (!function_exists('ezFunctions')) { 
+if (!function_exists('ezFunctions')) {
+    function to_string($arrays, $separation = ',')
+    {
+        return ezQuery::to_string($arrays, $separation);
+    }
+
     function column(string $column = null, string $type = null, ...$args)
     {
         return ezSchema::column($column, $type, ...$args);
@@ -16,28 +21,35 @@ if (!function_exists('ezFunctions')) {
 
     function primary(string $constraintName, ...$primaryKeys)
     {
-        $primary[] = \PRIMARY;
-        $primary += $primaryKeys;
-        return \column(\CONSTRAINT, $constraintName, ...$primary);
+        array_unshift($primaryKeys, \PRIMARY);
+        return \column(\CONSTRAINT, $constraintName, ...$primaryKeys);
     }
 
     function foreign(string $constraintName, ...$foreignKeys)
     {
-        $foreign[] = \FOREIGN;
-        $foreign += $foreignKeys;
-        return \column(\CONSTRAINT, $constraintName, ...$foreign);
+        array_unshift($foreignKeys, \FOREIGN);
+        return \column(\CONSTRAINT, $constraintName, ...$foreignKeys);
     }
 
     function unique(string $constraintName, ...$uniqueKeys)
     {
-        $unique[] = \UNIQUE;
-        $unique += $uniqueKeys;
-        return \column(\CONSTRAINT, $constraintName, ...$unique);
+        array_unshift($uniqueKeys, \UNIQUE);
+        return \column(\CONSTRAINT, $constraintName, ...$uniqueKeys);
     }
 
     function index(string $indexName, ...$indexKeys)
     {
         return \column(\INDEX, $indexName, ...$indexKeys);
+    }
+
+    function add(string $columnName, ...$datatype)
+    {
+        return \column(\ADD, $columnName, ...$datatype);
+    }
+
+    function drop(string $columnName, ...$data)
+    {
+        return \column(\DROP, $columnName, ...$data);
     }
 
     function createCertificate(

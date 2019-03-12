@@ -129,7 +129,8 @@ if (!\defined('CONSTANTS')) {
     \define('CLOB', 'CLOB');
         
     // Numeric SQL data types
-    \define('INTS', 'INT');
+    \define('INTR', 'INT');
+    \define('INT0', 'INT');
     \define('INT2', 'INT2');
     \define('INT4', 'INT4');
     \define('INT8', 'INT8');
@@ -179,6 +180,12 @@ if (!\defined('CONSTANTS')) {
     \define('FOREIGN', 'FOREIGN KEY');
     \define('UNIQUE', 'UNIQUE');
     \define('INDEX', 'INDEX');
+
+    \define('AUTO', 'AUTO_INCREMENT');
+
+    \define('ADD', 'ADD');
+    \define('DROP', 'DROP COLUMN');
+    \define('CHANGE', 'CHANGE');
 
     if (!\defined('_DS'))
         \define('_DS', \DIRECTORY_SEPARATOR);
