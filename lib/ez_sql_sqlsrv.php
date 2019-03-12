@@ -65,7 +65,7 @@
 		*  same time as initializing the ezSQL_mssql class
 		*/
 
-		function __construct($dbuser='', $dbpassword='', $dbname='', $dbhost='localhost', $convertMySqlToMSSqlQuery=true)
+		function __construct($dbuser = '', $dbpassword = '', $dbname = '', $dbhost = 'localhost', $convertMySqlToMSSqlQuery = true)
 		{
             parent::__construct();
             
@@ -84,7 +84,7 @@
 		*  and select a sqlsrv database at the same time
 		*/
 
-		function quick_connect($dbuser='', $dbpassword='', $dbname='', $dbhost='localhost')
+		function quick_connect($dbuser = '', $dbpassword = '', $dbname = '', $dbhost = 'localhost')
 		{
 			$return_val = false;
             $this->_connected = false;
@@ -98,7 +98,7 @@
 		*  Try to connect to sqlsrv database server
 		*/
 
-		function connect($dbuser='', $dbpassword='', $dbname='', $dbhost='localhost')
+		function connect($dbuser = '', $dbpassword = '', $dbname = '', $dbhost = 'localhost')
 		{
 			global $ezsql_sqlsrv_str; $return_val = false;
             $this->_connected = false;
@@ -159,7 +159,7 @@
 
 			//if flag to convert query from MySql syntax to MS-Sql syntax is true
 			//convert the query
-			if($this->convertMySqlTosqlsrvQuery == true)
+			if($this->convertMySqlToMSSqlQuery == true)
 				$query = $this->ConvertMySqlTosqlsrv($query);
 
 
