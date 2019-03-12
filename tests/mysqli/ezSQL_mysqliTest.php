@@ -280,6 +280,38 @@ class ezSQL_mysqliTest extends TestCase {
     } // testInsertId
     
     /**
+     * @covers ezQuery::create
+     */
+    public function testCreate()
+    {
+        $this->object->connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD);
+        $this->object->select(self::TEST_DB_NAME);
+             
+        $this->assertEquals($this->object->create('new_create_test',
+            \column('id', INT0, 11, notNULL, AUTO),
+            \column('create_key', VARCHAR, 50),
+            \primary('id_pk', 'id')), 
+        0);
+
+        $this->object->setPrepare(false);
+        $this->assertEquals($this->object->insert('new_create_test',
+            ['create_key' => 'test 2']),
+        1);
+        $this->object->setPrepare();
+    }
+
+    /**
+     * @covers ezQuery::drop
+     */
+    public function testDrop()
+    {
+        $this->object->connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD);
+        $this->object->select(self::TEST_DB_NAME);
+             
+        $this->assertEquals($this->object->drop('new_create_test'), 0);
+    }
+
+    /**
      * @covers ezQuery::insert
      */
     public function testInsert()

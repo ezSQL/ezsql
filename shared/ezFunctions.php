@@ -114,7 +114,7 @@ use ezsql\ezQueryInterface;
         const CLOB = 'CLOB';
         
         // Numeric SQL data types
-        const INTS = 'INT';
+        const INT0 = 'INT';
         const INT2 = 'INT2';
         const INT4 = 'INT4';
         const INT8 = 'INT8';
@@ -165,6 +165,8 @@ use ezsql\ezQueryInterface;
         const UNIQUE = 'UNIQUE';
         const INDEX = 'INDEX';
 
+        const AUTO = 'AUTO_INCREMENT';
+
         const ADD = 'ADD';
         const DROP = 'DROP COLUMN';
 
@@ -173,6 +175,11 @@ use ezsql\ezQueryInterface;
         // Global class instances, will be used to create and call methods directly.        
         global $ezInstance;
  
+    function to_string($arrays, $separation = ',')
+    {
+        return \ezQuery::to_string($arrays, $separation);
+    }
+
     function column(string $column = null, string $type = null, ...$args)
     {
         return ezSchema::column($column, $type, ...$args);
@@ -180,23 +187,20 @@ use ezsql\ezQueryInterface;
 
     function primary(string $constraintName, ...$primaryKeys)
     {
-        $primary[] = \PRIMARY;
-        $primary += $primaryKeys;
-        return \column(\CONSTRAINT, $constraintName, ...$primary);
+        array_unshift($primaryKeys, \PRIMARY);
+        return \column(\CONSTRAINT, $constraintName, ...$primaryKeys);
     }
 
     function foreign(string $constraintName, ...$foreignKeys)
     {
-        $foreign[] = \FOREIGN;
-        $foreign += $foreignKeys;
-        return \column(\CONSTRAINT, $constraintName, ...$foreign);
+        array_unshift($foreignKeys, \FOREIGN);
+        return \column(\CONSTRAINT, $constraintName, ...$foreignKeys);
     }
 
     function unique(string $constraintName, ...$uniqueKeys)
     {
-        $unique[] = \UNIQUE;
-        $unique += $uniqueKeys;
-        return \column(\CONSTRAINT, $constraintName, ...$unique);
+        array_unshift($uniqueKeys, \UNIQUE);
+        return \column(\CONSTRAINT, $constraintName, ...$uniqueKeys);
     }
 
     function index(string $indexName, ...$indexKeys)

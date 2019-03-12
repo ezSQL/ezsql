@@ -89,35 +89,35 @@ class ezSchema
             $numberOrString = $args[0];
 			$store = \is_int($numberOrString) ? '('.$numberOrString.')' : '';
 			$store = empty($store) && !empty($numberOrString) ? $numberOrString : $store;
-			$value = !empty($args[1]) ? $args[1] : '';
-			$options = !empty($args[2]) ? $args[2] : '';
+			$value = !empty($args[1]) ? ' '.$args[1] : '';
+			$options = !empty($args[2]) ? ' '.$args[2] : '';
 			$extra = !empty($args[3]) ? ' '.$args[3] : '';
-			$data = $type.$store.' '.$value.' '.$options.$extra;
+			$data = $type.$store.$value.$options.$extra;
 		} elseif (\preg_match($numericPattern, $type)) {
 			// check for numeric data type
 			$size = '('.(!empty($args[0]) ? $args[0] : 10 ).',';
 			$size .= (!empty($args[1]) ? $args[1] : 2 ).')';
-			$value = !empty($args[2]) ? $args[2] : '';
+			$value = !empty($args[2]) ? ' '.$args[2] : '';
 			$options = !empty($args[3]) ? $args[3] : '';
 			$extra = !empty($args[4]) ? ' '.$args[4] : '';
-			$data = $type.$size.' '.$value.' '.$options.$extra;
+			$data = $type.$size.$value.$options.$extra;
 		} elseif (\preg_match($numberPattern, $type)) {
             // check for numeric data type
             $numberOrString = $args[0];
-			$store = \is_int($numberOrString) ? '('.$numberOrString.')' : '';
+            $store = \is_int($numberOrString) ? '('.$numberOrString.')' : '';
 			$store = empty($store) && !empty($numberOrString) ? $numberOrString : $store;
-			$value = !empty($args[1]) ? $args[1] : '';
-			$options = !empty($args[2]) ? $args[2] : '';
+			$value = !empty($args[1]) ? ' '.$args[1] : '';
+			$options = !empty($args[2]) ? ' '.$args[2] : '';
 			$extra = !empty($args[3]) ? ' '.$args[3] : '';
-			$data = $type.$store.' '.$value.' '.$options.$extra;
+			$data = $type.$store.$value.$options.$extra;
         } elseif (\preg_match($dateTimePattern, $type)) {
 			// check for date time data type
             $numberOrString = $args[0];
 			$store = \is_int($numberOrString) ? '('.$numberOrString.')' : '';
 			$fraction = empty($store) && !empty($numberOrString) ? $numberOrString : $store;
-			$value = !empty($args[1]) ? $args[1] : '';
-			$options = !empty($args[2]) ? $args[2] : '';
-			$data = $type.$fraction.' '.$value.' '.$options;
+			$value = !empty($args[1]) ? ' '.$args[1] : '';
+			$options = !empty($args[2]) ? ' '.$args[2] : '';
+			$data = $type.$fraction.$value.$options;
         } elseif (\preg_match($objectPattern, $type)) {
 			// check for large object data type
 			$value = !empty($args[0]) ? ' '.$args[0] : '';
@@ -178,25 +178,30 @@ class ezSchema
 
         $columnData = '';
         if (($column == \CONSTRAINT) || ($column == \INDEX)) {
-            if (empty($args[0]) || empty($args[1]))
+            if (empty($args[0]) || empty($args[1])) {
                 return false;
+            }
 
             $keyType = ($column != \INDEX) ? \array_shift($args).' ' : ' ';
-            $keys = $keyType.'('.ezQuery::to_string($args).'), ';
+            $keys = $keyType.'('.\to_string($args).'), ';
             $columnData .= $column.' '.$type.' '.$keys;
-        } elseif (($column == \ADD) || ($column == \ALTER)) {
-            $column = $column.' '.$type;
-            $type2 = \array_shift($args);
-            $data = self::datatype($type2, $args);
+        } elseif (($column == \ADD) || ($column == \DROP)) {
+            if ($column != \DROP) {
+                $column = $column.' '.$type;
+                $type2 = \array_shift($args);
+                $data = self::datatype($type2, ...$args);
+            } else
+                $data = $type;
+
             if (!empty($data))
                 $columnData = $column.' '.$data.', ';
         } else {
-            $data = self::datatype($type, $args);
+            $data = self::datatype($type, ...$args);
             if (!empty($data))
                 $columnData = $column.' '.$data.', ';
         }
 
-        $schemaColumns = !empty($columnData) ? \rtrim($columnData, ', ') : null;
+        $schemaColumns = !empty($columnData) ? $columnData : null;
         if (\is_string($schemaColumns))
             return $schemaColumns;
 
