@@ -12,3 +12,7 @@ tests/pdo/ez_test.sqlite
 tests/sqlite/ez_test.sqlite
 tests/sqlite/ez_test.sqlite3
 .vscode/settings.json
+*.crt
+*.csr
+*.key
+test.php
