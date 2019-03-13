@@ -393,4 +393,25 @@ interface ezQueryInterface
     * @return mixed bool/id of inserted record, or false for error
 	*/
     public function insert_select($toTable = '', $toColumns = '*', $fromTable = null, $fromColumns = '*', ...$fromWhere);
+    
+   /**
+    * Creates an database table and columns, by either:
+    *  - array( column, datatype, ...value/options arguments ) // calls create_schema() 
+    *  - column( column, datatype, ...value/options arguments ) // returns string
+    *  - primary( primary_key_label, ...primaryKeys) // returns string
+    *  - foreign( foreign_key_label, ...foreignKeys) // returns string
+    *  - unique( unique_key_label, ...uniqueKeys) // returns string
+    * 
+    * @param string $table, - The name of the db table that you wish to create
+    * @param mixed $schemas, - An array of:
+    *
+    * @param string $column|CONSTRAINT, - column name/CONSTRAINT usage for PRIMARY|FOREIGN KEY
+    * @param string $type|$constraintName, - data type for column/primary|foreign constraint name
+    * @param mixed $size|...$primaryForeignKeys, 
+    * @param mixed $value, - column should be NULL or NOT NULL. If omitted, assumes NULL
+    * @param mixed $default - Optional. It is the value to assign to the column
+    * 
+    * @return mixed results of query() call
+    */
+   public function create(string $table = null, ...$schemas);
 }

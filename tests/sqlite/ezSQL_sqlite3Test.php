@@ -126,6 +126,33 @@ class ezSQL_sqlite3Test extends TestCase
         // Get rid of the table we created..
         $this->object->query("DROP TABLE test_table;");
     }   
+
+    /**
+     * @covers ezQuery::create
+     */
+    public function testCreate()
+    {
+        $this->assertEquals($this->object->create('new_create_test',
+            column('id', INTEGERS, notNULL, AUTO),
+            column('create_key', VARCHAR, 50),
+            primary('id_pk', 'id')), 
+        0);
+
+        $this->object->setPrepare(false);
+        $this->assertEquals($this->object->insert('new_create_test',
+            ['create_key' => 'test 2']),
+        0);
+        $this->object->setPrepare();
+    }
+
+    /**
+     * @covers ezQuery::drop
+     */
+    public function testDrop()
+    {
+        $this->assertEquals($this->object->drop('new_create_test'), 0);
+    }
+
     /**
      * @covers ezQuery::insert
      */
@@ -150,8 +177,8 @@ class ezSQL_sqlite3Test extends TestCase
         $test_table['test_key'] = 'the key string';
         $where="test_key  =  test 1";
         $this->assertEquals(1, $this->object->update('test_table', $test_table, $where));
-        $this->assertEquals(1, $this->object->update('test_table', $test_table, eq('test_key','test 3', _AND),
-                                                                            eq('test_value','testing string 3')));
+        $this->assertEquals(1, $this->object->update(
+            'test_table', $test_table, eq('test_key','test 3', _AND), eq('test_value','testing string 3')));
         $where=eq('test_value','testing string 4');
         $this->assertEquals(0, $this->object->update('test_table', $test_table, $where));
         $this->assertEquals(1, $this->object->update('test_table', $test_table, "test_key  =  test 2"));

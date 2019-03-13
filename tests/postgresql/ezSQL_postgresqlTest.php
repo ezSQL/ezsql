@@ -181,7 +181,37 @@ class ezSQL_postgresqlTest extends TestCase {
         
         $this->assertEquals(0, $this->object->query('DROP TABLE unit_test'));
     } // testQuery
-    
+
+     /**
+     * @covers ezQuery::create
+     */
+    public function testCreate()
+    {
+        $this->object->connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME, self::TEST_DB_HOST, self::TEST_DB_PORT);
+             
+        $this->assertEquals($this->object->create('new_create_test',
+            column('id', AUTO),
+            column('create_key', VARCHAR, 50),
+            primary('id_pk', 'id')), 
+        0);
+
+        $this->object->setPrepare(false);
+        $this->assertEquals($this->object->insert('new_create_test',
+            ['create_key' => 'test 2']),
+        1);
+        $this->object->setPrepare();
+    }
+
+    /**
+     * @covers ezQuery::drop
+     */
+    public function testDrop()
+    {
+        $this->object->connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME, self::TEST_DB_HOST, self::TEST_DB_PORT);
+             
+        $this->assertEquals($this->object->drop('new_create_test'), 0);
+    }
+
     /**
      * @covers ezSQLcore::insert
      */

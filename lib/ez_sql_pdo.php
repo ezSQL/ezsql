@@ -1,17 +1,4 @@
 <?php
-/**
- * ezSQL class - PDO
- * Desc..: PDO component (part of ezSQL database abstraction library)
- *
- * @author  Justin Vincent (jv@jvmultimedia.com)
- * @author  Stefanie Janine Stoelting <mail@stefanie-stoelting.de>
- * Contributor:  Lawrence Stubbs <technoexpressnet@gmail.com>
- * @link    http://twitter.com/justinvincent
- * @name    ezSQL_pdo
- * @package ezSQL
- * @license FREE / Donation (LGPL - You may do what you like with ezSQL - no exceptions.)
- *
- */
 
 class ezSQL_pdo extends ezSQLcore
 {
@@ -47,14 +34,18 @@ class ezSQL_pdo extends ezSQLcore
      * The array for connection options, MySQL connection charset, for example
      * @var array
      */
-    private $_options;
+    private static $_options = array();
     
     /**
      * Whether it is a file based database connection, for example to a SQLite
      * database file, or not
      * @var boolean Default is false
      */
-    private $_isFileBased=false;
+    private $_isFileBased = false;
+
+    private static $isSecure = false;
+    private static $secure = null;
+    private $dbh;
 
     /**
      * Show errors
@@ -62,11 +53,11 @@ class ezSQL_pdo extends ezSQLcore
      */
     public $show_errors = true;
     
-	protected $preparedvalues = array();
+    protected $preparedValues = array();
 
     /**
-     * Constructor - allow the user to perform a qucik connect at the same time
-     * as initialising the ezSQL_sqlite class
+     * Constructor - allow the user to perform a quick connect at the same time
+     * as initializing the ezSQL_sqlite class
      *
      * @param string $dsn The connection parameter string
      *                    Default is empty string
@@ -82,12 +73,13 @@ class ezSQL_pdo extends ezSQLcore
      *                             dsn parameter
      *                             Default is false
      */
-    public function __construct($dsn='', $user='', $password='', $options=array(), $isFileBased=false) {
+    public function __construct($dsn = '', $user = '', $password = '', $options = array(), $isFileBased = false) 
+    {
         if ( ! \class_exists ('PDO') ) {
-            throw new Exception('<b>Fatal Error:</b> ezSQL_pdo requires PDO Lib to be compiled and or linked in to the PHP engine');
+            throw new \Exception('<b>Fatal Error:</b> ezSQL_pdo requires PDO Lib to be compiled and or linked in to the PHP engine');
         }
         if ( ! \class_exists ('ezSQLcore') ) {
-            throw new Exception('<b>Fatal Error:</b> ezSQL_pdo requires ezSQLcore (ez_sql_core.php) to be included/loaded before it can be used');
+            throw new \Exception('<b>Fatal Error:</b> ezSQL_pdo requires ezSQLcore (ez_sql_core.php) to be included/loaded before it can be used');
         }
 
         parent::__construct();
@@ -102,6 +94,33 @@ class ezSQL_pdo extends ezSQLcore
         $GLOBALS['db_pdo'] = $this;
         \setQuery($this);
     } // __construct
+
+    public static function securePDO(
+        $vendor = null, 
+        $key = 'certificate.key', 
+        $cert = 'certificate.crt', 
+        $ca = 'cacert.pem', 
+        $path = '.'.\_DS) 
+    {
+        if (\array_key_exists(\strtolower($vendor), \VENDOR) 
+            && (! \file_exists($path.$cert) || ! \file_exists($path.$key)))
+            ezQuery::createCertificate();
+
+        if (($vendor == 'pgsql') || ($vendor == 'postgresql')) {
+            self::$secure = "sslmode=require;sslcert=".$path.$cert.";sslkey=".$path.$key.";sslrootcert=".$path.$ca.";";
+            self::$isSecure = true;
+        } elseif (($vendor == 'mysql') || ($vendor == 'mysqli')) {
+            self::$_options = array(
+                \PDO::MYSQL_ATTR_SSL_KEY => $path.$key,
+                \PDO::MYSQL_ATTR_SSL_CERT => $path.$cert,
+                \PDO::MYSQL_ATTR_SSL_CA => $path.$ca,
+                \PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT => false,
+            );
+        } elseif (($vendor == 'sqlserver') || ($vendor == 'mssql') || ($vendor == 'sqlsrv')) {
+            self::$secure = ";Encrypt=true;TrustServerCertificate=true";
+            self::$isSecure = true;
+        }
+    }
 
     /**
      * Try to connect to the database server in the DSN parameters
@@ -121,16 +140,21 @@ class ezSQL_pdo extends ezSQLcore
      *                             Default is false
      * @return boolean
      */
-    public function connect($dsn='', $dbuser='', $dbpassword='', $options=array(), $isFileBased=false) {
+    public function connect($dsn = '', $dbuser = '', $dbpassword = '', $options = array(), $isFileBased = false) 
+    {
         $this->_connected = false;
 
-        $this->_dsn = empty($dsn) ? $this->_dsn : $dsn;
+        if (self::$isSecure)
+            $this->_dsn = empty($dsn) ? $this->_dsn.$this->secure : $dsn.$this->secure;
+        else
+            $this->_dsn = empty($dsn) ? $this->_dsn : $dsn;
+
         $this->_isFileBased = $isFileBased;
         
         if (!$isFileBased) {
             $this->_dbuser = empty($dbuser) ? $this->_dbuser : $dbuser;
             $this->_dbpassword = empty($dbpassword) ? $this->_dbpassword : $dbpassword;
-            $this->_options = $options;        
+            $this->_options = empty($options) ? $this->_options : $options;        
 
             // Must have a user and a password if not file based
             if ( empty($this->_dsn) || empty($this->_dbuser) || empty($this->_dbpassword) ) {
@@ -156,8 +180,7 @@ class ezSQL_pdo extends ezSQLcore
                 $this->dbh = new \PDO($this->_dsn, $this->_dbuser, $this->_dbpassword, $this->_options);
                 $this->_connected = true;
             }
-        }
-        catch (\PDOException $e) {
+        } catch (\PDOException $e) {
             $this->register_error($e->getMessage());
             $this->show_errors ? \trigger_error($e->getMessage() . '- $dsn: ' . $dsn, \E_USER_WARNING) : null;
             return false;
@@ -186,7 +209,8 @@ class ezSQL_pdo extends ezSQLcore
      *                             Default is false
      * @return boolean
      */
-    public function quick_connect($dsn='', $user='', $password='', $options=array(), $isFileBased=false) {
+    public function quick_connect($dsn = '', $user = '', $password = '', $options = array(), $isFileBased = false) 
+    {
         return $this->connect($dsn, $user, $password, $options, $isFileBased);
     } // quick_connect
 
@@ -201,7 +225,8 @@ class ezSQL_pdo extends ezSQLcore
      * @param string $str
      * @return string
      */
-    public function escape($str) {
+    public function escape($str) 
+    {
         // If there is no existing database connection then try to connect
         if ( ! isset($this->dbh) || ! $this->dbh ) {
             $this->connect($this->_dsn, $this->user, $this->password, $this->_options, $this->_isFileBased);
@@ -219,7 +244,8 @@ class ezSQL_pdo extends ezSQLcore
      *
      * @return string
      */
-    public function sysdate() {
+    public function sysdate() 
+    {
         return "datetime('now')";
     } // sysdate
 
@@ -228,7 +254,8 @@ class ezSQL_pdo extends ezSQLcore
      *
      * @return string
      */
-    public function catch_error(){
+    public function catch_error()
+    {
         $error_str = 'No error info';
 
         $err_array = $this->dbh->errorInfo();
@@ -277,7 +304,9 @@ class ezSQL_pdo extends ezSQLcore
      * @param type $query
      * @return object
      */
-    public function query($query, $use_prepare = false) {
+    public function query($query, $use_prepare = false) 
+    {
+        $param = [];
         if ($use_prepare)
             $param = $this->prepareValues();
         
@@ -418,11 +447,20 @@ class ezSQL_pdo extends ezSQLcore
     /**
      * Close the database connection
      */
-    public function disconnect(){
+    public function disconnect()
+    {
         if ($this->dbh) {
             $this->dbh = null;
             $this->_connected = false;
         }
      } // disconnect
+
+    /**
+     * Get connection handle
+     */
+    public function connection()
+    {
+        return $this->dbh;
+    }
 
 } // ezSQL_pdo
