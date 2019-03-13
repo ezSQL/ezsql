@@ -1,14 +1,5 @@
 <?php
-/**
- * ezSQL Database specific class with TNS connection
- * Desc..: Oracle TNS component (part of ezSQL databse abstraction library)
- *
- * @author  Stefanie Janine Stoelting (mail@stefanie-stoelting.de)
- * @name    ezSQL_oracleTNS
- * @package ezSQL
- * @license FREE / Donation (LGPL - You may do what you like with ezSQL - no exceptions.)
- *
- */
+
 class ezSQL_oracleTNS extends ezSQLcore
 {
     /**

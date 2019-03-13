@@ -1,14 +1,6 @@
 <?php
 
 	/**********************************************************************
-	*  Author: Justin Vincent (jv@jvmultimedia.com)
-	*  Web...: http://twitter.com/justinvincent
-	*  Name..: ezSQL_oracle8_9
-	*  Desc..: Oracle 8i/9i component (part of ezSQL databse abstraction library)
-	*
-	*/
-
-	/**********************************************************************
 	*  ezSQL error strings - Oracle
 	*/
 

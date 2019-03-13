@@ -95,7 +95,7 @@ use ezsql\ezQueryInterface;
 
         // String SQL data types
         const CHAR = 'CHAR';
-        const VARC = 'VARCHAR';
+        const VARS = 'VARCHAR';
         const VARCHAR = 'VARCHAR';
         const TEXT = 'TEXT';
         const TINY = 'TINYTEXT';
@@ -114,7 +114,8 @@ use ezsql\ezQueryInterface;
         const CLOB = 'CLOB';
         
         // Numeric SQL data types
-        const INTS = 'INT';
+        const INTR = 'INT';
+        const INT0 = 'INT';
         const INT2 = 'INT2';
         const INT4 = 'INT4';
         const INT8 = 'INT8';
@@ -126,7 +127,6 @@ use ezsql\ezQueryInterface;
         const TINYINT = 'TINYINT';
         const SMALLINT = 'SMALLINT';
         const MEDIUMINT = 'MEDIUMINT';
-        const LARGE = 'BIGINT';
         const BIGINT = 'BIGINT';
         const DEC = 'DEC';
         const FIXED = 'FIXED';
@@ -137,9 +137,6 @@ use ezsql\ezQueryInterface;
         const BOOLEANS = 'BOOLEAN';
         const SMALLMONEY = 'SMALLMONEY';
         const MONEY = 'MONEY';
-        const SMALLSERIAL = 'SMALLSERIAL';
-        const SERIAL = 'SERIAL';
-        const BIGSERIAL = 'BIGSERIAL';
         
         // Date/Time SQL data types	
         const DATES = 'DATE';
@@ -164,10 +161,30 @@ use ezsql\ezQueryInterface;
         const FOREIGN = 'FOREIGN KEY';
         const UNIQUE = 'UNIQUE';
         const INDEX = 'INDEX';
-	
+        const REFERENCES = 'REFERENCES';
+
+        const AUTO = '__autoNumbers__';
+        const AUTO_INCREMENT = 'AUTO_INCREMENT';
+        const AUTOINCREMENT = 'AUTOINCREMENT';
+        const IDENTITY = 'IDENTITY';
+        const SERIAL = 'SERIAL';
+        const SMALLSERIAL = 'SMALLSERIAL';
+        const BIGSERIAL = 'BIGSERIAL';
+
+        const ADD = 'ADD';
+        const DROP = 'DROP COLUMN';
+        const CHANGE = '__modifyColumn__';
+
+        const _DS = \DIRECTORY_SEPARATOR;
+
         // Global class instances, will be used to create and call methods directly.        
         global $ezInstance;
  
+    function to_string($arrays, $separation = ',')
+    {
+        return \ezQuery::to_string($arrays, $separation);
+    }
+
     function column(string $column = null, string $type = null, ...$args)
     {
         return ezSchema::column($column, $type, ...$args);
@@ -175,28 +192,66 @@ use ezsql\ezQueryInterface;
 
     function primary(string $constraintName, ...$primaryKeys)
     {
-        $primary[] = \PRIMARY;
-        $primary += $primaryKeys;
-        return \column(\CONSTRAINT, $constraintName, ...$primary);
+        array_unshift($primaryKeys, \PRIMARY);
+        return \column(\CONSTRAINT, $constraintName, ...$primaryKeys);
     }
 
     function foreign(string $constraintName, ...$foreignKeys)
     {
-        $foreign[] = \FOREIGN;
-        $foreign += $foreignKeys;
-        return \column(\CONSTRAINT, $constraintName, ...$foreign);
+        array_unshift($foreignKeys, \FOREIGN);
+        return \column(\CONSTRAINT, $constraintName, ...$foreignKeys);
     }
 
     function unique(string $constraintName, ...$uniqueKeys)
     {
-        $unique[] = \UNIQUE;
-        $unique += $uniqueKeys;
-        return \column(\CONSTRAINT, $constraintName, ...$unique);
+        array_unshift($uniqueKeys, \UNIQUE);
+        return \column(\CONSTRAINT, $constraintName, ...$uniqueKeys);
     }
 
     function index(string $indexName, ...$indexKeys)
     {
         return \column(\INDEX, $indexName, ...$indexKeys);
+    }
+
+    function add(string $columnName, ...$datatype)
+    {
+        return \column(\ADD, $columnName, ...$datatype);
+    }
+
+    function drop(string $columnName, ...$data)
+    {
+        return \column(\DROP, $columnName, ...$data);
+    }
+
+    function createCertificate(
+        string $privatekeyFile = 'certificate.key', 
+        string $certificateFile = 'certificate.crt', 
+        string $signingFile = 'certificate.csr', 
+        // string $caCertificate = null, 
+        string $ssl_path = null, 
+        array $details = ["commonName" => "localhost"]
+    ) 
+    {
+        ezQuery::createCertificate($privatekeyFile, $certificateFile, $signingFile, $ssl_path, $details);
+    }
+
+    function securePDO(
+        $vendor = null, 
+        $key = 'certificate.key', 
+        $cert = 'certificate.crt', 
+        $ca = 'cacert.pem', 
+        $path = '.'.\_DS) 
+    {
+        ezSQL_pdo::securePDO($vendor, $key, $cert, $ca, $path);
+    }
+
+    function secureSQL(
+        $key = 'certificate.key', 
+        $cert = 'certificate.crt', 
+        $ca = 'cacert.pem', 
+        $path = '.'.\_DS) 
+    {
+        // todo
     }
 
 	/**
