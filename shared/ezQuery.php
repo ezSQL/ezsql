@@ -760,7 +760,7 @@ class ezQuery implements ezQueryInterface
         $skipSchema = false;
         if (\is_string($schemas[0])) {
             $data = '';
-            $allowedTypes = ezSchema::CHANGES;
+            $allowedTypes = ezSchema::ALTERS;
             $pattern = "/".\implode('|', $allowedTypes)."/i";
             foreach($schemas as $types) {
                 if (\preg_match($pattern, $types)) {
@@ -788,9 +788,6 @@ class ezQuery implements ezQueryInterface
 
         $drop = 'DROP TABLE '.$table.';';
 
-        if (\is_string($drop))
-            return $this->query($drop);
-
-        return false;
+        return $this->query($drop);
    }
 }

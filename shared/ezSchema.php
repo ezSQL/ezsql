@@ -51,6 +51,7 @@ class ezSchema
     ];
 
     const OPTIONS  = ['CONSTRAINT', 'PRIMARY KEY', 'FOREIGN KEY', 'UNIQUE', 'INDEX', 'REFERENCES'];
+    const ALTERS  = ['ADD', 'DROP COLUMN', 'CHANGE COLUMN', 'RENAME TO', 'MODIFY', 'ALTER COLUMN'];
     const CHANGES  = [
         'mysql' => 'MODIFY',
         'postgresql' => 'ALTER COLUMN',
@@ -72,6 +73,16 @@ class ezSchema
         $this->arguments = $args;
     }
 
+    /**
+     * Makes an datatype callable from the above supported CONSTANTS. 
+     * This is used to create the database schema.
+     *
+     * @param string $type
+     * @param array $args
+     * 
+     * @return string
+     * @throws Exception
+     */
 	public function __call($type, $args) 
 	{
         $vendor = self::vendor();
@@ -199,7 +210,7 @@ class ezSchema
             $keyType = ($column != \INDEX) ? \array_shift($args).' ' : ' ';
             $keys = $keyType.'('.\to_string($args).'), ';
             $columnData .= $column.' '.$type.' '.$keys;
-        } elseif (($column == \ADD) || ($column == \DROP) || ($column == \CHANGE)) {
+        } elseif (($column == \ADD) || ($column == \DROP) || ($column == \CHANGER)) {
             if ($column != \DROP) {
                 // check for modify placeholder and replace with vendors
                 $column = \str_replace(\CHANGE, self::CHANGES[$vendor], $column);

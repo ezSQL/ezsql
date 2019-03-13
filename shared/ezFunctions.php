@@ -173,7 +173,11 @@ use ezsql\ezQueryInterface;
 
         const ADD = 'ADD';
         const DROP = 'DROP COLUMN';
-        const CHANGE = '__modifyColumn__';
+        const CHANGE  = 'CHANGE COLUMN';
+        const ALTER  = 'ALTER COLUMN';
+        const MODIFY  = 'MODIFY';
+        const RENAME  = 'RENAME TO';
+        const CHANGER = '__modifyingColumns__';
 
         const _DS = \DIRECTORY_SEPARATOR;
 
