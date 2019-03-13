@@ -6,7 +6,7 @@ require_once('ezQuery.php');
 	/**
 	*  ezSQL Constants
 	*/
-	defined('EZSQL_VERSION') or define('EZSQL_VERSION', '3.12');
+	defined('EZSQL_VERSION') or define('EZSQL_VERSION', '3.13');
 	defined('OBJECT') or define('OBJECT', 'OBJECT');
 	defined('ARRAY_A') or define('ARRAY_A', 'ARRAY_A');
 	defined('ARRAY_N') or define('ARRAY_N', 'ARRAY_N');
