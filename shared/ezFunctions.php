@@ -95,7 +95,7 @@ use ezsql\ezQueryInterface;
 
         // String SQL data types
         const CHAR = 'CHAR';
-        const VARC = 'VARCHAR';
+        const VARS = 'VARCHAR';
         const VARCHAR = 'VARCHAR';
         const TEXT = 'TEXT';
         const TINY = 'TINYTEXT';
@@ -127,7 +127,6 @@ use ezsql\ezQueryInterface;
         const TINYINT = 'TINYINT';
         const SMALLINT = 'SMALLINT';
         const MEDIUMINT = 'MEDIUMINT';
-        const LARGE = 'BIGINT';
         const BIGINT = 'BIGINT';
         const DEC = 'DEC';
         const FIXED = 'FIXED';
@@ -138,9 +137,6 @@ use ezsql\ezQueryInterface;
         const BOOLEANS = 'BOOLEAN';
         const SMALLMONEY = 'SMALLMONEY';
         const MONEY = 'MONEY';
-        const SMALLSERIAL = 'SMALLSERIAL';
-        const SERIAL = 'SERIAL';
-        const BIGSERIAL = 'BIGSERIAL';
         
         // Date/Time SQL data types	
         const DATES = 'DATE';
@@ -167,12 +163,17 @@ use ezsql\ezQueryInterface;
         const INDEX = 'INDEX';
         const REFERENCES = 'REFERENCES';
 
-        const AUTO = 'AUTO_INCREMENT';
-        const IDENTITY = 'IDENTITY(1,1)';
+        const AUTO = '__autoNumbers__';
+        const AUTO_INCREMENT = 'AUTO_INCREMENT';
+        const AUTOINCREMENT = 'AUTOINCREMENT';
+        const IDENTITY = 'IDENTITY';
+        const SERIAL = 'SERIAL';
+        const SMALLSERIAL = 'SMALLSERIAL';
+        const BIGSERIAL = 'BIGSERIAL';
 
         const ADD = 'ADD';
         const DROP = 'DROP COLUMN';
-        const CHANGE = 'CHANGE';
+        const CHANGE = '__modifyColumn__';
 
         const _DS = \DIRECTORY_SEPARATOR;
 

@@ -45,6 +45,7 @@ class ezSQL_pdo extends ezSQLcore
 
     private static $isSecure = false;
     private static $secure = null;
+    private $dbh;
 
     /**
      * Show errors
@@ -52,11 +53,11 @@ class ezSQL_pdo extends ezSQLcore
      */
     public $show_errors = true;
     
-	protected $preparedValues = array();
+    protected $preparedValues = array();
 
     /**
-     * Constructor - allow the user to perform a qucik connect at the same time
-     * as initialising the ezSQL_sqlite class
+     * Constructor - allow the user to perform a quick connect at the same time
+     * as initializing the ezSQL_sqlite class
      *
      * @param string $dsn The connection parameter string
      *                    Default is empty string
@@ -453,5 +454,13 @@ class ezSQL_pdo extends ezSQLcore
             $this->_connected = false;
         }
      } // disconnect
+
+    /**
+     * Get connection handle
+     */
+    public function connection()
+    {
+        return $this->dbh;
+    }
 
 } // ezSQL_pdo

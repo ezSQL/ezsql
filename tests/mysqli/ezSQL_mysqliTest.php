@@ -288,9 +288,9 @@ class ezSQL_mysqliTest extends TestCase {
         $this->object->select(self::TEST_DB_NAME);
              
         $this->assertEquals($this->object->create('new_create_test',
-            \column('id', INT0, 11, notNULL, AUTO),
-            \column('create_key', VARCHAR, 50),
-            \primary('id_pk', 'id')), 
+            column('id', INTR, 11, notNULL, AUTO),
+            column('create_key', VARCHAR, 50),
+            primary('id_pk', 'id')), 
         0);
 
         $this->object->setPrepare(false);

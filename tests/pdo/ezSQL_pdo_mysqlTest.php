@@ -163,6 +163,64 @@ class ezSQL_pdo_mysqlTest extends TestCase {
 
         $this->assertEquals(0, $this->object->query('DROP TABLE unit_test'));
     } // testMySQLQuery
+
+    /**
+     * @covers ezSQL_pdo::securePDO
+     */
+    public function testSecurePDO()
+    {
+        securePDO('mysqli');
+        $this->assertTrue($this->object->connect('mysql:host=' . self::TEST_DB_HOST . ';dbname=' . self::TEST_DB_NAME . ';port=' . self::TEST_DB_PORT, self::TEST_DB_USER, self::TEST_DB_PASSWORD));
+             
+        $this->assertEquals($this->object->drop('new_create_test2'), 0);
+        $this->assertEquals($this->object->create('new_create_test2',
+            column('id', INTR, 11, notNULL, AUTO),
+            column('create_key', VARCHAR, 50),
+            primary('id_pk', 'id')), 
+        0);
+
+        $this->object->setPrepare(false);
+        $this->assertEquals($this->object->insert('new_create_test2',
+            ['create_key' => 'test 2']),
+        1);
+
+        $conn = $this->object->connection();
+        $res = $conn->query("SHOW STATUS LIKE 'Ssl_cipher';")->fetchAll();
+        $this->assertEquals('Ssl_cipher', $res[0]['Variable_name']);
+
+        $this->object->setPrepare();
+        $this->assertEquals($this->object->drop('new_create_test2'), 0);
+    }
+
+    /**
+     * @covers ezQuery::create
+     */
+    public function testCreate()
+    {
+        $this->assertTrue($this->object->connect('mysql:host=' . self::TEST_DB_HOST . ';dbname=' . self::TEST_DB_NAME . ';port=' . self::TEST_DB_PORT, self::TEST_DB_USER, self::TEST_DB_PASSWORD));
+             
+        $this->assertEquals($this->object->create('new_create_test',
+            column('id', INTR, 11, notNULL, AUTO),
+            column('create_key', VARCHAR, 50),
+            primary('id_pk', 'id')), 
+        0);
+
+        $this->object->setPrepare(false);
+        $this->assertEquals($this->object->insert('new_create_test',
+            ['create_key' => 'test 2']),
+        1);
+        $this->object->setPrepare();
+    }
+
+    /**
+     * @covers ezQuery::drop
+     */
+    public function testDrop()
+    {
+        $this->assertTrue($this->object->connect('mysql:host=' . self::TEST_DB_HOST . ';dbname=' . self::TEST_DB_NAME . ';port=' . self::TEST_DB_PORT, self::TEST_DB_USER, self::TEST_DB_PASSWORD));
+             
+        $this->assertEquals($this->object->drop('new_create_test'), 0);
+    }
     
     /**
      * @covers ezSQLcore::insert
