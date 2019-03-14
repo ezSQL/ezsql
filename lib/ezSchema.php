@@ -26,9 +26,9 @@ class ezSchema
 
     const NUMERICS = [
         'common' => ['NUMERIC', 'DECIMAL'],
-        'mysql' => ['DEC', 'FIXED', 'FLOAT', 'DOUBLE', 'DOUBLE PRECISION', 'REAL'],
-        'postgresql' => [],
+        'mysql' => ['IDENTITY','DEC', 'FIXED', 'FLOAT', 'DOUBLE', 'DOUBLE PRECISION', 'REAL'],
         'sqlserver' => ['DEC'],
+        'postgresql' => [],
         'sqlite3' => []
     ];
 
@@ -50,8 +50,21 @@ class ezSchema
         'sqlserver' => []
     ];
 
-    const OPTIONS  = ['CONSTRAINT', 'PRIMARY KEY', 'FOREIGN KEY', 'UNIQUE', 'INDEX'];
-    const CHANGES  = ['ADD', 'ALTER COLUMN', 'DROP COLUMN', 'MODIFY', 'RENAME COLUMN', 'CHANGE COLUMN', 'RENAME TO'];
+    const OPTIONS  = ['CONSTRAINT', 'PRIMARY KEY', 'FOREIGN KEY', 'UNIQUE', 'INDEX', 'REFERENCES'];
+    const ALTERS  = ['ADD', 'DROP COLUMN', 'CHANGE COLUMN', 'RENAME TO', 'MODIFY', 'ALTER COLUMN'];
+    const CHANGES  = [
+        'mysql' => 'MODIFY',
+        'postgresql' => 'ALTER COLUMN',
+        'sqlserver' => 'ALTER COLUMN',
+        'sqlite3' => ''
+     ];
+
+    const autoNUMBERS  = [
+        'mysql' => 'AUTO_INCREMENT',
+        'postgresql' => 'SERIAL',
+        'sqlserver' => 'IDENTITY(1,1)',
+        'sqlite3' => 'AUTOINCREMENT'
+     ];
 
     private $arguments = null;
 	
@@ -60,6 +73,16 @@ class ezSchema
         $this->arguments = $args;
     }
 
+    /**
+     * Makes an datatype callable from the above supported CONSTANTS. 
+     * This is used to create the database schema.
+     *
+     * @param string $type
+     * @param array $args
+     * 
+     * @return string
+     * @throws Exception
+     */
 	public function __call($type, $args) 
 	{
         $vendor = self::vendor();
@@ -146,13 +169,14 @@ class ezSchema
         elseif ($dbMssql === \getInstance() && !empty($dbMssql))
             $type = 'sqlserver';
         elseif ($dbPdo === \getInstance() && !empty($dbPdo)) {
-            if (strpos($dbPdo->getAttribute(\PDO::ATTR_CLIENT_VERSION), 'mysql') !== false) 
+            $dbh = $dbPdo->connection();
+            if (strpos($dbh->getAttribute(\PDO::ATTR_CLIENT_VERSION), 'mysql') !== false) 
                 $type = 'mysql';
-            elseif (strpos($dbPdo->getAttribute(\PDO::ATTR_CLIENT_VERSION), 'pgsql') !== false) 
+            elseif (strpos($dbh->getAttribute(\PDO::ATTR_CLIENT_VERSION), 'pgsql') !== false) 
                 $type = 'postgresql';
-            elseif (strpos($dbPdo->getAttribute(\PDO::ATTR_CLIENT_VERSION), 'sqlite') !== false) 
+            elseif (strpos($dbh->getAttribute(\PDO::ATTR_CLIENT_VERSION), 'sqlite') !== false) 
                 $type = 'sqlite3';
-            elseif (strpos($dbPdo->getAttribute(\PDO::ATTR_CLIENT_VERSION), 'sqlsrv') !== false) 
+            elseif (strpos($dbh->getAttribute(\PDO::ATTR_CLIENT_VERSION), 'sqlsrv') !== false) 
                 $type = 'sqlserver';
         }
 
@@ -176,6 +200,7 @@ class ezSchema
         if (empty($column) || empty($type))
             return false;
 
+        $vendor = self::vendor();
         $columnData = '';
         if (($column == \CONSTRAINT) || ($column == \INDEX)) {
             if (empty($args[0]) || empty($args[1])) {
@@ -185,20 +210,25 @@ class ezSchema
             $keyType = ($column != \INDEX) ? \array_shift($args).' ' : ' ';
             $keys = $keyType.'('.\to_string($args).'), ';
             $columnData .= $column.' '.$type.' '.$keys;
-        } elseif (($column == \ADD) || ($column == \DROP)) {
+        } elseif (($column == \ADD) || ($column == \DROP) || ($column == \CHANGER)) {
             if ($column != \DROP) {
+                // check for modify placeholder and replace with vendors
+                $column = \str_replace(\CHANGE, self::CHANGES[$vendor], $column);
                 $column = $column.' '.$type;
                 $type2 = \array_shift($args);
                 $data = self::datatype($type2, ...$args);
-            } else
+            } elseif ($vendor != 'sqlite3')
                 $data = $type;
 
             if (!empty($data))
                 $columnData = $column.' '.$data.', ';
         } else {
             $data = self::datatype($type, ...$args);
-            if (!empty($data))
+            if (!empty($data)) {
+		        // check for sequence placeholder and replace with vendors
+		        $data = \str_replace(\AUTO, self::autoNUMBERS[$vendor], $data);
                 $columnData = $column.' '.$data.', ';
+            }
         }
 
         $schemaColumns = !empty($columnData) ? $columnData : null;

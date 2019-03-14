@@ -17,7 +17,7 @@ class ezQuery implements ezQueryInterface
     public function __construct()
     {
     }
- 
+
     public static function clean($string) 
     {
         $patterns = array( // strip out:
@@ -55,6 +55,7 @@ class ezQuery implements ezQueryInterface
      *      "emailAddress" => ''
      *  ];
      * 
+     * @return string certificate path
      */
     public static function createCertificate(
         string $privatekeyFile = 'certificate.key', 
@@ -65,7 +66,7 @@ class ezQuery implements ezQueryInterface
         array $details = ["commonName" => "localhost"]
     ) 
     {
-        if (empty($ssl_path) || ! \is_dir($ssl_path)) {
+        if (empty($ssl_path)) {
             $ssl_path = \getcwd();
             $ssl_path = \preg_replace('/\\\/', \_DS, $ssl_path). \_DS;
         } else
@@ -90,6 +91,8 @@ class ezQuery implements ezQueryInterface
         
         // Create a signing request file 
         \openssl_csr_export_to_file($csr, $ssl_path.$signingFile);
+
+        return $ssl_path;
     }
 
     /**
@@ -688,25 +691,6 @@ class ezQuery implements ezQueryInterface
        return false;
    }
 
-   /**
-    * Creates an database table and columns, by either:
-    *  - array( column, datatype, ...value/options arguments ) // calls create_schema() 
-    *  - column( column, datatype, ...value/options arguments ) // returns string
-    *  - primary( primary_key_label, ...primaryKeys) // returns string
-    *  - foreign( foreign_key_label, ...foreignKeys) // returns string
-    *  - unique( unique_key_label, ...uniqueKeys) // returns string
-    * 
-    * @param string $table, - The name of the db table that you wish to create
-    * @param mixed $schemas, - An array of:
-    *
-    * @param string $column|CONSTRAINT, - column name/CONSTRAINT usage for PRIMARY|FOREIGN KEY
-    * @param string $type|$constraintName, - data type for column/primary|foreign constraint name
-    * @param mixed $size|...$primaryForeignKeys, 
-    * @param mixed $value, - column should be NULL or NOT NULL. If omitted, assumes NULL
-    * @param mixed $default - Optional. It is the value to assign to the column
-    * 
-    * @return mixed results of query() call
-    */
    public function create(string $table = null, ...$schemas) 
    {
         $vendor = ezSchema::vendor();
@@ -770,6 +754,7 @@ class ezQuery implements ezQueryInterface
         return false;
    }
 
+   // todo not finish, not tested
    public function alter(string $table = null, ...$schemas) 
    {
         if (empty($table) || empty($schemas))
@@ -780,7 +765,7 @@ class ezQuery implements ezQueryInterface
         $skipSchema = false;
         if (\is_string($schemas[0])) {
             $data = '';
-            $allowedTypes = ezSchema::CHANGES;
+            $allowedTypes = ezSchema::ALTERS;
             $pattern = "/".\implode('|', $allowedTypes)."/i";
             foreach($schemas as $types) {
                 if (\preg_match($pattern, $types)) {
@@ -808,9 +793,6 @@ class ezQuery implements ezQueryInterface
 
         $drop = 'DROP TABLE '.$table.';';
 
-        if (\is_string($drop))
-            return $this->query($drop);
-
-        return false;
+        return $this->query($drop);
    }
 }

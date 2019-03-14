@@ -94,7 +94,24 @@ class ezsqlModel extends ezQuery
 	{
 		parent::__construct();
 	}
-	
+
+	/**
+	* Use for Calling Non-Existent Functions, handling Getters and Setters
+	* @param function set/get{name} = private/protected property that needs to be accessed
+	*/
+	public function __call($function, $args)
+	{
+		$prefix = substr($function, 0, 3);
+		$property = strtolower(substr($function, 3, strlen($function)));
+		if ($prefix == 'set') {
+			$this->$property = $args[0];
+		} elseif ($prefix == 'get') {
+			return $this->$property;
+		} else {
+			throw new Exception("$function does not exist");
+		}
+	}
+
 	/**
 	* Get host and port from an "host:port" notation.
 	* @return array of host and port. If port is omitted, returns $default

@@ -153,9 +153,6 @@ if (!\defined('CONSTANTS')) {
     \define('BOOLEANS', 'BOOLEAN');
     \define('SMALLMONEY', 'SMALLMONEY');
     \define('MONEY', 'MONEY');
-    \define('SMALLSERIAL', 'SMALLSERIAL');
-    \define('SERIAL', 'SERIAL');
-    \define('BIGSERIAL', 'BIGSERIAL');
         
     // Date/Time SQL data types	
     \define('DATES', 'DATE');
@@ -180,12 +177,23 @@ if (!\defined('CONSTANTS')) {
     \define('FOREIGN', 'FOREIGN KEY');
     \define('UNIQUE', 'UNIQUE');
     \define('INDEX', 'INDEX');
+    \define('REFERENCES', 'REFERENCES');
 
-    \define('AUTO', 'AUTO_INCREMENT');
+    \define('AUTO', '__autoNumbers__');
+    \define('AUTO_INCREMENT', 'AUTO_INCREMENT');
+    \define('AUTOINCREMENT', 'AUTOINCREMENT');
+    \define('IDENTITY', 'IDENTITY');
+    \define('SERIAL', 'SERIAL');
+    \define('SMALLSERIAL', 'SMALLSERIAL');
+    \define('BIGSERIAL', 'BIGSERIAL');
 
     \define('ADD', 'ADD');
     \define('DROP', 'DROP COLUMN');
-    \define('CHANGE', 'CHANGE');
+    \define('CHANGE', 'CHANGE COLUMN');
+    \define('ALTER', 'ALTER COLUMN');
+    \define('MODIFY', 'MODIFY');
+    \define('RENAME', 'RENAME TO');
+    \define('CHANGER', '__modifyingColumns__');
 
     if (!\defined('_DS'))
         \define('_DS', \DIRECTORY_SEPARATOR);
