@@ -114,6 +114,32 @@ class sqlite3Test extends DBTestCase
         // Get rid of the table we created..
         $this->object->query("DROP TABLE test_table;");
     }
+
+    /**
+     * @covers ezQuery::create
+     */
+    public function testCreate()
+    {
+        $this->assertEquals($this->object->create('new_create_test',
+            column('id', INTEGERS, notNULL, AUTO),
+            column('create_key', VARCHAR, 50),
+            primary('id_pk', 'id')), 
+        0);
+
+        $this->object->setPrepare(false);
+        $this->assertEquals($this->object->insert('new_create_test',
+            ['create_key' => 'test 2']),
+        0);
+        $this->object->setPrepare();
+    }
+
+    /**
+     * @covers ezQuery::drop
+     */
+    public function testDrop()
+    {
+        $this->assertEquals($this->object->drop('new_create_test'), 0);
+    }
     
     /**
      * @covers ezQuery::insert
