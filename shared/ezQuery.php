@@ -53,6 +53,7 @@ class ezQuery implements ezQueryInterface
      *      "emailAddress" => ''
      *  ];
      * 
+     * @return string certificate path
      */
     public static function createCertificate(
         string $privatekeyFile = 'certificate.key', 
@@ -63,7 +64,7 @@ class ezQuery implements ezQueryInterface
         array $details = ["commonName" => "localhost"]
     ) 
     {
-        if (empty($ssl_path) || ! \is_dir($ssl_path)) {
+        if (empty($ssl_path)) {
             $ssl_path = \getcwd();
             $ssl_path = \preg_replace('/\\\/', \_DS, $ssl_path). \_DS;
         } else
@@ -88,6 +89,8 @@ class ezQuery implements ezQueryInterface
         
         // Create a signing request file 
         \openssl_csr_export_to_file($csr, $ssl_path.$signingFile);
+
+        return $ssl_path;
     }
 
     /**

@@ -104,7 +104,11 @@ class ezSQL_pdo extends ezSQLcore
     {
         if (\array_key_exists(\strtolower($vendor), \VENDOR) 
             && (! \file_exists($path.$cert) || ! \file_exists($path.$key)))
-            ezQuery::createCertificate();
+            $path = ezQuery::createCertificate();
+        elseif ($path == '.'.\_DS) {
+            $ssl_path = \getcwd();
+            $path = \preg_replace('/\\\/', \_DS, $ssl_path). \_DS;
+        }
 
         if (($vendor == 'pgsql') || ($vendor == 'postgresql')) {
             self::$secure = "sslmode=require;sslcert=".$path.$cert.";sslkey=".$path.$key.";sslrootcert=".$path.$ca.";";
@@ -114,7 +118,9 @@ class ezSQL_pdo extends ezSQLcore
                 \PDO::MYSQL_ATTR_SSL_KEY => $path.$key,
                 \PDO::MYSQL_ATTR_SSL_CERT => $path.$cert,
                 \PDO::MYSQL_ATTR_SSL_CA => $path.$ca,
-                \PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT => false,
+                \PDO::MYSQL_ATTR_SSL_CAPATH => $path,
+                \PDO::MYSQL_ATTR_SSL_CIPHER => 'DHE-RSA-AES256-SHA',
+                \PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT => false
             );
         } elseif (($vendor == 'sqlserver') || ($vendor == 'mssql') || ($vendor == 'sqlsrv')) {
             self::$secure = ";Encrypt=true;TrustServerCertificate=true";
