@@ -118,7 +118,7 @@ final class ez_sqlsrv extends ezsqlModel
      *  i.e. Oracle: SYSDATE sqlsrv: NOW(), MS-SQL : getDate()
      *
      *  The SQLSRV drivers pull back the data into a Date class.  Converted
-     *   it to a string inside of SQL in order to prevent this from ocurring
+     *   it to a string inside of SQL in order to prevent this from occurring
      *  ** make sure to use " AS <label>" after calling this...
      */
     public function sysDate()
@@ -142,10 +142,10 @@ final class ez_sqlsrv extends ezsqlModel
         // check for ezQuery placeholder tag and replace tags with proper prepare tag
         $query = \str_replace(\_TAG, '?', $query);
 
-        //if flag to convert query from MySql syntax to MS-Sql syntax is true
-        //convert the query
+        // if flag to convert query from MySql syntax to MS-Sql syntax is true
+        // convert the query
         if ($this->database->getToMySql()) {
-            $query = $this->mySqlto($query);
+            $query = $this->convert($query);
         }
 
         // Initialize return
@@ -281,7 +281,7 @@ final class ez_sqlsrv extends ezsqlModel
      *        not work. e.g. MS SQL requires all columns in Select Clause to be present in 'group by' clause.
      *        There is no such restriction in MySql.
      */
-    public function mySqlto($query)
+    public function convert($query)
     {
         //replace the '`' character used for MySql queries, but not
         //supported in MS-Sql
@@ -324,29 +324,29 @@ final class ez_sqlsrv extends ezsqlModel
             switch ($col->typeid) {
                 case -2:
                     if ($col->max_length < 8000) {
-                        $datatype = "binary";
+                        $datatype = \BINARY;
                     } else {
-                        $datatype = "timestamp";
+                        $datatype = \TIMESTAMP;
                     }
 
                     break;
                 case 3:
                     if (($col->scale == 4) && ($col->precision == 19)) {
-                        $datatype = "money";
+                        $datatype = \MONEY;
                     } else if (($col->scale == 4) && ($col->precision == 10)) {
-                        $datatype = "smallmoney";
+                        $datatype = \SMALLMONEY;
                     } else {
-                        $datatype = "decimal";
+                        $datatype = \DECIMAL;
                     }
 
                     break;
                 case 93:
                     if (($col->precision == 16) && ($col->scale == 0)) {
-                        $datatype = "smalldatetime";
+                        $datatype = \SMALLDATETIME;
                     } else if (($col->precision == 23) && ($col->scale == 3)) {
-                        $datatype = "datetime";
+                        $datatype = \DATETIME;
                     } else {
-                        $datatype = "datetime2";
+                        $datatype = \DATETIME2;
                     }
 
                     break;
