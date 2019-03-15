@@ -14,7 +14,7 @@ final class ez_sqlite3 extends ezsqlModel
      */
     private $ezsql_sqlite3_str = array
         (
-        1 => 'Require $dbpath and $dbname to open an SQLite database',
+        1 => 'Require $path and $name to open an SQLite database',
     );
 
     private $rows_affected = false;
@@ -107,7 +107,7 @@ final class ez_sqlite3 extends ezsqlModel
     // Get the data type of the value to bind.
     public function getArgType($arg)
     {
-        switch (gettype($arg)) {
+        switch (\gettype($arg)) {
             case 'double':return \SQLITE3_FLOAT;
             case 'integer':return \SQLITE3_INTEGER;
             case 'boolean':return \SQLITE3_INTEGER;
