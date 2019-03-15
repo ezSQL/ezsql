@@ -2,8 +2,8 @@
 
 namespace ezsql\Tests;
 
+use ezsql\Database;
 use ezsql\Configuration;
-use ezsql\Database\ez_pdo;
 use ezsql\Tests\DBTestCase;
 
 class pdo_sqliteTest extends DBTestCase 
@@ -33,7 +33,9 @@ class pdo_sqliteTest extends DBTestCase
               'The pdo_sqlite Lib is not available.'
             );
         }
-        $this->object = new ez_pdo(Configuration);
+
+        $setting = new Configuration('pdo', ['sqlite:' . self::TEST_SQLITE_DB, '', '', array(), true]);
+        $this->object = Database::initialize($setting);
         $this->object->setPrepare();
     } // setUp
 

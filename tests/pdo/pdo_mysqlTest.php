@@ -2,9 +2,8 @@
 
 namespace ezsql\Tests;
 
+use ezsql\Database;
 use ezsql\Configuration;
-use ezsql\Database\ez_mysqli;
-use ezsql\Database\ez_pdo;
 use ezsql\Tests\DBTestCase;
 
 class pdo_mysqlTest extends DBTestCase 
@@ -26,7 +25,8 @@ class pdo_mysqlTest extends DBTestCase
             );
         }
 
-        $this->object = new ez_pdo(Configuration);
+        $setting = new Configuration('pdo', ['mysql:host='.self::TEST_DB_HOST.';dbname='. self::TEST_DB_NAME.';port='.self::TEST_DB_PORT, self::TEST_DB_USER, self::TEST_DB_PASSWORD]);
+        $this->object = Database::initialize($setting);
         $this->object->setPrepare();
     } // setUp
 

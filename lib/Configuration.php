@@ -29,7 +29,7 @@ class Configuration extends ConfigAbstract
      *                                          work with path in the dsn parameter
      * @param string $port  /args[4]        The PostgreSQL database TCP/IP port, Default is 5432
      */
-    public function __construct(string $driver, ...$args)
+    public function __construct(string $driver, $args)
     {
         $sql = \strtolower($driver);
         if ( ! \class_exists ('ezsqlModel') ) {
@@ -57,7 +57,7 @@ class Configuration extends ConfigAbstract
         if ( ! \function_exists ('mysqli_connect') ) 
             throw new Exception('<b>Fatal Error:</b> ez_mysql requires mySQLi Lib to be compiled and or linked in to the PHP engine');
         elseif (\is_string($args))
-            $this->parseConnectionString($args, ['path', 'name']);
+            $this->parseConnectionString($args, ['user', 'name', 'password']);
         elseif (\count($args)>=3) {
             $this->user = empty($args[0]) ? $this->getUser() : $args[0];
             $this->password = empty($args[1]) ? $this->getPassword() : $args[1];

@@ -2,8 +2,8 @@
 
 namespace ezsql\Tests;
 
+use ezsql\Database;
 use ezsql\Configuration;
-use ezsql\Database\ez_mysqli;
 use ezsql\Tests\DBTestCase;
 
 class ez_mysqliTest extends DBTestCase 
@@ -25,7 +25,8 @@ class ez_mysqliTest extends DBTestCase
             );
         }
 
-        $this->object = new ez_mysqli(Configuration);
+        $setting = new Configuration('mysqli', [self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME]);
+        $this->object = Database::initialize($setting);
         $this->object->setPrepare();
     }
 

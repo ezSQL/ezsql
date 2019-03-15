@@ -2,8 +2,8 @@
 
 namespace ezsql\Tests;
 
+use ezsql\Database;
 use ezsql\Configuration;
-use ezsql\Database\ez_pdo;
 use ezsql\Tests\DBTestCase;
 
 class pdo_sqlsrvTest extends DBTestCase 
@@ -24,7 +24,9 @@ class pdo_sqlsrvTest extends DBTestCase
               'The pdo_sqlsrv Lib is not available.'
             );
         }
-        $this->object = new ez_pdo(Configuration);
+        
+        $setting = new Configuration('pdo', ['sqlsrv:Server=' . self::TEST_DB_HOST . ';Database=' . self::TEST_DB_NAME, self::TEST_DB_USER, self::TEST_DB_PASSWORD]);
+        $this->object = Database::initialize($setting);
         $this->object->setPrepare();
     } // setUp
 

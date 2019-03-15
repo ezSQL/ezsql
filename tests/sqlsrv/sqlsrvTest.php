@@ -2,8 +2,8 @@
 
 namespace ezsql\Tests;
 
+use ezsql\Database;
 use ezsql\Configuration;
-use ezsql\Database\ez_sqlsrv;
 use ezsql\Tests\DBTestCase;
 
 class sqlsrvTest extends DBTestCase 
@@ -26,7 +26,8 @@ class sqlsrvTest extends DBTestCase
             );
         }
 
-        $this->object = new ez_sqlsrv(Configuration);
+        $setting = new Configuration('sqlsrv', [self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME]);
+        $this->object = Database::initialize($setting);
         $this->object->setPrepare();
     } // setUp
 

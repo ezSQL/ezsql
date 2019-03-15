@@ -2,7 +2,6 @@
 
 namespace ezsql\Tests;
 
-use ezsql\Configuration;
 use ezsql\Database\ezQuery;
 use ezsql\Tests\DBTestCase;
 

@@ -2,8 +2,8 @@
 
 namespace ezsql\Tests;
 
+use ezsql\Database;
 use ezsql\Configuration;
-use ezsql\Database\ez_postgresql;
 use ezsql\Tests\DBTestCase;
 
 class postgresqlTest extends DBTestCase 
@@ -17,24 +17,6 @@ class postgresqlTest extends DBTestCase
      * @var ezSQL_postgresql
      */
     protected $object;
-    private $errors;
- 
-    function errorHandler($errno, $errstr, $errfile, $errline, $errcontext) {
-        $this->errors[] = compact("errno", "errstr", "errfile",
-            "errline", "errcontext");
-    }
-
-    function assertError($errstr, $errno) {
-        foreach ($this->errors as $error) {
-            if ($error["errstr"] === $errstr
-                && $error["errno"] === $errno) {
-                return;
-            }
-        }
-        $this->fail("Error with level " . $errno .
-            " and message '" . $errstr . "' not found in ", 
-            var_export($this->errors, TRUE));
-    }   
 
     /**
      * Sets up the fixture, for example, opens a network connection.
@@ -47,7 +29,9 @@ class postgresqlTest extends DBTestCase
               'The PostgreSQL Lib is not available.'
             );
         }
-        $this->object = new ez_postgresql();               
+        
+        $setting = new Configuration('pgsql', [self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME, self::TEST_DB_HOST, self::TEST_DB_PORT]);
+        $this->object = Database::initialize($setting); 
         $this->object->setPrepare();
     } // setUp
 

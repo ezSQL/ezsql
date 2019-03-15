@@ -2,8 +2,8 @@
 
 namespace ezsql\Tests;
 
+use ezsql\Database;
 use ezsql\Configuration;
-use ezsql\Database\ez_sqlite3;
 use ezsql\Tests\DBTestCase;
 
 /**
@@ -33,7 +33,9 @@ class sqlite3Test extends DBTestCase
               'The sqlite3 Lib is not available.'
             );
         }
-        $this->object = new ez_sqlite3(self::TEST_SQLITE_DB_DIR, self::TEST_SQLITE_DB); 
+        
+        $setting = new Configuration('sqlite3', [self::TEST_SQLITE_DB_DIR, self::TEST_SQLITE_DB]);
+        $this->object = Database::initialize($setting); 
         $this->object->setPrepare();
     }
 
