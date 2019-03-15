@@ -187,6 +187,10 @@ class ezSchema
      * Creates an database column, 
      * - column, datatype, value/options with the given arguments.
      * 
+     * // datatype are global CONSTANTS and can be written out like:
+     *      - VARCHAR, 32, notNULL, PRIMARY, AUTO, ....
+     * // AUTO constant will replaced with the proper auto sequence for the SQL driver
+     * 
      * @param string $column|CONSTRAINT, - column name/CONSTRAINT usage for PRIMARY|FOREIGN KEY
      * @param string $type|$constraintName, - data type for column/primary|foreign constraint name
      * @param mixed $size|...$primaryForeignKeys, 
@@ -213,7 +217,7 @@ class ezSchema
         } elseif (($column == \ADD) || ($column == \DROP) || ($column == \CHANGER)) {
             if ($column != \DROP) {
                 // check for modify placeholder and replace with vendors
-                $column = \str_replace(\CHANGE, self::CHANGES[$vendor], $column);
+                $column = \str_replace(\CHANGER, self::CHANGES[$vendor], $column);
                 $column = $column.' '.$type;
                 $type2 = \array_shift($args);
                 $data = self::datatype($type2, ...$args);
