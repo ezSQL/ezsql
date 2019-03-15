@@ -99,14 +99,14 @@ require_once('ezQuery.php');
 		*/
 		public function __call($function, $args) 
 		{
-			$prefix = substr($function, 0, 3);
-			$property = strtolower(substr($function, 3, strlen($function)));
-			if ($prefix == 'set') {
+			$prefix = \substr($function, 0, 3);
+			$property = \strtolower(substr($function, 3, \strlen($function)));
+			if (($prefix == 'set') && isset($this->$property)) {
 				$this->$property = $args[0];
-			} elseif ($prefix == 'get') {
+			} elseif (($prefix == 'get') && isset($this->$property)){
 				return $this->$property;
 			} else {
-				throw new Exception("$function does not exist");
+				throw new \Exception("$function does not exist");
 			}
 		}
 
@@ -117,8 +117,8 @@ require_once('ezQuery.php');
 		public function get_host_port($host, $default = false)
 		{
 			$port = $default;
-			if ( false !== strpos( $host, ':' ) ) {
-				list( $host, $port ) = explode( ':', $host );
+			if ( false !== \strpos( $host, ':' ) ) {
+				list( $host, $port ) = \explode( ':', $host );
 				$port = (int) $port;
 			}
 			return array( $host, $port );
@@ -175,7 +175,7 @@ require_once('ezQuery.php');
 			$this->func_call = $query;
 			
 			// Keep an running Log of all functions called
-			array_push($this->all_func_calls, $this->func_call);
+			\array_push($this->all_func_calls, $this->func_call);
 		}
 
 		/**
@@ -193,7 +193,7 @@ require_once('ezQuery.php');
 
 			// Extract public out of cached results based x,y vals
 			if ( $this->last_result[$y] ) {
-				$values = array_values(get_object_vars($this->last_result[$y]));
+				$values = \array_values(\get_object_vars($this->last_result[$y]));
 			}
 			
 			// If there is a value return it else return null
@@ -218,13 +218,13 @@ require_once('ezQuery.php');
 				return $this->last_result[$y]?$this->last_result[$y]:null;
 			} elseif ( $output == ARRAY_A ) {
 				// If the output is an associative array then return row as such..
-				return $this->last_result[$y]?get_object_vars($this->last_result[$y]):null;
+				return $this->last_result[$y]? \get_object_vars($this->last_result[$y]):null;
 			} elseif ( $output == ARRAY_N ) {
 				// If the output is an numerical array then return row as such..
-				return $this->last_result[$y]?array_values(get_object_vars($this->last_result[$y])):null;
+				return $this->last_result[$y]? \array_values(\get_object_vars($this->last_result[$y])):null;
 			} else {
 				// If invalid output type was specified..
-				$this->show_errors ? trigger_error(" \$db->get_row(string query, output type, int offset) -- Output type must be one of: OBJECT, ARRAY_A, ARRAY_N",E_USER_WARNING) : null;
+				$this->show_errors ? \trigger_error(" \$db->get_row(string query, output type, int offset) -- Output type must be one of: OBJECT, ARRAY_A, ARRAY_N", \E_USER_WARNING) : null;
 			}
 		}
 
@@ -241,7 +241,7 @@ require_once('ezQuery.php');
 			}
 
 			// Extract the column values
-			$j = count($this->last_result);
+			$j = \count($this->last_result);
 			for ( $i=0; $i < $j; $i++ )	{
 				$new_array[$i] = $this->get_var(null,$x,$i);
 			}
@@ -265,15 +265,15 @@ require_once('ezQuery.php');
 
 			if ( $output == OBJECT ) {
 				return $this->last_result;
-			} elseif ( $output == _JSON ) { 
-				return json_encode($this->last_result); // return as json output
+			} elseif ( $output == \_JSON ) { 
+				return \json_encode($this->last_result); // return as json output
 			} elseif ( $output == ARRAY_A || $output == ARRAY_N ) {
 				if ( $this->last_result ) {
 					$i=0;
 					foreach( $this->last_result as $row ) {
-						$new_array[$i] = get_object_vars($row);
+						$new_array[$i] = \get_object_vars($row);
 						if ( $output == ARRAY_N ) {
-							$new_array[$i] = array_values($new_array[$i]);
+							$new_array[$i] = \array_values($new_array[$i]);
 						}
 						$i++;
 					}
@@ -288,11 +288,11 @@ require_once('ezQuery.php');
 		* Function to get column meta data info pertaining to the last query
 		* see docs for more info and usage
 		*/
-		public function get_col_info($info_type="name",$col_offset=-1)
+		public function get_col_info($info_type = "name", $col_offset = -1)
 		{
 			if ( $this->col_info ) {
 				if ( $col_offset == -1 ) {
-					$i=0;
+					$i = 0;
 					foreach($this->col_info as $col ) {
 						$new_array[$i] = $col->{$info_type};
 						$i++;
@@ -311,13 +311,13 @@ require_once('ezQuery.php');
 		public function store_cache($query,$is_insert)
 		{
 			// The would be cache file for this query
-			$cache_file = $this->cache_dir.'/'.md5($query);
+			$cache_file = $this->cache_dir.'/'.\md5($query);
 
 			// disk caching of queries
 			if ( $this->use_disk_cache && ( $this->cache_queries && ! $is_insert ) || ( $this->cache_inserts && $is_insert )) {
-				if ( ! is_dir($this->cache_dir) ) {
+				if ( ! \is_dir($this->cache_dir) ) {
 					$this->register_error("Could not open cache dir: $this->cache_dir");
-					$this->show_errors ? trigger_error("Could not open cache dir: $this->cache_dir",E_USER_WARNING) : null;
+					$this->show_errors ? \trigger_error("Could not open cache dir: $this->cache_dir", \E_USER_WARNING) : null;
 				} else {
 					// Cache all result values
 					$result_cache = array(
@@ -327,8 +327,8 @@ require_once('ezQuery.php');
 						'return_value' => $this->num_rows,
 					);
 
-					file_put_contents($cache_file, serialize($result_cache));
-					if( file_exists($cache_file . ".updating") )
+					\file_put_contents($cache_file, \serialize($result_cache));
+					if( \file_exists($cache_file . ".updating") )
 						unlink($cache_file . ".updating");
 				}
 			}
@@ -340,16 +340,16 @@ require_once('ezQuery.php');
 		public function get_cache($query)
 		{
 			// The would be cache file for this query
-			$cache_file = $this->cache_dir.'/'.md5($query);
+			$cache_file = $this->cache_dir.'/'.\md5($query);
 
 			// Try to get previously cached version
-			if ( $this->use_disk_cache && file_exists($cache_file) ) {
+			if ( $this->use_disk_cache && \file_exists($cache_file) ) {
 				// Only use this cache file if less than 'cache_timeout' (hours)
-				if ( (time() - filemtime($cache_file)) > ($this->cache_timeout*3600) &&
-					!(file_exists($cache_file . ".updating") && (time() - filemtime($cache_file . ".updating") < 60)) ) {
-					touch($cache_file . ".updating"); // Show that we in the process of updating the cache
+				if ( (\time() - \filemtime($cache_file)) > ($this->cache_timeout*3600) &&
+					!(\file_exists($cache_file . ".updating") && (\time() - \filemtime($cache_file . ".updating") < 60)) ) {
+					\touch($cache_file . ".updating"); // Show that we in the process of updating the cache
 				} else {
-					$result_cache = unserialize(file_get_contents($cache_file));
+					$result_cache = \unserialize(\file_get_contents($cache_file));
 
 					$this->col_info = $result_cache['col_info'];
 					$this->last_result = $result_cache['last_result'];
@@ -372,7 +372,7 @@ require_once('ezQuery.php');
 		public function vardump($mixed = '')
 		{
 			// Start output buffering
-			ob_start();
+			\ob_start();
 
 			echo "<p><table><tr><td bgcolor=ffffff><blockquote><font color=000090>";
 			echo "<pre><font face=arial>";
@@ -381,9 +381,9 @@ require_once('ezQuery.php');
 				echo "<font color=800080><b>ezSQL</b> (v".EZSQL_VERSION.") <b>Variable Dump..</b></font>\n\n";
 			}
 
-			$var_type = gettype ($mixed);
-			print_r(($mixed?$mixed:"<font color=red>No Value / False</font>"));
-			echo "\n\n<b>Type:</b> " . ucfirst($var_type) . "\n";
+			$var_type = \gettype ($mixed);
+			\print_r(($mixed?$mixed:"<font color=red>No Value / False</font>"));
+			echo "\n\n<b>Type:</b> " . \ucfirst($var_type) . "\n";
 			echo "<b>Last Query</b> [$this->num_queries]<b>:</b> ".($this->last_query?$this->last_query:"NULL")."\n";
 			echo "<b>Last Function Call:</b> " . ($this->func_call?$this->func_call:"None")."\n";
 			
@@ -393,13 +393,13 @@ require_once('ezQuery.php');
 					echo "  " . $func_string ."<br>\n";
 			}
 			
-			echo "<b>Last Rows Returned:</b> ".(count($this->last_result)>0 ? $this->last_result : '')."\n";
+			echo "<b>Last Rows Returned:</b> ".(\count($this->last_result)>0 ? $this->last_result : '')."\n";
 			echo "</font></pre></font></blockquote></td></tr></table>";//.$this->donation()
 			echo "\n<hr size=1 noshade color=dddddd>";
 
 			// Stop output buffering and capture debug HTML
-			$html = ob_get_contents();
-			ob_end_clean();
+			$html = \ob_get_contents();
+			\ob_end_clean();
 
 			// Only echo output if it is turned on
 			if ( $this->debug_echo_is_on ) {
@@ -426,7 +426,7 @@ require_once('ezQuery.php');
 		public function debug($print_to_screen = true)
 		{
 			// Start outup buffering
-			ob_start();
+			\ob_start();
 
 			echo "<blockquote>";
 
@@ -454,7 +454,7 @@ require_once('ezQuery.php');
 				echo "<table cellpadding=5 cellspacing=1 bgcolor=555555>";
 				echo "<tr bgcolor=eeeeee><td nowrap valign=bottom><font color=555599 face=arial size=2><b>(row)</b></font></td>";
 
-				for ( $i=0, $j=count($this->col_info); $i < $j; $i++ )
+				for ( $i = 0, $j = \count($this->col_info); $i < $j; $i++ )
 				{
 					/* when selecting count(*) the maxlengh is not set, size is set instead. */
 					echo "<td nowrap align=left valign=top><font size=1 color=555599 face=arial>{$this->col_info[$i]->type}";
@@ -486,7 +486,7 @@ require_once('ezQuery.php');
 					}
 				// if last result
 				} else {
-					echo "<tr bgcolor=ffffff><td colspan=".(count($this->col_info)+1)."><font face=arial size=2>No Results</font></td></tr>";
+					echo "<tr bgcolor=ffffff><td colspan=".(\count($this->col_info)+1)."><font face=arial size=2>No Results</font></td></tr>";
 				}
 				echo "</table>";
 			// if col_info
@@ -497,8 +497,8 @@ require_once('ezQuery.php');
 			//echo "</blockquote></blockquote>".$this->donation()."<hr noshade color=dddddd size=1>";
 
 			// Stop output buffering and capture debug HTML
-			$html = ob_get_contents();
-			ob_end_clean();
+			$html = \ob_get_contents();
+			\ob_end_clean();
 
 			// Only echo output if it is turned on
 			if ( $this->debug_echo_is_on && $print_to_screen)
@@ -523,7 +523,7 @@ require_once('ezQuery.php');
 		*/
 		public function timer_get_cur()
 		{
-			list($usec, $sec) = explode(" ",microtime());
+			list($usec, $sec) = \explode(" ",\microtime());
 			return ((float)$usec + (float)$sec);
 		}
 
@@ -534,7 +534,7 @@ require_once('ezQuery.php');
 
 		public function timer_elapsed($timer_name)
 		{
-			return round($this->timer_get_cur() - $this->timers[$timer_name],2);
+			return \round($this->timer_get_cur() - $this->timers[$timer_name],2);
 		}
 
 		public function timer_update_global($timer_name)
@@ -569,7 +569,7 @@ require_once('ezQuery.php');
 		*/
 		public function get_set($params)
 		{
-			if( !is_array( $params ) )
+			if( !\is_array( $params ) )
 			{
 				$this->register_error( 'get_set() parameter invalid. Expected array in '.__FILE__.' on line '.__LINE__);
 				return;
@@ -591,7 +591,7 @@ require_once('ezQuery.php');
 						$sql[] = "$field = '".$this->escape( $val )."'";
 				}
 			}
-			return implode( ', ' , $sql );
+			return \implode( ', ' , $sql );
 		}
 
 		/**
@@ -651,7 +651,7 @@ require_once('ezQuery.php');
 	public function escape($data) 
 	{
 		if ( !isset($data) ) return '';
-        if ( is_numeric($data) ) return $data;
+        if ( \is_numeric($data) ) return $data;
 
         $non_displayables = array(
                 '/%0[0-8bcef]/',            // url encoded 00-08, 11, 12, 14, 15
@@ -663,10 +663,10 @@ require_once('ezQuery.php');
                 );
                 
         foreach ( $non_displayables as $regex )
-            $data = preg_replace( $regex, '', $data );
+            $data = \preg_replace( $regex, '', $data );
         $search = array("\\",  "\x00", "\n",  "\r",  "'",  '"', "\x1a");
         $replace = array("\\\\","\\0","\\n", "\\r", "\'", '\"', "\\Z");
 
-        return str_replace($search, $replace, $data);
+        return \str_replace($search, $replace, $data);
 	}        
 } // ezSQLcore
