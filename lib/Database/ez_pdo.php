@@ -91,9 +91,9 @@ final class ez_pdo extends ezsqlModel
     *
     * @param string $dsn The connection parameter string
     *                  Default is empty string
-    * @param string $dbuser The database user name
+    * @param string $user The database user name
     *                  Default is empty string
-    * @param string $dbpassword The database password
+    * @param string $password The database password
     *                  Default is empty string
     * @param array $options Array for setting connection options as MySQL
     * charset for example
@@ -112,8 +112,8 @@ final class ez_pdo extends ezsqlModel
         else
             $setDsn = empty($dsn) ? $this->database->getDsn() : $dsn;
 
-        $setUser = empty($dbuser) ? $this->database->getUser() : $user;
-        $setPassword = empty($dbpassword) ? $this->database->getPassword() : $password; 
+        $setUser = empty($user) ? $this->database->getUser() : $user;
+        $setPassword = empty($password) ? $this->database->getPassword() : $password; 
         $setOptions = empty($options) ? $this->database->getOptions() : $options;
         
         $IsFile = empty($isFile) ? $this->database->getIsFile() : $isFile;   
@@ -194,7 +194,7 @@ final class ez_pdo extends ezsqlModel
         }
 
         // pdo quote adds ' at the beginning and at the end, remove them for standard behavior
-        $return_val = substr($this->dbh->quote($str), 1, -1);
+        $return_val = \substr($this->dbh->quote($str), 1, -1);
 
         return $return_val;
     } // escape
