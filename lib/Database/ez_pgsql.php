@@ -94,7 +94,7 @@ final class ez_pgsql extends ezsqlModel
             // Must have a user and a password
             $this->register_error($this->_ezsql_postgresql_str[1] . ' in ' . __FILE__ . ' on line ' . __LINE__);
             $this->show_errors ? \trigger_error($this->_ezsql_postgresql_str[1], \E_USER_WARNING) : null;
-        } else if (!$this->dbh = \g_connect($connect_string, true)) {
+        } else if (!$this->dbh = \pg_connect($connect_string, true)) {
             // Try to establish the server database handle
             $this->register_error($this->_ezsql_postgresql_str[2] . ' in ' . __FILE__ . ' on line ' . __LINE__);
             $this->show_errors ? \trigger_error($this->_ezsql_postgresql_str[2], \E_USER_WARNING) : null;
@@ -253,9 +253,9 @@ final class ez_pgsql extends ezsqlModel
 
             if (\preg_match("/returning/smi", $query)) {
                 while ($row = @\pg_fetch_object($this->result)) {
-                    $return_valx[] = $row;
+                    $return_affected[] = $row;
                 }
-                $return_val = $return_valx;
+                $return_val = $return_affected;
             }
             // Query was a select
         } else {
