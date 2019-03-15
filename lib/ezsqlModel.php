@@ -21,8 +21,14 @@ class ezsqlModel extends ezQuery
 		protected $trace            = false;  // same as $debug_all
 		protected $debug_all        = false;  // same as $trace
 		protected $debug_called     = false;
-		protected $vardump_called   = false;
+		protected $varDump_called   = false;
+		
+		/**
+		 * RCurrent show error state
+		 * @var boolean
+		 */
 		protected $show_errors      = true;
+
 		protected $num_queries      = 0;
 		protected $conn_queries     = 0;
 		protected $captured_errors  = array();
@@ -101,14 +107,14 @@ class ezsqlModel extends ezQuery
 	*/
 	public function __call($function, $args)
 	{
-		$prefix = substr($function, 0, 3);
-		$property = strtolower(substr($function, 3, strlen($function)));
-		if ($prefix == 'set') {
+		$prefix = \substr($function, 0, 3);
+		$property = \strtolower(substr($function, 3, \strlen($function)));
+		if (($prefix == 'set') && isset($this->$property)) {
 			$this->$property = $args[0];
-		} elseif ($prefix == 'get') {
-			return $this->$property;
+		} elseif (($prefix == 'get') && isset($this->$property)){
+	 		return $this->$property;
 		} else {
-			throw new Exception("$function does not exist");
+			throw new \Exception("$function does not exist");
 		}
 	}
 
@@ -227,7 +233,7 @@ class ezsqlModel extends ezQuery
 			return $this->last_result[$y] ? \array_values(\get_object_vars($this->last_result[$y])) : null;
 		} else {
 			// If invalid output type was specified..
-			$this->show_errors ? \trigger_error(" \$db->get_row(string query, output type, int offset) -- Output type must be one of: OBJECT, ARRAY_A, ARRAY_N",E_USER_WARNING) : null;
+			$this->show_errors ? \trigger_error(" \$db->get_row(string query, output type, int offset) -- Output type must be one of: OBJECT, ARRAY_A, ARRAY_N", \E_USER_WARNING) : null;
 		}
 	}
 	
@@ -247,7 +253,7 @@ class ezsqlModel extends ezQuery
 		// Extract the column values
 		$j = \count($this->last_result);
 		for ( $i=0; $i < $j; $i++ ) {
-			$new_array[$i] = $this->get_var(null,$x,$i);
+			$new_array[$i] = $this->get_var(null, $x, $i, $use_prepare);
 		}
 		
 		return $new_array;
@@ -272,7 +278,7 @@ class ezsqlModel extends ezQuery
 			return \json_encode($this->last_result); // return as json output
 		} elseif ( $output == ARRAY_A || $output == ARRAY_N ) {
 			if ( $this->last_result ) {
-				$i=0;
+				$i = 0;
 				foreach( $this->last_result as $row ) {
 					$new_array[$i] = \get_object_vars($row);
 					if ( $output == ARRAY_N ) {
@@ -323,7 +329,7 @@ class ezsqlModel extends ezQuery
 		) {
 			if ( ! \is_dir($this->cache_dir) ) {
 				$this->register_error("Could not open cache dir: $this->cache_dir");
-				$this->show_errors ? \trigger_error("Could not open cache dir: $this->cache_dir",E_USER_WARNING) : null;
+				$this->show_errors ? \trigger_error("Could not open cache dir: $this->cache_dir", \E_USER_WARNING) : null;
 			} else {
 				// Cache all result values
 				$result_cache = array(
@@ -376,8 +382,10 @@ class ezsqlModel extends ezQuery
 	/**
 	* Dumps the contents of any input variable to screen in a nicely
 	* formatted and easy to understand way - any type: Object, public or Array
+	* @param mixed $mixed
+	* @return string
 	*/
-	public function vardump($mixed = '')
+	public function varDump($mixed = '')
 	{
 		// Start output buffering
 		\ob_start();
@@ -385,7 +393,7 @@ class ezsqlModel extends ezQuery
 		echo "<p><table><tr><td bgcolor=ffffff><blockquote><font color=000090>";
 		echo "<pre><font face=arial>";
 		
-		if ( ! $this->vardump_called ) {
+		if ( ! $this->varDump_called ) {
 			echo "<font color=800080><b>ezSQL</b> (v".EZSQL_VERSION.") <b>Variable Dump..</b></font>\n\n";
 		}
 		
@@ -395,13 +403,13 @@ class ezsqlModel extends ezQuery
 		echo "<b>Last Query</b> [$this->num_queries]<b>:</b> ".($this->last_query?$this->last_query:"NULL")."\n";
 		echo "<b>Last Function Call:</b> " . ($this->func_call?$this->func_call:"None")."\n";
 		
-		if (count($this->all_func_calls) > 1) {
+		if (\count($this->all_func_calls) > 1) {
 			echo "<b>List of All Function Calls:</b><br>"; 
 			foreach($this->all_func_calls as $func_string)
 			echo "  " . $func_string ."<br>\n";
 		}
 		
-		echo "<b>Last Rows Returned:</b> ".(count($this->last_result)>0 ? $this->last_result : '')."\n";
+		echo "<b>Last Rows Returned:</b> ".(\count($this->last_result)>0 ? $this->last_result : '')."\n";
 		echo "</font></pre></font></blockquote></td></tr></table>";//.$this->donation();
 		echo "\n<hr size=1 noshade color=dddddd>";
 		
@@ -420,17 +428,20 @@ class ezsqlModel extends ezQuery
 	}
 	
 	/**
-	*  Alias for the above function
+	* @internal alias for ezsqlModel::varDump()
 	*/
 	public function dump_var($mixed)
 	{
-		return $this->vardump($mixed);
+		return $this->varDump($mixed);
 	}
 	
 	/**
 	* Displays the last query string that was sent to the database & a
 	* table listing results (if there were any).
 	* (abstracted into a separate file to save server overhead).
+	*
+	* @param boolean $print_to_screen
+	* @return string
 	*/
 	public function debug($print_to_screen = true)
 	{
@@ -461,8 +472,7 @@ class ezsqlModel extends ezQuery
 		if ( $this->col_info ) {
 			// Results top rows
 			echo "<table cellpadding=5 cellspacing=1 bgcolor=555555>";
-			echo "<tr bgcolor=eeeeee><td nowrap valign=bottom><font color=555599 face=arial size=2><b>(row)</b></font></td>";
-			
+			echo "<tr bgcolor=eeeeee><td nowrap valign=bottom><font color=555599 face=arial size=2><b>(row)</b></font></td>";			
 			
 			for ( $i=0, $j=count($this->col_info); $i < $j; $i++ ) {
 				/* when selecting count(*) the maxlengh is not set, size is set instead. */
@@ -478,8 +488,8 @@ class ezsqlModel extends ezQuery
 			
 			// print main results
 			if ( $this->last_result ) {
-				$i=0;
-				foreach ( $this->get_results(null,ARRAY_N) as $one_row ) {
+				$i = 0;
+				foreach ( $this->get_results(null, ARRAY_N) as $one_row ) {
 					$i++;
 					echo "<tr bgcolor=ffffff><td bgcolor=eeeeee nowrap align=middle><font size=2 color=555599 face=arial>$i</font></td>";
 					
@@ -490,7 +500,7 @@ class ezsqlModel extends ezQuery
 				}
 			} else {
 				// if last result 
-				echo "<tr bgcolor=ffffff><td colspan=".(\count($this->col_info)+1)."><font face=arial size=2>No Results</font></td></tr>";
+				echo "<tr bgcolor=ffffff><td colspan=".(\count($this->col_info) + 1)."><font face=arial size=2>No Results</font></td></tr>";
 			}
 			
 			echo "</table>";
@@ -623,16 +633,6 @@ class ezsqlModel extends ezQuery
 	{
         return $this->_connected;
     } // isConnected
-
-    /**
-     * Returns the current show error state
-     *
-     * @return boolean
-     */
-	public function getShowErrors() 
-	{
-        return $this->show_errors;
-    } // getShowErrors
 
     /**
      * Returns the affected rows of a query
