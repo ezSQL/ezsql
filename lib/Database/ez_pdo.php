@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace ezsql\Database;
 
+use Exception;
 use ezsql\Configuration;
 use ezsql\ezsqlModel;
 
