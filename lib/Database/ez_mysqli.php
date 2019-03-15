@@ -88,7 +88,7 @@ final class ez_mysqli extends ezsqlModel
      * @param string $password The database users password
      * @param string $host The host name or IP address of the database server.
      *                       Default is localhost
-     * @param type $charset The database charset
+     * @param string $charset The database charset
      *                      Default is empty string
      * @return boolean
      */
@@ -109,7 +109,7 @@ final class ez_mysqli extends ezsqlModel
         if ( empty($user ) ) {
             $this->register_error($this->ezsql_mysql_str[1] . ' in ' . __FILE__ . ' on line ' . __LINE__);
             $this->show_errors ? \trigger_error($this->ezsql_mysql_str[1], \E_USER_WARNING) : null;
-        } else if ( ! $this->dbh = mysqli_connect($host, $user, $password, $this->database->getName()) ) {
+        } else if ( ! $this->dbh = \mysqli_connect($host, $user, $password, $this->database->getName()) ) {
             // Try to establish the server database handle
             $this->register_error($this->ezsql_mysql_str[2] . ' in ' . __FILE__ . ' on line ' . __LINE__);
             $this->show_errors ? \trigger_error($this->ezsql_mysql_str[2], \E_USER_WARNING) : null;
@@ -156,13 +156,13 @@ final class ez_mysqli extends ezsqlModel
 
             if ( $charset != '' ) {
                 $encoding = \strtolower(\str_replace('-', '', $charset));
-                $charsets = array();
-                $recordset = \mysqli_query($this->dbh, 'SHOW CHARACTER SET');
-                while ( $row = \mysqli_fetch_array($recordset, \MYSQLI_ASSOC) ) {
-                        $charsets[] = $row['Charset'];
+                $charset = array();
+                $recordSet = \mysqli_query($this->dbh, 'SHOW CHARACTER SET');
+                while ( $row = \mysqli_fetch_array($recordSet, \MYSQLI_ASSOC) ) {
+                        $charset[] = $row['Charset'];
                 }
 
-                if ( \in_array($charset, $charsets) ) {
+                if ( \in_array($charset, $charset) ) {
                     \mysqli_query($this->dbh, 'SET NAMES \'' . $encoding . '\'');
                 }
             }
@@ -181,7 +181,7 @@ final class ez_mysqli extends ezsqlModel
      */
     public function escape(string $str) 
     {
-        return \mysqli_real_escape_string($this->dbh, stripslashes($str));
+        return \mysqli_real_escape_string($this->dbh, \stripslashes($str));
     } // escape
 
     /**
