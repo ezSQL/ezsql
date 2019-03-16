@@ -65,6 +65,17 @@ if (!\defined('CONSTANTS')) {
         'sqlsrv' => 'ez_sqlsrv'
     ]);
 
+    \define('mysql', 'mysqli');
+    \define('mysqli', 'mysqli');
+    \define('pdo', 'pdo');
+    \define('pgsql', 'pgsql');
+    \define('postgresql', 'postgresql');
+    \define('sqlite', 'sqlite');
+    \define('sqlite3', 'sqlite3');
+    \define('sqlsrv', 'sqlsrv');
+    \define('sqlserver', 'sqlserver');
+    \define('mssql', 'mssql');
+
     \define('ALLOWED_KEYS', [
         'host',
         'hostname',

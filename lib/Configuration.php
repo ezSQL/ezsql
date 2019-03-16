@@ -38,15 +38,15 @@ class Configuration extends ConfigAbstract
                 throw new Exception('<b>Fatal Error:</b> Missing configuration details to connect to database');
         } else {
             $this->driver = $sql;
-            if ($sql == 'pdo') {    
+            if ($sql == pdo) {    
                 $this->setupPdo($args);            
-            } elseif (($sql == 'postgressql') || ($sql == 'pgsql')) {
+            } elseif (($sql == postgresql) || ($sql == pgsql)) {
                 $this->setupPgsql($args);
-            } elseif (($sql == 'sqlsrv') || ($sql == 'mssql') || ($sql == 'sqlserver')) {
+            } elseif (($sql == sqlsrv) || ($sql == mssql) || ($sql == sqlserver)) {
                 $this->setupSqlsrv($args);
-            } elseif (($sql == 'mysqli') || ($sql == 'mysql')) {
+            } elseif (($sql == mysqli) || ($sql == mysql)) {
                 $this->setupMysqli($args);
-            } elseif ((($sql == 'sqlite3') || ($sql == 'sqlite')) && count($args) == 2) {
+            } elseif ((($sql == sqlite3) || ($sql == sqlite)) && count($args) == 2) {
                 $this->setupSqlite3($args);
             }
         }
