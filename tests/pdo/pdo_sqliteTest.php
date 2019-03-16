@@ -34,8 +34,7 @@ class pdo_sqliteTest extends DBTestCase
             );
         }
 
-        $setting = new Configuration('pdo', ['sqlite:' . self::TEST_SQLITE_DB, '', '', array(), true]);
-        $this->object = Database::initialize($setting);
+        $this->object = Database::initialize('pdo', ['sqlite:' . self::TEST_SQLITE_DB, '', '', array(), true]);
         $this->object->setPrepare();
     } // setUp
 

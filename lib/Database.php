@@ -29,15 +29,15 @@ class Database
     /**
      * Initialize and connect a vendor database.
      * 
-     * @param object $settings - Has SQL driver and connection parameters
+     * @param object $settings - Has SQL driver connection parameters
      */    
-    public static function initialize(Configuration $settings)
+    public static function initialize(string $vendor, $settings)
     { 
-        if  (empty($settings) || (!$settings instanceof Configuration)) {
+        if  (empty($settings) || empty($vendor)) {
             throw new \Exception('<b>Fatal Error:</b> Missing configuration details to connect to database');
         } else {
             self::$_ts = \microtime();
-            self::$database = $settings;
+            self::$database = new Configuration($vendor, $settings);
             $key = self::$database->getDriver();
             $value = \VENDOR[$key];
 
@@ -55,12 +55,17 @@ class Database
      *
      * @return array|float time elapsed, memory usage.
      */
-    public function benchmark()
+    public static function benchmark()
     {
         return [
-            'start'  => $this->_ts,
-            'elapse' => \microtime() - $this->_ts,
+            'start'  => self::$_ts,
+            'elapse' => \microtime() - self::$_ts,
             'memory' => \memory_get_usage(true),
         ];
+    }
+
+    public static function settings()
+    {
+        return self::$database;
     }
 }

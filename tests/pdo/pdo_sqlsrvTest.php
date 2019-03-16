@@ -25,8 +25,7 @@ class pdo_sqlsrvTest extends DBTestCase
             );
         }
         
-        $setting = new Configuration('pdo', ['sqlsrv:Server=' . self::TEST_DB_HOST . ';Database=' . self::TEST_DB_NAME, self::TEST_DB_USER, self::TEST_DB_PASSWORD]);
-        $this->object = Database::initialize($setting);
+        $this->object = Database::initialize('pdo', ['sqlsrv:Server=' . self::TEST_DB_HOST . ';Database=' . self::TEST_DB_NAME, self::TEST_DB_USER, self::TEST_DB_PASSWORD]);
         $this->object->setPrepare();
     } // setUp
 

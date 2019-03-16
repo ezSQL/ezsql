@@ -34,8 +34,7 @@ class sqlite3Test extends DBTestCase
             );
         }
         
-        $setting = new Configuration('sqlite3', [self::TEST_SQLITE_DB_DIR, self::TEST_SQLITE_DB]);
-        $this->object = Database::initialize($setting); 
+        $this->object = Database::initialize('sqlite3', [self::TEST_SQLITE_DB_DIR, self::TEST_SQLITE_DB]); 
         $this->object->setPrepare();
     }
 

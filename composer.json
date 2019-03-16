@@ -1,7 +1,7 @@
 {
     "name": "ezsql/ezdba",
     "description": "Advance database access library. Make interacting with a database ridiculously easy.",
-    "keywords": ["mysql", "mysqli", "postgres", "mssql", "sqlsrv", "sqlserver", "pdo", "sqlite", "sqlite3", "database", "abstraction", "sql", "dba"],
+    "keywords": ["mysql", "mysqli", "postgresql", "mssql", "sqlsrv", "sqlserver", "pdo", "sqlite", "sqlite3", "database", "abstraction", "sql", "dba"],
     "license": "LGPL-3.0-or-later",
     "authors": [
         {
@@ -14,7 +14,7 @@
         },
         {
             "name": "l. stubbs",
-            "email": "lstubbs@technoexpress.net"
+            "email": "lstubbs@techno.express"
         }
     ],
     "support": {
@@ -37,8 +37,7 @@
         }
     },
     "require-dev": {
-        "phpunit/phpunit": ">5.7.0",
-        "php-coveralls/php-coveralls": "^2.1"
+        "phpunit/phpunit": ">5.7.0"
     },
     "autoload-dev": {
         "psr-4": {

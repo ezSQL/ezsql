@@ -26,8 +26,7 @@ class sqlsrvTest extends DBTestCase
             );
         }
 
-        $setting = new Configuration('sqlsrv', [self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME]);
-        $this->object = Database::initialize($setting);
+        $this->object = Database::initialize('sqlsrv', [self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME]);
         $this->object->setPrepare();
     } // setUp
 

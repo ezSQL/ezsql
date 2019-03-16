@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace ezsql;
 
 use Psr\Container\ContainerInterface;
+use ezsql\Exception\ContainerException;
+use ezsql\Exception\NotFoundException;
 
 /**
  * Dependency Injection Container
@@ -19,8 +21,10 @@ class DInjector implements ContainerInterface
 	protected $instances = [];
 
 	/**
-	 * @param      $abstract
-	 * @param null $concrete
+   * Register a service with the container.
+   *
+   * @param string $abstract - className
+   * @param string $concrete - friendlyName
 	 */
 	public function set($abstract, $concrete = NULL)
 	{
@@ -41,11 +45,11 @@ class DInjector implements ContainerInterface
 	/** 
 	 * Execute with any dependencies
 	 * 
-	 * @param		$abstract
+	 * @param $abstract
 	 * @param array $values
 	 *
 	 * @return mixed
-	 * @throws Exception
+	 * @throws ContainerException
 	 */
 	public function call($abstract, $values = [])
 	{		
@@ -53,20 +57,19 @@ class DInjector implements ContainerInterface
 		if ($concrete instanceof \Closure) {
 			return $concrete($this, $values);
 		} else
-			throw new \Exception("{$concrete} is not callable");
+			throw new ContainerException("{$concrete} is not callable");
 	}
 
 	/**
-	 * @param       $abstract
-	 * @param array $values
+	 * @param $abstract
 	 *
 	 * @return null|object
-	 * @throws Exception
+	 * @throws NotFoundException
 	 */
 	public function get($abstract)
 	{
 		if (!$this->has($abstract)) {
-			throw new \Exception("{$abstract} does not exists");
+			throw new NotFoundException("{$abstract} does not exists");
 		}
 		return $this->instances[$abstract];
 	}
@@ -74,11 +77,11 @@ class DInjector implements ContainerInterface
 	/**
 	 * Auto setup, execute, or resolve any dependencies.
 	 * 
-	 * @param       $abstract
+	 * @param $abstract
 	 * @param array $values
 	 *
 	 * @return mixed|null|object
-	 * @throws Exception
+	 * @throws ContainerException
 	 */
 	public function autoWire($abstract, $values = [])
 	{
@@ -92,12 +95,12 @@ class DInjector implements ContainerInterface
 
 	/**
 	 * Do we have dependence
-	 * @param       $abstract
-     * @return bool
-     */
-    public function has($abstract)
-    {
-        return isset($this->instances[$abstract]);
+	 * @param $abstract
+   * @return bool
+   */
+  public function has($abstract): bool
+  {
+    return isset($this->instances[$abstract]);
 	}
 	
 	/**
@@ -107,18 +110,18 @@ class DInjector implements ContainerInterface
 	 * @param $values
 	 *
 	 * @return mixed|object
-	 * @throws Exception
+	 * @throws ContainerException
 	 */
-	public function resolve($concrete, $values = [])
+	protected function resolve($concrete, $values = [])
 	{
 		if ($concrete instanceof \Closure) {
 			return $concrete($this, $values);
 		}
 
-		$reflector = new ReflectionClass($concrete);
+		$reflector = new \ReflectionClass($concrete);
 		// check if class is instantiable
 		if (!$reflector->isInstantiable()) {
-			throw new \Exception("Class {$concrete} is not instantiable");
+			throw new ContainerException("Class {$concrete} is not instantiable");
 		}
 
 		// get class constructor
@@ -129,7 +132,7 @@ class DInjector implements ContainerInterface
 		}
 
 		// get constructor params
-		$parameters   = $constructor->getParameters();
+		$parameters = $constructor->getParameters();
 		$dependencies = $this->getDependencies($parameters, $values);
 
 		// get new instance with dependencies resolved
@@ -142,7 +145,7 @@ class DInjector implements ContainerInterface
 	 * @param $parameters
 	 *
 	 * @return array
-	 * @throws Exception
+	 * @throws ContainerException
 	 */
 	public function getDependencies($parameters, $values)
 	{
@@ -152,21 +155,21 @@ class DInjector implements ContainerInterface
 			$dependency = $parameter->getClass();
 			if ($dependency === NULL) {				
 				// check if the constructor parameter name exists as a key in the values array
-				if (array_key_exists($parameter->getName(), $values)) {			  
+				if (\array_key_exists($parameter->getName(), $values)) {			  
 				  // get default value of parameter
 				  $dependencies[] = $values[$parameter->getName()];			  
 				} else {			  
 				  // check if default value for a parameter is available
 				  if ($parameter->isDefaultValueAvailable()) {			  
-					// get default value of parameter
-					$dependencies[] = $parameter->getDefaultValue();			  
+						// get default value of parameter
+						$dependencies[] = $parameter->getDefaultValue();			  
 				  } else {			  
-					throw new \Exception("Can not resolve class dependency {$parameter->name}");			  
+						throw new ContainerException("Can not resolve class dependency {$parameter->name}");			  
 				  }			  
 				}							  
 			} else {			  
 				// get dependency resolved
-				$dependencies[] = $this->get($dependency->name);			  
+				$dependencies[] = $this->autoWire($dependency->name, $values);			  
 			}
 		}
 

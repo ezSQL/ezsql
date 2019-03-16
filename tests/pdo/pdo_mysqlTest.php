@@ -25,8 +25,7 @@ class pdo_mysqlTest extends DBTestCase
             );
         }
 
-        $setting = new Configuration('pdo', ['mysql:host='.self::TEST_DB_HOST.';dbname='. self::TEST_DB_NAME.';port='.self::TEST_DB_PORT, self::TEST_DB_USER, self::TEST_DB_PASSWORD]);
-        $this->object = Database::initialize($setting);
+        $this->object = Database::initialize('pdo', ['mysql:host='.self::TEST_DB_HOST.';dbname='. self::TEST_DB_NAME.';port='.self::TEST_DB_PORT, self::TEST_DB_USER, self::TEST_DB_PASSWORD]);
         $this->object->setPrepare();
     } // setUp
 

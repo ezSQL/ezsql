@@ -133,7 +133,7 @@ class Configuration extends ConfigAbstract
     * @param string $connectionString
     * @throws Exception If vendor specifics not provided.
     */
-    public function parseConnectionString(string $connectionString, array $check_for) 
+    private function parseConnectionString(string $connectionString, array $check_for) 
     {
         $params = \explode(";", $connectionString);
 

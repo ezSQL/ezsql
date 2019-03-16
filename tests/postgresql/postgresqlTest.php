@@ -30,8 +30,7 @@ class postgresqlTest extends DBTestCase
             );
         }
         
-        $setting = new Configuration('pgsql', [self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME, self::TEST_DB_HOST, self::TEST_DB_PORT]);
-        $this->object = Database::initialize($setting); 
+        $this->object = Database::initialize('pgsql', [self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME, self::TEST_DB_HOST, self::TEST_DB_PORT]); 
         $this->object->setPrepare();
     } // setUp
 

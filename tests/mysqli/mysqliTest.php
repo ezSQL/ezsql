@@ -25,8 +25,7 @@ class ez_mysqliTest extends DBTestCase
             );
         }
 
-        $setting = new Configuration('mysqli', [self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME]);
-        $this->object = Database::initialize($setting);
+        $this->object = Database::initialize('mysqli', [self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME]);
         $this->object->setPrepare();
     }
 
