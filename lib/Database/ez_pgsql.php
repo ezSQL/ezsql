@@ -42,7 +42,8 @@ final class ez_pgsql extends ezsqlModel
         parent::__construct();
         $this->database = $settings;
 
-        $GLOBALS['db_' . $this->database->getDriver()] = $this;
+        $GLOBALS['db_' .\PGSQL] = $this;
+        $GLOBALS['db_' .\POSTGRESQL] = $this;
         \setInstance($this);
     } // __construct
 

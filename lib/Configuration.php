@@ -34,19 +34,19 @@ class Configuration extends ConfigAbstract
         $sql = \strtolower($driver);
         if ( ! \class_exists ('ezsqlModel') ) {
             throw new Exception('<b>Fatal Error:</b> This configuration requires ezsqlModel (ezsqlModel.php) to be included/loaded before it can be used');
-        } elseif (!\array_key_exists($sql, \VENDOR) || empty($sql) || empty($args)) {
-                throw new Exception('<b>Fatal Error:</b> Missing configuration details to connect to database');
+        } elseif (!\array_key_exists($sql, \VENDOR) || empty($args)) {
+            throw new Exception('<b>Fatal Error:</b> Missing configuration details to connect to database');
         } else {
             $this->driver = $sql;
-            if ($sql == pdo) {    
+            if ($sql == \Pdo) {
                 $this->setupPdo($args);            
-            } elseif (($sql == postgresql) || ($sql == pgsql)) {
+            } elseif (($sql == \POSTGRESQL) || ($sql == \PGSQL)) {
                 $this->setupPgsql($args);
-            } elseif (($sql == sqlsrv) || ($sql == mssql) || ($sql == sqlserver)) {
+            } elseif (($sql == \SQLSRV) || ($sql == \MSSQL) || ($sql == \SQLSERVER)) {
                 $this->setupSqlsrv($args);
-            } elseif (($sql == mysqli) || ($sql == mysql)) {
+            } elseif (($sql == \MYSQLI) || ($sql == \MYSQL)) {
                 $this->setupMysqli($args);
-            } elseif ((($sql == sqlite3) || ($sql == sqlite)) && count($args) == 2) {
+            } elseif (($sql == \SQLITE3) || ($sql == \SQLITE)) {
                 $this->setupSqlite3($args);
             }
         }

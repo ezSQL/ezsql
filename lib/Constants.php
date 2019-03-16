@@ -121,14 +121,12 @@ if (!\defined('CONSTANTS')) {
 
     // String SQL data types
     \define('CHAR', 'CHAR');
-    \define('VARC', 'VARCHAR');
     \define('VARCHAR', 'VARCHAR');
     \define('TEXT', 'TEXT');
     \define('TINY', 'TINYTEXT');
     \define('TINYTEXT', 'TINYTEXT');
     \define('MEDIUM', 'MEDIUMTEXT');
     \define('MEDIUMTEXT', 'MEDIUMTEXT');
-    \define('LONG', 'LONGTEXT');
     \define('LONGTEXT', 'LONGTEXT');
     \define('BINARY', 'BINARY');
     \define('VARBINARY', 'VARBINARY');
@@ -153,7 +151,6 @@ if (!\defined('CONSTANTS')) {
     \define('TINYINT', 'TINYINT');
     \define('SMALLINT', 'SMALLINT');
     \define('MEDIUMINT', 'MEDIUMINT');
-    \define('LARGE', 'BIGINT');
     \define('BIGINT', 'BIGINT');
     \define('DEC', 'DEC');
     \define('FIXED', 'FIXED');

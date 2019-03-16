@@ -47,7 +47,8 @@ final class ez_sqlite3 extends ezsqlModel
             $this->connect($path, $name);
         }
 
-        $GLOBALS['db_' . $this->database->getDriver()] = $this;
+        $GLOBALS['db_'.\SQLITE] = $this;
+        $GLOBALS['db_'.\SQLITE3] = $this;
         \setInstance($this);
     }
 

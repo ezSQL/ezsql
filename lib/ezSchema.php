@@ -155,29 +155,29 @@ class ezSchema
     public static function vendor() 
     {
         $type = null;
-        $dbSqlite = $GLOBALS['db_sqlite'];
-        $dbPgsql = $GLOBALS['db_pgsql'];
-        $dbMysqli = $GLOBALS['db_mysqli'];
-        $dbMssql = $GLOBALS['db_sqlsrv'];
-        $dbPdo = $GLOBALS['db_pdo'];
+        $dbSqlite = $GLOBALS['db_'.\SQLITE3];
+        $dbPgsql = $GLOBALS['db_'.\PGSQL];
+        $dbMysqli = $GLOBALS['db_'.\MYSQL];
+        $dbMssql = $GLOBALS['db_'.\SQLSERVER];
+        $dbPdo = $GLOBALS['db_'.\Pdo];
         if ($dbSqlite === \getInstance() && !empty($dbSqlite))
-            $type = 'sqlite3';
+            $type = \SQLITE3;
         elseif ($dbPgsql === \getInstance() && !empty($dbPgsql)) 
-            $type = 'postgresql';
+            $type = \POSTGRESQL;
         elseif ($dbMysqli === \getInstance() && !empty($dbMysqli))
-            $type = 'mysql';
+            $type = \MYSQL;
         elseif ($dbMssql === \getInstance() && !empty($dbMssql))
-            $type = 'sqlserver';
+            $type = \SQLSERVER;
         elseif ($dbPdo === \getInstance() && !empty($dbPdo)) {
             $dbh = $dbPdo->connection();
-            if (strpos($dbh->getAttribute(\PDO::ATTR_CLIENT_VERSION), 'mysql') !== false) 
-                $type = 'mysql';
-            elseif (strpos($dbh->getAttribute(\PDO::ATTR_CLIENT_VERSION), 'pgsql') !== false) 
-                $type = 'postgresql';
-            elseif (strpos($dbh->getAttribute(\PDO::ATTR_CLIENT_VERSION), 'sqlite') !== false) 
-                $type = 'sqlite3';
-            elseif (strpos($dbh->getAttribute(\PDO::ATTR_CLIENT_VERSION), 'sqlsrv') !== false) 
-                $type = 'sqlserver';
+            if (strpos($dbh->getAttribute(\PDO::ATTR_CLIENT_VERSION), \MYSQL) !== false) 
+                $type = \MYSQL;
+            elseif (strpos($dbh->getAttribute(\PDO::ATTR_CLIENT_VERSION), \PGSQL) !== false) 
+                $type = \POSTGRESQL;
+            elseif (strpos($dbh->getAttribute(\PDO::ATTR_CLIENT_VERSION), \SQLITE) !== false) 
+                $type = \SQLITE3;
+            elseif (strpos($dbh->getAttribute(\PDO::ATTR_CLIENT_VERSION), \SQLSRV) !== false) 
+                $type = \SQLSERVER;
         }
 
         return $type;
@@ -221,7 +221,7 @@ class ezSchema
                 $column = $column.' '.$type;
                 $type2 = \array_shift($args);
                 $data = self::datatype($type2, ...$args);
-            } elseif ($vendor != 'sqlite3')
+            } elseif ($vendor != \SQLITE3)
                 $data = $type;
 
             if (!empty($data))

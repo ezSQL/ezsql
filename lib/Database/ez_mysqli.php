@@ -52,7 +52,8 @@ final class ez_mysqli extends ezsqlModel
 
         parent::__construct();
         $this->database = $settings;
-        $GLOBALS['db_'.$this->database->getDriver()] = $this;
+        $GLOBALS['db_'.\MYSQL] = $this;
+        $GLOBALS['db_'.\MYSQLI] = $this;
         \setInstance($this);
     } // __construct
 

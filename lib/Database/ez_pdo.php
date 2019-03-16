@@ -49,7 +49,7 @@ final class ez_pdo extends ezsqlModel
                 $this->database->getIsFile());
         }
         
-        $GLOBALS['db_'.$this->database->getDriver()] = $this;
+        $GLOBALS['db_'.\Pdo] = $this;
         \setInstance($this);
     } // __construct
 
@@ -68,10 +68,10 @@ final class ez_pdo extends ezsqlModel
             $path = \preg_replace('/\\\/', \_DS, $ssl_path). \_DS;
         }
 
-        if (($vendor == 'pgsql') || ($vendor == 'postgresql')) {
+        if (($vendor == \PGSQL) || ($vendor == \POSTGRESQL)) {
             self::$secure = "sslmode=require;sslcert=".$path.$cert.";sslkey=".$path.$key.";sslrootcert=".$path.$ca.";";
             self::$isSecure = true;
-        } elseif (($vendor == 'mysql') || ($vendor == 'mysqli')) {
+        } elseif (($vendor == \MYSQL) || ($vendor == \MYSQLI)) {
             self::$_options = array(
                 \PDO::MYSQL_ATTR_SSL_KEY => $path.$key,
                 \PDO::MYSQL_ATTR_SSL_CERT => $path.$cert,
@@ -80,7 +80,7 @@ final class ez_pdo extends ezsqlModel
                 \PDO::MYSQL_ATTR_SSL_CIPHER => 'DHE-RSA-AES256-SHA',
                 \PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT => false
             );
-        } elseif (($vendor == 'sqlserver') || ($vendor == 'mssql') || ($vendor == 'sqlsrv')) {
+        } elseif (($vendor == \SQLSERVER) || ($vendor == \MSSQL) || ($vendor == \SQLSRV)) {
             self::$secure = ";Encrypt=true;TrustServerCertificate=true";
             self::$isSecure = true;
         }

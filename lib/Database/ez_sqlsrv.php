@@ -51,7 +51,9 @@ final class ez_sqlsrv extends ezsqlModel
         parent::__construct();
         $this->database = $settings;
 
-        $GLOBALS['db_' . $this->database->getDriver()] = $this;
+        $GLOBALS['db_'.\SQLSERVER] = $this;
+        $GLOBALS['db_'.\MSSQL] = $this;
+        $GLOBALS['db_'.\SQLSRV] = $this;
         \setInstance($this);
     }
 
