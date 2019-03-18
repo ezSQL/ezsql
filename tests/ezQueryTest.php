@@ -2,10 +2,10 @@
 
 namespace ezsql\Tests;
 
-use ezsql\Database\ezQuery;
-use ezsql\Tests\DBTestCase;
+use ezsql\ezQuery;
+use ezsql\Tests\EZTestCase;
 
-class ezQueryTest extends DBTestCase 
+class ezQueryTest extends EZTestCase 
 {
 	
     /**
@@ -31,7 +31,7 @@ class ezQueryTest extends DBTestCase
     } // tearDown
  
     /**
-      * @covers ezQuery::Clean
+      * @covers ezsql\ezQuery::Clean
      */
     public function testClean()
     {
@@ -39,7 +39,7 @@ class ezQueryTest extends DBTestCase
     } 
          
     /**
-     * @covers ezQuery::where
+     * @covers ezsql\ezQuery::where
      */
     public function testWhere()
     {
@@ -48,7 +48,7 @@ class ezQueryTest extends DBTestCase
     }
      
     /**
-     * @covers ezQuery::delete
+     * @covers ezsql\ezQuery::delete
      */
     public function testDelete()
     {
@@ -57,19 +57,18 @@ class ezQueryTest extends DBTestCase
     }
        
     /**
-     * @covers ezQuery::selecting
+     * @covers ezsql\ezQuery::selecting
      */
     public function testSelecting()
     {
         $this->assertFalse($this->object->selecting('',''));
-
         $this->expectException(\Error::class);
-        $this->expectExceptionMessageRegExp('/Call to undefined method ezQuery::get_results()/');
+        $this->expectExceptionMessageRegExp('/[Call to undefined method ezsql\ezQuery::get_results()]/');
         $this->assertNotNull($this->object->selecting('table','columns','WHERE','GROUP BY','HAVING','ORDER BY','LIMIT'));
     }
     
     /**
-     * @covers ezQuery::create_select
+     * @covers ezsql\ezQuery::create_select
      */
     public function testCreate_select()
     {
@@ -77,7 +76,7 @@ class ezQueryTest extends DBTestCase
     }
     
     /**
-     * @covers ezQuery::insert_select
+     * @covers ezsql\ezQuery::insert_select
      */
     public function testInsert_select()
     {
@@ -85,7 +84,7 @@ class ezQueryTest extends DBTestCase
     }
     
     /**
-     * @covers ezQuery::insert
+     * @covers ezsql\ezQuery::insert
      */
     public function testInsert()
     {
@@ -93,7 +92,7 @@ class ezQueryTest extends DBTestCase
     }
     
     /**
-     * @covers ezQuery::update
+     * @covers ezsql\ezQuery::update
      */
     public function testUpdate()
     {
@@ -102,7 +101,7 @@ class ezQueryTest extends DBTestCase
     }
 	
     /**
-     * @covers ezQuery::replace
+     * @covers ezsql\ezQuery::replace
      */
     public function testReplace()
     {
@@ -110,7 +109,7 @@ class ezQueryTest extends DBTestCase
     }
     
     /**
-     * @covers ezQuery::__construct
+     * @covers ezsql\ezQuery::__construct
      */
     public function test__Construct() {         
         $ezQuery = $this->getMockBuilder(ezQuery::class)

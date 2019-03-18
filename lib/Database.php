@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace ezsql;
 
-use ezsql\Configuration;
 use ezsql\DInjector;
+use ezsql\Configuration;
 
 class Database
 {
@@ -29,21 +29,24 @@ class Database
     /**
      * Initialize and connect a vendor database.
      * 
-     * @param object $settings - Has SQL driver connection parameters
+     * @param mixed $vendor - SQL driver
+     * @param mixed $setting - SQL connection parameters
      */    
-    public static function initialize(string $vendor, $settings)
+    public static function initialize(string $vendor = null, $setting = null)
     { 
-        if  (empty($settings) || empty($vendor)) {
-            throw new \Exception('<b>Fatal Error:</b> Missing configuration details to connect to database');
+        if  (empty($vendor) || empty($setting)) {
+            throw new \Exception(\MISSING_CONFIGURATION);
         } else {
             self::$_ts = \microtime();
-            self::$database = new Configuration($vendor, $settings);
+            self::$database = new Configuration($vendor, $setting);
             $key = self::$database->getDriver();
             $value = \VENDOR[$key];
 
-            if (empty($GLOBALS['db_'.$key])) {    
+            if (empty($GLOBALS['db_'.$key])) {
                 $di = new DInjector();
-                $GLOBALS['db_'.$key] = $di->autoWire($value, self::$database); 
+                $di->set($key, $value);
+                //$di->set($key, \ezsql\Configuration::class);
+                $GLOBALS['db_'.$key] = $di->autoWire($key, ['driver' => $key, 'args' => $setting, 'settings' => self::$database]); 
             }
 
             return $GLOBALS['db_'.$key];

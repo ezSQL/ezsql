@@ -2,10 +2,10 @@
 
 namespace ezsql\Tests;
 
-use ezsql\Database\ezsqlModel;
-use ezsql\Tests\DBTestCase;
+use ezsql\ezsqlModel;
+use ezsql\Tests\EZTestCase;
 
-class ezsqlModelTest extends DBTestCase 
+class ezsqlModelTest extends EZTestCase 
 {	
     /**
      * @var ezsqlModel
@@ -31,17 +31,17 @@ class ezsqlModelTest extends DBTestCase
     } // tearDown
 
     /**
-     * @covers ezsqlModel::get_host_port
+     * @covers ezsql\ezsqlModel::get_host_port
      */
     public function testGet_host_port()
     {
-        $hostport = $this->object->get_host_port("localhost:8181");
-        $this->assertEquals($hostport[0],"localhost");
-        $this->assertEquals($hostport[1],"8181");
+        $hostPort = $this->object->get_host_port("localhost:8181");
+        $this->assertEquals($hostPort[0],"localhost");
+        $this->assertEquals($hostPort[1],"8181");
     }
     
     /**
-     * @covers ezSQLcore::__call
+     * @covers ezsql\ezsqlModel::__call
      */
     public function testGetCache_Timeout()
     {
@@ -50,7 +50,7 @@ class ezsqlModelTest extends DBTestCase
     }
 
     /**
-     * @covers ezSQLcore::__call
+     * @covers ezsql\ezsqlModel::__call
      */
     public function testSetCache_Timeout()
     {
@@ -59,9 +59,9 @@ class ezsqlModelTest extends DBTestCase
     }
 
     /**
-     * @covers ezSQLcore::__call
+     * @covers ezsql\ezsqlModel::__call
      */
-    public function testgetNotProperty()
+    public function testGetNotProperty()
     {
         $this->expectException(\Exception::class);
         $this->expectExceptionMessageRegExp('/does not exist/');
@@ -69,7 +69,7 @@ class ezsqlModelTest extends DBTestCase
     }
 		
     /**
-     * @covers ezsqlModel::register_error
+     * @covers ezsql\ezsqlModel::register_error
      */
     public function testRegister_error() 
     {
@@ -77,106 +77,104 @@ class ezsqlModelTest extends DBTestCase
         
         $this->object->register_error($err_str);
         
-        $this->assertEquals($err_str, $this->object->last_error);
+        $this->assertEquals($err_str, $this->object->getLast_Error());
     } // testRegister_error
 
     /**
-     * @covers ezsqlModel::show_errors
+     * @covers ezsql\ezsqlModel::show_errors
      */
     public function testShow_errors() 
     {
         $this->object->hide_errors();
         
-        $this->assertFalse($this->object->getShowErrors());
+        $this->assertFalse($this->object->getShow_Errors());
         
         $this->object->show_errors();
         
-        $this->assertTrue($this->object->getShowErrors());
+        $this->assertTrue($this->object->getShow_Errors());
     } // testShow_errors
 
     /**
-     * @covers ezsqlModel::hide_errors
+     * @covers ezsql\ezsqlModel::hide_errors
      */
     public function testHide_errors() 
     {
         $this->object->hide_errors();
         
-        $this->assertFalse($this->object->getShowErrors());
+        $this->assertFalse($this->object->getShow_Errors());
     } // testHide_errors
 
     /**
-     * @covers ezsqlModel::flush
+     * @covers ezsql\ezsqlModel::flush
      */
     public function testFlush() 
     {
         $this->object->flush();
         
-        $this->assertNull($this->object->last_result);
-        $this->assertNull($this->object->col_info);
-        $this->assertNull($this->object->last_query);
-        $this->assertFalse($this->object->from_disk_cache);
+        $this->assertNull($this->object->getLast_Result());
+        $this->assertNull($this->object->getLast_Query());
+        $this->assertNull($this->object->getCol_Info());
+        $this->assertFalse($this->object->getFrom_Disk_Cache());
     } // testFlush
 
     /**
-     * @covers ezsqlModel::get_var
+     * @covers ezsql\ezsqlModel::get_var
      */
     public function testGet_var() 
     {
-        $this->object->last_result = array('1');
+        $this->assertEmpty($this->object->get_var());
+        $this->object->setLast_Result([new \stdClass]);
         $this->assertNull($this->object->get_var());
-        //$this->expectExceptionMessage('Call to undefined method ezsqlModel::query()');
         $this->assertNull($this->object->get_var('1'));
     } // testGet_var
 
     /**
-     * @covers ezsqlModel::get_row
+     * @covers ezsql\ezsqlModel::get_row
      */
     public function testGet_row() 
     {
         $this->assertNull($this->object->get_row());
-        $this->assertNull($this->object->get_row(null,ARRAY_A));
-        $this->assertNull($this->object->get_row(null,ARRAY_N));
-        $this->assertNull($this->object->get_row(null,'BAD'));
-       // $this->expectExceptionMessage('Call to undefined method ezsqlModel::query()');
+        $this->assertNull($this->object->get_row(null, ARRAY_A));
+        $this->assertNull($this->object->get_row(null, ARRAY_N));
+        $this->object->hide_errors();
+        $this->assertNull($this->object->get_row(null, 'BAD'));
         $this->assertNull($this->object->get_row('1'));
     } // testGet_row
 
     /**
-     * @covers ezsqlModel::get_col
+     * @covers ezsql\ezsqlModel::get_col
      */
     public function testGet_col() 
     {
         $this->assertEmpty($this->object->get_col());
-        $this->object->last_result = array('1');
+        $this->object->setLast_Result([new \stdClass]);
         $this->assertNotNull($this->object->get_col());
-        //$this->expectExceptionMessage('Call to undefined method ezsqlModel::query()');
         $this->assertNotFalse($this->object->get_col('1'));
     } // testGet_col
 
     /**
-     * @covers ezsqlModel::get_results
+     * @covers ezsql\ezsqlModel::get_results
      */
     public function testGet_results() 
     {
         $this->assertNull($this->object->get_results());
         $this->assertNotNull($this->object->get_results(null, ARRAY_A));
-       // $this->expectExceptionMessage('Call to undefined method ezsqlModel::query()');
         $this->assertNull($this->object->get_results('1'));
     } // testGet_results
 
     /**
-     * @covers ezsqlModel::get_col_info
+     * @covers ezsql\ezsqlModel::get_col_info
      */
     public function testGet_col_info() 
     {
         $this->assertEmpty($this->object->get_col_info());
-        $this->object->col_info = true;
+        $this->object->setCol_Info([]);
         $this->assertNull($this->object->get_col_info());
-        $this->assertNull($this->object->get_col_info('name',1));
+        $this->assertNull($this->object->get_col_info('name', 1));
     } // testGet_col_info
 
     /**
-     * @covers ezsqlModel::store_cache
+     * @covers ezsql\ezsqlModel::store_cache
      */
     public function testStore_cache() 
     {
@@ -188,7 +186,7 @@ class ezsqlModelTest extends DBTestCase
     } // testStore_cache
 
     /**
-     * @covers ezsqlModel::get_cache
+     * @covers ezsql\ezsqlModel::get_cache
      */
     public function testGet_cache() 
     {
@@ -201,32 +199,31 @@ class ezsqlModelTest extends DBTestCase
 
     /**
      * The test does not echos HTML, it is just a test, that is still running
-     * @covers ezsqlModel::vardump
+     * @covers ezsql\ezsqlModel::varDump
      */
-    public function testVardump() 
+    public function testVarDump() 
     {
-        $this->object->debug_echo_is_on = false;
-        $this->object->last_result = array('Test 1');
-        $this->assertNotEmpty($this->object->vardump($this->object->last_result));
-        $this->object->debug_echo_is_on = true;
+        $this->object->setDebug_Echo_Is_On(false);
+        $this->object->setLast_Result('test 1');
+        $this->assertNotEmpty($this->object->vardump($this->object->getLast_Result()));
+        $this->object->setDebug_Echo_Is_On(true);
         $this->expectOutputRegex('/[Last Function Call]/');
-        $this->object->vardump('');
-        
+        $this->object->varDump('');        
     } // testVardump
 
     /**
      * The test echos HTML, it is just a test, that is still running
-     * @covers ezsqlModel::dumpvar
+     * @covers ezsql\ezsqlModel::dump_var
      */
-    public function testDumpvar() 
+    public function testDump_var() 
     {
-        $this->object->last_result = array('Test 1', 'Test 2');
+        $this->object->setLast_Result(['Test 1', 'Test 2']);
         $this->expectOutputRegex('/[Last Function Call]/');
-        $this->object->dumpvar('');
-    } // testDumpvar
+        $this->object->dump_var();
+    } // testDump_var
 
     /**
-     * @covers ezsqlModel::debug
+     * @covers ezsql\ezsqlModel::debug
      */
     public function testDebug() 
     {
@@ -235,21 +232,21 @@ class ezsqlModelTest extends DBTestCase
         // In addition of getting a result, it fills the console
         $this->expectOutputRegex('/[make a donation]/');
         $this->object->debug(true);
-        $this->object->last_error = "test last";
+        $this->object->setLast_Error("test last");
         $this->expectOutputRegex('/[test last]/');
         $this->object->debug(true);
-        $this->object->from_disk_cache = true;
+        $this->object->setFrom_Disk_Cache(true);
         $this->expectOutputRegex('/[Results retrieved from disk cache]/');
         $this->object->debug(true);
-        $this->object->col_info = array("just another test");        
+        $this->object->setCol_Info(["just another test"]);
         $this->object->debug(false);   
-        $this->object->col_info = null;     
-        $this->object->last_result = array("just another test II");        
+        $this->object->setCol_Info(null);
+        $this->object->setLast_Result(["just another test II"]);        
         $this->object->debug(false);
     } // testDebug
 
     /**
-     * @covers ezsqlModel::donation
+     * @covers ezsql\ezsqlModel::donation
      */
     public function testDonation() 
     {
@@ -257,7 +254,7 @@ class ezsqlModelTest extends DBTestCase
     } // testDonation
 
     /**
-     * @covers ezsqlModel::timer_get_cur
+     * @covers ezsql\ezsqlModel::timer_get_cur
      */
     public function testTimer_get_cur() 
     {
@@ -269,16 +266,16 @@ class ezsqlModelTest extends DBTestCase
     } // testTimer_get_cur
 
     /**
-     * @covers ezsqlModel::timer_start
+     * @covers ezsql\ezsqlModel::timer_start
      */
     public function testTimer_start() 
     {
         $this->object->timer_start('test_timer');
-        $this->assertNotNull($this->object->timers['test_timer']);        
+        $this->assertNotNull($this->object->getTimers());        
     } // testTimer_start
 
     /**
-     * @covers ezsqlModel::timer_elapsed
+     * @covers ezsql\ezsqlModel::timer_elapsed
      */
     public function testTimer_elapsed() 
     {
@@ -289,26 +286,24 @@ class ezsqlModelTest extends DBTestCase
     } // testTimer_elapsed
 
     /**
-     * @covers ezsqlModel::timer_update_global
+     * @covers ezsql\ezsqlModel::timer_update_global
      */
     public function testTimer_update_global() 
     {
         $this->object->timer_start('test_timer');           
 		usleep( 5 );
-        $this->object->do_profile = true;
+        $this->object->setDo_Profile(true);
         $this->object->timer_update_global('test_timer');
-        $expected = $this->object->total_query_time;     
+        $expected = $this->object->getTotal_Query_Time();     
         $this->assertGreaterThanOrEqual($expected, $this->object->timer_elapsed('test_timer'));    
     }
 
     /**
-     * @covers ezsqlModel::get_set
+     * @covers ezsql\ezsqlModel::get_set
      */
     public function testGet_set()
     {
-        $this->assertNull($this->object->get_set(''));    
- 
-        //$this->expectExceptionMessage('Call to undefined method ezsqlModel::escape()');
+        $this->assertNull($this->object->get_set(''));
         $this->assertContains('NOW()',$this->object->get_set(
             array('test_unit'=>'NULL',
             'test_unit2'=>'NOW()',
@@ -321,7 +316,7 @@ class ezsqlModelTest extends DBTestCase
     }
 
     /**
-     * @covers ezsqlModel::count
+     * @covers ezsql\ezsqlModel::count
      */
     public function testCount()
     {
@@ -332,7 +327,7 @@ class ezsqlModelTest extends DBTestCase
     }
    
     /**
-     * @covers ezsqlModel::affectedRows
+     * @covers ezsql\ezsqlModel::affectedRows
      */
     public function testAffectedRows() 
     {
@@ -340,7 +335,7 @@ class ezsqlModelTest extends DBTestCase
     } // testAffectedRows   
     
     /**
-     * @covers ezsqlModel::isConnected
+     * @covers ezsql\ezsqlModel::isConnected
      */
     public function testIsConnected() 
     {
@@ -348,15 +343,7 @@ class ezsqlModelTest extends DBTestCase
     }  //testisConnected
 
     /**
-     * @covers ezsqlModel::getShowErrors
-     */
-    public function testGetShowErrors() 
-    {
-        $this->assertNotEmpty($this->object->getShowErrors());
-    } // testgetShowErrors       
-    
-    /**
-     * @covers ezsqlModel::__construct
+     * @covers ezsql\ezsqlModel::__construct
      */
     public function test__Construct() 
     {         

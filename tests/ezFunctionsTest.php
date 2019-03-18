@@ -2,9 +2,9 @@
 
 namespace ezsql\Tests;
 
-use ezsql\Tests\DBTestCase;
+use ezsql\Tests\EZTestCase;
 
-class ezFunctionsTest extends DBTestCase 
+class ezFunctionsTest extends EZTestCase 
 {
     /**
      * eq 
@@ -135,7 +135,7 @@ class ezFunctionsTest extends DBTestCase
     /**
      * notBetween
      */
-    public function testnotBetween()
+    public function testNotBetween()
     {
         $this->assertInternalType('array',notBetween('field', 'data', 'data2'));
         $this->assertArraySubset([3 => 'data2'], notBetween('field', 'data', 'data2'));
@@ -144,16 +144,15 @@ class ezFunctionsTest extends DBTestCase
     /**
      * setInstance
      */
-    public function testsetInstance() {
-        $this->assertFalse(setInstance());
-        $this->assertTrue(setInstance('pdo'));
-        $this->assertFalse(setInstance(''));
+    public function testCetQuery() {
+        $this->assertFalse(setQuery());
+        $this->assertFalse(setQuery('pdo'));
     }
 
     /**
      * select
      */
-    public function testselect() {
+    public function testSelect() {
         $this->assertFalse(select(''));
     } 
 

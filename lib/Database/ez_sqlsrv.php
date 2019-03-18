@@ -45,9 +45,14 @@ final class ez_sqlsrv extends ezsqlModel
 
     public function __construct(Configuration $settings)
     {
-        if (empty($settings) || (!$settings instanceof Configuration)) {
-            throw new Exception('<b>Fatal Error:</b> Missing configuration details to connect to database');
+        if ( ! \class_exists ('ezsqlModel') ) {
+            throw new Exception(\CONFIGURATION_REQUIRES);
         }
+        
+        if (empty($settings) || (!$settings instanceof Configuration)) {
+            throw new Exception(\MISSING_CONFIGURATION);
+        }
+        
         parent::__construct();
         $this->database = $settings;
 

@@ -69,14 +69,14 @@ abstract class ConfigAbstract
     * The PDO array for connection options, MySQL connection charset, for example
     * @var array
     */
-    private static $options = array();
+    private $options = array();
     
     /**
     * Check PDO for whether it is a file based database connection, for example to a SQLite
     * database file, or not
     * @var boolean Default is false
     */
-    private $isFile = false;
+    private $isfile = false;
 
     /**
     * TCP/IP port of PostgreSQL
@@ -88,7 +88,7 @@ abstract class ConfigAbstract
     * If we want to convert Queries in MySql syntax to MS-SQL syntax. 
     * Yes, there are some differences in query syntax.
     */
-    private $toMysql = true;
+    private $tomysql = true;
 
     /**
     * The path to open an SQLite database
@@ -97,15 +97,20 @@ abstract class ConfigAbstract
         
 	/**
 	* Use for Calling Non-Existent Functions, handling Getters and Setters
-	* @param function set/get{name} = private/protected property that needs to be accessed
+	* @method set/get{property} - a property that needs to be accessed 
+	*
+	* @property-read function
+	* @property-write args
+	*
+	* @return mixed
 	*/
 	public function __call($function, $args)
 	{
 		$prefix = \substr($function, 0, 3);
 		$property = \strtolower(substr($function, 3, \strlen($function)));
-		if (($prefix == 'set') && isset($this->$property)) {
+		if (($prefix == 'set') && \property_exists($this, $property)) {
 			$this->$property = $args[0];
-		} elseif (($prefix == 'get') && isset($this->$property)){
+		} elseif (($prefix == 'get') && \property_exists($this, $property)) {
 	 		return $this->$property;
 		} else {
 			throw new \Exception("$function does not exist");

@@ -42,32 +42,32 @@ class ezsqlModel extends ezQuery
 		protected $profile_times    = array();
 		protected $insert_id        = null;
 
-		public $last_query       = null;
-		public $last_error       = null;
-		public $col_info         = null;
-		public $timers           = array();
-		public $total_query_time = 0;
-		public $trace_log        = array();
-		public $use_trace_log    = false;
-		public $do_profile       = false;
+		protected $last_query       = null;
+		protected $last_error       = null;
+		protected $col_info			= null;
+		protected $timers           = array();
+		protected $total_query_time = 0;
+		protected $trace_log        = array();
+		protected $use_trace_log    = false;
+		protected $do_profile       = false;
 		
 	/**
 	* The last query result
 	* @var object Default is null
 	*/
-		public $last_result = null;
+	protected $last_result = null;
 		
 	/**
 	* Get data from disk cache
 	* @var boolean Default is false
 	*/
-	public $from_disk_cache = false;
+	protected $from_disk_cache = false;
 
 	/**
 	*  Needed for echo of debug function
 	* @var boolean Default is false
 	*/
-		public $debug_echo_is_on = true;
+	protected $debug_echo_is_on = true;
 
 	/**
 	* Whether the database connection is established, or not
@@ -103,15 +103,20 @@ class ezsqlModel extends ezQuery
 
 	/**
 	* Use for Calling Non-Existent Functions, handling Getters and Setters
-	* @param function set/get{name} = private/protected property that needs to be accessed
+	* @method set/get{property} - a property that needs to be accessed 
+	*
+	* @property-read function
+	* @property-write args
+	*
+	* @return mixed
 	*/
 	public function __call($function, $args)
 	{
 		$prefix = \substr($function, 0, 3);
 		$property = \strtolower(substr($function, 3, \strlen($function)));
-		if (($prefix == 'set') && isset($this->$property)) {
+		if (($prefix == 'set') && \property_exists($this, $property)) {
 			$this->$property = $args[0];
-		} elseif (($prefix == 'get') && isset($this->$property)){
+		} elseif (($prefix == 'get') && \property_exists($this, $property)) {
 	 		return $this->$property;
 		} else {
 			throw new \Exception("$function does not exist");
@@ -200,13 +205,13 @@ class ezsqlModel extends ezQuery
 			$this->query($query, $use_prepare);
 		}
 		
-		// Extract public out of cached results based x,y vals
+		// Extract public out of cached results based x,y values
 		if ( $this->last_result[$y] ) {
 			$values = \array_values(\get_object_vars($this->last_result[$y]));
 		}
 		
 		// If there is a value return it else return null
-		return (isset($values[$x]) && $values[$x]!=='')?$values[$x]:null;
+		return (isset($values[$x]) && $values[$x] !== null) ? $values[$x] :null;
 	}
 	
 	/**
@@ -409,7 +414,7 @@ class ezsqlModel extends ezQuery
 			echo "  " . $func_string ."<br>\n";
 		}
 		
-		echo "<b>Last Rows Returned:</b> ".(\count($this->last_result)>0 ? $this->last_result : '')."\n";
+		echo "<b>Last Rows Returned:</b> ".((\count($this->last_result) > 0)  ? $this->last_result[0] : '')."\n";
 		echo "</font></pre></font></blockquote></td></tr></table>";//.$this->donation();
 		echo "\n<hr size=1 noshade color=dddddd>";
 		
@@ -430,7 +435,7 @@ class ezsqlModel extends ezQuery
 	/**
 	* @internal alias for ezsqlModel::varDump()
 	*/
-	public function dump_var($mixed)
+	public function dump_var($mixed = '')
 	{
 		return $this->varDump($mixed);
 	}
@@ -475,14 +480,23 @@ class ezsqlModel extends ezQuery
 			echo "<tr bgcolor=eeeeee><td nowrap valign=bottom><font color=555599 face=arial size=2><b>(row)</b></font></td>";			
 			
 			for ( $i=0, $j=count($this->col_info); $i < $j; $i++ ) {
+				echo "<td nowrap align=left valign=top><font size=1 color=555599 face=arial>";
 				/* when selecting count(*) the maxlengh is not set, size is set instead. */
-				echo "<td nowrap align=left valign=top><font size=1 color=555599 face=arial>{$this->col_info[$i]->type}";
-				if (!isset($this->col_info[$i]->max_length)) {
+				if (isset($this->col_info[$i]->type))
+					echo "{$this->col_info[$i]->type}";
+
+				if (isset($this->col_info[$i]->size))
 					echo "{$this->col_info[$i]->size}";
-				} else {
+
+				if (isset($this->col_info[$i]->max_length))
 					echo "{$this->col_info[$i]->max_length}";
-				}
-				echo "</font><br><span style='font-family: arial; font-size: 10pt; font-weight: bold;'>{$this->col_info[$i]->name}</span></td>";
+
+				echo "</font><br><span style='font-family: arial; font-size: 10pt; font-weight: bold;'>";
+
+				if (isset($this->col_info[$i]->name))
+					echo "{$this->col_info[$i]->name}";
+
+				echo "</span></td>";					
 			}
 			echo "</tr>";
 			
@@ -645,18 +659,18 @@ class ezsqlModel extends ezQuery
     } // affectedRows
 	
 	// query call template
-	public function query(string $query, $use_prepare = false) 
+	public function query($query, $use_prepare = false) 
 	{
 		return false;
 	}    
 	
 	// escape call template if not available by vendor
-	public function escape($data) 
+	public function escape(string $str) 
 	{
-		if ( !isset($data) ) 
+		if ( !isset($str) ) 
 			return '';
-		if ( \is_numeric($data) ) 
-			return $data;
+		if ( \is_numeric($str) ) 
+			return $str;
 
         $nonDisplayable = array(
 			'/%0[0-8bcef]/',            // url encoded 00-08, 11, 12, 14, 15
@@ -668,11 +682,11 @@ class ezsqlModel extends ezQuery
 		);
                 
         foreach ( $nonDisplayable as $regex )
-			$data = \preg_replace( $regex, '', $data );
+			$str = \preg_replace( $regex, '', $str);
 
         $search = array("\\",  "\x00", "\n",  "\r",  "'",  '"', "\x1a");
         $replace = array("\\\\","\\0","\\n", "\\r", "\'", '\"', "\\Z");
 
-        return \str_replace($search, $replace, $data);
+        return \str_replace($search, $replace, $str);
 	}        
 } // ezsqlModel

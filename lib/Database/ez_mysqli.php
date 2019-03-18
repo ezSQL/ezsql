@@ -45,11 +45,15 @@ final class ez_mysqli extends ezsqlModel
      */
     private $database;
 
-    public function __construct(Configuration $settings) {
-        if (empty($settings) || (!$settings instanceof Configuration)) {
-            throw new Exception('<b>Fatal Error:</b> Missing configuration details to connect to database');
+    public function __construct(Configuration $settings = null) {
+        if ( ! \class_exists ('ezsqlModel') ) {
+            throw new Exception(\CONFIGURATION_REQUIRES);
         }
 
+        if (empty($settings) || (!$settings instanceof Configuration)) {
+            throw new Exception(\MISSING_CONFIGURATION);
+        }
+        
         parent::__construct();
         $this->database = $settings;
         $GLOBALS['db_'.\MYSQL] = $this;

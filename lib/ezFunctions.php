@@ -279,7 +279,7 @@ if (!function_exists('ezFunctions')) {
     }
     
     function setInstance($ezSQL = '') {
-        return \setQuery($ezSQL);
+        \setQuery($ezSQL);
     }
 
     function getInstance() {

@@ -29,15 +29,13 @@ class Configuration extends ConfigAbstract
      *                                          work with path in the dsn parameter
      * @param string $port  /args[4]        The PostgreSQL database TCP/IP port, Default is 5432
      */
-    public function __construct(string $driver, $args)
+    public function __construct(string $driver = '', $args = null)
     {
         $sql = \strtolower($driver);
-        if ( ! \class_exists ('ezsqlModel') ) {
-            throw new Exception('<b>Fatal Error:</b> This configuration requires ezsqlModel (ezsqlModel.php) to be included/loaded before it can be used');
-        } elseif (!\array_key_exists($sql, \VENDOR) || empty($args)) {
-            throw new Exception('<b>Fatal Error:</b> Missing configuration details to connect to database');
+        if (!\array_key_exists($sql, \VENDOR) || empty($args)) {
+            throw new Exception(\MISSING_CONFIGURATION);
         } else {
-            $this->driver = $sql;
+            $this->setDriver($sql);
             if ($sql == \Pdo) {
                 $this->setupPdo($args);            
             } elseif (($sql == \POSTGRESQL) || ($sql == \PGSQL)) {
@@ -59,14 +57,14 @@ class Configuration extends ConfigAbstract
         elseif (\is_string($args))
             $this->parseConnectionString($args, ['user', 'name', 'password']);
         elseif (\count($args)>=3) {
-            $this->user = empty($args[0]) ? $this->getUser() : $args[0];
-            $this->password = empty($args[1]) ? $this->getPassword() : $args[1];
-            $this->name = empty($args[2]) ? $this->getName() : $args[2];
-            $this->host = empty($args[3]) ? $this->getHost() : $args[3];
+            $this->setUser($args[0]);
+            $this->setPassword($args[1]);
+            $this->setName($args[2]);
+            $this->setHost(empty($args[3]) ? $this->getHost() : $args[3]);
             $charset = !empty($args[4]) ? $args[4] : '';
-            $this->charset = empty($charset) ? $this->getCharset() : \strtolower(\str_replace('-', '', $charset));
+            $this->setCharset(empty($charset) ? $this->getCharset() : \strtolower(\str_replace('-', '', $charset)));
         } else
-            throw new Exception('<b>Fatal Error:</b> Missing configuration details to connect to database');
+            throw new Exception(\MISSING_CONFIGURATION);
     }
 
     private function setupPdo($args) 
@@ -76,13 +74,13 @@ class Configuration extends ConfigAbstract
         elseif (\is_string($args))
             $this->parseConnectionString($args, ['user', 'dsn', 'password']);
         elseif (\count($args)>=3) {
-            $this->dsn = empty($args[0]) ? $this->getDsn() : $args[0];
-            $this->user = empty($args[1]) ? $this->getUser() : $args[1];
-            $this->password = empty($args[2]) ? $this->getPassword() : $args[2];
-            $this->options = empty($args[3]) ? $this->getOptions() : $args[3];
-            $this->isFile = empty($args[4]) ? $this->getIsFile() : $args[4];
+            $this->setDsn($args[0]);
+            $this->setUser($args[1]);
+            $this->setPassword($args[2]);
+            $this->setOptions(empty($args[3]) ? $this->getOptions() : $args[3]);
+            $this->setIsFile(empty($args[4]) ? $this->getIsFile() : $args[4]);
         } else
-           throw new Exception('<b>Fatal Error:</b> Missing configuration details to connect to database');
+           throw new Exception(\MISSING_CONFIGURATION);
     }
 
     private function setupSqlsrv($args) 
@@ -92,13 +90,13 @@ class Configuration extends ConfigAbstract
         elseif (\is_string($args))
             $this->parseConnectionString($args, ['user', 'name', 'password']);
         elseif (\count($args)>=3) {
-            $this->user = empty($args[0]) ? $this->getUser() : $args[0];
-            $this->password = empty($args[1]) ? $this->getPassword() : $args[1];
-            $this->name = empty($args[2]) ? $this->getName() : $args[2];
-            $this->host = empty($args[3]) ? $this->getHost() : $args[3];
-            $this->toMysql = empty($args[4]) ? $this->getToMysql() : $args[4];
+            $this->setUser($args[0]);
+            $this->setPassword($args[1]);
+            $this->setName($args[2]);
+            $this->setHost(empty($args[3]) ? $this->getHost() : $args[3]);
+            $this->setToMysql(empty($args[4]) ? $this->getToMysql() : $args[4]);
         } else
-            throw new Exception('<b>Fatal Error:</b> Missing configuration details to connect to database');
+            throw new Exception(\MISSING_CONFIGURATION);
     }
 
     private function setupPgsql($args) 
@@ -108,13 +106,13 @@ class Configuration extends ConfigAbstract
         elseif (\is_string($args))
             $this->parseConnectionString($args, ['user', 'name', 'password']);
         elseif (count($args)>=3) {
-            $this->user = empty($args[0]) ? $this->getUser() : $args[0];
-            $this->password = empty($args[1]) ? $this->getPassword() : $args[1];
-            $this->name = empty($args[2]) ? $this->getName() : $args[2];
-            $this->host = empty($args[3]) ? $this->getHost() : $args[3];
-            $this->port = empty($args[4]) ? $this->getPort() : $args[4];
+            $this->setUser($args[0]);
+            $this->setPassword($args[1]);
+            $this->setName($args[2]);
+            $this->setHost(empty($args[3]) ? $this->getHost() : $args[3]);
+            $this->setPort(empty($args[4]) ? $this->getPort() : $args[4]);
         } else
-            throw new Exception('<b>Fatal Error:</b> Missing configuration details to connect to database');
+            throw new Exception(\MISSING_CONFIGURATION);
     }
 
     private function setupSqlite3($args) {
@@ -123,10 +121,10 @@ class Configuration extends ConfigAbstract
         elseif (\is_string($args))
             $this->parseConnectionString($args, ['path', 'name']);
         elseif (\count($args)==2) {
-            $this->path = empty($args[0]) ? $this->getPath() : $args[0];
-            $this->name = empty($args[1]) ? $this->getName() : $args[1];
+            $this->setPath($args[0]);
+            $this->setName($args[1]);
         } else
-            throw new Exception('<b>Fatal Error:</b> Missing configuration details to connect to database');
+            throw new Exception(\MISSING_CONFIGURATION);
     }
 
     /**

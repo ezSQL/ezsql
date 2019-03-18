@@ -66,12 +66,13 @@ class DInjector implements ContainerInterface
 	 * @return null|object
 	 * @throws NotFoundException
 	 */
-	public function get($abstract)
+	public function get($abstract, $values = [])
 	{
 		if (!$this->has($abstract)) {
 			throw new NotFoundException("{$abstract} does not exists");
 		}
-		return $this->instances[$abstract];
+
+		return $this->resolve($this->instances[$abstract], $values);
 	}
 
 	/**
@@ -126,7 +127,7 @@ class DInjector implements ContainerInterface
 
 		// get class constructor
 		$constructor = $reflector->getConstructor();
-		if (is_null($constructor)) {
+		if (\is_null($constructor)) {
 			// get new instance from class
 			return $reflector->newInstance();
 		}
@@ -147,32 +148,34 @@ class DInjector implements ContainerInterface
 	 * @return array
 	 * @throws ContainerException
 	 */
-	public function getDependencies($parameters, $values)
+	protected function getDependencies($parameters, $values = null)
 	{
 		$dependencies = [];
-		foreach ($parameters as $parameter) {
-			// get the type hinted class
-			$dependency = $parameter->getClass();
-			if ($dependency === NULL) {				
-				// check if the constructor parameter name exists as a key in the values array
-				if (\array_key_exists($parameter->getName(), $values)) {			  
-				  // get default value of parameter
-				  $dependencies[] = $values[$parameter->getName()];			  
-				} else {			  
-				  // check if default value for a parameter is available
-				  if ($parameter->isDefaultValueAvailable()) {			  
+		if (\is_array($parameters)) {
+			foreach ($parameters as $parameter) {
+				// get the type hinted class
+				$dependency = $parameter->getClass();
+				if ($dependency === NULL) {
+					// check if the constructor parameter name exists as a key in the values array
+					if (\array_key_exists($parameter->getName(), $values)) {
 						// get default value of parameter
-						$dependencies[] = $parameter->getDefaultValue();			  
-				  } else {			  
-						throw new ContainerException("Can not resolve class dependency {$parameter->name}");			  
-				  }			  
-				}							  
-			} else {			  
-				// get dependency resolved
-				$dependencies[] = $this->autoWire($dependency->name, $values);			  
+						$dependencies[] = $values[$parameter->getName()];			  
+					} else {
+						// check if default value for a parameter is available
+						if ($parameter->isDefaultValueAvailable()) {
+							// get default value of parameter
+							$dependencies[] = $parameter->getDefaultValue();			  
+						} else {
+							throw new ContainerException("Can not resolve class dependency {$parameter->name}");
+						}
+					}
+				} else {
+					// get dependency resolved
+					$dependencies[] = $this->autoWire($dependency->name, $values);			  
+				}
 			}
-		}
+	}
 
-		return $dependencies;
+	return $dependencies;
 	}
 }

@@ -33,9 +33,14 @@ final class ez_sqlite3 extends ezsqlModel
      */
     public function __construct(Configuration $settings)
     {
-        if (empty($settings) || (!$settings instanceof Configuration)) {
-            throw new Exception('<b>Fatal Error:</b> Missing configuration details to connect to database');
+        if ( ! \class_exists ('ezsqlModel') ) {
+            throw new Exception(\CONFIGURATION_REQUIRES);
         }
+        
+        if (empty($settings) || (!$settings instanceof Configuration)) {
+            throw new Exception(\MISSING_CONFIGURATION);
+        }
+        
         parent::__construct();
         $this->database = $settings;
 
@@ -90,8 +95,10 @@ final class ez_sqlite3 extends ezsqlModel
     /**
      *  Format a SQLite string correctly for safe SQLite insert
      *  (no mater if magic quotes are on or not)
+     * @param string $str
+     * @return string
      */
-    public function escape($str)
+    public function escape(string $str)
     {
         return $this->dbh->escapeString(\stripslashes(\preg_replace("/[\r\n]/", '', $str)));
     }

@@ -4,9 +4,9 @@ namespace ezsql\Tests;
 
 use ezsql\Database;
 use ezsql\Configuration;
-use ezsql\Tests\DBTestCase;
+use ezsql\Tests\EZTestCase;
 
-class ezResultsetTest extends DBTestCase 
+class ezResultsetTest extends EZTestCase 
 {    
     /**
      * @var ezResultset

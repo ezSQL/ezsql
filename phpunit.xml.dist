@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<phpunit 
-        backupGlobals="false"
-        backupStaticAttributes="false"
-        colors="true"
-        convertErrorsToExceptions="true"
-        convertNoticesToExceptions="true"
-        convertWarningsToExceptions="true"
-        processIsolation="false"
-        stopOnFailure="false" >
+<phpunit bootstrap="vendor/autoload.php"
+		 backupGlobals="false"
+         backupStaticAttributes="false"
+         colors="false"
+         convertErrorsToExceptions="true"
+         convertNoticesToExceptions="true"
+         convertWarningsToExceptions="true"
+         processIsolation="false"
+         stopOnFailure="false">
         
     <testsuites>
         <testsuite name="ezDBA Test Suite">
@@ -35,7 +35,7 @@
         <var name="DB_PASSWD" value="ezTest" />
         <var name="DB_DBNAME" value="ez_test" />    
     </php>
-	
+
 	<logging>
         <log type="tap" target="build/report.tap"/>
         <log type="junit" target="build/report.junit.xml"/>

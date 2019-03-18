@@ -36,9 +36,14 @@ final class ez_pgsql extends ezsqlModel
 
     public function __construct(Configuration $settings)
     {
-        if (empty($settings) || (!$settings instanceof Configuration)) {
-            throw new Exception('<b>Fatal Error:</b> Missing configuration details to connect to database');
+        if ( ! \class_exists ('ezsqlModel') ) {
+            throw new Exception(\CONFIGURATION_REQUIRES);
         }
+        
+        if (empty($settings) || (!$settings instanceof Configuration)) {
+            throw new Exception(\MISSING_CONFIGURATION);
+        }
+        
         parent::__construct();
         $this->database = $settings;
 
@@ -113,7 +118,7 @@ final class ez_pgsql extends ezsqlModel
      * @param string $str
      * @return string
      */
-    public function escape($str)
+    public function escape(string $str)
     {
         return \pg_escape_string(\stripslashes($str));
     } // escape

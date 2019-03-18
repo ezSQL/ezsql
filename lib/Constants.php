@@ -1,6 +1,9 @@
 <?php
 
 if (!\defined('CONSTANTS')) {
+    // Error messages
+    \define('MISSING_CONFIGURATION', '<b>Fatal Error:</b> Missing configuration details to connect to database');
+    \define('CONFIGURATION_REQUIRES', '<b>Fatal Error:</b> This configuration requires ezsqlModel (ezsqlModel.php) to be included/loaded before it can be used');
     // ezQuery prepare placeholder/positional tag
     \define('_TAG', '__ez__');
     // Use to set get_result output as json 
@@ -53,16 +56,16 @@ if (!\defined('CONSTANTS')) {
     * @define(array)
     */
     \define('VENDOR', [
-        'mysql' => 'ez_mysqli',
-        'mysqli' => 'ez_mysqli',
-        'pdo' => 'ez_pdo',
-        'postgresql' => 'ez_pgsql',
-        'pgsql' => 'ez_pgsql',
-        'sqlite' => 'ez_sqlite3',
-        'sqlite3' => 'ez_sqlite3',
-        'sqlserver' => 'ez_sqlsrv',
-        'mssql' => 'ez_sqlsrv',
-        'sqlsrv' => 'ez_sqlsrv'
+        'mysql' => 'ezsql\Database\ez_mysqli',
+        'mysqli' => 'ezsql\Database\ez_mysqli',
+        'pdo' => 'ezsql\Database\ez_pdo',
+        'postgresql' => 'ezsql\Database\ez_pgsql',
+        'pgsql' => 'ezsql\Database\ez_pgsql',
+        'sqlite' => 'ezsql\Database\ez_sqlite3',
+        'sqlite3' => 'ezsql\Database\ez_sqlite3',
+        'sqlserver' => 'ezsql\Database\ez_sqlsrv',
+        'mssql' => 'ezsql\Database\ez_sqlsrv',
+        'sqlsrv' => 'ezsql\Database\ez_sqlsrv'
     ]);
 
     \define('MYSQL', 'mysqli', true);
