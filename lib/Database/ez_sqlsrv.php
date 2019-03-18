@@ -46,7 +46,8 @@ final class ez_sqlsrv extends ezsqlModel
     public function __construct(Configuration $settings)
     {
         if ( ! \class_exists ('ezsqlModel') ) {
-            throw new Exception(\CONFIGURATION_REQUIRES);
+            if ( ! \class_exists ('ezsql\Database') )
+                throw new Exception(\CONFIGURATION_REQUIRES);
         }
         
         if (empty($settings) || (!$settings instanceof Configuration)) {
@@ -60,6 +61,11 @@ final class ez_sqlsrv extends ezsqlModel
         $GLOBALS['db_'.\MSSQL] = $this;
         $GLOBALS['db_'.\SQLSRV] = $this;
         \setInstance($this);
+    }
+
+    public function settings()
+    {
+        return $this->database;
     }
 
     /**

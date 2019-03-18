@@ -37,7 +37,8 @@ final class ez_pgsql extends ezsqlModel
     public function __construct(Configuration $settings)
     {
         if ( ! \class_exists ('ezsqlModel') ) {
-            throw new Exception(\CONFIGURATION_REQUIRES);
+            if ( ! \class_exists ('ezsql\Database') )
+                throw new Exception(\CONFIGURATION_REQUIRES);
         }
         
         if (empty($settings) || (!$settings instanceof Configuration)) {
@@ -51,6 +52,11 @@ final class ez_pgsql extends ezsqlModel
         $GLOBALS['db_' .\POSTGRESQL] = $this;
         \setInstance($this);
     } // __construct
+
+    public function settings()
+    {
+        return $this->database;
+    }
 
     /**
      * In the case of PostgreSQL quick_connect is not really needed because std.

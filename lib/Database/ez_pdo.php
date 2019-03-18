@@ -32,7 +32,8 @@ final class ez_pdo extends ezsqlModel
 
     public function __construct(Configuration $settings) {
         if ( ! \class_exists ('ezsqlModel') ) {
-            throw new Exception(\CONFIGURATION_REQUIRES);
+            if ( ! \class_exists ('ezsql\Database') )
+                throw new Exception(\CONFIGURATION_REQUIRES);
         }
         
         if (empty($settings) || (!$settings instanceof Configuration)) {
@@ -57,6 +58,11 @@ final class ez_pdo extends ezsqlModel
         $GLOBALS['db_'.\Pdo] = $this;
         \setInstance($this);
     } // __construct
+
+    public function settings()
+    {
+        return $this->database;
+    }
 
     public static function securePDO(
         $vendor = null, 

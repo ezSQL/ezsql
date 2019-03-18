@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace ezsql;
 
 use ezsql\DInjector;
-use ezsql\Configuration;
 
 class Database
 {
@@ -15,12 +14,6 @@ class Database
      * @var float
      */
     private static $_ts = null;
-
-    /**
-     * Database configuration setting 
-     * @var Configuration instance
-     */
-    private static $database;
 
     private function __construct() {}
     private function __clone() {}
@@ -37,16 +30,18 @@ class Database
         if  (empty($vendor) || empty($setting)) {
             throw new \Exception(\MISSING_CONFIGURATION);
         } else {
-            self::$_ts = \microtime();
-            self::$database = new Configuration($vendor, $setting);
-            $key = self::$database->getDriver();
+            self::$_ts = \microtime(true);
+            //self::$database = new Configuration($vendor, $setting);
+            //$di->set('Configuration', 'ezsql\Configuration');
+            //$database = $di->autoWire('Configuration', ['driver' => $vendor, 'args' => $setting]); 
+            //$key = $database->getDriver();
+            $key = $vendor;
             $value = \VENDOR[$key];
 
             if (empty($GLOBALS['db_'.$key])) {
                 $di = new DInjector();
                 $di->set($key, $value);
-                //$di->set($key, \ezsql\Configuration::class);
-                $GLOBALS['db_'.$key] = $di->autoWire($key, ['driver' => $key, 'args' => $setting, 'settings' => self::$database]); 
+                $GLOBALS['db_'.$key] = $di->get($key, ['driver' => $key, 'args' => $setting]); 
             }
 
             return $GLOBALS['db_'.$key];
@@ -62,13 +57,8 @@ class Database
     {
         return [
             'start'  => self::$_ts,
-            'elapse' => \microtime() - self::$_ts,
+            'elapse' => \microtime(true) - self::$_ts,
             'memory' => \memory_get_usage(true),
         ];
-    }
-
-    public static function settings()
-    {
-        return self::$database;
     }
 }

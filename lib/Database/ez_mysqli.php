@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace ezsql\Database;
 
 use Exception;
+//use ezsql\Database;
 use ezsql\Configuration;
 use ezsql\ezsqlModel;
 
@@ -47,19 +48,25 @@ final class ez_mysqli extends ezsqlModel
 
     public function __construct(Configuration $settings = null) {
         if ( ! \class_exists ('ezsqlModel') ) {
-            throw new Exception(\CONFIGURATION_REQUIRES);
+            if ( ! \class_exists ('ezsql\Database') )
+                throw new Exception(\CONFIGURATION_REQUIRES);
         }
 
         if (empty($settings) || (!$settings instanceof Configuration)) {
             throw new Exception(\MISSING_CONFIGURATION);
         }
         
-        parent::__construct();
+        parent::__construct('here');
         $this->database = $settings;
         $GLOBALS['db_'.\MYSQL] = $this;
         $GLOBALS['db_'.\MYSQLI] = $this;
         \setInstance($this);
     } // __construct
+
+    public function settings()
+    {
+        return $this->database;
+    }
 
     /**
      * Short hand way to connect to mysql database server and select a mysql
