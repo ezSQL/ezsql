@@ -48,7 +48,6 @@ final class ez_pdo extends ezsqlModel implements DatabaseInterface
         ini_set('track_errors', 1);
 
         if ( !empty($this->database->getDsn()) && !empty($this->database->getUser()) && !empty($this->database->getPassword()) ) {
-            print "<p>constructor: ".$this->database->getDsn()."</p>";
             $this->connect($this->database->getDsn(), 
                 $this->database->getUser(), 
                 $this->database->getPassword(), 
