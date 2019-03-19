@@ -35,7 +35,7 @@ class Database
             $value = \VENDOR[$key];
 
             if (empty($GLOBALS['db_'.$key])) {
-                $di = new DInjector();//settings
+                $di = new DInjector();
                 $di->set($key, $value);                
                 $di->set('ezsql\ConfigInterface', 'ezsql\Config');
                 $GLOBALS['db_'.$key] = $di->get($key, ['driver' => $key, 'arguments' => $setting]); 

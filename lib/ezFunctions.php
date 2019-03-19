@@ -2,13 +2,42 @@
 
 use ezsql\ezSchema;
 use ezsql\ezQuery;
+use ezsql\Database;
 use ezsql\Database\ez_pdo;
-use ezsql\ezQueryInterface;
+use ezsql\DatabaseInterface;
 
 // Global class instances, will be used to create and call methods directly.
 global $ezInstance;
 
 if (!function_exists('ezFunctions')) {
+    function database(string $sqlDriver = null, $connectionSetting = null)
+    {
+        return Database::initialize($sqlDriver, $connectionSetting);
+    }
+
+    function mysqlInstance($databaseSetting = null)
+    {
+        return \database(\MYSQLI, $databaseSetting);
+    }
+    function pgsqlInstance($databaseSetting = null)
+    {
+        return \database(\PGSQL, $databaseSetting);
+    }
+    function mssqlInstance($databaseSetting = null)
+    {
+        return \database(\MSSQL, $databaseSetting);
+    }
+
+    function pdoInstance($databaseSetting = null)
+    {
+        return \database(\Pdo, $databaseSetting);
+    }
+
+    function sqliteInstance($databaseSetting = null)
+    {
+        return \database(\SQLITE3, $databaseSetting);
+    }
+
     function to_string($arrays, $separation = ',')
     {
         return ezQuery::to_string($arrays, $separation);
@@ -264,7 +293,7 @@ if (!function_exists('ezFunctions')) {
         global $ezInstance;
         $status = false;
 
-        if ($ezSQL instanceOf ezQueryInterface) {
+        if ($ezSQL instanceOf DatabaseInterface) {
 			$ezInstance = $ezSQL;
 			$status = true;
 		} elseif (\array_key_exists(\strtolower($ezSQL), VENDOR)) {
@@ -294,49 +323,49 @@ if (!function_exists('ezFunctions')) {
 
     function select($table = '', $columns = '*', ...$args) {
         $ezQuery = \getInstance();
-        return ($ezQuery instanceOf ezQueryInterface) 
+        return ($ezQuery instanceOf DatabaseInterface) 
             ? $ezQuery->selecting($table, $columns, ...$args) 
             : false;
     } 
     
     function select_into($table, $columns = '*', $old = null, ...$args) {
         $ezQuery = \getInstance();
-        return ($ezQuery instanceOf ezQueryInterface) 
+        return ($ezQuery instanceOf DatabaseInterface) 
             ? $ezQuery->select_into($table, $columns, $old, ...$args) 
             : false;
     } 
     
     function insert_select($totable = '', $columns = '*', $fromTable, $from = '*', ...$args) {
         $ezQuery = \getInstance();
-        return ($ezQuery instanceOf ezQueryInterface) 
+        return ($ezQuery instanceOf DatabaseInterface) 
             ? $ezQuery->insert_select($totable, $columns, $fromTable, $from, ...$args) 
             : false;
     }     
     
     function create_select($table, $from, $old = null, ...$args) {
         $ezQuery = \getInstance();
-        return ($ezQuery instanceOf ezQueryInterface) 
+        return ($ezQuery instanceOf DatabaseInterface) 
             ? $ezQuery->create_select($table, $from, $old, ...$args) 
             : false;
     }  
     
     function where( ...$args) {
         $ezQuery = \getInstance();
-        return ($ezQuery instanceOf ezQueryInterface) 
+        return ($ezQuery instanceOf DatabaseInterface) 
             ? $ezQuery->where( ...$args) 
             : false;
     } 
     
     function groupBy($groupBy) {
         $ezQuery = \getInstance();
-        return ($ezQuery instanceOf ezQueryInterface) 
+        return ($ezQuery instanceOf DatabaseInterface) 
             ? $ezQuery->groupBy($groupBy) 
             : false;
     } 
     
     function having( ...$args) {
         $ezQuery = \getInstance();
-        return ($ezQuery instanceOf ezQueryInterface) 
+        return ($ezQuery instanceOf DatabaseInterface) 
             ? $ezQuery->having( ...$args) 
             : false;
     }
@@ -349,7 +378,7 @@ if (!function_exists('ezFunctions')) {
         $condition = \EQ
     ) {
         $ezQuery = \getInstance();
-        return ($ezQuery instanceOf ezQueryInterface) 
+        return ($ezQuery instanceOf DatabaseInterface) 
             ? $ezQuery->innerJoin($leftTable, $rightTable, $leftColumn, $rightColumn, $condition) 
             : false;
     }
@@ -362,7 +391,7 @@ if (!function_exists('ezFunctions')) {
         $condition = \EQ
     ) {
         $ezQuery = \getInstance();
-        return ($ezQuery instanceOf ezQueryInterface) 
+        return ($ezQuery instanceOf DatabaseInterface) 
             ? $ezQuery->leftJoin($leftTable, $rightTable, $leftColumn, $rightColumn, $condition) 
             : false;
     }
@@ -375,7 +404,7 @@ if (!function_exists('ezFunctions')) {
         $condition = \EQ
     ) {
         $ezQuery = \getInstance();
-        return ($ezQuery instanceOf ezQueryInterface) 
+        return ($ezQuery instanceOf DatabaseInterface) 
             ? $ezQuery->rightJoin($leftTable, $rightTable, $leftColumn, $rightColumn, $condition) 
             : false;
     }
@@ -388,63 +417,63 @@ if (!function_exists('ezFunctions')) {
         $condition = \EQ
     ) {
         $ezQuery = \getInstance();
-        return ($ezQuery instanceOf ezQueryInterface) 
+        return ($ezQuery instanceOf DatabaseInterface) 
             ? $ezQuery->fullJoin($leftTable, $rightTable, $leftColumn, $rightColumn, $condition) 
             : false;
     }
 
     function union($table = '', $columnFields = '*', ...$conditions) {
         $ezQuery = \getInstance();
-        return ($ezQuery instanceOf ezQueryInterface) 
+        return ($ezQuery instanceOf DatabaseInterface) 
             ? $ezQuery->union($table, $columnFields, ...$conditions) 
             : false;
     } 
 
     function unionAll($table = '', $columnFields = '*', ...$conditions) {
         $ezQuery = \getInstance();
-        return ($ezQuery instanceOf ezQueryInterface) 
+        return ($ezQuery instanceOf DatabaseInterface) 
             ? $ezQuery->unionAll($table, $columnFields, ...$conditions) 
             : false;
     } 
 
     function orderBy($orderBy, $order) {
         $ezQuery = \getInstance();
-        return ($ezQuery instanceOf ezQueryInterface) 
+        return ($ezQuery instanceOf DatabaseInterface) 
             ? $ezQuery->orderBy($orderBy, $order) 
             : false;
     } 
 
     function limit($numberOf, $offset = null) {
         $ezQuery = \getInstance();
-        return ($ezQuery instanceOf ezQueryInterface) 
+        return ($ezQuery instanceOf DatabaseInterface) 
             ? $ezQuery->limit($numberOf, $offset) 
             : false;
     } 
     
     function insert($table = '', $keyValue) {
         $ezQuery = \getInstance();
-        return ($ezQuery instanceOf ezQueryInterface) 
+        return ($ezQuery instanceOf DatabaseInterface) 
             ? $ezQuery->insert($table, $keyValue) 
             : false;
     } 
     
     function update($table = '', $keyValue, ...$args) {
         $ezQuery = \getInstance();
-        return ($ezQuery instanceOf ezQueryInterface) 
+        return ($ezQuery instanceOf DatabaseInterface) 
             ? $ezQuery->update($table, $keyValue, ...$args) 
             : false;
     } 
     
     function delete($table = '', ...$args) {
         $ezQuery = \getInstance();
-        return ($ezQuery instanceOf ezQueryInterface) 
+        return ($ezQuery instanceOf DatabaseInterface) 
             ? $ezQuery->delete($table, ...$args) 
             : false;
     } 
         
     function replace($table = '', $keyValue) {
         $ezQuery = \getInstance();
-        return ($ezQuery instanceOf ezQueryInterface) 
+        return ($ezQuery instanceOf DatabaseInterface) 
             ? $ezQuery->replace($table, $keyValue) 
             : false;
     }  

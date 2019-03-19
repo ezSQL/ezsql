@@ -160,15 +160,16 @@ class ezSchema
         $dbMysqli = $GLOBALS['db_'.\MYSQL];
         $dbMssql = $GLOBALS['db_'.\SQLSERVER];
         $dbPdo = $GLOBALS['db_'.\Pdo];
-        if ($dbSqlite === \getInstance() && !empty($dbSqlite))
+        $instance = \getInstance();
+        if ($dbSqlite === $instance && !empty($dbSqlite))
             $type = \SQLITE3;
-        elseif ($dbPgsql === \getInstance() && !empty($dbPgsql)) 
+        elseif ($dbPgsql === $instance && !empty($dbPgsql)) 
             $type = \POSTGRESQL;
-        elseif ($dbMysqli === \getInstance() && !empty($dbMysqli))
+        elseif ($dbMysqli === $instance && !empty($dbMysqli))
             $type = \MYSQL;
-        elseif ($dbMssql === \getInstance() && !empty($dbMssql))
+        elseif ($dbMssql === $instance && !empty($dbMssql))
             $type = \SQLSERVER;
-        elseif ($dbPdo === \getInstance() && !empty($dbPdo)) {
+        elseif ($dbPdo === $instance && !empty($dbPdo)) {
             $dbh = $dbPdo->connection();
             if (strpos($dbh->getAttribute(\PDO::ATTR_CLIENT_VERSION), \MYSQL) !== false) 
                 $type = \MYSQL;

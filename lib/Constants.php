@@ -70,7 +70,8 @@ if (!\defined('CONSTANTS')) {
 
     \define('MYSQL', 'mysqli', true);
     \define('MYSQLI', 'mysqli', true);
-    \define('PDO', 'pdo', true);
+    //\define('PDO', 'pdo', true);
+    \define('Pdo', 'pdo');
     \define('PGSQL', 'pgsql', true);
     \define('POSTGRESQL', 'postgresql', true);
     \define('SQLITE', 'sqlite', true);
