@@ -31,17 +31,14 @@ class Database
             throw new \Exception(\MISSING_CONFIGURATION);
         } else {
             self::$_ts = \microtime(true);
-            //self::$database = new Configuration($vendor, $setting);
-            //$di->set('Configuration', 'ezsql\Configuration');
-            //$database = $di->autoWire('Configuration', ['driver' => $vendor, 'args' => $setting]); 
-            //$key = $database->getDriver();
             $key = $vendor;
             $value = \VENDOR[$key];
 
             if (empty($GLOBALS['db_'.$key])) {
-                $di = new DInjector();
-                $di->set($key, $value);
-                $GLOBALS['db_'.$key] = $di->get($key, ['driver' => $key, 'args' => $setting]); 
+                $di = new DInjector();//settings
+                $di->set($key, $value);                
+                $di->set('ezsql\ConfigInterface', 'ezsql\Config');
+                $GLOBALS['db_'.$key] = $di->get($key, ['driver' => $key, 'arguments' => $setting]); 
             }
 
             return $GLOBALS['db_'.$key];

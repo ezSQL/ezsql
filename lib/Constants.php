@@ -191,6 +191,7 @@ if (!\defined('CONSTANTS')) {
     \define('REFERENCES', 'REFERENCES');
 
     \define('AUTO', '__autoNumbers__');
+    \define('SEQUENCE', '__autoNumbers__');
     \define('AUTO_INCREMENT', 'AUTO_INCREMENT');
     \define('AUTOINCREMENT', 'AUTOINCREMENT');
     \define('IDENTITY', 'IDENTITY');

@@ -3,7 +3,7 @@
 namespace ezsql\Tests;
 
 use ezsql\Database;
-use ezsql\Configuration;
+use ezsql\ConfigInterface;
 use ezsql\Database\ez_mysqli;
 use ezsql\Database\ez_pdo;
 use ezsql\Database\ez_pgsql;
@@ -19,8 +19,8 @@ class DatabaseTest extends EZTestCase
     public function testInitialize()
     {
         $mysqli = Database::initialize(MYSQLI, [self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME]);
-        $this->assertFalse($mysqli instanceof Configuration);
-        $this->assertTrue($mysqli->settings() instanceof Configuration);
+        $this->assertFalse($mysqli instanceof ConfigInterface);
+        $this->assertTrue($mysqli->settings() instanceof ConfigInterface);
         $this->assertTrue($mysqli instanceof ez_mysqli);
         $this->assertTrue($mysqli->getShow_Errors());
         $benchmark = Database::benchmark();

@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace ezsql\Database;
 
 use Exception;
-use ezsql\Configuration;
+use ezsql\ConfigInterface;
 use ezsql\ezsqlModel;
 
 final class ez_pdo extends ezsqlModel
@@ -30,13 +30,13 @@ final class ez_pdo extends ezsqlModel
     */
     private static $database;
 
-    public function __construct(Configuration $settings) {
+    public function __construct(ConfigInterface $settings) {
         if ( ! \class_exists ('ezsqlModel') ) {
-            if ( ! \class_exists ('ezsql\Database') )
+            if ( ! \interface_exists('Psr\Container\ContainerInterface') )
                 throw new Exception(\CONFIGURATION_REQUIRES);
         }
         
-        if (empty($settings) || (!$settings instanceof Configuration)) {
+        if (empty($settings) || (!$settings instanceof ConfigInterface)) {
             throw new Exception(\MISSING_CONFIGURATION);
         }
         

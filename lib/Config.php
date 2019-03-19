@@ -1,53 +1,60 @@
-<?php 
-
+<?php
 declare(strict_types=1);
 
 namespace ezsql;
 
 use Exception;
 use ezsql\ConfigAbstract;
+use ezsql\ConfigInterface;
 
-class Configuration extends ConfigAbstract
+class Config extends ConfigAbstract implements ConfigInterface
 {
-    /**
-     * Constructor - initializing the SQL database class
-     *     
-     * @param string $driver     The sql database driver name
-     * 
-     * @param string $path  /args[0]        The path to open an SQLite database
-     * @param string $dsn   /args[0]        The PDO DSN connection parameter string
-     * 
-     * @param string $user  /args[0][1]     The database user name
-     * @param string $password  /args[1][2] The database users password
-     * 
-     * @param string $name  /args[1][2]     The name of the database
-     * @param string $host  /args[3]        The host name or IP address of the database server, Default is localhost
-     * @param string $charset   /args[4]    The database charset, Default is empty string
-     * 
-     * @param array $options    /args[3]    Array for setting connection options as MySQL
-     * @param boolean $isFile   /args[4]    File based databases like SQLite don't need user and password, 
-     *                                          work with path in the dsn parameter
-     * @param string $port  /args[4]        The PostgreSQL database TCP/IP port, Default is 5432
-     */
-    public function __construct(string $driver = '', $args = null)
+    public function __construct(string $driver = '', $arguments = null)
     {
         $sql = \strtolower($driver);
-        if (!\array_key_exists($sql, \VENDOR) || empty($args)) {
+        if (!\array_key_exists($sql, \VENDOR) || empty($arguments)) {
             throw new Exception(\MISSING_CONFIGURATION);
         } else {
             $this->setDriver($sql);
             if ($sql == \Pdo) {
-                $this->setupPdo($args);            
+                $this->setupPdo($arguments);            
             } elseif (($sql == \POSTGRESQL) || ($sql == \PGSQL)) {
-                $this->setupPgsql($args);
+                $this->setupPgsql($arguments);
             } elseif (($sql == \SQLSRV) || ($sql == \MSSQL) || ($sql == \SQLSERVER)) {
-                $this->setupSqlsrv($args);
+                $this->setupSqlsrv($arguments);
             } elseif (($sql == \MYSQLI) || ($sql == \MYSQL)) {
-                $this->setupMysqli($args);
+                $this->setupMysqli($arguments);
             } elseif (($sql == \SQLITE3) || ($sql == \SQLITE)) {
-                $this->setupSqlite3($args);
+                $this->setupSqlite3($arguments);
             }
         }
+    }
+
+    /**
+     * initializing/connection settings for vendors SQL database class
+     *     
+     * @param string $driver - The vendor's SQL database driver name
+     * @param string|array $arguments - of the following:
+     * 
+     * @param string $path  /args[0] - The path to open an SQLite database
+     * @param string $dsn   /args[0] - The PDO DSN connection parameter string
+     * 
+     * @param string $user  /args[0][1] - The database user name
+     * @param string $password  /args[1][2] - The database users password
+     * 
+     * @param string $name  /args[1][2] - The name of the database
+     * @param string $host  /args[3] - The host name or IP address of the database server,
+     *                                   Default is localhost
+     * @param string $charset   /args[4] - The database charset, Default is empty string
+     * 
+     * @param array $options    /args[3] - Array for setting connection options as MySQL
+     * @param boolean $isFile   /args[4] - File based databases like SQLite don't need user
+     *                                   and password, work with path in the dsn parameter
+     * @param string $port  /args[4] - The PostgreSQL database TCP/IP port, Default is 5432
+     */
+    public static function initialize(string $driver = '', $arguments = null)
+    {
+        return new self($driver, $arguments);
     }
 
     private function setupMysqli($args) 
