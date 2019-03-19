@@ -65,6 +65,34 @@ class ezSQLcoreTest extends TestCase {
     }
 	
     /**
+     * @covers ezSQLcore::__call
+     */
+    public function testGetCache_Timeout()
+    {
+        $res = $this->object->getCache_Timeout();
+        $this->assertEquals(24, $res);
+    }
+
+    /**
+     * @covers ezSQLcore::__call
+     */
+    public function testSetCache_Timeout()
+    {
+        $this->object->setCache_Timeout(44);
+        $this->assertEquals(44, $this->object->getCache_Timeout());
+    }
+
+    /**
+     * @covers ezSQLcore::__call
+     */
+    public function testgetNotProperty()
+    {
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessageRegExp('/does not exist/');
+        $res = $this->object->getNotProperty();
+    }
+	
+    /**
      * @covers ezSQLcore::register_error
      */
     public function testRegister_error() {
