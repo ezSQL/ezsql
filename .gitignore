@@ -13,3 +13,4 @@ build/logs/clover.xml
 *.csr
 *.key
 test.php
+build
