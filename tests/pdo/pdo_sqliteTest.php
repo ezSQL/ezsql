@@ -3,7 +3,6 @@
 namespace ezsql\Tests;
 
 use ezsql\Database;
-use ezsql\Configuration;
 use ezsql\Tests\DBTestCase;
 
 class pdo_sqliteTest extends DBTestCase 

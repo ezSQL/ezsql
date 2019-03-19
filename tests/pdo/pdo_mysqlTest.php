@@ -3,7 +3,6 @@
 namespace ezsql\Tests;
 
 use ezsql\Database;
-use ezsql\Configuration;
 use ezsql\Tests\DBTestCase;
 
 class pdo_mysqlTest extends DBTestCase 
@@ -285,7 +284,7 @@ class pdo_mysqlTest extends DBTestCase
         ->disableOriginalConstructor()
         ->getMock();
         
-        $this->expectOutputRegex('/[constructor:]/');
+        //$this->expectOutputRegex('/[constructor:]/');
         $this->assertNull($pdo->__construct('mysql:host=' . self::TEST_DB_HOST . ';dbname=' . self::TEST_DB_NAME . ';port=' . self::TEST_DB_PORT, self::TEST_DB_USER, self::TEST_DB_PASSWORD));  
     } 
      

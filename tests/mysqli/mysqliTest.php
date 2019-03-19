@@ -3,7 +3,6 @@
 namespace ezsql\Tests;
 
 use ezsql\Database;
-use ezsql\Configuration;
 use ezsql\Tests\EZTestCase;
 
 class ez_mysqliTest extends EZTestCase 

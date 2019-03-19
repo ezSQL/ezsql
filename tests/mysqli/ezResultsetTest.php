@@ -3,7 +3,6 @@
 namespace ezsql\Tests;
 
 use ezsql\Database;
-use ezsql\Configuration;
 use ezsql\Tests\EZTestCase;
 
 class ezResultsetTest extends EZTestCase 
@@ -29,8 +28,7 @@ class ezResultsetTest extends EZTestCase
             $this->markTestSkipped('The MySQL Lib is not available.');
         }
 
-        $setting = new Configuration('mysqli', [self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME]);
-        $this->ezSQL = Database::initialize($setting);
+        $this->ezSQL = Database::initialize('mysqli', [self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME]);
         $this->ezSQL->quick_connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME);        
         
         $this->ezSQL->select(self::TEST_DB_NAME);
