@@ -3,6 +3,7 @@
 namespace ezsql;
 
 use ezsql\ezQuery;
+use ezsql\ezsqlModelInterface;
 
 /**
 * ezsqlModel Constants
@@ -16,7 +17,7 @@ defined('ARRAY_N') or define('ARRAY_N', 'ARRAY_N');
 * Core class containing common functions to manipulate query result
 * sets once returned
 */	
-class ezsqlModel extends ezQuery
+class ezsqlModel extends ezQuery implements ezsqlModelInterface
 {
 		protected $trace            = false;  // same as $debug_all
 		protected $debug_all        = false;  // same as $trace

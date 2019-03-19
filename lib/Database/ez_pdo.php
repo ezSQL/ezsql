@@ -4,10 +4,11 @@ declare(strict_types=1);
 namespace ezsql\Database;
 
 use Exception;
-use ezsql\ConfigInterface;
 use ezsql\ezsqlModel;
+use ezsql\ConfigInterface;
+use ezsql\DatabaseInterface;
 
-final class ez_pdo extends ezsqlModel
+final class ez_pdo extends ezsqlModel implements DatabaseInterface
 {
     /**
     * ezSQL error strings - PDO

@@ -188,8 +188,8 @@ class ezSchema
      * - column, datatype, value/options with the given arguments.
      * 
      * // datatype are global CONSTANTS and can be written out like:
-     *      - VARCHAR, 32, notNULL, PRIMARY, AUTO, ....
-     * // AUTO constant will replaced with the proper auto sequence for the SQL driver
+     *      - VARCHAR, 32, notNULL, PRIMARY, SEQUENCE|AUTO, ....
+     * // SEQUENCE|AUTO constants will replaced with the proper auto sequence for the SQL driver
      * 
      * @param string $column|CONSTRAINT, - column name/CONSTRAINT usage for PRIMARY|FOREIGN KEY
      * @param string $type|$constraintName, - data type for column/primary|foreign constraint name
@@ -230,7 +230,7 @@ class ezSchema
             $data = self::datatype($type, ...$args);
             if (!empty($data)) {
 		        // check for sequence placeholder and replace with vendors
-		        $data = \str_replace(\AUTO, self::autoNUMBERS[$vendor], $data);
+		        $data = \str_replace(\SEQUENCE, self::autoNUMBERS[$vendor], $data);
                 $columnData = $column.' '.$data.', ';
             }
         }
