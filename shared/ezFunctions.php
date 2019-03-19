@@ -29,6 +29,10 @@ use ezsql\ezSchema;
 use ezsql\ezQuery;
 use ezsql\ezQueryInterface;
 
+    // Error messages
+    const MISSING_CONFIGURATION ='<b>Fatal Error:</b> Missing configuration details to connect to database';
+    const CONFIGURATION_REQUIRES = '<b>Fatal Error:</b> ezSQL_mysql requires ezSQLcore (ez_sql_core.php) to be included/loaded before it can be used';
+
 	// ezQuery prepare placeholder/positional tag
 		const _TAG = '__ez__';
     // Use to set get_result output as json 
@@ -164,6 +168,7 @@ use ezsql\ezQueryInterface;
         const REFERENCES = 'REFERENCES';
 
         const AUTO = '__autoNumbers__';
+        const SEQUENCE = '__autoNumbers__';
         const AUTO_INCREMENT = 'AUTO_INCREMENT';
         const AUTOINCREMENT = 'AUTOINCREMENT';
         const IDENTITY = 'IDENTITY';
