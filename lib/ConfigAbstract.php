@@ -21,6 +21,9 @@ declare(strict_types=1);
 
 namespace ezsql;
 
+/**
+* @method set/get{property} - a property that needs to be accessed 
+*/
 abstract class ConfigAbstract 
 {
     /**
@@ -97,8 +100,6 @@ abstract class ConfigAbstract
         
 	/**
 	* Use for Calling Non-Existent Functions, handling Getters and Setters
-	* @method set/get{property} - a property that needs to be accessed 
-	*
 	* @property-read function
 	* @property-write args
 	*
