@@ -336,8 +336,6 @@ final class ez_mysqli extends ezsqlModel implements DatabaseInterface
         // For reg expressions
         $query = \trim($query);
 
-        if (strpos($query,'create_test') !== false)
-            echo $query;
         // Log how the function was called
         $this->log_query("\$db->query(\"$query\")");
 

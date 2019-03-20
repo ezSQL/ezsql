@@ -134,9 +134,14 @@ class ezQuery implements ezQueryInterface
         return false;
     }
 
-    public function setPrepare($on = true) 
+    public function prepareActive()
     {
-        $this->prepareActive = ($on) ? true : false;
+        $this->prepareActive = true;
+    }
+    
+    public function prepareInActive()
+    {
+        $this->prepareActive = false;
     }  	
 
     /**
@@ -693,6 +698,7 @@ class ezQuery implements ezQueryInterface
 
    public function create(string $table = null, ...$schemas) 
    {
+        \setInstance($this);
         $vendor = ezSchema::vendor();
         if (empty($table) || empty($schemas) || empty($vendor))
            return false;

@@ -1,6 +1,8 @@
 <?php
 namespace ezsql;
 
+use ezsql\DatabaseInterface;
+
 class ezSchema
 {
     const STRINGS = [
@@ -155,21 +157,21 @@ class ezSchema
     public static function vendor() 
     {
         $type = null;
+        $instance = \getInstance();
         $dbSqlite = $GLOBALS['db_'.\SQLITE3];
         $dbPgsql = $GLOBALS['db_'.\PGSQL];
         $dbMysqli = $GLOBALS['db_'.\MYSQL];
         $dbMssql = $GLOBALS['db_'.\SQLSERVER];
-        $dbPdo = $GLOBALS['db_'.\Pdo];
-        $instance = \getInstance();
-        if ($dbSqlite == $instance && !empty($dbSqlite))
+        $dbPdo = $GLOBALS['db_'.\Pdo];        
+        if (($instance == $dbSqlite ) && $dbSqlite instanceof DatabaseInterface)
             $type = \SQLITE3;
-        elseif ($dbPgsql == $instance && !empty($dbPgsql)) 
+        elseif (($instance == $dbPgsql) && $dbPgsql instanceof DatabaseInterface)
             $type = \POSTGRESQL;
-        elseif ($dbMysqli == $instance && !empty($dbMysqli)) 
+        elseif (($instance == $dbMysqli) && $dbMysqli instanceof DatabaseInterface) 
             $type = \MYSQL;
-        elseif ($dbMssql == $instance && !empty($dbMssql))
+        elseif (($instance == $dbMssql) && $dbMssql instanceof DatabaseInterface)
             $type = \SQLSERVER;
-        elseif ($dbPdo == $instance && !empty($dbPdo)) {
+        elseif (($instance == $dbPdo) && $dbPdo instanceof DatabaseInterface) {
             $dbh = $dbPdo->connection();
             if (strpos($dbh->getAttribute(\PDO::ATTR_CLIENT_VERSION), \MYSQL) !== false) 
                 $type = \MYSQL;
