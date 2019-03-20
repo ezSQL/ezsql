@@ -2,7 +2,9 @@
 
 namespace ezsql\Tests;
 
+use ezsql\ezSchema;
 use ezsql\Database;
+use ezsql\Database\ez_mysqli;
 use ezsql\Tests\EZTestCase;
 
 class ez_mysqliTest extends EZTestCase 
@@ -42,17 +44,17 @@ class ez_mysqliTest extends EZTestCase
     }
        
     /**
-     * @covers ez_mysqli::quick_connect
+     * @covers ezsql\Database\ez_mysqli::quick_connect
      */
     public function testQuick_connect() 
     {
-        $result = $this->object->quick_connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME);
+        $result = $this->object->quick_connect();
 
         $this->assertTrue($result);
     }
 
     /**
-     * @covers ez_mysqli::quick_connect
+     * @covers ezsql\Database\ez_mysqli::quick_connect
      */
     public function testQuick_connect2() 
     {
@@ -62,26 +64,26 @@ class ez_mysqliTest extends EZTestCase
     }
 
     /**
-     * @covers ez_mysqli::connect
+     * @covers ezsql\Database\ez_mysqli::connect
      */
     public function testConnect() 
     {        
         $this->errors = array();
         set_error_handler(array($this, 'errorHandler')); 
          
-        $this->assertFalse($this->object->connect('',''));  
+        $this->assertFalse($this->object->connect('no',''));  
         $this->assertFalse($this->object->connect('self::TEST_DB_USER', 'self::TEST_DB_PASSWORD',' self::TEST_DB_NAME', 'self::TEST_DB_CHARSET'));  
         $result = $this->object->connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD);
 
         $this->assertTrue($result);
-    } // testConnect
+    }
 
     /**
-     * @covers ez_mysqli::select
+     * @covers ezsql\Database\ez_mysqli::select
      */
     public function testSelect() 
     {
-        $this->object->connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD);
+        $this->object->connect();
         $this->assertTrue($this->object->isConnected());
 
         $result = $this->object->select(self::TEST_DB_NAME);
@@ -90,35 +92,35 @@ class ez_mysqliTest extends EZTestCase
 
         $this->errors = array();
         set_error_handler(array($this, 'errorHandler')); 
-        $this->assertFalse($this->object->select(''));
+        $this->assertTrue($this->object->select(''));
         $this->object->disconnect();
         $this->assertFalse($this->object->select('notest'));
-        $this->object->connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD);
+        $this->object->connect();
         $this->assertFalse($this->object->select('notest'));
         $this->assertTrue($this->object->select(self::TEST_DB_NAME));        
     } // testSelect
 
     /**
-     * @covers ez_mysqli::escape
+     * @covers ezsql\Database\ez_mysqli::escape
      */
     public function testEscape() 
     {
-        $this->object->connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD);
+        $this->object->connect();
         $result = $this->object->escape("This is'nt escaped.");
 
         $this->assertEquals("This is\\'nt escaped.", $result);
     } // testEscape
 
     /**
-     * @covers ez_mysqli::sysdate
+     * @covers ezsql\Database\ez_mysqli::sysDate
      */
-    public function testSysdate() 
+    public function testSysDate() 
     {
-        $this->assertEquals('NOW()', $this->object->sysdate());
-    } // testSysdate
+        $this->assertEquals('NOW()', $this->object->sysDate());
+    } 
 
     /**
-     * @covers ez_mysqli::query
+     * @covers ezsql\Database\ez_mysqli::query
      */
     public function testQueryInsert() 
     {
@@ -133,10 +135,10 @@ class ez_mysqliTest extends EZTestCase
         $this->assertEquals($this->object->query('INSERT INTO unit_test(id, test_key) VALUES(2, \'test 2\')'),1);
         $this->object->disconnect();
         $this->assertNull($this->object->query('INSERT INTO unit_test(id, test_key) VALUES(3, \'test 3\')'));        
-    } // testQueryInsert
+    }
 
     /**
-     * @covers ez_mysqli::query
+     * @covers ezsql\Database\ez_mysqli::query
      */
     public function testQuerySelect() 
     {
@@ -159,17 +161,13 @@ class ez_mysqliTest extends EZTestCase
             $this->assertEquals('test ' . $i, $row->test_key);
             ++$i;
         }
-    } // testQuerySelect
+    }
 
     /**
-     * @covers ezSQLcore::get_results
+     * @covers ezsql\ezsqlModel::get_results
      */
     public function testGet_results() 
-    {
-        $this->object->connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD);
-
-        $this->object->select(self::TEST_DB_NAME);
-         
+    {         
         $this->assertEquals($this->object->query('CREATE TABLE unit_test(id integer, test_key varchar(50), PRIMARY KEY (ID))'), 0);
 
         $this->assertEquals($this->object->query('INSERT INTO unit_test(id, test_key) VALUES(1, \'test 1\')'), 1);
@@ -181,18 +179,18 @@ class ez_mysqliTest extends EZTestCase
                 
         $this->assertEquals('[{"id":"1","test_key":"test 1"},{"id":"2","test_key":"test 2"},{"id":"3","test_key":"test 3"}]', $result);
 
-    } // testGet_results
+    }
 
     /**
-     * @covers ez_mysqli::getDBHost
+     * @covers ezsql\Database\ez_mysqli::getDBHost
      */
     public function testGetDBHost() 
     {
         $this->assertEquals(self::TEST_DB_HOST, $this->object->getDBHost());
-    } // testGetDBHost
+    }
 
     /**
-     * @covers ez_mysqli::getCharset
+     * @covers ezsql\Database\ez_mysqli::getCharset
      */
     public function testGetCharset() 
     {
@@ -200,7 +198,7 @@ class ez_mysqliTest extends EZTestCase
     } // testGetCharset
     
     /**
-     * @covers ezSQLcore::get_set
+     * @covers ezsql\ezsqlModel::get_set
      */
     public function testGet_set()
     {
@@ -214,7 +212,7 @@ class ez_mysqliTest extends EZTestCase
     }
 
     /**
-     * @covers ez_mysqli::disconnect
+     * @covers ezsql\Database\ez_mysqli::disconnect
      */
     public function testDisconnect() 
     {
@@ -225,7 +223,7 @@ class ez_mysqliTest extends EZTestCase
     } // testDisconnect
 
     /**
-     * @covers ez_mysqli::getInsertId
+     * @covers ezsql\Database\ez_mysqli::getInsertId
      */
     public function testGetInsertId() 
     {
@@ -240,39 +238,37 @@ class ez_mysqliTest extends EZTestCase
     } // testInsertId
  
     /**
-     * @covers ezQuery::create
+     * @covers ezsql\ezQuery::create
      */
     public function testCreate()
     {
-        $this->object->connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD);
-        $this->object->select(self::TEST_DB_NAME);
+        $object = Database::initialize('mysqli', [self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME]);
+        $this->assertEquals($this->object, $object);
+        $object->connect();
+        $object->select(self::TEST_DB_NAME);
              
-        $this->assertEquals($this->object->create('new_create_test',
-            \column('id', INTR, 11, notNULL, AUTO),
+        $this->assertEquals($object->create('create_test',
+            \column('id', INTR, 11, \AUTO),
             \column('create_key', VARCHAR, 50),
             \primary('id_pk', 'id')), 
         0);
 
-        $this->object->setPrepare(false);
-        $this->assertEquals($this->object->insert('new_create_test',
-            ['create_key' => 'test 2']),
-        1);
-        $this->object->setPrepare();
+        $object->setPrepare(false);
+        $this->assertEquals(1, $object->insert('create_test',
+            ['create_key' => 'test 2']));
+        $this->setPrepare();
     }
 
     /**
-     * @covers ezQuery::drop
+     * @covers ezsql\ezQuery::drop
      */
     public function testDrop()
-    {
-        $this->object->connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD);
-        $this->object->select(self::TEST_DB_NAME);
-             
-        $this->assertEquals($this->object->drop('new_create_test'), 0);
+    {             
+        $this->assertEquals($this->object->drop('create_test'), 0);
     }
    
     /**
-     * @covers ezQuery::insert
+     * @covers ezsql\ezQuery::insert
      */
     public function testInsert()
     {
@@ -283,7 +279,7 @@ class ez_mysqliTest extends EZTestCase
     }
         
     /**
-     * @covers ezQuery::replace
+     * @covers ezsql\ezQuery::replace
      */
     public function testReplace()
     {
@@ -295,7 +291,7 @@ class ez_mysqliTest extends EZTestCase
     }
     
     /**
-     * @covers ezQuery::update
+     * @covers ezsql\ezQuery::update
      */
     public function testUpdate()
     {
@@ -315,7 +311,7 @@ class ez_mysqliTest extends EZTestCase
     }
     
     /**
-     * @covers ezQuery::delete
+     * @covers ezsql\ezQuery::delete
      */
     public function testDelete()
     {
@@ -340,7 +336,7 @@ class ez_mysqliTest extends EZTestCase
     }  
        
     /**
-     * @covers ezQuery::selecting
+     * @covers ezsql\ezQuery::selecting
      */
     public function testSelecting()
     {
@@ -377,7 +373,7 @@ class ez_mysqliTest extends EZTestCase
     }    
           
     /**
-     * @covers ezQuery::create_select
+     * @covers ezsql\ezQuery::create_select
      */
     public function testCreate_select()
     {
@@ -400,7 +396,7 @@ class ez_mysqliTest extends EZTestCase
     }    
               
     /**
-     * @covers ezQuery::insert_select
+     * @covers ezsql\ezQuery::insert_select
      */
     public function testInsert_select()
     {
@@ -427,7 +423,7 @@ class ez_mysqliTest extends EZTestCase
     }    
 	
     /**
-     * @covers ezQuery::where
+     * @covers ezsql\ezQuery::where
      */
     public function testWhere()
     {
@@ -480,7 +476,7 @@ class ez_mysqliTest extends EZTestCase
     } 
     
     /**
-     * @covers ez_mysqli::query_prepared
+     * @covers ezsql\Database\ez_mysqli::query_prepared
      */
     public function testQuery_prepared() {
         $this->object->connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD);
@@ -491,15 +487,12 @@ class ez_mysqliTest extends EZTestCase
     } // testQuery_prepared
        
     /**
-     * @covers ez_mysqli::__construct
+     * @covers ezsql\Database\ez_mysqli::__construct
      */
-    public function test__Construct() {         
-        $mysqli = $this->getMockBuilder(ez_mysqli::class)
-        ->setMethods(null)
-        ->disableOriginalConstructor()
-        ->getMock();
+    public function test__Construct() {
         
-        $this->assertNull($mysqli->__construct());  
-        $this->assertNull($mysqli->__construct('testuser','','','','utf8'));  
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessageRegExp('/[Missing configuration details]/');
+        $this->assertNull(new ez_mysqli);  
     } 
 } // ez_mysqliTest
