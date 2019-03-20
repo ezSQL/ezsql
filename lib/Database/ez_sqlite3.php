@@ -54,7 +54,8 @@ final class ez_sqlite3 extends ezsqlModel implements DatabaseInterface
             $this->connect($path, $name);
         }
 
-        $GLOBALS['db_'.\SQLITE3] = $this;
+        if (empty($GLOBALS['db_'.\SQLITE3]))
+            $GLOBALS['db_'.\SQLITE3] = $this;
         \setInstance($this);
     }
 

@@ -55,7 +55,8 @@ final class ez_pdo extends ezsqlModel implements DatabaseInterface
                 $this->database->getIsFile());
         }
         
-        $GLOBALS['db_'.\Pdo] = $this;
+        if (empty($GLOBALS['db_'.\Pdo]))
+            $GLOBALS['db_'.\Pdo] = $this;
         \setInstance($this);
     } // __construct
 

@@ -49,7 +49,8 @@ final class ez_pgsql extends ezsqlModel implements DatabaseInterface
         parent::__construct();
         $this->database = $settings;
 
-        $GLOBALS['db_' .\PGSQL] = $this;
+        if (empty($GLOBALS['db_'.\PGSQL]))
+            $GLOBALS['db_'.\PGSQL] = $this;
         \setInstance($this);
     } // __construct
 

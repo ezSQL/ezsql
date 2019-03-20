@@ -58,7 +58,9 @@ final class ez_mysqli extends ezsqlModel implements DatabaseInterface
         
         parent::__construct();
         $this->database = $settings;
-        $GLOBALS['db_'.\MYSQLI] = $this;
+
+        if (empty($GLOBALS['db_'.\MYSQLI]))
+            $GLOBALS['db_'.\MYSQLI] = $this;
         \setInstance($this);
     } // __construct
 

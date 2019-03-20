@@ -58,7 +58,8 @@ final class ez_sqlsrv extends ezsqlModel implements DatabaseInterface
         parent::__construct();
         $this->database = $settings;
 
-        $GLOBALS['db_'.\SQLSRV] = $this;
+        if (empty($GLOBALS['db_'.\SQLSRV]))
+            $GLOBALS['db_'.\SQLSRV] = $this;
         \setInstance($this);
     }
 
