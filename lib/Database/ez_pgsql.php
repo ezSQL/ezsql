@@ -50,7 +50,6 @@ final class ez_pgsql extends ezsqlModel implements DatabaseInterface
         $this->database = $settings;
 
         $GLOBALS['db_' .\PGSQL] = $this;
-        $GLOBALS['db_' .\POSTGRESQL] = $this;
         \setInstance($this);
     } // __construct
 

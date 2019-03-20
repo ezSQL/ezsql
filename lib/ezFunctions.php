@@ -295,7 +295,7 @@ if (!function_exists('ezFunctions')) {
 
         if ($ezSQL instanceOf DatabaseInterface) {
 			$ezInstance = $ezSQL;
-			$status = true;
+            $status = true;
 		} elseif (\array_key_exists(\strtolower($ezSQL), VENDOR)) {
             if (!empty($GLOBALS['db_'.\strtolower($ezSQL)]))
                 $ezInstance = $GLOBALS['db_'.\strtolower($ezSQL)];

@@ -73,12 +73,12 @@ if (!\defined('CONSTANTS')) {
     //\define('PDO', 'pdo', true);
     \define('Pdo', 'pdo');
     \define('PGSQL', 'pgsql', true);
-    \define('POSTGRESQL', 'postgresql', true);
-    \define('SQLITE', 'sqlite', true);
+    \define('POSTGRESQL', 'pgsql', true);
+    \define('SQLITE', 'sqlite3', true);
     \define('SQLITE3', 'sqlite3', true);
     \define('SQLSRV', 'sqlsrv');
-    \define('SQLSERVER', 'sqlserver', true);
-    \define('MSSQL', 'mssql', true);
+    \define('SQLSERVER', 'sqlsrv', true);
+    \define('MSSQL', 'sqlsrv', true);
 
     \define('ALLOWED_KEYS', [
         'host',

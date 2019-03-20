@@ -19,38 +19,38 @@ defined('ARRAY_N') or define('ARRAY_N', 'ARRAY_N');
 */	
 class ezsqlModel extends ezQuery implements ezsqlModelInterface
 {
-		protected $trace            = false;  // same as $debug_all
-		protected $debug_all        = false;  // same as $trace
-		protected $debug_called     = false;
-		protected $varDump_called   = false;
-		
-		/**
-		 * RCurrent show error state
-		 * @var boolean
-		 */
-		protected $show_errors      = true;
-
-		protected $num_queries      = 0;
-		protected $conn_queries     = 0;
-		protected $captured_errors  = array();
-		protected $cache_dir        = false;
-		protected $cache_queries    = false;
-		protected $cache_inserts    = false;
-		protected $use_disk_cache   = false;
-		protected $cache_timeout    = 24; // hours
-		protected $db_connect_time  = 0;
-		protected $sql_log_file     = false;
-		protected $profile_times    = array();
-		protected $insert_id        = null;
-
-		protected $last_query       = null;
-		protected $last_error       = null;
-		protected $col_info			= null;
-		protected $timers           = array();
-		protected $total_query_time = 0;
-		protected $trace_log        = array();
-		protected $use_trace_log    = false;
-		protected $do_profile       = false;
+	protected $trace            = false;  // same as $debug_all
+	protected $debug_all        = false;  // same as $trace
+	protected $debug_called     = false;
+	protected $varDump_called   = false;
+	
+	/**
+	* RCurrent show error state
+	* @var boolean
+	*/
+	protected $show_errors      = true;
+	
+	protected $num_queries      = 0;
+	protected $conn_queries     = 0;
+	protected $captured_errors  = array();
+	protected $cache_dir        = false;
+	protected $cache_queries    = false;
+	protected $cache_inserts    = false;
+	protected $use_disk_cache   = false;
+	protected $cache_timeout    = 24; // hours
+	protected $db_connect_time  = 0;
+	protected $sql_log_file     = false;
+	protected $profile_times    = array();
+	protected $insert_id        = null;
+	
+	protected $last_query       = null;
+	protected $last_error       = null;
+	protected $col_info			= null;
+	protected $timers           = array();
+	protected $total_query_time = 0;
+	protected $trace_log        = array();
+	protected $use_trace_log    = false;
+	protected $do_profile       = false;
 		
 	/**
 	* The last query result

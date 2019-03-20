@@ -56,9 +56,8 @@ final class ez_mysqli extends ezsqlModel implements DatabaseInterface
             throw new Exception(\MISSING_CONFIGURATION);
         }
         
-        parent::__construct('here');
+        parent::__construct();
         $this->database = $settings;
-        $GLOBALS['db_'.\MYSQL] = $this;
         $GLOBALS['db_'.\MYSQLI] = $this;
         \setInstance($this);
     } // __construct
@@ -87,6 +86,12 @@ final class ez_mysqli extends ezsqlModel implements DatabaseInterface
         string $host = 'localhost', 
         string $charset = '') 
     {
+        $user = empty($user) ? $this->database->getUser() : $user;
+        $password = empty($password) ? $this->database->getPassword() : $password;
+        $name = empty($name) ? $this->database->getName() : $name;
+        $host = ($host != 'localhost') ? $this->database->getHost() : $host;
+        $charset = empty($charset) ? $this->database->getCharset() : $charset;
+
         if ( ! $this->connect($user, $password, $host, $charset) ) ;
         else if ( ! $this->select($name, $charset) ) ;
 
@@ -143,6 +148,8 @@ final class ez_mysqli extends ezsqlModel implements DatabaseInterface
     public function select($name = '', $charset = '') 
     {
         $this->_connected = false;
+        $name = empty($name) ? $this->database->getName() : $name;
+        $charset = empty($charset) ? $this->database->getCharset() : $charset;
         if ( ! $name ) {
             // Must have a database name
             $this->register_error($this->ezsql_mysql_str[3] . ' in ' . __FILE__ . ' on line ' . __LINE__);
@@ -329,6 +336,8 @@ final class ez_mysqli extends ezsqlModel implements DatabaseInterface
         // For reg expressions
         $query = \trim($query);
 
+        if (strpos($query,'create_test') !== false)
+            echo $query;
         // Log how the function was called
         $this->log_query("\$db->query(\"$query\")");
 
