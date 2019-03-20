@@ -49,7 +49,8 @@ class ezResultsetTest extends EZTestCase
      * Tears down the fixture, for example, closes a network connection.
      * This method is called after a test is executed.
      */
-    protected function tearDown() {
+    protected function tearDown(): void
+    {
         $this->ezSQL->query('DROP TABLE unit_test');
         
         $this->object = null;

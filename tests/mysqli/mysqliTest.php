@@ -2,7 +2,6 @@
 
 namespace ezsql\Tests;
 
-use ezsql\ezSchema;
 use ezsql\Database;
 use ezsql\Database\ez_mysqli;
 use ezsql\Tests\EZTestCase;
@@ -34,7 +33,7 @@ class ez_mysqliTest extends EZTestCase
      * Tears down the fixture, for example, closes a network connection.
      * This method is called after a test is executed.
      */
-    protected function tearDown() 
+    protected function tearDown(): void 
     {
         if ($this->object->isConnected()) {
             $this->object->select(self::TEST_DB_NAME);

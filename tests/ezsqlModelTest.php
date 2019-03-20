@@ -25,7 +25,7 @@ class ezsqlModelTest extends EZTestCase
      * Tears down the fixture, for example, closes a network connection.
      * This method is called after a test is executed.
      */
-    protected function tearDown() 
+    protected function tearDown(): void 
     {
         $this->object = null;
     } // tearDown
@@ -204,7 +204,7 @@ class ezsqlModelTest extends EZTestCase
     public function testVarDump() 
     {
         $this->object->setDebug_Echo_Is_On(false);
-        $this->object->setLast_Result('test 1');
+        $this->object->setLast_Result(['test 1']);
         $this->assertNotEmpty($this->object->vardump($this->object->getLast_Result()));
         $this->object->setDebug_Echo_Is_On(true);
         $this->expectOutputRegex('/[Last Function Call]/');

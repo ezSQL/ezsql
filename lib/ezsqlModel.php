@@ -207,7 +207,7 @@ class ezsqlModel extends ezQuery implements ezsqlModelInterface
 		}
 		
 		// Extract public out of cached results based x,y values
-		if ( $this->last_result[$y] ) {
+		if ( isset($this->last_result[$y]) ) {
 			$values = \array_values(\get_object_vars($this->last_result[$y]));
 		}
 		
@@ -230,13 +230,13 @@ class ezsqlModel extends ezQuery implements ezsqlModelInterface
 		
 		if ( $output == OBJECT ) {
 			// If the output is an object then return object using the row offset..
-			return $this->last_result[$y]?$this->last_result[$y]:null;
+			return isset($this->last_result[$y]) ? $this->last_result[$y] : null;
 		} elseif ( $output == ARRAY_A ) {
 			// If the output is an associative array then return row as such..
-			return $this->last_result[$y] ? \get_object_vars($this->last_result[$y]) : null;
+			return isset($this->last_result[$y]) ? \get_object_vars($this->last_result[$y]) : null;
 		} elseif ( $output == ARRAY_N )	{
 			// If the output is an numerical array then return row as such..
-			return $this->last_result[$y] ? \array_values(\get_object_vars($this->last_result[$y])) : null;
+			return isset($this->last_result[$y]) ? \array_values(\get_object_vars($this->last_result[$y])) : null;
 		} else {
 			// If invalid output type was specified..
 			$this->show_errors ? \trigger_error(" \$db->get_row(string query, output type, int offset) -- Output type must be one of: OBJECT, ARRAY_A, ARRAY_N", \E_USER_WARNING) : null;
@@ -257,11 +257,13 @@ class ezsqlModel extends ezQuery implements ezsqlModelInterface
 		}
 		
 		// Extract the column values
-		$j = \count($this->last_result);
-		for ( $i=0; $i < $j; $i++ ) {
-			$new_array[$i] = $this->get_var(null, $x, $i, $use_prepare);
+		if (\is_array($this->last_result)) {
+			$j = \count($this->last_result);
+			for ( $i=0; $i < $j; $i++ ) {
+				$new_array[$i] = $this->get_var(null, $x, $i, $use_prepare);
+			}
 		}
-		
+
 		return $new_array;
 	}
 	

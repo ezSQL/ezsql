@@ -8,7 +8,7 @@ use ezsql\ConfigInterface;
 use ezsql\Tests\EZTestCase;
 
 class ConfigTest extends EZTestCase 
-{		
+{
     /**
     * @covers ezsql\Config::SetupMysqli
     */
@@ -70,21 +70,21 @@ class ConfigTest extends EZTestCase
         $this->assertEquals(self::TEST_SQLITE_DB_DIR, $settings->getPath());
         $this->assertEquals(self::TEST_SQLITE_DB, $settings->getName());
     }
-    
+
     /**
     * @covers ezsql\Config::__construct
     */
-    public function test__construct()
+    public function test_construct()
     {
         $this->expectException(\Exception::class);
         $this->expectExceptionMessageRegExp('/[Missing configuration details to connect to database]/');
         $settings = new Config('', [self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME]);
     }
-   
+
     /**
     * @covers ezsql\Config::__construct
     */
-    public function test__constructArgs()
+    public function test_constructArgs()
     {
         $this->expectException(\Exception::class);
         $this->expectExceptionMessageRegExp('/[Missing configuration details to connect to database]/');
