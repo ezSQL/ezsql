@@ -3,9 +3,9 @@
 namespace ezsql\Tests;
 
 use ezsql\Database;
-use ezsql\Tests\DBTestCase;
+use ezsql\Tests\EZTestCase;
 
-class postgresqlTest extends DBTestCase 
+class postgresqlTest extends EZTestCase 
 {
     /**
      * constant database port 
@@ -37,7 +37,8 @@ class postgresqlTest extends DBTestCase
      * Tears down the fixture, for example, closes a network connection.
      * This method is called after a test is executed.
      */
-    protected function tearDown() {
+    protected function tearDown():void
+    {
         $this->object = null;
     } // tearDown
 

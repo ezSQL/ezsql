@@ -3,9 +3,9 @@
 namespace ezsql\Tests;
 
 use ezsql\Database;
-use ezsql\Tests\DBTestCase;
+use ezsql\Tests\EZTestCase;
 
-class sqlsrvTest extends DBTestCase 
+class sqlsrvTest extends EZTestCase 
 {
 
     /**
@@ -33,7 +33,7 @@ class sqlsrvTest extends DBTestCase
      * Tears down the fixture, for example, closes a network connection.
      * This method is called after a test is executed.
      */
-    protected function tearDown() 
+    protected function tearDown(): void
     {
         $this->object->query('DROP TABLE unit_test');
         $this->object = null;
