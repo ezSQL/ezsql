@@ -41,6 +41,7 @@ class Database
                 $GLOBALS['db_'.$key] = $di->get($key, ['driver' => $key, 'arguments' => $setting]); 
             }
 
+            \setInstance($GLOBALS['db_'.$key]);
             return $GLOBALS['db_'.$key];
         }
     }

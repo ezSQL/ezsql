@@ -158,29 +158,31 @@ class ezSchema
     {
         $type = null;
         $instance = \getInstance();
-        $dbSqlite = $GLOBALS['db_'.\SQLITE3];
-        $dbPgsql = $GLOBALS['db_'.\PGSQL];
-        $dbMysqli = $GLOBALS['db_'.\MYSQL];
-        $dbMssql = $GLOBALS['db_'.\SQLSERVER];
-        $dbPdo = $GLOBALS['db_'.\Pdo];        
-        if (($instance == $dbSqlite ) && $dbSqlite instanceof DatabaseInterface)
-            $type = \SQLITE3;
-        elseif (($instance == $dbPgsql) && $dbPgsql instanceof DatabaseInterface)
-            $type = \POSTGRESQL;
-        elseif (($instance == $dbMysqli) && $dbMysqli instanceof DatabaseInterface) 
-            $type = \MYSQL;
-        elseif (($instance == $dbMssql) && $dbMssql instanceof DatabaseInterface)
-            $type = \SQLSERVER;
-        elseif (($instance == $dbPdo) && $dbPdo instanceof DatabaseInterface) {
-            $dbh = $dbPdo->connection();
-            if (strpos($dbh->getAttribute(\PDO::ATTR_CLIENT_VERSION), \MYSQL) !== false) 
-                $type = \MYSQL;
-            elseif (strpos($dbh->getAttribute(\PDO::ATTR_CLIENT_VERSION), \PGSQL) !== false) 
-                $type = \POSTGRESQL;
-            elseif (strpos($dbh->getAttribute(\PDO::ATTR_CLIENT_VERSION), \SQLITE) !== false) 
+        if ($instance instanceof DatabaseInterface) {
+            $dbSqlite = $GLOBALS['db_'.\SQLITE3];
+            $dbPgsql = $GLOBALS['db_'.\PGSQL];
+            $dbMysqli = $GLOBALS['db_'.\MYSQL];
+            $dbMssql = $GLOBALS['db_'.\SQLSERVER];
+            $dbPdo = $GLOBALS['db_'.\Pdo];        
+            if ($instance == $dbSqlite )
                 $type = \SQLITE3;
-            elseif (strpos($dbh->getAttribute(\PDO::ATTR_CLIENT_VERSION), \SQLSRV) !== false) 
+            elseif ($instance == $dbPgsql)
+                $type = \POSTGRESQL;
+            elseif ($instance == $dbMysqli)
+                $type = \MYSQL;
+            elseif ($instance == $dbMssql)
                 $type = \SQLSERVER;
+            elseif ($instance == $dbPdo) {
+                $dbh = $dbPdo->connection();
+                if (strpos($dbh->getAttribute(\PDO::ATTR_CLIENT_VERSION), \MYSQL) !== false) 
+                    $type = \MYSQL;
+                elseif (strpos($dbh->getAttribute(\PDO::ATTR_CLIENT_VERSION), \PGSQL) !== false) 
+                    $type = \POSTGRESQL;
+                elseif (strpos($dbh->getAttribute(\PDO::ATTR_CLIENT_VERSION), \SQLITE) !== false) 
+                    $type = \SQLITE3;
+                elseif (strpos($dbh->getAttribute(\PDO::ATTR_CLIENT_VERSION), \SQLSRV) !== false) 
+                    $type = \SQLSERVER;
+            }
         }
 
         return $type;

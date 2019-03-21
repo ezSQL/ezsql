@@ -6,6 +6,12 @@ use ezsql\Tests\EZTestCase;
 
 class ezFunctionsTest extends EZTestCase 
 {
+    
+    protected function setUp(): void
+	{
+        \clearInstance();
+    }
+
     /**
      * eq 
      */
@@ -144,9 +150,9 @@ class ezFunctionsTest extends EZTestCase
     /**
      * setInstance
      */
-    public function testCetQuery() {
+    public function testSetQuery() {
         $this->assertFalse(setQuery());
-        $this->assertFalse(setQuery('pdo'));
+        $this->assertFalse(\setQuery('pdo'));
     }
 
     /**

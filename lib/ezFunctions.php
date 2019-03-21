@@ -1,12 +1,12 @@
 <?php
 
-use ezsql\ezSchema;
 use ezsql\ezQuery;
+use ezsql\ezSchema;
 use ezsql\Database;
-use ezsql\Database\ez_pdo;
 use ezsql\DatabaseInterface;
+use ezsql\Database\ez_pdo;
 
-// Global class instances, will be used to create and call methods directly.
+// Global class instances, will be used to call methods directly here.
 global $ezInstance;
 
 if (!function_exists('ezFunctions')) {
@@ -114,14 +114,14 @@ if (!function_exists('ezFunctions')) {
 
 	/**
      * Creates an array from expressions in the following format
-     * @param  strings $x,  - The left expression.
-     * @param  strings $operator,   - One of 
+     * @param strings $x, - The left expression.
+     * @param strings $operator, - One of 
      *      '<', '>', '=', '!=', '>=', '<=', '<>', 'IN',, 'NOT IN', 'LIKE', 
      *      'NOT LIKE', 'BETWEEN', 'NOT BETWEEN', 'IS', 'IS NOT', or  the constants above.
      * 
-     * @param  strings $y,  - The right expression.
-     * @param  strings $and,    - combine additional expressions with,  'AND','OR', 'NOT', 'AND NOT'.
-     * @param  strings $args    - for any extras
+     * @param strings $y, - The right expression.
+     * @param strings $and, - combine additional expressions with,  'AND','OR', 'NOT', 'AND NOT'.
+     * @param strings $args - for any extras
      *
      * function comparison($x, $operator, $y, $and=null, ...$args)
      *  {
@@ -284,25 +284,16 @@ if (!function_exists('ezFunctions')) {
     /**
     * Using global class instances, setup functions to call class methods directly.
     *
-    * @param string| object $ezSQL - representing class 
-    *   'mysql', 'mysqli', 'pdo', 'postgres', 'sqlite3', 'sqlsrv'
-    *
     * @return boolean - true, or false for error
     */
-    function setQuery($ezSQL = '') {
+    function setQuery($ezSQL = null) {
         global $ezInstance;
         $status = false;
 
         if ($ezSQL instanceOf DatabaseInterface) {
 			$ezInstance = $ezSQL;
             $status = true;
-		} elseif (\array_key_exists(\strtolower($ezSQL), \VENDOR)) {
-            if (!empty($GLOBALS['db_'.\strtolower($ezSQL)]))
-                $ezInstance = $GLOBALS['db_'.\strtolower($ezSQL)];
-            $status = !empty($ezInstance);            
-        } elseif (!empty($GLOBALS['ezInstance'])) {
-            unset($GLOBALS['ezInstance']);
-        }
+		} 
 
         return $status;
     }
@@ -316,7 +307,12 @@ if (!function_exists('ezFunctions')) {
 
         return $ezInstance;
     }
-   
+
+    function clearInstance() {
+        $GLOBALS['ezInstance'] = null;
+        unset($GLOBALS['ezInstance']);
+    }
+
     function cleanInput($string) {
         return ezQuery::clean($string);
     } 

@@ -217,13 +217,12 @@ final class ez_mysqli extends ezsqlModel implements DatabaseInterface
     
     /**
      * Helper fetches rows from a prepared result set 
-     * @param \mysqli_stmt
+     * @param mysqli_stmt $stmt 
      * @param string $query
-     * @return bool|\mysqli_result
+     * @return bool|mysqli_result
      */
-    function fetch_prepared_result(&$stmt, $query) 
+    private function fetch_prepared_result(&$stmt, $query) 
     {
-        $has_values = false; 
         if($stmt instanceof mysqli_stmt) {
             $stmt->store_result();       
             $variables = array();
@@ -260,24 +259,31 @@ final class ez_mysqli extends ezsqlModel implements DatabaseInterface
             if ( $str = $stmt->error ) {
                 $is_insert = true;
                 $this->register_error($str);
-                $this->show_errors ? \trigger_error($str, \E_USER_WARNING) : null;                
-            } else {               
-                // Return number of rows affected
-                $has_values = $this->_affectedRows;                
+                $this->show_errors ? \trigger_error($str, \E_USER_WARNING) : null;
+                
+                // If debug ALL queries
+                $this->trace || $this->debug_all ? $this->debug() : null ;
+                return false;
             }
-
+               
+            // Return number of rows affected
+            $return_val = $this->_affectedRows;
+            
             // disk caching of queries
             $this->store_cache($query, $is_insert);
 
             // If debug ALL queries
             $this->trace || $this->debug_all ? $this->debug() : null ;
+            
+            return $return_val;
         }
-        return $has_values;
+
+        return false;
     }	
 
 	/**
      * Creates a prepared query, binds the given parameters and returns the result of the executed
-     * {@link \mysqli_stmt}.
+     * {@link mysqli_stmt}.
      * @param string $query
      * @param array $args
      * @return bool|mysqli_result
@@ -310,7 +316,7 @@ final class ez_mysqli extends ezsqlModel implements DatabaseInterface
         // free and closes a prepared statement
         $stmt->free_result();
         $stmt->close();
-        
+
         return $result;
     }
     
