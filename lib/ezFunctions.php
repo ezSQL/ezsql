@@ -10,32 +10,39 @@ use ezsql\Database\ez_pdo;
 global $ezInstance;
 
 if (!function_exists('ezFunctions')) {
-    function database(string $sqlDriver = null, $connectionSetting = null)
+    function database(string $sqlDriver = null, $connectionSetting = null, string $instanceTag = null)
     {
-        return Database::initialize($sqlDriver, $connectionSetting);
+        return Database::initialize($sqlDriver, $connectionSetting, $instanceTag);
     }
 
-    function mysqlInstance($databaseSetting = null)
+    function tagInstance(string $getTag = null)
     {
-        return \database(\MYSQLI, $databaseSetting);
-    }
-    function pgsqlInstance($databaseSetting = null)
-    {
-        return \database(\PGSQL, $databaseSetting);
-    }
-    function mssqlInstance($databaseSetting = null)
-    {
-        return \database(\MSSQL, $databaseSetting);
+        return \database($getTag);
     }
 
-    function pdoInstance($databaseSetting = null)
+    function mysqlInstance($databaseSetting = null, $instanceTag = null)
     {
-        return \database(\Pdo, $databaseSetting);
+        return \database(\MYSQLI, $databaseSetting, $instanceTag);
     }
 
-    function sqliteInstance($databaseSetting = null)
+    function pgsqlInstance($databaseSetting = null, $instanceTag = null)
     {
-        return \database(\SQLITE3, $databaseSetting);
+        return \database(\PGSQL, $databaseSetting, $instanceTag);
+    }
+
+    function mssqlInstance($databaseSetting = null, $instanceTag = null)
+    {
+        return \database(\MSSQL, $databaseSetting, $instanceTag);
+    }
+
+    function pdoInstance($databaseSetting = null, $instanceTag = null)
+    {
+        return \database(\Pdo, $databaseSetting, $instanceTag);
+    }
+
+    function sqliteInstance($databaseSetting = null, $instanceTag = null)
+    {
+        return \database(\SQLITE3, $databaseSetting, $instanceTag);
     }
 
     function to_string($arrays, $separation = ',')
@@ -45,7 +52,7 @@ if (!function_exists('ezFunctions')) {
 
     function column(string $column = null, string $type = null, ...$args)
     {
-        return ezSchema::column($column, $type, ...$args);
+        return \setInstance($this) ? ezSchema::column($column, $type, ...$args) : false;
     }
 
     function primary(string $constraintName, ...$primaryKeys)
@@ -281,12 +288,16 @@ if (!function_exists('ezFunctions')) {
         return $expression;
     }
     
+    function setQuery($ezSQL = null) {
+        \setQuery($ezSQL);
+    }
+    
     /**
     * Using global class instances, setup functions to call class methods directly.
     *
     * @return boolean - true, or false for error
     */
-    function setQuery($ezSQL = null) {
+    function setInstance($ezSQL = '') {
         global $ezInstance;
         $status = false;
 
@@ -296,10 +307,6 @@ if (!function_exists('ezFunctions')) {
 		} 
 
         return $status;
-    }
-    
-    function setInstance($ezSQL = '') {
-        \setQuery($ezSQL);
     }
 
     function getInstance() {

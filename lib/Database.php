@@ -14,6 +14,7 @@ class Database
      * @var float
      */
     private static $_ts = null;
+    private static $instances = [];
 
     private function __construct() {}
     private function __clone() {}
@@ -24,9 +25,13 @@ class Database
      * 
      * @param mixed $vendor - SQL driver
      * @param mixed $setting - SQL connection parameters
-     */    
-    public static function initialize(string $vendor = null, $setting = null)
-    { 
+     * @param mixed $tag - Store the instance for later use
+     */
+    public static function initialize(string $vendor = null, $setting = null, string $tag = null)
+    {
+        if (isset(self::$instances[$vendor]))
+            return \setInstance(self::$instances[$vendor]) ? self::$instances[$vendor] : false;
+        
         if  (empty($vendor) || empty($setting)) {
             throw new \Exception(\MISSING_CONFIGURATION);
         } else {
@@ -34,11 +39,15 @@ class Database
             $key = $vendor;
             $value = \VENDOR[$key];
 
-            if (empty($GLOBALS['db_'.$key])) {
+            if (empty($GLOBALS['db_'.$key]) || !empty($tag)) {
                 $di = new DInjector();
                 $di->set($key, $value);                
                 $di->set('ezsql\ConfigInterface', 'ezsql\Config');
-                $GLOBALS['db_'.$key] = $di->get($key, ['driver' => $key, 'arguments' => $setting]); 
+                $instance = $di->get($key, ['driver' => $key, 'arguments' => $setting]);
+                if (!empty($tag)) {
+                    self::$instances[$tag] = $instance;
+                    return $instance;
+                }
             }
 
             \setInstance($GLOBALS['db_'.$key]);
