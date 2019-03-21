@@ -5,15 +5,14 @@ namespace ezsql\Tests;
 use ezsql\Tests\EZTestCase;
 
 class ezFunctionsTest extends EZTestCase 
-{
-    
+{    
     protected function setUp(): void
 	{
         \clearInstance();
     }
 
     /**
-     * eq 
+     * @test eq 
      */
     public function testeq()
     {
@@ -22,7 +21,7 @@ class ezFunctionsTest extends EZTestCase
     }
 
     /**
-     * neq
+     * @test neq
      */
     public function testneq()
     {
@@ -31,7 +30,7 @@ class ezFunctionsTest extends EZTestCase
     }
 
     /**
-     * ne
+     * @test ne
      */
     public function testne()
     {
@@ -40,7 +39,7 @@ class ezFunctionsTest extends EZTestCase
     }
     
     /**
-     * lt
+     * @test lt
      */
     public function testlt()
     {
@@ -49,7 +48,7 @@ class ezFunctionsTest extends EZTestCase
     }
 
     /**
-     * lte
+     * @test lte
      */
     public function testlte()
     {
@@ -58,7 +57,7 @@ class ezFunctionsTest extends EZTestCase
     }
 
     /**
-     * gt
+     * @test gt
      */
     public function testgt()
     {
@@ -67,7 +66,7 @@ class ezFunctionsTest extends EZTestCase
     }
 
     /**
-     * gte
+     * @test gte
      */
     public function testgte()
     {
@@ -76,7 +75,7 @@ class ezFunctionsTest extends EZTestCase
     }
 
     /**
-     * isNull
+     * @test isNull
      */
     public function testisNull()
     {
@@ -85,7 +84,7 @@ class ezFunctionsTest extends EZTestCase
     }
 
     /**
-     * isNotNull
+     * @test isNotNull
      */
     public function testisNotNull()
     {
@@ -94,7 +93,7 @@ class ezFunctionsTest extends EZTestCase
     }
 
     /**
-     * like
+     * @test like
      */
     public function testlike()
     {
@@ -103,7 +102,7 @@ class ezFunctionsTest extends EZTestCase
     }
 
     /**
-     * notLike
+     * @test notLike
      */
     public function testnotLike()
     {
@@ -112,7 +111,7 @@ class ezFunctionsTest extends EZTestCase
     }
 
     /**
-     * in
+     * @test in
      */
     public function testin()
     {
@@ -121,7 +120,7 @@ class ezFunctionsTest extends EZTestCase
     }
 
     /**
-     *  notIn
+     * @test notIn
      */
     public function testnotIn()
     {
@@ -130,7 +129,7 @@ class ezFunctionsTest extends EZTestCase
     }
 
     /**
-     * between
+     * @test between
      */
     public function testbetween()
     {
@@ -139,7 +138,7 @@ class ezFunctionsTest extends EZTestCase
     }
 
     /**
-     * notBetween
+     * @test notBetween
      */
     public function testNotBetween()
     {
@@ -148,50 +147,50 @@ class ezFunctionsTest extends EZTestCase
     }
 
     /**
-     * setInstance
+     * @test setInstance
      */
-    public function testSetQuery() {
-        $this->assertFalse(setQuery());
-        $this->assertFalse(\setQuery('pdo'));
+    public function testSetInstance() {
+        $this->assertFalse(\setInstance());
+        $this->assertFalse(\setInstance($this));
     }
 
     /**
-     * select
+     * @test select
      */
     public function testSelect() {
         $this->assertFalse(select(''));
     } 
 
     /**
-     * select_into
+     * @test select_into
      */    
     public function testselect_into() {
         $this->assertFalse(select_into('field', 'data', 'data2'));
     } 
 
     /**
-     * insert_select
+     * @test insert_select
      */    
     public function testinsert_select() {
         $this->assertFalse(insert_select('field', 'data', 'data2'));
     }     
 
     /**
-     * create_select
+     * @test create_select
      */    
     public function testcreate_select() {
         $this->assertFalse(create_select('field', 'data', 'data2'));
     }  
 
     /**
-     * where
+     * @test where
      */    
     public function testwhere() {
         $this->assertFalse(where('field', 'data', 'data2'));
     } 
 
     /**
-     * groupBy
+     * @test groupBy
      */    
     public function testgroupBy() {
         $this->assertFalse(groupBy(''));
@@ -199,14 +198,14 @@ class ezFunctionsTest extends EZTestCase
     } 
  
     /**
-     * having
+     * @test having
      */   
     public function testhaving() {
         $this->assertFalse(having('field', 'data', 'data2'));
     }
 
     /**
-     * orderBy
+     * @test orderBy
      */    
     public function testorderBy() {
         $this->assertFalse(orderBy('', 'data'));
@@ -214,28 +213,28 @@ class ezFunctionsTest extends EZTestCase
     } 
 
     /**
-     * insert
+     * @test insert
      */    
     public function testinsert() {
         $this->assertFalse(insert('field', 'data', 'data2'));
     } 
 
     /**
-     * update
+     * @test update
      */    
     public function testupdate() {
         $this->assertFalse(update('field', 'data', 'data2'));
     } 
 
     /**
-     * delete
+     * @test delete
      */    
     public function testdelete() {
         $this->assertFalse(delete('field', 'data', 'data2'));
     } 
 
     /**
-     * replace
+     * @test replace
      */        
     public function testreplace() {
         $this->assertFalse(replace('field', 'data', 'data2'));
