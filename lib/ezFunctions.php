@@ -52,7 +52,7 @@ if (!function_exists('ezFunctions')) {
 
     function column(string $column = null, string $type = null, ...$args)
     {
-        return \setInstance($this) ? ezSchema::column($column, $type, ...$args) : false;
+        return ezSchema::column($column, $type, ...$args);
     }
 
     function primary(string $constraintName, ...$primaryKeys)
