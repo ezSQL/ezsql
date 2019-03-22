@@ -1,6 +1,5 @@
 {
     "name": "ezsql/ezsql",
-    "version": "4.0.0-beta",
     "description": "Advance database access library. Make interacting with a database ridiculously easy.",
     "keywords": ["mysql", "mysqli", "postgresql", "mssql", "sqlsrv", "sqlserver", "pdo", "sqlite", "sqlite3", "database", "abstraction", "sql", "dba"],
     "license": ["LGPL-3.0-or-later", "MIT"],
@@ -47,5 +46,11 @@
     },
     "scripts": {
         "test": "phpunit --bootstrap vendor/autoload.php tests"
+    },
+    "minimum-stability": "dev",
+    "extra": {
+        "branch-alias": {
+            "dev-master": "4.0-dev"
+        }
     }
 }
