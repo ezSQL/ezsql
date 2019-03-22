@@ -49,7 +49,7 @@ class ezSQL_sqlite3Test extends TestCase
             );
         }
         $this->object = new ezSQL_sqlite3(self::TEST_SQLITE_DB_DIR, self::TEST_SQLITE_DB); 
-        $this->object->setPrepare();
+        $this->object->prepareActive();
     }
 
     /**
@@ -138,11 +138,11 @@ class ezSQL_sqlite3Test extends TestCase
             primary('id_pk', 'id')), 
         0);
 
-        $this->object->setPrepare(false);
+        $this->object->prepareInActive(false);
         $this->assertEquals($this->object->insert('new_create_test',
             ['create_key' => 'test 2']),
         0);
-        $this->object->setPrepare();
+        $this->object->prepareActive();
     }
 
     /**

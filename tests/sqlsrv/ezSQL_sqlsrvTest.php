@@ -74,7 +74,7 @@ class ezSQL_sqlsrvTest extends TestCase {
             );
         }
         $this->object = new ezSQL_sqlsrv;        
-        $this->object->setPrepare();
+        $this->object->prepareActive();
     } // setUp
 
     /**
@@ -180,11 +180,11 @@ class ezSQL_sqlsrvTest extends TestCase {
             primary('id_pk', 'id')), 
         0);
 
-        $this->object->setPrepare(false);
+        $this->object->prepareInActive(false);
         $this->assertEquals($this->object->insert('new_create_test',
             ['create_key' => 'test 2']),
         0);
-        $this->object->setPrepare();
+        $this->object->prepareActive();
     }
 
     /**

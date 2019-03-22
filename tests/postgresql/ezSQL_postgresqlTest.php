@@ -77,7 +77,7 @@ class ezSQL_postgresqlTest extends TestCase {
             );
         }
         $this->object = new ezSQL_postgresql;               
-        $this->object->setPrepare();
+        $this->object->prepareActive();
     } // setUp
 
     /**
@@ -195,11 +195,11 @@ class ezSQL_postgresqlTest extends TestCase {
             primary('id_pk', 'id')), 
         0);
 
-        $this->object->setPrepare(false);
+        $this->object->prepareInActive(false);
         $this->assertEquals($this->object->insert('new_create_test',
             ['create_key' => 'test 2']),
         1);
-        $this->object->setPrepare();
+        $this->object->prepareActive();
     }
 
     /**

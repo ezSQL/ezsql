@@ -79,7 +79,7 @@ class ezSQL_mysqliTest extends TestCase {
             );
         }
         $this->object = new ezSQL_mysqli();       
-        $this->object->setPrepare();
+        $this->object->prepareActive();
     }
 
     /**
@@ -293,11 +293,11 @@ class ezSQL_mysqliTest extends TestCase {
             primary('id_pk', 'id')), 
         0);
 
-        $this->object->setPrepare(false);
+        $this->object->prepareInActive(false);
         $this->assertEquals($this->object->insert('new_create_test',
             ['create_key' => 'test 2']),
         1);
-        $this->object->setPrepare();
+        $this->object->prepareActive();
     }
 
     /**
@@ -472,7 +472,7 @@ class ezSQL_mysqliTest extends TestCase {
     {
         $this->object->connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD);
         $this->object->select(self::TEST_DB_NAME);
-        $this->object->setPrepare(false);
+        $this->object->prepareInActive(false);
         $expect = where(
             between('where_test','testing 1','testing 2','bad'),
 			like('test_null','null')
@@ -507,7 +507,7 @@ class ezSQL_mysqliTest extends TestCase {
             array('where_test','=','testing 1','or'),
 			array('test_like',_LIKE,'_good')
 			));                   
-        $this->object->setPrepare(true);
+        $this->object->prepareActive(true);
         $expect = where(
             between('where_test','testing 1','testing 2','bad'),
 			like('test_null','null')
