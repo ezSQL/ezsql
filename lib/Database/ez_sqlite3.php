@@ -143,7 +143,7 @@ final class ez_sqlite3 extends ezsqlModel implements DatabaseInterface
      * @param array $param
      * @return bool \SQLite3Result
      */
-    public function query_prepared($query, $param = null)
+    public function query_prepared(string $query, array $param = null)
     {
         $stmt = $this->dbh->prepare($query);
         foreach ($param as $index => $val) {
@@ -172,7 +172,7 @@ final class ez_sqlite3 extends ezsqlModel implements DatabaseInterface
      * @param bool
      * @return object
      */
-    public function query(string $query, $use_prepare = false)
+    public function query(string $query, bool $use_prepare = false)
     {
         $param = [];
         if ($use_prepare) {

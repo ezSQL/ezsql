@@ -140,6 +140,18 @@ final class ez_sqlsrv extends ezsqlModel implements DatabaseInterface
     }
 
     /**
+    * Creates a prepared query, binds the given parameters and returns the result of the executed
+    *
+    * @param string $query
+    * @param array $param
+    * @return bool|mixed
+    */
+    public function query_prepared(string $query, array $param = null)
+    { 
+        return @\sqlsrv_query($this->dbh, $query, $param);
+    }
+
+    /**
      * Perform sqlsrv query and try to determine result value
      * @param string
      * @param bool
@@ -194,7 +206,7 @@ final class ez_sqlsrv extends ezsqlModel implements DatabaseInterface
 
         // Perform the query via std sqlsrv_query function..
         if (!empty($param) && \is_array($param) && ($this->isPrepareActive())) {
-            $this->result = @\sqlsrv_query($this->dbh, $query, $param);
+            $this->result = $this->query_prepared($query, $param);
         } else {
             $this->result = @\sqlsrv_query($this->dbh, $query);
         }

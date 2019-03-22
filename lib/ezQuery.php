@@ -17,7 +17,7 @@ class ezQuery implements ezQueryInterface
     public function __construct()
     {
     }
-
+ 
     public static function clean($string) 
     {
         $patterns = array( // strip out:
@@ -141,8 +141,8 @@ class ezQuery implements ezQueryInterface
     
     public function prepareInActive()
     {
-        $this->prepareActive = false;
-    }  	
+        $this->prepareActive = $this->clearPrepare();
+    }
 
     /**
     * Convert array to string, and attach '`, `' for separation, if none is provided.
@@ -698,7 +698,6 @@ class ezQuery implements ezQueryInterface
 
    public function create(string $table = null, ...$schemas) 
    {
-        \setInstance($this);
         $vendor = ezSchema::vendor();
         if (empty($table) || empty($schemas) || empty($vendor))
            return false;

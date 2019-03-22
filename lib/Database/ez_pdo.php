@@ -258,7 +258,7 @@ final class ez_pdo extends ezsqlModel implements DatabaseInterface
     * @param boolean $isSelect - return \PDOStatement, if SELECT SQL statement, otherwise int
     * @return bool|int|PDOStatement 
     */
-    public function query_prepared(string $query, $param = null, $isSelect = false)
+    public function query_prepared(string $query, array $param = null, $isSelect = false)
     { 
         $stmt = $this->dbh->prepare($query);
         $result = false;
@@ -273,10 +273,11 @@ final class ez_pdo extends ezsqlModel implements DatabaseInterface
     /**
      * Basic Query	- see docs for more detail
      *
-     * @param type $query
+     * @param string $query
+     * @param bool $use_prepare
      * @return object
      */
-    public function query(string $query, $use_prepare = false)
+    public function query(string $query, bool $use_prepare = false)
      {
         $param = [];
         if ($use_prepare)

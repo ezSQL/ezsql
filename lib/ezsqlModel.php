@@ -25,7 +25,7 @@ class ezsqlModel extends ezQuery implements ezsqlModelInterface
 	protected $varDump_called   = false;
 	
 	/**
-	* RCurrent show error state
+	* Current show error state
 	* @var boolean
 	*/
 	protected $show_errors      = true;
@@ -662,7 +662,7 @@ class ezsqlModel extends ezQuery implements ezsqlModelInterface
     } // affectedRows
 	
 	// query call template
-	public function query($query, $use_prepare = false) 
+	public function query(string $query, bool $use_prepare = false) 
 	{
 		return false;
 	}    

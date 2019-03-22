@@ -181,15 +181,15 @@ class ez_mysqliTest extends EZTestCase
     }
 
     /**
-     * @covers ezsql\Database\ez_mysqli::getDBHost
+     * @covers ezsql\Database\ez_mysqli::settings
      */
-    public function testGetDBHost() 
+    public function testGetHost() 
     {
-        $this->assertEquals(self::TEST_DB_HOST, $this->object->getDBHost());
+        $this->assertEquals(self::TEST_DB_HOST, $this->object->getHost());
     }
 
     /**
-     * @covers ezsql\Database\ez_mysqli::getCharset
+     * @covers ezsql\Database\ez_mysqli::settings
      */
     public function testGetCharset() 
     {
@@ -463,22 +463,20 @@ class ez_mysqliTest extends EZTestCase
 			like('test_null','null')
 			);
 
-        $this->assertContains('WHERE where_test BETWEEN '._TAG.' AND '._TAG.' AND test_null IS NULL',$expect);   
+        $this->assertContains('WHERE where_test BETWEEN '._TAG.' AND '._TAG.' AND test_null IS NULL', $expect);   
     }     
  
     /**
      * @covers ezsql\Database\ez_mysqli::query_prepared
      */
     public function testQuery_prepared() {
-        $this->object->connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD);
-
-        $this->object->select(self::TEST_DB_NAME);
-        $this->assertEquals($this->object->create('unit_test',
+        $this->object->prepareInActive();
+        $this->assertEquals(0, $this->object->create('unit_test',
             \column('id', \INTR, 11, \notNULL, \AUTO, \PRIMARY),
-            \column('prepare_key', VARCHAR, 50)), 
-        0);
+            \column('prepare_key', VARCHAR, 50))
+        );
 
-        $result = $this->object->query_prepared('INSERT INTO unit_test(id, prepare_key) VALUES(1, ?)', ['test 1']);
+        $result = $this->object->query_prepared('INSERT INTO unit_test( id, prepare_key ) VALUES( 9, ? )', ['test 1']);
         $this->assertEquals(1, $result);
     } // testQuery_prepared
        

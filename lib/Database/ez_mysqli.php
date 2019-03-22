@@ -22,12 +22,6 @@ final class ez_mysqli extends ezsqlModel implements DatabaseInterface
             4 => 'mySQL database connection is not active',
             5 => 'Unexpected error while trying to select database'
         );
-
-    /**
-     * Show errors
-     * @var boolean Default is true
-     */
-    protected $show_errors = true;
     
     protected $preparedValues = array();
 
@@ -222,8 +216,8 @@ final class ez_mysqli extends ezsqlModel implements DatabaseInterface
      * @return bool|mysqli_result
      */
     private function fetch_prepared_result(&$stmt, $query) 
-    {
-        if($stmt instanceof mysqli_stmt) {
+    {   
+        if ($stmt instanceof \mysqli_stmt) {
             $stmt->store_result();       
             $variables = array();
             $is_insert = false;
@@ -285,14 +279,14 @@ final class ez_mysqli extends ezsqlModel implements DatabaseInterface
      * Creates a prepared query, binds the given parameters and returns the result of the executed
      * {@link mysqli_stmt}.
      * @param string $query
-     * @param array $args
+     * @param array $param
      * @return bool|mysqli_result
      */
-    public function query_prepared($query, array $args)
+    public function query_prepared(string $query, array $param = null)
     {
         $stmt   = $this->dbh->prepare($query);
         $params = [];
-        $types  = \array_reduce($args,
+        $types  = \array_reduce($param,
             function ($string, &$arg) use (&$params) {
                 $params[] = &$arg;
                 if (\is_float($arg))
@@ -324,9 +318,10 @@ final class ez_mysqli extends ezsqlModel implements DatabaseInterface
      * Perform mySQL query and try to determine result value
      *
      * @param string $query
-     * @return boolean
+     * @param bool $use_prepare
+     * @return mixed|bool
      */
-    public function query($query, $use_prepare = false)
+    public function query(string $query, bool $use_prepare = false)
     {
         $param = [];
         if ($use_prepare)
@@ -449,7 +444,7 @@ final class ez_mysqli extends ezsqlModel implements DatabaseInterface
      *
      * @return string
      */
-    public function getDBHost() 
+    public function getHost() 
     {
         return $this->database->getHost();
     } // getDBHost

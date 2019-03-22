@@ -3,6 +3,35 @@ namespace ezsql;
 
 interface DatabaseInterface
 {
+    /**
+    * Database configuration methods:
+    *
+    * - setDriver($args);
+    * - setDsn($args);
+    * - setUser($args);
+    * - setPassword($args);
+    * - setName($args);
+    * - setHost($args);
+    * - setPort($args); 
+    * - setCharset($args);
+    * - setOptions($args);
+    * - setIsFile($args);
+    * - setToMysql($args);
+    * - setPath($args);
+    *
+    * - getDriver();
+    * - getDsn();
+    * - getUser();
+    * - getPassword()
+    * - getName();
+    * - getHost();
+    * - getPort();
+    * - getCharset();
+    * - getOptions();
+    * - getIsFile();
+    * - getToMysql();
+    * - getPath();
+    */
     public function settings();
 
     /**
@@ -24,20 +53,21 @@ interface DatabaseInterface
     
 	/**
      * Creates a prepared query, binds the given parameters and returns the result of the executed
-     * {@link \mysqli_stmt}.
+     * 
      * @param string $query
-     * @param array $args
-     * @return bool|mysqli_result
+     * @param array $param
+     * @return bool|result
      */
-    public function query_prepared($query, array $args);
+    public function query_prepared(string $query, array $param = null);
     
     /**
      * Perform mySQL query and try to determine result value
      *
-     * @param type $query
-     * @return boolean
+     * @param string $query
+     * @param bool $use_prepare
+     * @return bool|mixed
      */
-    public function query($query, $use_prepare = false);
+    public function query(string $query, bool $use_prepare = false);
 	
     /**
      * Close the database connection

@@ -173,13 +173,25 @@ final class ez_pgsql extends ezsqlModel implements DatabaseInterface
     } // showDatabases
 
     /**
+    * Creates a prepared query, binds the given parameters and returns the result of the executed
+    *
+    * @param string $query
+    * @param array $param
+    * @return bool|mixed
+    */
+    public function query_prepared(string $query, array $param = null)
+    { 
+        return @\pg_query_params($this->dbh, $query, $param); 
+    }
+
+    /**
      * Perform PostgreSQL query and try to determine result value
      *
      * @param string
      * @param bool
      * @return object
      */
-    public function query(string $query, $use_prepare = false)
+    public function query(string $query, bool $use_prepare = false)
     {
         $param = [];
         if ($use_prepare) {
@@ -233,7 +245,7 @@ final class ez_pgsql extends ezsqlModel implements DatabaseInterface
 
         // Perform the query via std postgresql_query function..
         if (!empty($param) && \is_array($param) && ($this->isPrepareActive())) {
-            $this->result = @\pg_query_params($this->dbh, $query, $param);
+            $this->result = $this->query_prepared($query, $param);
         } else {
             $this->result = @\pg_query($this->dbh, $query);
         }
@@ -329,7 +341,7 @@ final class ez_pgsql extends ezsqlModel implements DatabaseInterface
      *
      * @return string
      */
-    public function getDBHost()
+    public function getHost()
     {
         return $this->database->getHost();
     } // getDBHost
