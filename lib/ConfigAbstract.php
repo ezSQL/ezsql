@@ -91,7 +91,7 @@ abstract class ConfigAbstract
     * If we want to convert Queries in MySql syntax to MS-SQL syntax. 
     * Yes, there are some differences in query syntax.
     */
-    private $tomysql = true;
+    private $tomssql = true;
 
     /**
     * The path to open an SQLite database

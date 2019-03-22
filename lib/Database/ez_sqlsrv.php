@@ -169,7 +169,7 @@ final class ez_sqlsrv extends ezsqlModel implements DatabaseInterface
 
         // if flag to convert query from MySql syntax to MS-Sql syntax is true
         // convert the query
-        if ($this->database->getToMySql()) {
+        if ($this->database->getToMssql()) {
             $query = $this->convert($query);
         }
 
@@ -201,7 +201,8 @@ final class ez_sqlsrv extends ezsqlModel implements DatabaseInterface
             $this->connect($this->database->getUser(),
                 $this->database->getPassword(),
                 $this->database->getName(),
-                $this->database->getHost());
+                $this->database->getHost()
+            );
         }
 
         // Perform the query via std sqlsrv_query function..

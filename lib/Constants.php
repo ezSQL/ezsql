@@ -96,8 +96,8 @@ if (!\defined('CONSTANTS')) {
         'port',
         'file',
         'filebase',
-        'nosql',
-        'nomysql',
+        'tosql',
+        'tomssql',
         'options'
     ]);
         
@@ -118,8 +118,8 @@ if (!\defined('CONSTANTS')) {
         'port' => 'port',
         'file' => 'isFile',
         'filebase' => 'isFile',
-        'nosql' => 'toMysql',
-        'nomysql' => 'toMysql',
+        'tosql' => 'toMssql',
+        'tomssql' => 'toMssql',
         'options' => 'options'
     ]);
 

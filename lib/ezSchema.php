@@ -127,7 +127,7 @@ class ezSchema
 			$extra = !empty($args[4]) ? ' '.$args[4] : '';
 			$data = $type.$size.$value.$options.$extra;
 		} elseif (\preg_match($numberPattern, $type)) {
-            // check for numeric data type
+            // check for whole number data type
             $numberOrString = $args[0];
             $store = \is_int($numberOrString) ? '('.$numberOrString.')' : '';
 			$store = empty($store) && !empty($numberOrString) ? $numberOrString : $store;
@@ -159,6 +159,20 @@ class ezSchema
         $type = null;
         $instance = \getInstance();
         if ($instance instanceof DatabaseInterface) {
+            $type = $instance->settings()->getDriver();
+            if ($type == \Pdo) {
+                $dbh = $instance->connection();
+                if (strpos($dbh->getAttribute(\PDO::ATTR_CLIENT_VERSION), \MYSQL) !== false) 
+                    $type = \MYSQL;
+                elseif (strpos($dbh->getAttribute(\PDO::ATTR_CLIENT_VERSION), \PGSQL) !== false) 
+                    $type = \POSTGRESQL;
+                elseif (strpos($dbh->getAttribute(\PDO::ATTR_CLIENT_VERSION), \SQLITE) !== false) 
+                    $type = \SQLITE3;
+                elseif (strpos($dbh->getAttribute(\PDO::ATTR_CLIENT_VERSION), \SQLSRV) !== false) 
+                    $type = \SQLSERVER;
+            }
+
+            /*
             $dbSqlite = $GLOBALS['db_'.\SQLITE3];
             $dbPgsql = $GLOBALS['db_'.\PGSQL];
             $dbMysqli = $GLOBALS['db_'.\MYSQL];
@@ -183,6 +197,7 @@ class ezSchema
                 elseif (strpos($dbh->getAttribute(\PDO::ATTR_CLIENT_VERSION), \SQLSRV) !== false) 
                     $type = \SQLSERVER;
             }
+            */
         }
 
         return $type;

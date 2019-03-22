@@ -6,19 +6,6 @@ interface DatabaseInterface
     /**
     * Database configuration methods:
     *
-    * - setDriver($args);
-    * - setDsn($args);
-    * - setUser($args);
-    * - setPassword($args);
-    * - setName($args);
-    * - setHost($args);
-    * - setPort($args); 
-    * - setCharset($args);
-    * - setOptions($args);
-    * - setIsFile($args);
-    * - setToMysql($args);
-    * - setPath($args);
-    *
     * - getDriver();
     * - getDsn();
     * - getUser();
@@ -29,8 +16,23 @@ interface DatabaseInterface
     * - getCharset();
     * - getOptions();
     * - getIsFile();
-    * - getToMysql();
+    * - getToMssql();
     * - getPath();
+    *---------------
+    * - setDriver($args);
+    * - setDsn($args);
+    * - setUser($args);
+    * - setPassword($args);
+    * - setName($args);
+    * - setHost($args);
+    * - setPort($args); 
+    * - setCharset($args);
+    * - setOptions($args);
+    * - setIsFile($args);
+    * - setToMssql($args);
+    * - setPath($args);
+    *
+    * @return string|array|bool|void
     */
     public function settings();
 

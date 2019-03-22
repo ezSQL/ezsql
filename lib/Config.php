@@ -62,18 +62,37 @@ class Config extends ConfigAbstract implements ConfigInterface
      * @param string $driver - The vendor's SQL database driver name
      * @param string|array $arguments In the following:
      * 
-     * - $path|args[0] // The path to open an SQLite database
-     * - $dsn |args[0] // The PDO DSN connection parameter string
-     * - $user|args[0][1] // The database user name
-     * - $password|args[1][2] // The database users password
-     * - $name|args[1][2] // The name of the database
-     * - $host|args[3] // The host name or IP address of the database server,
+     * - user|args[0][1] // The database user name
+     * - password|args[1][2] // The database users password
+     * - database|args[1][2] // The name of the database
+     * - host|args[3] // The host name or IP address of the database server,
      *      Default is localhost
-     * - $charset|args[4] // The database charset, Default is empty string
-     * - array $options|args[3] // Array for setting connection options as MySQL
-     * - boolean $isFile|args[4] // File based databases like SQLite don't need user
-     *      and password, work with path in the dsn parameter
-     * - $port|args[4] // The PostgreSQL database TCP/IP port, Default is 5432
+     * 
+     *  for: mysqli 
+     * - (username, password, database, host, charset)
+     * - charset|args[4] // The database charset, 
+     *      Default is empty string
+     * 
+     *  for: postgresql  
+     * - (username, password, database, host, port)
+     * - port|args[4] // The PostgreSQL database TCP/IP port, 
+     *      Default is 5432
+     * 
+     *  for: sqlserver 
+     * - (username, password, database, host, convertMysqlToMssqlQuery)
+     * - convertMysqlToMssqlQuery[4] // convert Queries in MySql syntax to MS-SQL syntax
+     *      Default is false
+     * 
+     *  for: pdo
+     * - (dsn, username, password, options, isFile?) 
+     * - dsn |args[0] // The PDO DSN connection parameter string
+     * - options|args[3] // Array for setting connection options as MySQL
+     * - isFile|args[4] // File based databases like SQLite don't need
+     *      user and password, they work with path in the dsn parameter
+     *      Default is false
+     * 
+     *  for: sqlite3 
+     * - (filePath, database) - filePath|args[0] // The path to open an SQLite database
      */
     public static function initialize(string $driver = '', $arguments = null)
     {
@@ -102,7 +121,7 @@ class Config extends ConfigAbstract implements ConfigInterface
         if ( ! \class_exists ('PDO') )
             throw new Exception('<b>Fatal Error:</b> ez_pdo requires PDO Lib to be compiled and or linked in to the PHP engine');           
         elseif (\is_string($args))
-            $this->parseConnectionString($args, ['user', 'dsn', 'password']);
+            $this->parseConnectionString($args, ['dsn', 'user', 'password']);
         elseif (\count($args)>=3) {
             $this->setDsn($args[0]);
             $this->setUser($args[1]);
@@ -118,13 +137,13 @@ class Config extends ConfigAbstract implements ConfigInterface
         if ( ! \function_exists ('sqlsrv_connect') ) 
             throw new Exception('<b>Fatal Error:</b> ez_sqlsrv requires the php_sqlsrv.dll or php_pdo_sqlsrv.dll to be installed. Also enable MS-SQL extension in PHP.ini file ');
         elseif (\is_string($args))
-            $this->parseConnectionString($args, ['user', 'name', 'password']);
+            $this->parseConnectionString($args, ['user', 'password', 'name']);
         elseif (\count($args)>=3) {
             $this->setUser($args[0]);
             $this->setPassword($args[1]);
             $this->setName($args[2]);
             $this->setHost(empty($args[3]) ? $this->getHost() : $args[3]);
-            $this->setToMysql(empty($args[4]) ? $this->getToMysql() : $args[4]);
+            $this->setToMssql(empty($args[4]) ? $this->getToMssql() : $args[4]);
         } else
             throw new Exception(\MISSING_CONFIGURATION);
     }
@@ -134,7 +153,7 @@ class Config extends ConfigAbstract implements ConfigInterface
         if ( ! \function_exists ('pg_connect') )
             throw new Exception('<b>Fatal Error:</b> ez_pgsql requires PostgreSQL Lib to be compiled and or linked in to the PHP engine');
         elseif (\is_string($args))
-            $this->parseConnectionString($args, ['user', 'name', 'password']);
+            $this->parseConnectionString($args, ['user', 'password', 'name']);
         elseif (count($args)>=3) {
             $this->setUser($args[0]);
             $this->setPassword($args[1]);
