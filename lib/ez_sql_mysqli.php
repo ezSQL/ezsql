@@ -325,9 +325,7 @@ class ezSQL_mysqli extends ezSQLcore
         // free and closes a prepared statement
         $stmt->free_result();
         $stmt->close();
-        
-        $this->clearPrepare();
-        
+                
         return $result;
     }
     
@@ -337,7 +335,7 @@ class ezSQL_mysqli extends ezSQLcore
      * @param type $query
      * @return boolean
      */
-    public function query($query, $use_prepare=false) {
+    public function query($query, $use_prepare = false) {
         $param = [];
         if ($use_prepare)
             $param = $this->prepareValues();

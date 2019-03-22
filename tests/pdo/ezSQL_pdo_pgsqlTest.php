@@ -94,7 +94,7 @@ class ezSQL_pdo_pgsqlTest extends TestCase {
             );
         }
         $this->object = new ezSQL_pdo();
-        $this->object->setPrepare();
+        $this->object->prepareActive();
     } // setUp
 
     /**

@@ -94,7 +94,7 @@ class ezSQL_pdo_mysqlTest extends TestCase {
             );
         }
         $this->object = new ezSQL_pdo();
-        $this->object->setPrepare();
+        $this->object->prepareActive();
     } // setUp
 
     /**
@@ -179,7 +179,7 @@ class ezSQL_pdo_mysqlTest extends TestCase {
             primary('id_pk', 'id')), 
         0);
 
-        $this->object->setPrepare(false);
+        $this->object->prepareInActive(false);
         $this->assertEquals($this->object->insert('new_create_test2',
             ['create_key' => 'test 2']),
         1);
@@ -188,7 +188,7 @@ class ezSQL_pdo_mysqlTest extends TestCase {
         $res = $conn->query("SHOW STATUS LIKE 'Ssl_cipher';")->fetchAll();
         $this->assertEquals('Ssl_cipher', $res[0]['Variable_name']);
 
-        $this->object->setPrepare();
+        $this->object->prepareActive();
         $this->assertEquals($this->object->drop('new_create_test2'), 0);
     }
 
@@ -205,11 +205,11 @@ class ezSQL_pdo_mysqlTest extends TestCase {
             primary('id_pk', 'id')), 
         0);
 
-        $this->object->setPrepare(false);
+        $this->object->prepareInActive(false);
         $this->assertEquals($this->object->insert('new_create_test',
             ['create_key' => 'test 2']),
         1);
-        $this->object->setPrepare();
+        $this->object->prepareActive();
     }
 
     /**

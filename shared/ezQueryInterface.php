@@ -36,10 +36,14 @@ interface ezQueryInterface
     public static function clean($string);
       	
     /**
-    * Turn off/on prepare function availability in ezQuery shortcut method calls 
-    */
-    public function setPrepare($on = true);
+    * Turn on prepare function availability in ezQuery shortcut method calls 
+    */    
+    public function prepareActive();
     
+    /**
+    * Turn off prepare function availability in ezQuery shortcut method calls 
+    */    
+    public function prepareInActive();
 
     /**
     * Specifies a grouping over the results of the query.

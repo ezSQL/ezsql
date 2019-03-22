@@ -135,7 +135,17 @@ class ezQuery implements ezQueryInterface
     public function setPrepare($on = true) 
     {
         $this->prepareActive = ($on) ? true : false;
-    }  	
+    }
+
+    public function prepareActive() 
+    {
+        $this->prepareActive = true;
+    }
+    
+    public function prepareInActive() 
+    {
+        $this->prepareActive = $this->clearPrepare();
+    }
 
     /**
     * Convert array to string, and attach '`, `' for separation, if none is provided.
