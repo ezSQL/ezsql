@@ -14,33 +14,63 @@ defined('ARRAY_A') or define('ARRAY_A', 'ARRAY_A');
 defined('ARRAY_N') or define('ARRAY_N', 'ARRAY_N');
 
 /**
-* Core class containing common functions to manipulate query result
-* sets once returned
-*/	
+ * Core class containing common functions to manipulate query result
+ * sets once returned
+ */	
 class ezsqlModel extends ezQuery implements ezsqlModelInterface
 {
-	protected $trace            = false;  // same as $debug_all
-	protected $debug_all        = false;  // same as $trace
-	protected $debug_called     = false;
-	protected $varDump_called   = false;
+	/**
+	 * If set to true (i.e. $db->debug_all = true;) Then it will print out ALL queries and ALL results of your script.
+	 * @var boolean
+	 */
+	protected $debug_all = false;  
+	
+	// same as $debug_all
+	protected $trace = false;
+	protected $debug_called = false;
+	protected $varDump_called = false;
 	
 	/**
-	* Current show error state
-	* @var boolean
-	*/
-	protected $show_errors      = true;
-	
-	protected $num_queries      = 0;
-	protected $conn_queries     = 0;
-	protected $captured_errors  = array();
-	protected $cache_dir        = false;
-	protected $cache_queries    = false;
+	 * Current show error state
+	 * @var boolean
+	 */
+	protected $show_errors = true;
+
+	/**
+	 * Keeps track of exactly how many 'real' (not cached) 
+	 * queries were executed during the lifetime of the current script
+	 * @var int
+	 */
+	protected $num_queries = 0;
+
+	/**
+	 * 
+	 */
+	protected $conn_queries = 0;
+	protected $captured_errors = array();
+
+	/**
+	 * Path to SQL caching dir.
+	 * @var boolean
+	 */
+	protected $cache_dir = false;
+
+	/**
+	 * 
+	 * @var boolean
+	 */
+	protected $cache_queries = false;
 	protected $cache_inserts    = false;
 	protected $use_disk_cache   = false;
 	protected $cache_timeout    = 24; // hours
+
 	protected $db_connect_time  = 0;
 	protected $sql_log_file     = false;
 	protected $profile_times    = array();
+	/**
+	 * ID generated from the AUTO_INCRIMENT of the previous INSERT operation (if any)
+	 * @var int
+	 */
 	protected $insert_id        = null;
 	
 	protected $last_query       = null;
@@ -153,9 +183,6 @@ class ezsqlModel extends ezQuery implements ezsqlModelInterface
 		);
 	}
 	
-	/**
-	* Turn error handling on or off..
-	*/
 	public function show_errors()
 	{
 		$this->show_errors = true;
@@ -192,9 +219,6 @@ class ezsqlModel extends ezQuery implements ezsqlModelInterface
 		\array_push($this->all_func_calls, $this->func_call);
 	}
 	
-	/**
-	* Get one variable from the DB - see docs for more detail
-	*/
 	public function get_var(string $query = null, $x = 0, $y = 0, $use_prepare = false)
 	{
 		
@@ -215,9 +239,6 @@ class ezsqlModel extends ezQuery implements ezsqlModelInterface
 		return (isset($values[$x]) && $values[$x] !== null) ? $values[$x] :null;
 	}
 	
-	/**
-	* Get one row from the DB - see docs for more detail
-	*/
 	public function get_row(string $query = null, $output = OBJECT, $y = 0, $use_prepare = false)
 	{
 		// Log how the function was called
@@ -243,11 +264,7 @@ class ezsqlModel extends ezQuery implements ezsqlModelInterface
 		}
 	}
 	
-	/**
-	* Function to get 1 column from the cached result set based in X index
-	* see docs for usage and info
-	*/
-	public function get_col(string $query = null, $x = 0, $use_prepare = false)
+	public function get_col(string $query = null, int $x = 0, bool $use_prepare = false)
 	{
 		$new_array = array();
 		
@@ -267,10 +284,7 @@ class ezsqlModel extends ezQuery implements ezsqlModelInterface
 		return $new_array;
 	}
 	
-	/**
-	* Return the the query as a result set, will use prepare statements if setup - see docs for more details
-	*/
-	public function get_results(string $query = null, $output = \OBJECT, $use_prepare = false) 
+	public function get_results(string $query = null, $output = \OBJECT, bool $use_prepare = false) 
 	{
 		// Log how the function was called
 		$this->log_query("\$db->get_results(\"$query\", $output, $use_prepare)");
@@ -301,10 +315,6 @@ class ezsqlModel extends ezQuery implements ezsqlModelInterface
 		}
 	}
 	
-	/**
-	* Function to get column meta data info pertaining to the last query
-	* see docs for more info and usage
-	*/
 	public function get_col_info($info_type = "name", $col_offset = -1)
 	{
 		if ( $this->col_info ) {
@@ -387,13 +397,7 @@ class ezsqlModel extends ezQuery implements ezsqlModelInterface
 		}
 	}
 	
-	/**
-	* Dumps the contents of any input variable to screen in a nicely
-	* formatted and easy to understand way - any type: Object, public or Array
-	* @param mixed $mixed
-	* @return string
-	*/
-	public function varDump($mixed = '')
+	public function varDump($mixed = null)
 	{
 		// Start output buffering
 		\ob_start();
@@ -436,21 +440,13 @@ class ezsqlModel extends ezQuery implements ezsqlModelInterface
 	}
 	
 	/**
-	* @internal alias for ezsqlModel::varDump()
+	* @internal ezsqlModel::varDump
 	*/
-	public function dump_var($mixed = '')
+	public function dump_var($mixed = null)
 	{
 		return $this->varDump($mixed);
 	}
 	
-	/**
-	* Displays the last query string that was sent to the database & a
-	* table listing results (if there were any).
-	* (abstracted into a separate file to save server overhead).
-	*
-	* @param boolean $print_to_screen
-	* @return string
-	*/
 	public function debug($print_to_screen = true)
 	{
 		// Start output buffering
@@ -581,43 +577,39 @@ class ezsqlModel extends ezQuery implements ezsqlModelInterface
 	}
 	
 	/**
-	* Creates a SET nvp sql string from an associative array (and escapes all values)
-	*
-	*  Usage:
-	*
-	*     $db_data = array('login'=>'jv','email'=>'jv@vip.ie', 'user_id' => 1, 'created' => 'NOW()');
-	*
-	*     $db->query("INSERT INTO users SET ".$db->get_set($db_data));
-	*
-	*     ...OR...
-	*
-	*     $db->query("UPDATE users SET ".$db->get_set($db_data)." WHERE user_id = 1");
-	*
-	* Output:
-	*
-	*     login = 'jv', email = 'jv@vip.ie', user_id = 1, created = NOW()
-	*/
-	public function get_set($params)
+	 * Creates a SET nvp sql string from an associative array (and escapes all values)
+	 *
+	 * Usage:
+	 *	$db_data = array(
+	 *	 'login' => 'jv', 
+	 *	 'email' => 'jv@vip.ie', 
+	 *	 'user_id' => 1, 
+	 *	 'created' => 'NOW()'
+	 *	);
+	 *
+	 *	$db->query("INSERT INTO users SET ".$db->get_set($db_data));
+	 *     ...OR...
+	 *	$db->query("UPDATE users SET ".$db->get_set($db_data)." WHERE user_id = 1");
+	 *
+	 * Output:
+	 *	login = 'jv', email = 'jv@vip.ie', user_id = 1, created = NOW()
+	 */
+	public function get_set(array $params)
 	{
-		if( !\is_array( $params ) ) {
-			$this->register_error( 'get_set() parameter invalid. Expected array in '.__FILE__.' on line '.__LINE__);
-			return;
-		}
-		
 		$sql = array();
 		foreach ( $params as $field => $val ) {
 			if ( $val === 'true' || $val === true )
-			$val = 1;
+				$val = 1;
 			if ( $val === 'false' || $val === false )
-			$val = 0;
+				$val = 0;
 			
 			switch( $val ) {
 				case 'NOW()' :
 				case 'NULL' :
-				$sql[] = "$field = $val";
-				break;
+					$sql[] = "$field = $val";
+					break;
 				default :
-				$sql[] = "$field = '".$this->escape( $val )."'";
+					$sql[] = "$field = '".$this->escape( $val )."'";
 			}
 		}
 		

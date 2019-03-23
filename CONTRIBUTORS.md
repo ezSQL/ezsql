@@ -1,31 +1,37 @@
-**ezSQL** *Contributors*
+**ezsql** *Contributors*
 ============================================
 
 * **[Justin Vincent](http://twitter.com/justinvincent)**
   > jv@jvmultimedia.com
-  * Author: ezSQL class - *mySQL, PDO, PostgreSQL, Cubrid, Oracle8_9*
+  * Author: ezsql class - *mySQL, PDO, PostgreSQL, Cubrid, Oracle8_9*
+
+    Contact Info :
+      - Follow me on twitter: 
+        http://twitter.com/justinvincent
+      - Check out my podcast TechZing where we talk about tech and tech startups:
+        http://techzinglive.com
 
 * **[Stefanie Janine Stoelting](https://stefanie-stoelting.de)**
   > mail@stefanie-stoelting.de
   * Author: 
-    - *ezSQL version 3.00*
+    - *ezsql version 3.00*
     - *oracleTNS*
     - *phpunit tests*
     - *RecordSet - for working with query results*
 
 * **davisjw**
   > davisjw@gmail.com
-  * Author: ezSQL class - *Sqlserver*
+  * Author: ezsql class - *Sqlserver*
 
 * **Silvio Wanka**
-  * Author: ezSQL class - *sqlite3*
+  * Author: ezsql class - *sqlite3*
 
 ----
 
 **[L. Stubbs]**
   > lstubbs@techno.express
   * Author/Maintainer: 
-    - ezSQL version 3
+    - ezsql version 3
     - In Development version *4.0*
     - *ezQuery, ezFunctions, ezSchema*
 

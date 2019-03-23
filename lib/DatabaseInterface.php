@@ -63,7 +63,16 @@ interface DatabaseInterface
     public function query_prepared(string $query, array $param = null);
     
     /**
-     * Perform mySQL query and try to determine result value
+     * Perform SQL query and try to determine result value.
+     *  
+     * It should be noted that you can send any type of query to the
+     * database using this command. 
+     * 
+     * If there are any results generated they will be stored and can be
+     * accessed by any ezsql function as long as you use a null query. 
+     * 
+     * If there are results returned the function will return `true`.
+     * if no results the return will be `false`.
      *
      * @param string $query
      * @param bool $use_prepare
