@@ -24,12 +24,12 @@ Quick Examples..
 
 Note: In all these examples no other code is required other than including ez\_sql.php
 
-            ----------------------------------------------------
+ ----------------------------------------------------
 
 _Example 1_
 ===========
 
-\----------------------------------------------------
+
 
 // Select multiple records from the database and print them out..
 
@@ -41,18 +41,18 @@ foreach ( $users as $user )
 
  // Access data using object syntax
 
-            echo $user->name;
+ echo $user->name;
 
-            echo $user->email;
+ echo $user->email;
 
 }
 
-\----------------------------------------------------
+
 
 _Example 2_
 ===========
 
-\----------------------------------------------------
+
 
 // Get one row from the database and print it out..
 
@@ -62,11 +62,11 @@ echo $user->name;
 
 echo $user->email;
 
-\----------------------------------------------------
+
 
 ###### Example 3
 
-\----------------------------------------------------
+
 
 // Get one variable from the database and print it out..
 
@@ -74,41 +74,41 @@ $var = $db->get\_var("SELECT count(\*) FROM users");
 
 echo $var;
 
-\----------------------------------------------------
+
 
 ###### Example 4
 
-\----------------------------------------------------
+
 
 // Insert into the database
 
 $db->query("INSERT INTO users (id, name, email) VALUES (NULL,'justin','jv@foo.com')");
 
-\----------------------------------------------------
+
 
 ###### Example 5
 
-\----------------------------------------------------
+
 
 // Update the database
 
 $db->query("UPDATE users SET name = 'Justin' WHERE id = 2)");
 
-\----------------------------------------------------
+
 
 ###### Example 6
 
-\----------------------------------------------------
+
 
 // Display last query and all associated results
 
 $db->debug();
 
-\----------------------------------------------------
+
 
 ###### Example 7
 
-\----------------------------------------------------
+
 
 // Display the structure and contents of any result(s) .. or any variable
 
@@ -116,11 +116,11 @@ $results = $db->get\_results("SELECT name, email FROM users");
 
 $db->vardump($results);
 
-\----------------------------------------------------
+
 
 ###### Example 8
 
-\----------------------------------------------------
+
 
 // Get 'one column' (based on column index) and print it out..
 
@@ -130,15 +130,15 @@ foreach ( $names as $name )
 
 {
 
-            echo $name;
+ echo $name;
 
 }
 
-\----------------------------------------------------
+
 
 ###### Example 9
 
-\----------------------------------------------------
+
 
 // Same as above ‘but quicker’
 
@@ -146,15 +146,15 @@ foreach ( $db->get\_col("SELECT name,email FROM users",0) as $name )
 
 {
 
-            echo $name;
+ echo $name;
 
 }
 
-\----------------------------------------------------
+
 
 ###### Example 10
 
-\----------------------------------------------------
+
 
 // Map out the full schema of any given database and print it out..
 
@@ -164,9 +164,9 @@ foreach ( $db->get\_col("SHOW TABLES",0) as $table\_name )
 
 {
 
-            $db->debug();
+ $db->debug();
 
-            $db->get\_results("DESC $table\_name");
+ $db->get\_results("DESC $table\_name");
 
 }
 
@@ -253,19 +253,19 @@ include\_once "ez\_sql\_mysql.php";
 
 $db = new **ezsql**\_mysql('db\_user','db\_password','db\_name','db\_host');
 
-            $my\_tables = $db->get\_results("SHOW TABLES",ARRAY\_N);
+ $my\_tables = $db->get\_results("SHOW TABLES",ARRAY\_N);
 
-            $db->debug();
+ $db->debug();
 
-            foreach ( $my\_tables as $table )
+ foreach ( $my\_tables as $table )
 
-            {
+ {
 
-                        $db->get\_results("DESC $table\[0\]");
+  $db->get\_results("DESC $table\[0\]");
 
-                        $db->debug();
+  $db->debug();
 
-            }
+ }
 
 ?>
 
@@ -280,7 +280,7 @@ This is the standard way to start php executing within your web page.
 
 This is how you include **ezsql** in your script. Normally you include it at the top of your script and from that point forward you have access to any **ezsql** function.
 
-**            $my\_tables = $db->get\_results(“SHOW TABLES”,ARRAY\_N);**
+** $my\_tables = $db->get\_results(“SHOW TABLES”,ARRAY\_N);**
 
 get\_results() is how you get ‘a list’ of things from the database using **ezsql**. The list is returned as an array. In this case the std mySQL command  of ‘SHOW TABLES’ is called and the resulting list is stored in a  newly created array $my\_tables.
 
@@ -318,43 +318,43 @@ Results returned as an object make it very easy to work with database results us
 
 $users = $db->get\_results(“SELECT id,name FROM users”);
 
-                                    foreach( $users as $user )
+   foreach( $users as $user )
 
-                                    {
+   {
 
-                                                echo $user->id;
+    echo $user->id;
 
-                                                echo $user->name;
+    echo $user->name;
 
-                                    }
+   }
 
-                        If you are 100% sure that there will be results you can skip a step and do this..
+  If you are 100% sure that there will be results you can skip a step and do this..
 
-                                    foreach( $db->get\_results(“SELECT id,name FROM users”) as $user )
+   foreach( $db->get\_results(“SELECT id,name FROM users”) as $user )
 
-                                    {
+   {
 
-                                                echo $user->id;
+    echo $user->id;
 
-                                                echo $user->name;
+    echo $user->name;
 
-                                    }
+   }
 
-                        If you don’t know whether there will be results or not you can do this..
+  If you don’t know whether there will be results or not you can do this..
 
 If ( $users= $db->get\_results(“SELECT id,name FROM users”) )
 
 {
 
-                                                foreach( $users as $user )
+    foreach( $users as $user )
 
-                                                {
+    {
 
-                                                            echo $user->id;
+     echo $user->id;
 
-                                                            echo $user->name;
+     echo $user->name;
 
-            }
+ }
 
 }
 
@@ -362,7 +362,7 @@ else
 
 {
 
-            echo “No results”;
+ echo “No results”;
 
 }
 
@@ -382,65 +382,65 @@ $my\_tables\[1\] = array (0 => “products”);
 
 $my\_tables\[2\] = array (0 => “guestbook”);
 
-**            {**
+** {**
 
 The foreach is looping through each primary element of $my\_tables\[n\] which are in turn numerical arrays, with the format like so..
 
-            array(0 => “value”, 1 => “value”, etc.);
+ array(0 => “value”, 1 => “value”, etc.);
 
 Thus, during the foreach loop of $my\_tables we have access to the value of the first column like so:
 
-            foreach ($my\_tables as $table)
+ foreach ($my\_tables as $table)
 
-            {
+ {
 
-                        echo $table\[0\];
+  echo $table\[0\];
 
-            }
+ }
 
 If we did the same thing using an associative array it might look like this..
 
-            $users = $db->get\_results(“SELECT id,name FROM users”,ARRAY\_A);
+ $users = $db->get\_results(“SELECT id,name FROM users”,ARRAY\_A);
 
-            foreach ( $users as $user )
+ foreach ( $users as $user )
 
-            {
+ {
 
-                        echo $user\[‘id’\];
+  echo $user\[‘id’\];
 
-                        echo $user\[‘name’\];
+  echo $user\[‘name’\];
 
-            }
+ }
 
 But if there were no results foreach might generate a warning. So a safer way to do the above is..
 
-            if ( $users = $db->get\_results(“SELECT id,name FROM users”,ARRAY\_A))
+ if ( $users = $db->get\_results(“SELECT id,name FROM users”,ARRAY\_A))
 
-            {
+ {
 
-                        foreach ( $users as $user )
+  foreach ( $users as $user )
 
-                        {
+  {
 
-                                    echo $user\[‘id’\];
+   echo $user\[‘id’\];
 
-                                    echo $user\[‘name’\];
+   echo $user\[‘name’\];
 
-                        }
+  }
 
-            }
+ }
 
-            else
+ else
 
-            {
+ {
 
-                        echo “No Users”:
+  echo “No Users”:
 
-            }
+ }
 
 This works because if no results are returned then get\_results() returns false.
 
-**                        $db->get\_results(“DESC $table\[0\]”);**
+**  $db->get\_results(“DESC $table\[0\]”);**
 
 This database query is nested within the foreach loop. Note that we are using the results of the previous call to make a new call. Traditionally you would have to be concerned about using different db\_resource identifiers in a case like this but **ezsql** takes care of that for you, making it very easy to nest database queries.
 
@@ -448,11 +448,11 @@ You may be wondering why I have used a numerical array output and not object or 
 
 _FYI: The SQL command SHOW TABLES always names the first column a different value depending on the database being used. If the database was named **users** the column would be called **Tables\_in\_users** if the database was called **customers** the column would be called **Tables\_in\_customers** and so on._
 
-**                        $db->debug();**
+**  $db->debug();**
 
 This function will always print the last query and its results (if any) to the browser. In this case it will be for the above query..
 
-            $db->get\_results(“DESC $table\[0\]”);
+ $db->get\_results(“DESC $table\[0\]”);
 
 You may have noticed that the above get\_results function is not assigning a value. (i.e. $var = val). This is because even if you do not assign the output value of any **ezsql** function the query results are always stored and made ready for any **ezsql** function to use. In this case $db->debug() is displaying the stored results. Then, by calling any **ezsql** function using a **null** query you will be accessing the stored results from the last query. Here is a more detailed example.           
 
@@ -464,19 +464,19 @@ _tyson, tyson@foo.com_
 
  // Any **ezsql** function will store query results..
 
-            $users = $db->get\_results(“SELECT name,email FROM users”);
+ $users = $db->get\_results(“SELECT name,email FROM users”);
 
-            // This gets a variable from the above results (offset by $x = 1, $y = 1).
+ // This gets a variable from the above results (offset by $x = 1, $y = 1).
 
-            echo $db->get\_var(null,1,1);
+ echo $db->get\_var(null,1,1);
 
-            // Note: Because a **null** query is passed to get\_var it uses results from the previous query.
+ // Note: Because a **null** query is passed to get\_var it uses results from the previous query.
 
 Output: tyson@foo.com        
 
-**            }**
+** }**
 
-            This closes the foreach loop
+ This closes the foreach loop
 
 **?>**
 
@@ -553,17 +553,17 @@ $db2 = new db(”user\_name”, ”user\_password”, ”database\_name”, “d
 
  // Perform some kind of query..
 
-            $other\_db\_tables = $db2->get\_results(“SHOW TABLES”);
+ $other\_db\_tables = $db2->get\_results(“SHOW TABLES”);
 
  // You can still query the database you were already connected to..
 
-            $existing\_connection\_tables = $db->get\_results(“SHOW TABLES”);
+ $existing\_connection\_tables = $db->get\_results(“SHOW TABLES”);
 
  // Print the results from both of these queries..
 
-            $db->debug();
+ $db->debug();
 
-            $db2->debug();
+ $db2->debug();
 
 **$db->select**
 
@@ -660,11 +660,11 @@ $user\_email = $db->get\_var(“SELECT name, email FROM users”,1,1) ;
 
 $user = $db->get\_row(null,OBJECT,1);
 
-            // Both are the same value..
+ // Both are the same value..
 
-            echo $user\_email;
+ echo $user\_email;
 
-            echo $user->email;
+ echo $user->email;
 
 _Example 3_
 ===========
@@ -730,17 +730,17 @@ object **$db->get\_ row**(string query / null \[, OBJECT / ARRAY\_A / ARRAY\_N \
 
 ##### Example 1
 
-            // Get a users name and email from the database and extract it into an object called user..
+ // Get a users name and email from the database and extract it into an object called user..
 
 $user = $db->get\_row(“SELECT name,email FROM users WHERE id = 22”) ;
 
  // Output the values..
 
-            echo “$user->name has the email of $user->email”;
+ echo “$user->name has the email of $user->email”;
 
  _Output:_
 
-_                        Amy has the email of amy@foo.com_
+_  Amy has the email of amy@foo.com_
 
 ### Example 2
 
@@ -754,11 +754,11 @@ _                        Amy has the email of amy@foo.com_
 
 // accessible via the created object or associative array. In this case $user\[‘date\_joined’\] (object would be $user->date\_joined)
 
-            echo $user\[‘name’\] . “ joined us on ” . date(“m/d/y”,$user\[‘date\_joined’\]);
+ echo $user\[‘name’\] . “ joined us on ” . date(“m/d/y”,$user\[‘date\_joined’\]);
 
  _Output:_
 
-_                        Amy joined us on 05/02/01_
+_  Amy joined us on 05/02/01_
 
 ### Example 3
 
@@ -768,11 +768,11 @@ _                        Amy joined us on 05/02/01_
 
  // Note: Row offset starts at 0
 
-            echo “$user->name joined us on ” . date(“m/d/y”,$user->date\_joined);
+ echo “$user->name joined us on ” . date(“m/d/y”,$user->date\_joined);
 
  _Output:_
 
-_                        Tyson joined us on 05/02/02_
+_  Tyson joined us on 05/02/02_
 
 ### Example 4
 
@@ -784,15 +784,15 @@ _                        Tyson joined us on 05/02/02_
 
  echo “<table>”;
 
-            for ( $i=1; $i <= count($user); $i++ )
+ for ( $i=1; $i <= count($user); $i++ )
 
-            {
+ {
 
-                        echo “<tr><td>$i</td><td>$user\[$I\]</td></tr>”;
+  echo “<tr><td>$i</td><td>$user\[$I\]</td></tr>”;
 
-            }
+ }
 
-            echo “</table>”;
+ echo “</table>”;
 
  _Output:_
 
@@ -825,15 +825,15 @@ if ( $users = $db->get\_results(“SELECT name, email FROM users”) )
 
  // Loop through the resulting array on the index $users\[n\]
 
-                        foreach ( $users as $user )
+  foreach ( $users as $user )
 
-                        {
+  {
 
  // Access data using column names as associative array keys
 
-                                    echo “$user->name - $user->email<br\>”;
+   echo “$user->name - $user->email<br\>”;
 
-                        }
+  }
 
 }
 
@@ -849,7 +849,7 @@ echo “No users found.”;
 
  _Output:_
 
-_            Amy - amy@hotmail.com     _
+_ Amy - amy@hotmail.com     _
 
  _Tyson - tyson@hotmail.com_
 
@@ -866,27 +866,27 @@ if ( $dogs = $db->get\_results(“SELECT breed, owner, name FROM dogs”, ARRAY\
 
  // Loop through the resulting array on the index $dogs\[n\]
 
-                        foreach ( $dogs as $dog\_detail )
+  foreach ( $dogs as $dog\_detail )
 
-                        {
+  {
 
  // Loop through the resulting array
 
-                                    foreach ( $dogs\_detail as $key => $val )
+   foreach ( $dogs\_detail as $key => $val )
 
-                                    {
+   {
 
  // Access and format data using $key and $val pairs..
 
-                                                echo “<b>” . ucfirst($key) . “</b>: $val<br>”;
+    echo “<b>” . ucfirst($key) . “</b>: $val<br>”;
 
-                                    }
+   }
 
  // Do a P between dogs..
 
-                                    echo “<p>”;
+   echo “<p>”;
 
-                        }
+  }
 
 }
 
@@ -902,23 +902,23 @@ echo “No dogs found.”;
 
  _Output:_
 
-_            **Breed:** Boxer_
+_ **Breed:** Boxer_
 
-_            **Owner:** Amy_
+_ **Owner:** Amy_
 
-_            **Name:** Tyson_
+_ **Name:** Tyson_
 
-_            **Breed:** Labrador_
+_ **Breed:** Labrador_
 
-_            **Owner:** Lee_
+_ **Owner:** Lee_
 
-_            **Name:** Henry_
+_ **Name:** Henry_
 
-_            **Breed:** Dachshund_
+_ **Breed:** Dachshund_
 
-_            **Owner:** Mary_
+_ **Owner:** Mary_
 
-_            **Name:** Jasmine_
+_ **Name:** Jasmine_
 
 _Example 3 – Return results as numerical array_
 ===============================================
@@ -931,47 +931,47 @@ script was responding to a form with $type being submitted as either ‘fish’ 
 
  // Create an associative array for animal types..
 
-                        $animal = array ( “fish” => “num\_fins”, “dog” => “num\_legs” );
+  $animal = array ( “fish” => “num\_fins”, “dog” => “num\_legs” );
 
  // Create a dynamic query on the fly..
 
-                        if ( $results = $db->(“SELECT $animal\[$type\] FROM $type”,ARRAY\_N))
+  if ( $results = $db->(“SELECT $animal\[$type\] FROM $type”,ARRAY\_N))
 
-                        {
+  {
 
-                                    foreach ( $results as $result )
+   foreach ( $results as $result )
 
-                                    {
+   {
 
-                                                echo “$result\[0\]<br>”;
+    echo “$result\[0\]<br>”;
 
-                                    }
+   }
 
-                        }
+  }
 
-                        else
+  else
 
-                        {
+  {
 
-                                    echo “No $animal\\s!”;
+   echo “No $animal\\s!”;
 
-                        }
+  }
 
  _Output:_
 
-                                                4
+    4
 
-                                                4
+    4
 
-                                                4
+    4
 
- _            Note: The dynamic query would be look like one of the following..._
+ _ Note: The dynamic query would be look like one of the following..._
 
 · _SELECT num\_fins FROM fish_
 
 · _SELECT num\_legs FROM dogs_
 
-_                        It would be easy to see which it was by using $db->debug(); after the dynamic query call._
+_  It would be easy to see which it was by using $db->debug(); after the dynamic query call._
 
 **$db->debug**
 
@@ -1038,7 +1038,7 @@ foreach ( $db->get\_col(“SELECT product FROM product\_list”) as $product)
 
 {
 
-            echo $product;
+ echo $product;
 
 }
 
@@ -1059,7 +1059,7 @@ foreach ( $db->get\_col(null, $last\_col\_num) as $last\_col )
 
 {
 
-            echo $last\_col;
+ echo $last\_col;
 
 }
 
@@ -1159,17 +1159,17 @@ foreach ( $db->get\_col\_info(“name”)  as $name )
 
 {
 
-            echo “$name<br>”;
+ echo “$name<br>”;
 
 }
 
  Output:
 
-             id
+  id
 
-                        name
+  name
 
-                        email
+  email
 
 _Example 2_
 ===========
@@ -1198,9 +1198,9 @@ $EZSQL\_ERROR\[0\] = Array
 
 (
 
-                \[query\] => SOME BAD QUERY
+     \[query\] => SOME BAD QUERY
 
-                \[error\_str\] => You have an error in your SQL syntax near ‘SOME BAD QUERY' at line 1
+     \[error\_str\] => You have an error in your SQL syntax near ‘SOME BAD QUERY' at line 1
 
 )
 
@@ -1208,9 +1208,9 @@ $EZSQL\_ERROR\[1\] = Array
 
 (
 
-                \[query\] => ANOTHER BAD QUERY
+     \[query\] => ANOTHER BAD QUERY
 
-                \[error\_str\] => You have an error in your SQL syntax near ‘ANOTHER BAD QUERY' at line 1
+     \[error\_str\] => You have an error in your SQL syntax near ‘ANOTHER BAD QUERY' at line 1
 
 )
 
@@ -1218,9 +1218,9 @@ $EZSQL\_ERROR\[2\] = Array
 
 (
 
-                \[query\] => THIRD BAD QUERY
+     \[query\] => THIRD BAD QUERY
 
-                \[error\_str\] => You have an error in your SQL syntax near ‘THIRD BAD QUERY' at line 1
+     \[error\_str\] => You have an error in your SQL syntax near ‘THIRD BAD QUERY' at line 1
 
 )
 
@@ -1247,7 +1247,7 @@ if ( $EZSQL\_ERROR )
 
  // View the errors
 
-            $db->vardump($EZSQL\_ERROR);
+ $db->vardump($EZSQL\_ERROR);
 
 }
 
@@ -1255,7 +1255,7 @@ else
 
 {
 
-            echo “No Errors”;
+ echo “No Errors”;
 
 }
 
@@ -1282,22 +1282,22 @@ $db->escape – Format a string correctly in order to stop accidental mal formed
 _Example 1_
 ===========
 
-            // Escape and assign the value..
+ // Escape and assign the value..
 
  $title = $db->escape(“Justin’s and Amy’s Home Page”);
 
-            // Insert in to the DB..
+ // Insert in to the DB..
 
 $db->query(“INSERT INTO pages (title) VALUES (’$title’)”) ;
 
 _Example 2_
 ===========
 
-            // Assign the value..
+ // Assign the value..
 
  $title = “Justin’s and Amy’s Home Page”;
 
-            // Insert in to the DB and escape at the same time..
+ // Insert in to the DB and escape at the same time..
 
 $db->query(“INSERT INTO pages (title) VALUES (’”. $db->escape($title).”’)”) ;
 
