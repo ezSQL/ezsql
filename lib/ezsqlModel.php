@@ -67,14 +67,25 @@ class ezsqlModel extends ezQuery implements ezsqlModelInterface
 	protected $db_connect_time  = 0;
 	protected $sql_log_file     = false;
 	protected $profile_times    = array();
+
 	/**
 	 * ID generated from the AUTO_INCRIMENT of the previous INSERT operation (if any)
 	 * @var int
 	 */
 	protected $insert_id        = null;
-	
+
+	/**
+	 * Use to keep track of the last query for debug..
+	 * @var string
+	 */
 	protected $last_query       = null;
+
+	/**
+	 * Use to keep track of last error
+	 * @var string
+	 */
 	protected $last_error       = null;
+
 	protected $col_info			= null;
 	protected $timers           = array();
 	protected $total_query_time = 0;
