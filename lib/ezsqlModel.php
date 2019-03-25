@@ -47,19 +47,31 @@ class ezsqlModel extends ezQuery implements ezsqlModelInterface
 	protected $captured_errors = array();
 
 	/**
-	 * Path to SQL caching dir.
+	 * Disk Cache Setup
+	 * (1. You must create this dir. first!)
+	 * (2. Might need to do chmod 775)
+	 * 
+	 * Global override setting to turn disc caching off (but not on)
 	 * @var boolean
 	 */
-	protected $cache_dir = false;
+	protected $use_disk_cache = false;
 
 	/**
-	 * 
+	 * Specify a cache dir. Path is taken from calling script
+	 * @var string 
+	 */
+	protected $cache_dir = 'ez_cache';
+	
+	// Cache expiry
+	protected $cache_timeout = 24;  // Note: this is hours
+
+	/**
+	 * By wrapping up queries you can ensure that the default
+	 * is NOT to cache unless specified
 	 * @var boolean
 	 */
 	protected $cache_queries = false;
-	protected $cache_inserts    = false;
-	protected $use_disk_cache   = false;
-	protected $cache_timeout    = 24; // hours
+	protected $cache_inserts = false;
 
 	protected $db_connect_time  = 0;
 	protected $sql_log_file     = false;
