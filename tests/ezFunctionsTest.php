@@ -5,7 +5,12 @@ namespace ezsql\Tests;
 use ezsql\Tests\EZTestCase;
 
 class ezFunctionsTest extends EZTestCase 
-{    
+{
+    protected function setUp(): void
+	{
+        \clearInstance();
+    }
+
     /**
      * @test eq 
      */
