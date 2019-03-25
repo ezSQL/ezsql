@@ -6,13 +6,9 @@ clone_folder: c:\projects\php-project-workspace
 ## Build matrix for lowest and highest possible targets
 environment:
   matrix:
-  - dependencies: lowest
   - php_ver_target: 7.1
   - dependencies: current
     php_ver_target: 7.2
-  - dependencies: highest
-    php_ver_target: 7.3
-
   MYSQL_DATABASE: ez_test
   MYSQL_HOST: localhost
   MYSQL_USER: root
