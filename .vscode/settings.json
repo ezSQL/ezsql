@@ -1,0 +1,30 @@
+{
+    "cSpell.words": [
+        "AUTOINCREMENT",
+        "BIGINT",
+        "LONGTEXT",
+        "MEDIUMBLOB",
+        "MEDIUMINT",
+        "MEDIUMTEXT",
+        "NCHAR",
+        "NTEXT",
+        "NVAR",
+        "NVARCHAR",
+        "Postgres",
+        "SMALLINT",
+        "TINYBLOB",
+        "TINYINT",
+        "TINYTEXT",
+        "VARBINARY",
+        "VARBIT",
+        "VARCHAR",
+        "ezsql",
+        "filebase",
+        "isfile",
+        "postgresql",
+        "sqlserver",
+        "tomssql",
+        "tosql",
+        "zerofill"
+    ]
+}
