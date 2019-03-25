@@ -161,43 +161,17 @@ class ezSchema
         if ($instance instanceof DatabaseInterface) {
             $type = $instance->settings()->getDriver();
             if ($type == \Pdo) {
-                $dbh = $instance->connection();
-                if (strpos($dbh->getAttribute(\PDO::ATTR_CLIENT_VERSION), \MYSQL) !== false) 
+                $type = null;
+                $dbh = $instance->handle();
+                if (strpos($dbh->getAttribute(\PDO::ATTR_CLIENT_VERSION), 'mysql') !== false) 
                     $type = \MYSQL;
-                elseif (strpos($dbh->getAttribute(\PDO::ATTR_CLIENT_VERSION), \PGSQL) !== false) 
+                elseif (strpos($dbh->getAttribute(\PDO::ATTR_CLIENT_VERSION), 'pgsql') !== false) 
                     $type = \POSTGRESQL;
-                elseif (strpos($dbh->getAttribute(\PDO::ATTR_CLIENT_VERSION), \SQLITE) !== false) 
+                elseif (strpos($dbh->getAttribute(\PDO::ATTR_CLIENT_VERSION), 'sqlite') !== false) 
                     $type = \SQLITE3;
-                elseif (strpos($dbh->getAttribute(\PDO::ATTR_CLIENT_VERSION), \SQLSRV) !== false) 
+                elseif (strpos($dbh->getAttribute(\PDO::ATTR_CLIENT_VERSION), 'sqlsrv') !== false) 
                     $type = \SQLSERVER;
             }
-
-            /*
-            $dbSqlite = $GLOBALS['db_'.\SQLITE3];
-            $dbPgsql = $GLOBALS['db_'.\PGSQL];
-            $dbMysqli = $GLOBALS['db_'.\MYSQL];
-            $dbMssql = $GLOBALS['db_'.\SQLSERVER];
-            $dbPdo = $GLOBALS['db_'.\Pdo];        
-            if ($instance == $dbSqlite )
-                $type = \SQLITE3;
-            elseif ($instance == $dbPgsql)
-                $type = \POSTGRESQL;
-            elseif ($instance == $dbMysqli)
-                $type = \MYSQL;
-            elseif ($instance == $dbMssql)
-                $type = \SQLSERVER;
-            elseif ($instance == $dbPdo) {
-                $dbh = $dbPdo->connection();
-                if (strpos($dbh->getAttribute(\PDO::ATTR_CLIENT_VERSION), \MYSQL) !== false) 
-                    $type = \MYSQL;
-                elseif (strpos($dbh->getAttribute(\PDO::ATTR_CLIENT_VERSION), \PGSQL) !== false) 
-                    $type = \POSTGRESQL;
-                elseif (strpos($dbh->getAttribute(\PDO::ATTR_CLIENT_VERSION), \SQLITE) !== false) 
-                    $type = \SQLITE3;
-                elseif (strpos($dbh->getAttribute(\PDO::ATTR_CLIENT_VERSION), \SQLSRV) !== false) 
-                    $type = \SQLSERVER;
-            }
-            */
         }
 
         return $type;
@@ -221,10 +195,10 @@ class ezSchema
      */
     public static function column(string $column = null, string $type = null, ...$args)
     {
-        if (empty($column) || empty($type))
+        $vendor = self::vendor();
+        if (empty($column) || empty($type) || empty($vendor))
             return false;
 
-        $vendor = self::vendor();
         $columnData = '';
         if (($column == \CONSTRAINT) || ($column == \INDEX)) {
             if (empty($args[0]) || empty($args[1])) {
@@ -263,18 +237,18 @@ class ezSchema
     }
 
     /**
-    * Creates an datatype with given arguments.
-    * 
-    * @param string $type,
-    * @param mixed $size, 
-    * @param mixed $value, 
-    * @param mixed $default
-    * 
-    * @return string
-    */
-   public static function datatype(string $type, ...$args)	
-   {
-       $data = new self( ...$args);
-       return $data->$type();
-   }
+     * Creates an datatype with given arguments.
+     * 
+     * @param string $type,
+     * @param mixed $size, 
+     * @param mixed $value, 
+     * @param mixed $default
+     * 
+     * @return string
+     */
+    public static function datatype(string $type, ...$args)	
+    {
+        $data = new self( ...$args);
+        return $data->$type();
+    }
 } 

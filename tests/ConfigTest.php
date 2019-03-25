@@ -38,7 +38,7 @@ class ConfigTest extends EZTestCase
             );
         }
 
-        $dsn = 'mysql:host='.self::TEST_DB_HOST.';dbname='. self::TEST_DB_NAME.';port='.self::TEST_DB_PORT;
+        $dsn = 'mysql:host='.self::TEST_DB_HOST.';dbname='. self::TEST_DB_NAME.';port=3306';
         $settings = Config::initialize('pdo', [$dsn, self::TEST_DB_USER, self::TEST_DB_PASSWORD]);
         $this->assertTrue($settings instanceof ConfigAbstract);
         $this->assertEquals($dsn, $settings->getDsn());

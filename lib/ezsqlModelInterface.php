@@ -168,7 +168,7 @@ interface ezsqlModelInterface
 	/**
 	 * store_cache
 	 */
-	public function store_cache(string $query, $is_insert);
+	public function store_cache(string $query, bool $is_insert);
 	
 	/**
 	 * get_cache
@@ -200,16 +200,11 @@ interface ezsqlModelInterface
 	/**
 	 * Timer related functions
 	 */
-	public function timer_get_cur();
-	
-	public function timer_start($timer_name);
-	
-	public function timer_elapsed($timer_name);
-	
+	public function timer_get_cur();	
+	public function timer_start($timer_name);	
+	public function timer_elapsed($timer_name);	
 	public function timer_update_global($timer_name);
-	
-	public function get_set($params);
-	
+
 	/**
 	* Function for operating query count
 	*

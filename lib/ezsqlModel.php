@@ -43,9 +43,6 @@ class ezsqlModel extends ezQuery implements ezsqlModelInterface
 	 */
 	protected $num_queries = 0;
 
-	/**
-	 * 
-	 */
 	protected $conn_queries = 0;
 	protected $captured_errors = array();
 
@@ -86,7 +83,12 @@ class ezsqlModel extends ezQuery implements ezsqlModelInterface
 	 */
 	protected $last_error       = null;
 
-	protected $col_info			= null;
+	/**
+	 * Saved info on the table column
+ 	 * @var mixed
+ 	 */
+	protected $col_info			= array();
+
 	protected $timers           = array();
 	protected $total_query_time = 0;
 	protected $trace_log        = array();
@@ -230,9 +232,9 @@ class ezsqlModel extends ezQuery implements ezsqlModelInterface
 		\array_push($this->all_func_calls, $this->func_call);
 	}
 	
-	public function get_var(string $query = null, $x = 0, $y = 0, $use_prepare = false)
-	{
-		
+	public function get_var(string $query = null, int $x = 0, int $y = 0, 
+		bool $use_prepare = false)
+	{		
 		// Log how the function was called
 		$this->log_query("\$db->get_var(\"$query\",$x,$y)");
 		
@@ -250,7 +252,8 @@ class ezsqlModel extends ezQuery implements ezsqlModelInterface
 		return (isset($values[$x]) && $values[$x] !== null) ? $values[$x] :null;
 	}
 	
-	public function get_row(string $query = null, $output = OBJECT, $y = 0, $use_prepare = false)
+	public function get_row(string $query = null, $output = OBJECT, int $y = 0, 
+		bool $use_prepare = false)
 	{
 		// Log how the function was called
 		$this->log_query("\$db->get_row(\"$query\",$output,$y)");
@@ -275,7 +278,8 @@ class ezsqlModel extends ezQuery implements ezsqlModelInterface
 		}
 	}
 	
-	public function get_col(string $query = null, int $x = 0, bool $use_prepare = false)
+	public function get_col(string $query = null, int $x = 0, 
+		bool $use_prepare = false)
 	{
 		$new_array = array();
 		
@@ -295,7 +299,8 @@ class ezsqlModel extends ezQuery implements ezsqlModelInterface
 		return $new_array;
 	}
 	
-	public function get_results(string $query = null, $output = \OBJECT, bool $use_prepare = false) 
+	public function get_results(string $query = null, $output = \OBJECT, 
+		bool $use_prepare = false) 
 	{
 		// Log how the function was called
 		$this->log_query("\$db->get_results(\"$query\", $output, $use_prepare)");
@@ -326,7 +331,7 @@ class ezsqlModel extends ezQuery implements ezsqlModelInterface
 		}
 	}
 	
-	public function get_col_info($info_type = "name", $col_offset = -1)
+	public function get_col_info(string $info_type = "name", int $col_offset = -1)
 	{
 		if ( $this->col_info ) {
 			if ( $col_offset == -1 ) {
@@ -346,7 +351,7 @@ class ezsqlModel extends ezQuery implements ezsqlModelInterface
 	/**
 	* store_cache
 	*/
-	public function store_cache(string $query, $is_insert)
+	public function store_cache(string $query, bool $is_insert)
 	{
 		// The would be cache file for this query
 		$cache_file = $this->cache_dir.'/'.\md5($query);
@@ -548,15 +553,7 @@ class ezsqlModel extends ezQuery implements ezsqlModelInterface
 		
 		return $html;
 	}
-	
-	/**
-	* Naughty little function to ask for some remuneration!
-	*/
-	public function donation()
-	{
-		return "<font size=1 face=arial color=000000>If ezSQL has helped <a href=\"https://www.paypal.com/xclick/business=justin%40justinvincent.com&item_name=ezSQL&no_note=1&tax=0\" style=\"color: 0000CC;\">make a donation!?</a> &nbsp;&nbsp;<!--[ go on! you know you want to! ]--></font>";
-	}
-	
+		
 	/**
 	* Timer related functions
 	*/
@@ -585,46 +582,6 @@ class ezsqlModel extends ezQuery implements ezsqlModelInterface
 			);
 		}
 		$this->total_query_time += $this->timer_elapsed($timer_name);
-	}
-	
-	/**
-	 * Creates a SET nvp sql string from an associative array (and escapes all values)
-	 *
-	 * Usage:
-	 *	$db_data = array(
-	 *	 'login' => 'jv', 
-	 *	 'email' => 'jv@vip.ie', 
-	 *	 'user_id' => 1, 
-	 *	 'created' => 'NOW()'
-	 *	);
-	 *
-	 *	$db->query("INSERT INTO users SET ".$db->get_set($db_data));
-	 *     ...OR...
-	 *	$db->query("UPDATE users SET ".$db->get_set($db_data)." WHERE user_id = 1");
-	 *
-	 * Output:
-	 *	login = 'jv', email = 'jv@vip.ie', user_id = 1, created = NOW()
-	 */
-	public function get_set(array $params)
-	{
-		$sql = array();
-		foreach ( $params as $field => $val ) {
-			if ( $val === 'true' || $val === true )
-				$val = 1;
-			if ( $val === 'false' || $val === false )
-				$val = 0;
-			
-			switch( $val ) {
-				case 'NOW()' :
-				case 'NULL' :
-					$sql[] = "$field = $val";
-					break;
-				default :
-					$sql[] = "$field = '".$this->escape( $val )."'";
-			}
-		}
-		
-		return \implode( ', ' , $sql );
 	}
 	
 	/**

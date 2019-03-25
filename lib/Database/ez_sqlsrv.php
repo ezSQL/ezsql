@@ -32,11 +32,21 @@ final class ez_sqlsrv extends ezsqlModel implements DatabaseInterface
         -11 => 'uniqueidentifier', -3 => 'varbinary', 12 => 'varchar', -152 => 'xml',
     );
 
-    private $rows_affected = false;
-
     protected $preparedValues = array();
 
     private static $isSecure = false;
+
+    /**
+    * Database connection handle 
+    * @var connection instance
+    */
+    private $dbh;
+
+    /**
+     * Query result
+     * @var mixed
+     */
+    private $result;
 
     /**
      * Database configuration setting
@@ -58,8 +68,8 @@ final class ez_sqlsrv extends ezsqlModel implements DatabaseInterface
         parent::__construct();
         $this->database = $settings;
 
-        if (empty($GLOBALS['db_'.\SQLSRV]))
-            $GLOBALS['db_'.\SQLSRV] = $this;
+        if (empty($GLOBALS['ez'.\SQLSRV]))
+            $GLOBALS['ez'.\SQLSRV] = $this;
         \setInstance($this);
     }
 
@@ -157,7 +167,7 @@ final class ez_sqlsrv extends ezsqlModel implements DatabaseInterface
      * @param bool
      * @return object
      */
-    public function query(string $query, $use_prepare = false)
+    public function query(string $query, bool $use_prepare = false)
     {
         $param = [];
         if ($use_prepare) {
@@ -230,7 +240,7 @@ final class ez_sqlsrv extends ezsqlModel implements DatabaseInterface
         $is_insert = false;
         if (\preg_match("/^(insert|delete|update|replace)\s+/i", $query)) {
             $is_insert = true;
-            $this->rows_affected = @\sqlsrv_rows_affected($this->result);
+            $this->_affectedRows = @\sqlsrv_rows_affected($this->result);
 
             // Take note of the insert_id
             if (\preg_match("/^(insert|replace)\s+/i", $query)) {
@@ -243,7 +253,7 @@ final class ez_sqlsrv extends ezsqlModel implements DatabaseInterface
 
             }
             // Return number of rows affected
-            $return_val = $this->rows_affected;
+            $return_val = $this->_affectedRows;
         } else { // Query was a select
             // Take note of column info
             $i = 0;
@@ -257,7 +267,7 @@ final class ez_sqlsrv extends ezsqlModel implements DatabaseInterface
                     }
 
                     //DEFINED FOR E_STRICT
-                    $col = new StdClass();
+                    $col = new \StdClass();
                     $col->{$name} = $value;
                 }
 
@@ -393,5 +403,21 @@ final class ez_sqlsrv extends ezsqlModel implements DatabaseInterface
         $this->conn_queries = 0;
         @\sqlsrv_close($this->dbh);
         $this->_connected = false;
+    }
+
+    /**
+     * Reset database handle
+     */
+    public function reset()
+    {
+        $this->dbh = null;
+    }
+
+    /**
+     * Get connection handle
+     */
+    public function handle()
+    {
+        return $this->dbh;
     }
 } // end class

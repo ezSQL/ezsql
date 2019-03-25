@@ -246,14 +246,6 @@ class ezsqlModelTest extends EZTestCase
     } // testDebug
 
     /**
-     * @covers ezsql\ezsqlModel::donation
-     */
-    public function testDonation() 
-    {
-        $this->assertNotEmpty($this->object->donation());
-    } // testDonation
-
-    /**
      * @covers ezsql\ezsqlModel::timer_get_cur
      */
     public function testTimer_get_cur() 
@@ -296,23 +288,6 @@ class ezsqlModelTest extends EZTestCase
         $this->object->timer_update_global('test_timer');
         $expected = $this->object->getTotal_Query_Time();     
         $this->assertGreaterThanOrEqual($expected, $this->object->timer_elapsed('test_timer'));    
-    }
-
-    /**
-     * @covers ezsql\ezsqlModel::get_set
-     */
-    public function testGet_set()
-    {
-        $this->assertNull($this->object->get_set(''));
-        $this->assertContains('NOW()',$this->object->get_set(
-            array('test_unit'=>'NULL',
-            'test_unit2'=>'NOW()',
-            'test_unit3'=>'true',
-            'test_unit4'=>'false')));
-        $this->assertContains('',$this->object->get_set(
-            array('test_unit'=>'false')));
-        $this->assertContains('',$this->object->get_set(
-            array('test_unit'=>'true')));
     }
 
     /**

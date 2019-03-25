@@ -67,16 +67,16 @@ class Config extends ConfigAbstract implements ConfigInterface
      * - database|args[1][2] // The name of the database
      * - host|args[3] // The host name or IP address of the database server,
      *      Default is localhost
+     * - port|args[4] // The  database TCP/IP port, 
+     *      Default is: 5432 - PostgreSQL, 3306 - MySQL
      * 
      *  for: mysqli 
-     * - (username, password, database, host, charset)
-     * - charset|args[4] // The database charset, 
+     * - (username, password, database, host, port, charset)
+     * - charset|args[5] // The database charset, 
      *      Default is empty string
      * 
      *  for: postgresql  
      * - (username, password, database, host, port)
-     * - port|args[4] // The PostgreSQL database TCP/IP port, 
-     *      Default is 5432
      * 
      *  for: sqlserver 
      * - (username, password, database, host, convertMysqlToMssqlQuery)
@@ -110,7 +110,8 @@ class Config extends ConfigAbstract implements ConfigInterface
             $this->setPassword($args[1]);
             $this->setName($args[2]);
             $this->setHost(empty($args[3]) ? $this->getHost() : $args[3]);
-            $charset = !empty($args[4]) ? $args[4] : '';
+            $this->setPort(empty($args[4]) ? '3306' : $args[4]);
+            $charset = !empty($args[5]) ? $args[5] : '';
             $this->setCharset(empty($charset) ? $this->getCharset() : \strtolower(\str_replace('-', '', $charset)));
         } else
             throw new Exception(\MISSING_CONFIGURATION);
@@ -159,7 +160,7 @@ class Config extends ConfigAbstract implements ConfigInterface
             $this->setPassword($args[1]);
             $this->setName($args[2]);
             $this->setHost(empty($args[3]) ? $this->getHost() : $args[3]);
-            $this->setPort(empty($args[4]) ? $this->getPort() : $args[4]);
+            $this->setPort(empty($args[4]) ? '5432' : $args[4]);
         } else
             throw new Exception(\MISSING_CONFIGURATION);
     }

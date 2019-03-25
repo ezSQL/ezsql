@@ -18,9 +18,19 @@ final class ez_sqlite3 extends ezsqlModel implements DatabaseInterface
         1 => 'Require $path and $name to open an SQLite database',
     );
 
-    private $rows_affected = false;
-
     protected $preparedValues = array();
+
+    /**
+    * Database connection handle 
+    * @var connection instance
+    */
+    private $dbh;
+
+    /**
+     * Query result
+     * @var mixed
+     */
+    private $result;
 
     /**
      * Database configuration setting
@@ -47,15 +57,10 @@ final class ez_sqlite3 extends ezsqlModel implements DatabaseInterface
         $this->database = $settings;
 
         // Turn on track errors
-        ini_set('track_errors', 1);
-        $path = $this->database->getPath();
-        $name = $this->database->getName();
-        if (!empty($path) && !empty($name)) {
-            $this->connect($path, $name);
-        }
+        ini_set('track_errors', '1');
 
-        if (empty($GLOBALS['db_'.\SQLITE3]))
-            $GLOBALS['db_'.\SQLITE3] = $this;
+        if (empty($GLOBALS['ez'.\SQLITE3]))
+            $GLOBALS['ez'.\SQLITE3] = $this;
         \setInstance($this);
     }
 
@@ -71,6 +76,9 @@ final class ez_sqlite3 extends ezsqlModel implements DatabaseInterface
     {
         $return_val = false;
         $this->_connected = false;
+
+        $path = empty($path) ? $this->database->getPath() : $path;
+        $setPassword = empty($name) ? $this->database->getName() : $name;   
 
         // Must have a user and a password
         if (!$path || !$name) {
@@ -197,6 +205,11 @@ final class ez_sqlite3 extends ezsqlModel implements DatabaseInterface
         // Keep track of the last query for debug..
         $this->last_query = $query;
 
+        // If there is no existing database connection then try to connect
+        if ( ! isset($this->dbh) || ! $this->dbh ) {
+            $this->connect($this->database->getPath(), $this->database->getName());
+        }
+
         // Perform the query via std SQLite3 query or SQLite3 prepare function..
         if (!empty($param) && \is_array($param) && ($this->isPrepareActive())) {
             $this->result = $this->query_prepared($query, $param);
@@ -216,7 +229,7 @@ final class ez_sqlite3 extends ezsqlModel implements DatabaseInterface
 
         // Query was an insert, delete, update, replace
         if (\preg_match("/^(insert|delete|update|replace)\s+/i", $query)) {
-            $this->rows_affected = @$this->dbh->changes();
+            $this->_affectedRows = @$this->dbh->changes();
 
             // Take note of the insert_id
             if (\preg_match("/^(insert|replace)\s+/i", $query)) {
@@ -224,7 +237,7 @@ final class ez_sqlite3 extends ezsqlModel implements DatabaseInterface
             }
 
             // Return number of rows affected
-            $return_val = $this->rows_affected;
+            $return_val = $this->_affectedRows;
 
             // Query was an select
         } else {
@@ -232,7 +245,7 @@ final class ez_sqlite3 extends ezsqlModel implements DatabaseInterface
             $i = 0;
             $this->col_info = array();
             while ($i < @$this->result->numColumns()) {
-                $this->col_info[$i] = new StdClass;
+                $this->col_info[$i] = new \StdClass;
                 $this->col_info[$i]->name = $this->result->columnName($i);
                 $this->col_info[$i]->type = null;
                 $this->col_info[$i]->max_length = null;
@@ -263,5 +276,32 @@ final class ez_sqlite3 extends ezsqlModel implements DatabaseInterface
         $this->trace || $this->debug_all ? $this->debug() : null;
 
         return $return_val;
+    }
+
+    /**
+     * Close the database connection
+     */
+    public function disconnect()
+    {
+        if ($this->dbh) {
+            $this->dbh = null;
+            $this->_connected = false;
+        }
+     }
+
+    /**
+     * Reset database handle
+     */
+    public function reset()
+    {
+        $this->dbh = null;
+    }
+
+    /**
+     * Get connection handle
+     */
+    public function handle()
+    {
+        return $this->dbh;
     }
 }

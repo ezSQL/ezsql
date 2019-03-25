@@ -3,6 +3,7 @@
 namespace ezsql\Tests;
 
 use ezsql\Database;
+use ezsql\Database\ez_pdo;
 use ezsql\Tests\EZTestCase;
 
 class pdo_sqliteTest extends EZTestCase 
@@ -17,7 +18,7 @@ class pdo_sqliteTest extends EZTestCase
     const TEST_SQLITE_DB = './tests/pdo/ez_test.sqlite';
 
     /**
-     * @var ezSQL_pdo
+     * @var ez_pdo
      */
     protected $object;
 
@@ -34,7 +35,7 @@ class pdo_sqliteTest extends EZTestCase
         }
 
         $this->object = Database::initialize('pdo', ['sqlite:' . self::TEST_SQLITE_DB, '', '', array(), true]);
-        $this->object->setPrepare();
+        $this->object->prepareOn();
     } // setUp
 
     /**
@@ -43,6 +44,7 @@ class pdo_sqliteTest extends EZTestCase
      */
     protected function tearDown(): void
     {
+        $this->object->drop('unit_test');
         $this->object = null;
     } // tearDown
      
@@ -51,29 +53,23 @@ class pdo_sqliteTest extends EZTestCase
      */
 
     /**
-     * @covers ezSQL_pdo::connect
+     * @covers ezsql\Database\ez_pdo::connect
      */
-    public function testSQLiteConnect() { 
-        //$this->errors = array();
-        //set_error_handler(array($this, 'errorHandler'));        
-        $this->assertFalse($this->object->connect());
-        
-        $this->assertTrue($this->object->connect('sqlite:' . self::TEST_SQLITE_DB, '', '', array(), true));
-        $this->assertFalse($this->object->connect(null, '', '',array(), false));
-        $this->assertFalse($this->object->connect('', '', '',array(), false));
-        $this->assertFalse($this->object->connect('null:', '', '',array(), true));
-        $this->assertFalse($this->object->connect('', '', '',array(), true));
+    public function testSQLiteConnect() {     
+        $this->assertTrue($this->object->connect());        
+        $this->assertTrue($this->object->connect(null));
+        $this->assertFalse($this->object->connect('ccc', 'vccc'));
     } // testSQLiteConnect
 
     /**
-     * @covers ezSQL_pdo::quick_connect
+     * @covers ezsql\Database\ez_pdo::quick_connect
      */
     public function testSQLiteQuick_connect() {
         $this->assertTrue($this->object->quick_connect('sqlite:' . self::TEST_SQLITE_DB, '', '', array(), true));
     } // testSQLiteQuick_connect
 
     /**
-     * @covers ezSQL_pdo::escape
+     * @covers ezsql\Database\ez_pdo::escape
      */
     public function testSQLiteEscape() {
         $this->assertTrue($this->object->connect('sqlite:' . self::TEST_SQLITE_DB, '', '', array(), true));
@@ -84,18 +80,18 @@ class pdo_sqliteTest extends EZTestCase
          
         $this->object->disconnect();
         $result = $this->object->escape("Is'nt escaped.");
-        $this->assertEquals("Is''nt escaped.", $result);
+        $this->assertEquals("Is\'nt escaped.", $result);
     } // testSQLiteEscape
 
     /**
-     * @covers ezSQL_pdo::sysdate
+     * @covers ezsql\Database\ez_pdo::sysdate
      */
     public function testSQLiteSysdate() {
         $this->assertEquals("datetime('now')", $this->object->sysdate());
     } // testSQLiteSysdate
 
     /**
-     * @covers ezSQL_pdo::catch_error
+     * @covers ezsql\Database\ez_pdo::catch_error
      */
     public function testSQLiteCatch_error() {
         $this->assertTrue($this->object->connect('sqlite:' . self::TEST_SQLITE_DB, '', '', array(), true));
@@ -104,10 +100,10 @@ class pdo_sqliteTest extends EZTestCase
     } // testSQLiteCatch_error
 
     /**
-     * @covers ezSQL_pdo::query
+     * @covers ezsql\Database\ez_pdo::query
      */
     public function testSQLiteQuery() {
-        $this->assertTrue($this->object->connect('sqlite:' . self::TEST_SQLITE_DB, '', '', array(), true));
+        $this->assertTrue($this->object->connect());
 
         $this->assertEquals(0, $this->object->query('CREATE TABLE unit_test(id integer, test_key varchar(50), PRIMARY KEY (ID))'));
 
@@ -123,53 +119,60 @@ class pdo_sqliteTest extends EZTestCase
         $this->assertEquals(1, $result);        
         $this->assertNull($this->object->catch_error());   
         
-        $this->object->use_trace_log = true;
+        $this->object->setUse_Trace_Log(true);
         $this->assertNotNull($this->object->query('SELECT * FROM unit_test ;')); 
-        $this->assertNotNull($this->object->trace_log);
+        $this->assertNotNull($this->object->getTrace_Log());
         
         $this->assertFalse($this->object->query('SELECT id2 FROM unit_test ;'));   
         $this->assertTrue($this->object->catch_error());  
         
-        $this->assertEquals(1, $this->object->query('DROP TABLE unit_test'));
+        $this->assertEquals(0, $this->object->query('DROP TABLE unit_test'));
     } // testSQLiteQuery
     
     /**
-     * @covers ezQuery::insert
+     * @covers ezsql\ezQuery::insert
      */
     public function testInsert()
     {
         $this->assertTrue($this->object->connect('sqlite:' . self::TEST_SQLITE_DB, '', '', array(), true));
+        $this->assertEquals(0, $this->object->drop('unit_test'));
         $this->object->query('CREATE TABLE unit_test(id integer, test_key varchar(50), PRIMARY KEY (ID))');
 
         $result = $this->object->insert('unit_test', array('test_key'=>'test 1' ));
         $this->assertEquals(1, $result);
-        $this->assertEquals(1, $this->object->query('DROP TABLE unit_test'));
     }
        
     /**
-     * @covers ezQuery::update
+     * @covers ezsql\ezQuery::update
      */
     public function testUpdate()
     {
-        $this->assertTrue($this->object->connect('sqlite:' . self::TEST_SQLITE_DB, '', '', array(), true));
+        $this->assertTrue($this->object->connect('sqlite:' . self::TEST_SQLITE_DB, '', '', array(), true));        
+        $this->assertEquals(0, $this->object->drop('unit_test'));
+
         $this->object->query('CREATE TABLE unit_test(id integer, test_key varchar(50), test_value varchar(50), PRIMARY KEY (ID))');
+
         $this->object->insert('unit_test', array('test_key'=>'test 1', 'test_value'=>'testing string 1' ));
         $this->object->insert('unit_test', array('test_key'=>'test 2', 'test_value'=>'testing string 2' ));
         $result = $this->object->insert('unit_test', array('test_key'=>'test 3', 'test_value'=>'testing string 3' ));
         $this->assertEquals($result, 3);
+
         $unit_test['test_key'] = 'the key string';
         $where="test_key  =  test 1";
         $this->assertEquals(1, $this->object->update('unit_test', $unit_test, $where));
-        $this->assertEquals(1, $this->object->update('unit_test', $unit_test, eq('test_key','test 3', _AND),
-                                                                            eq('test_value','testing string 3')));
+        $this->assertEquals(1, $this->object->update('unit_test', $unit_test, 
+            eq('test_key','test 3', _AND),
+            eq('test_value','testing string 3')));
+
         $where=eq('test_value','testing string 4');
         $this->assertEquals(0, $this->object->update('unit_test', $unit_test, $where));
+
         $this->assertEquals(1, $this->object->update('unit_test', $unit_test, "test_key  =  test 2"));
         $this->assertEquals(1, $this->object->query('DROP TABLE unit_test'));
     }
     
     /**
-     * @covers ezQuery::delete
+     * @covers ezsql\ezQuery::delete
      */
     public function testDelete()
     {
@@ -193,7 +196,7 @@ class pdo_sqliteTest extends EZTestCase
     }  
 
     /**
-     * @covers ezQuery::selecting
+     * @covers ezsql\ezQuery::selecting
      */
     public function testSelecting()
     {
@@ -232,49 +235,22 @@ class pdo_sqliteTest extends EZTestCase
     } 
     
     /**
-     * @covers ezSQL_pdo::disconnect
+     * @covers ezsql\Database\ez_pdo::disconnect
      */
     public function testSQLiteDisconnect() {
-        $this->assertTrue($this->object->connect('sqlite:' . self::TEST_SQLITE_DB, '', '', array(), true));
+        $this->assertTrue($this->object->connect());
 
         $this->object->disconnect();
 
         $this->assertFalse($this->object->isConnected());
     } // testSQLiteDisconnect
-
-    /**
-     * @covers ezSQLcore::get_set
-     */
-    public function testGet_set() {
-        $expected = "test_var1 = '1', test_var2 = 'ezSQL test', test_var3 = 'This is''nt escaped.'";
-        
-        $params = array(
-            'test_var1' => 1,
-            'test_var2' => 'ezSQL test',
-            'test_var3' => "This is'nt escaped."
-        );
-        
-        $this->assertTrue($this->object->connect('sqlite:' . self::TEST_SQLITE_DB, '', '', array(), true));
-
-        $this->assertequals($expected, $this->object->get_set($params)); 
-        $this->assertContains('NOW()',$this->object->get_set(array('test_var1' => 1,'test_var2'=>'NOW()')));
-        $this->assertContains("test_var2 = 0", $this->object->get_set(array('test_var2'=>'false')));
-        $this->assertContains("test_var2 = '1'", $this->object->get_set(array('test_var2'=>'true')));
-    } // testSQLiteGet_set
     
     /**
-     * @covers ezSQL_pdo::__construct
+     * @covers ezsql\Database\ez_pdo::__construct
      */
-    public function test__Construct() {         
-        $this->errors = array();
-        set_error_handler(array($this, 'errorHandler'));    
-        
-        $pdo = $this->getMockBuilder(ezSQL_pdo::class)
-        ->setMethods(null)
-        ->disableOriginalConstructor()
-        ->getMock();
-        
-        $this->assertNull($pdo->__construct('sqlite:' . self::TEST_SQLITE_DB, '', '', array(), true));  
+    public function test__Construct() {
+        $this->expectExceptionMessageRegExp('/[Missing configuration details]/');
+        $this->assertNull(new ez_pdo);
     } 
      
-} // ezSQL_pdoTest
+} // ezsql\Database\ez_pdoTest

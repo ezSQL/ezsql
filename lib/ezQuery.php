@@ -134,6 +134,16 @@ class ezQuery implements ezQueryInterface
         return false;
     }
 
+    public function prepareOn()
+    {
+        $this->prepareActive = true;
+    }
+    
+    public function prepareOff()
+    {
+        $this->prepareActive = $this->clearPrepare();
+    }
+
     public function prepareActive()
     {
         $this->prepareActive = true;
@@ -796,7 +806,7 @@ class ezQuery implements ezQueryInterface
         if (empty($table))
            return false;
 
-        $drop = 'DROP TABLE '.$table.';';
+        $drop = 'DROP TABLE IF EXISTS '.$table.';';
 
         return $this->query($drop);
    }

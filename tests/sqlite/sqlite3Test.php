@@ -3,6 +3,7 @@
 namespace ezsql\Tests;
 
 use ezsql\Database;
+use ezsql\Database\ez_sqlite3;
 use ezsql\Tests\EZTestCase;
 
 /**
@@ -17,7 +18,7 @@ class sqlite3Test extends EZTestCase
     const TEST_SQLITE_DB_DIR = './tests/sqlite/';
     
     /**
-     * @var ezSQL_sqlite3
+     * @var ez_sqlite3
      */
     protected $object;
 
@@ -34,7 +35,7 @@ class sqlite3Test extends EZTestCase
         }
         
         $this->object = Database::initialize('sqlite3', [self::TEST_SQLITE_DB_DIR, self::TEST_SQLITE_DB]); 
-        $this->object->setPrepare();
+        $this->object->prepareOn();
     }
 
     /**
@@ -43,12 +44,12 @@ class sqlite3Test extends EZTestCase
      */
     protected function tearDown(): void
     {
-        $this->object->query("DROP TABLE test_table;");
+        $this->object->drop("test_table");
         $this->object = null;
     }
 
     /**
-     * @covers ezSQL_sqlite3::connect
+     * @covers ezsql\Database\ez_sqlite3::connect
      */
     public function testConnect() 
     { 
@@ -62,7 +63,7 @@ class sqlite3Test extends EZTestCase
     } // testSQLiteConnect
 
     /**
-     * @covers ezSQL_sqlite3::quick_connect
+     * @covers ezsql\Database\ez_sqlite3::quick_connect
      */
     public function testQuick_connect() 
     {
@@ -70,29 +71,31 @@ class sqlite3Test extends EZTestCase
     } // testSQLiteQuick_connect
     
     /**
-     * @covers ezSQL_sqlite3::escape
+     * @covers ezsql\Database\ez_sqlite3::escape
      */
     public function testSQLite3Escape() 
     {
+        $this->object->connect(self::TEST_SQLITE_DB_DIR, self::TEST_SQLITE_DB);
         $result = $this->object->escape("This is'nt escaped.");
         $this->assertEquals("This is''nt escaped.", $result);         
     } // testSQLiteEscape
     
     /**
-     * @covers ezSQL_sqlite3::sysdate
+     * @covers ezsql\Database\ez_sqlite3::sysDate
      */
-    public function testSysdate() 
+    public function testSysDate() 
     {
-        $this->assertEquals('now', $this->object->sysdate());
+        $this->assertEquals('now', $this->object->sysDate());
     }
 
     /**
-     * @covers ezSQL_sqlite3::query
+     * @covers ezsql\Database\ez_sqlite3::query
      */
     public function testQuery()
     {
+        $this->object->connect(self::TEST_SQLITE_DB_DIR, self::TEST_SQLITE_DB);
         // Create a table..
-        $this->object->query("DROP TABLE test_table;");
+        $this->object->drop("test_table");
         $this->assertEquals(0,$this->object->query("CREATE TABLE test_table ( MyColumnA INTEGER PRIMARY KEY, MyColumnB TEXT(32) );"));
 
         // Insert test data
@@ -116,25 +119,26 @@ class sqlite3Test extends EZTestCase
     }
 
     /**
-     * @covers ezQuery::create
+     * @covers ezsql\ezQuery::create
      */
     public function testCreate()
     {
+        $this->object->connect(self::TEST_SQLITE_DB_DIR, self::TEST_SQLITE_DB);
         $this->assertEquals($this->object->create('new_create_test',
             column('id', INTEGERS, notNULL, AUTO),
             column('create_key', VARCHAR, 50),
             primary('id_pk', 'id')), 
         0);
 
-        $this->object->setPrepare(false);
+        $this->object->prepareOff();
         $this->assertEquals($this->object->insert('new_create_test',
             ['create_key' => 'test 2']),
         0);
-        $this->object->setPrepare();
+        $this->object->prepareOn();
     }
 
     /**
-     * @covers ezQuery::drop
+     * @covers ezsql\ezQuery::drop
      */
     public function testDrop()
     {
@@ -142,7 +146,7 @@ class sqlite3Test extends EZTestCase
     }
     
     /**
-     * @covers ezQuery::insert
+     * @covers ezsql\ezQuery::insert
      */
     public function testInsert()
     {
@@ -153,27 +157,35 @@ class sqlite3Test extends EZTestCase
     }
        
     /**
-     * @covers ezQuery::update
+     * @covers ezsql\ezQuery::update
      */
     public function testUpdate()
     {
         $this->object->query('CREATE TABLE test_table(id integer, test_key varchar(50), test_value varchar(50), PRIMARY KEY (ID))');
+
         $this->object->insert('test_table', array('test_key'=>'test 1', 'test_value'=>'testing string 1' ));
         $this->object->insert('test_table', array('test_key'=>'test 2', 'test_value'=>'testing string 2' ));
         $result = $this->object->insert('test_table', array('test_key'=>'test 3', 'test_value'=>'testing string 3' ));
         $this->assertEquals($result, 3);
+
         $test_table['test_key'] = 'the key string';
         $where="test_key  =  test 1";
         $this->assertEquals(1, $this->object->update('test_table', $test_table, $where));
-        $this->assertEquals(1, $this->object->update('test_table', $test_table, eq('test_key','test 3', _AND),
-                                                                            eq('test_value','testing string 3')));
+
+        $this->assertEquals(1, $this->object->update('test_table', 
+            $test_table,
+            eq('test_key','test 3', _AND),
+            eq('test_value','testing string 3'))
+        );
+
         $where=eq('test_value','testing string 4');
         $this->assertEquals(0, $this->object->update('test_table', $test_table, $where));
+
         $this->assertEquals(1, $this->object->update('test_table', $test_table, "test_key  =  test 2"));
     }
     
     /**
-     * @covers ezQuery::delete
+     * @covers ezsql\ezQuery::delete
      */
     public function testDelete()
     {
@@ -184,22 +196,21 @@ class sqlite3Test extends EZTestCase
         $this->object->insert('test_table', array('test_key'=>'test 3', 'test_value'=>'testing string 3' ));   
 
         $where=array('test_key', '=', 'test 1');
-
         $this->assertEquals($this->object->delete('test_table', $where), 1);
         
         $this->assertEquals($this->object->delete('test_table', 
             array('test_key', '=', 'test 3'),
-            array('test_value',' =', 'testing string 3')), 1);
+            array('test_value','=', 'testing string 3')), 1);
 
         $where = array('test_value', '=', 'testing 2');
-
         $this->assertEquals(0, $this->object->delete('test_table', $where));
+
         $where = "test_key  =  test 2";
         $this->assertEquals(1, $this->object->delete('test_table', $where));
     }  
 
     /**
-     * @covers ezQuery::selecting
+     * @covers ezsql\ezQuery::selecting
      */
     public function testSelecting()
     {
@@ -238,18 +249,10 @@ class sqlite3Test extends EZTestCase
     } 
     
     /**
-     * @covers ezSQL_sqlite3::__construct
+     * @covers ezsql\Database\ez_sqlite3::__construct
      */
-    public function test__Construct() {   
-        $this->errors = array();
-        set_error_handler(array($this, 'errorHandler'));    
-        
-        $sqlite3 = $this->getMockBuilder(ezSQL_sqlite3::class)
-        ->setMethods(null)
-        ->disableOriginalConstructor()
-        ->getMock();
-        
-        $this->assertNull($sqlite3->__construct());  
-    } 
-    
+    public function test__Construct() {
+        $this->expectExceptionMessageRegExp('/[Missing configuration details]/');
+        $this->assertNull(new ez_sqlite3);
+    }     
 }

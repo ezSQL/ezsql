@@ -4,36 +4,36 @@ namespace ezsql;
 interface DatabaseInterface
 {
     /**
-    * Database configuration methods:
-    *
-    * - getDriver();
-    * - getDsn();
-    * - getUser();
-    * - getPassword()
-    * - getName();
-    * - getHost();
-    * - getPort();
-    * - getCharset();
-    * - getOptions();
-    * - getIsFile();
-    * - getToMssql();
-    * - getPath();
-    *---------------
-    * - setDriver($args);
-    * - setDsn($args);
-    * - setUser($args);
-    * - setPassword($args);
-    * - setName($args);
-    * - setHost($args);
-    * - setPort($args); 
-    * - setCharset($args);
-    * - setOptions($args);
-    * - setIsFile($args);
-    * - setToMssql($args);
-    * - setPath($args);
-    *
-    * @return string|array|bool|void
-    */
+     * Database configuration methods:
+     *
+     * - getDriver();
+     * - getDsn();
+     * - getUser();
+     * - getPassword()
+     * - getName();
+     * - getHost();
+     * - getPort();
+     * - getCharset();
+     * - getOptions();
+     * - getIsFile();
+     * - getToMssql();
+     * - getPath();
+     *---------------
+     * - setDriver($args);
+     * - setDsn($args);
+     * - setUser($args);
+     * - setPassword($args);
+     *  - setName($args);
+     * - setHost($args);
+     * - setPort($args); 
+     * - setCharset($args);
+     * - setOptions($args);
+     * - setIsFile($args);
+     * - setToMssql($args);
+     * - setPath($args);
+     *
+     * @return string|array|bool|void
+     */
     public function settings();
 
     /**
@@ -84,4 +84,9 @@ interface DatabaseInterface
      * Close the database connection
      */
     public function disconnect();
+
+    /**
+     * Get connection handle
+     */
+    public function handle();
 }

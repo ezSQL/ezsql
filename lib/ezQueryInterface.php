@@ -38,12 +38,12 @@ interface ezQueryInterface
     /**
     * Turn on prepare function availability in ezQuery shortcut method calls 
     */
-    public function prepareActive();
+    public function prepareOn();
       	
     /**
     * Turn off prepare function availability in ezQuery shortcut method calls 
     */
-    public function prepareInActive();
+    public function prepareOff();
     
 
     /**

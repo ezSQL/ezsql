@@ -29,10 +29,16 @@ final class ez_mysqli extends ezsqlModel implements DatabaseInterface
     private static $secure = null;
 
     /**
+    * Database connection handle 
+    * @var connection instance
+    */
+    private $dbh;
+
+    /**
      * Query result
      * @var mixed
      */
-    private $_result;
+    private $result;
 
     /**
      * Database configuration setting 
@@ -53,8 +59,8 @@ final class ez_mysqli extends ezsqlModel implements DatabaseInterface
         parent::__construct();
         $this->database = $settings;
 
-        if (empty($GLOBALS['db_'.\MYSQLI]))
-            $GLOBALS['db_'.\MYSQLI] = $this;
+        if (empty($GLOBALS['ez'.\MYSQLI]))
+            $GLOBALS['ez'.\MYSQLI] = $this;
         \setInstance($this);
     } // __construct
 
@@ -79,16 +85,18 @@ final class ez_mysqli extends ezsqlModel implements DatabaseInterface
         string $user = '', 
         string $password = '', 
         string $name = '', 
-        string $host = 'localhost', 
+        string $host = '', 
+        $port = '',
         string $charset = '') 
     {
         $user = empty($user) ? $this->database->getUser() : $user;
         $password = empty($password) ? $this->database->getPassword() : $password;
         $name = empty($name) ? $this->database->getName() : $name;
-        $host = ($host != 'localhost') ? $this->database->getHost() : $host;
+        $host = empty($host) ? $this->database->getHost() : $host;
+        $port = empty($port) ? $this->database->getPort() : $port;
         $charset = empty($charset) ? $this->database->getCharset() : $charset;
 
-        if ( ! $this->connect($user, $password, $host, $charset) ) ;
+        if ( ! $this->connect($user, $password, $host, (int) $port, $charset) ) ;
         else if ( ! $this->select($name, $charset) ) ;
 
         return $this->_connected;
@@ -106,23 +114,26 @@ final class ez_mysqli extends ezsqlModel implements DatabaseInterface
      * @return boolean
      */
     public function connect(
-        string $user = '', 
+        string $user = '',
         string $password = '',
-        string $host = 'localhost', 
-        string $charset = '')
+        string $host = '',
+        $port = '',
+        string $charset = '') 
     {
         $this->_connected = false;
 
         $user = empty($user) ? $this->database->getUser() : $user;
         $password = empty($password) ? $this->database->getPassword() : $password;
-        $host = ($host != 'localhost') ? $this->database->getHost() : $host;
+        $host = empty($host) ? $this->database->getHost() : $host;
+        $port = empty($port) ? $this->database->getPort() : $port;
         $charset = empty($charset) ? $this->database->getCharset() : $charset;
 
         // Must have a user and a password
         if ( empty($user ) ) {
             $this->register_error($this->ezsql_mysql_str[1] . ' in ' . __FILE__ . ' on line ' . __LINE__);
             $this->show_errors ? \trigger_error($this->ezsql_mysql_str[1], \E_USER_WARNING) : null;
-        } else if ( ! $this->dbh = \mysqli_connect($host, $user, $password, $this->database->getName()) ) {
+        } else if ( ! $this->dbh = \mysqli_connect($host, $user, $password, $this->database->getName(),  (int) $port) 
+        ) {
             // Try to establish the server database handle
             $this->register_error($this->ezsql_mysql_str[2] . ' in ' . __FILE__ . ' on line ' . __LINE__);
             $this->show_errors ? \trigger_error($this->ezsql_mysql_str[2], \E_USER_WARNING) : null;
@@ -363,7 +374,7 @@ final class ez_mysqli extends ezsqlModel implements DatabaseInterface
 		if (!empty($param) && \is_array($param) && ($this->isPrepareActive()))		
 			return $this->query_prepared($query, $param);
 		else 
-			$this->_result = \mysqli_query($this->dbh, $query);
+			$this->result = \mysqli_query($this->dbh, $query);
 
         // If there is an error then take note of it..
         if ( $str = \mysqli_error($this->dbh) ) {
@@ -389,25 +400,25 @@ final class ez_mysqli extends ezsqlModel implements DatabaseInterface
             // Return number of rows affected
             $return_val = $this->_affectedRows;
         } else {
-            if ( !\is_numeric($this->_result) && !\is_bool($this->_result)) {
+            if ( !\is_numeric($this->result) && !\is_bool($this->result)) {
                 // Query was a select
 
                 // Take note of column info
                 $i = 0;
-                while ($i < \mysqli_num_fields($this->_result)) {
-                    $this->col_info[$i] = \mysqli_fetch_field($this->_result);
+                while ($i < \mysqli_num_fields($this->result)) {
+                    $this->col_info[$i] = \mysqli_fetch_field($this->result);
                     $i++;
                 }
 
                 // Store Query Results
                 $num_rows = 0;
-                while ( $row = \mysqli_fetch_object($this->_result) ) {
+                while ( $row = \mysqli_fetch_object($this->result) ) {
                     // Store results as an objects within main array
                     $this->last_result[$num_rows] = $row;
                     $num_rows++;
                 }
 
-                \mysqli_free_result($this->_result);
+                \mysqli_free_result($this->result);
 
                 // Log number of rows the query returned
                 $this->num_rows = $num_rows;
@@ -437,7 +448,23 @@ final class ez_mysqli extends ezsqlModel implements DatabaseInterface
         }
 
         $this->_connected = false;
-    } // function
+    }
+
+    /**
+     * Reset database handle
+     */
+    public function reset()
+    {
+        $this->dbh = null;
+    }
+    
+    /**
+     * Get connection handle
+     */
+    public function handle()
+    {
+        return $this->dbh;
+    }
 
     /**
      * Returns the current database server host
@@ -447,7 +474,17 @@ final class ez_mysqli extends ezsqlModel implements DatabaseInterface
     public function getHost() 
     {
         return $this->database->getHost();
-    } // getDBHost
+    } 
+
+    /**
+     * Returns the current database server port
+     *
+     * @return string
+     */
+    public function getPort() 
+    {
+        return $this->database->getPort();
+    } 
 
     /**
      * Returns the current connection charset
@@ -457,7 +494,7 @@ final class ez_mysqli extends ezsqlModel implements DatabaseInterface
     public function getCharset() 
     {
         return $this->database->getCharset();
-    } // getCharset
+    }
 
     /**
      * Returns the last inserted auto-increment
@@ -468,5 +505,4 @@ final class ez_mysqli extends ezsqlModel implements DatabaseInterface
     {
         return \mysqli_insert_id($this->dbh);
     } // getInsertId
-
 } // ez_mysqli

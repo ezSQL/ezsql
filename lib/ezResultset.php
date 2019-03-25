@@ -1,7 +1,7 @@
 <?php
 /**
  * Originally:
- *  ezSQL Database specific class for working with query results record set component
+ *  ezSQL Database mysql specific class for working with query results record set component
  */
 namespace ezsql;
 

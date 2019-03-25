@@ -14,6 +14,7 @@ class Database
      * @var float
      */
     private static $_ts = null;
+    private static $factory = null;
     private static $instances = [];
 
     private function __construct() {}
@@ -39,7 +40,7 @@ class Database
             $key = $vendor;
             $value = \VENDOR[$key];
 
-            if (empty($GLOBALS['db_'.$key]) || !empty($tag)) {
+            if (empty($GLOBALS['ez'.$key]) || !empty($tag)) {
                 $di = new DInjector();
                 $di->set($key, $value);                
                 $di->set('ezsql\ConfigInterface', 'ezsql\Config');
@@ -50,8 +51,8 @@ class Database
                 }
             }
 
-            \setInstance($GLOBALS['db_'.$key]);
-            return $GLOBALS['db_'.$key];
+            \setInstance($GLOBALS['ez'.$key]);
+            return $GLOBALS['ez'.$key];
         }
     }
 

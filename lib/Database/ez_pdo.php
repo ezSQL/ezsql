@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace ezsql\Database;
 
 use Exception;
+use ezsql\ezQuery;
 use ezsql\ezsqlModel;
 use ezsql\ConfigInterface;
 use ezsql\DatabaseInterface;
@@ -24,12 +25,26 @@ final class ez_pdo extends ezsqlModel implements DatabaseInterface
 
     private static $isSecure = false;
     private static $secure = null;
+    private static $_options = [];
+
+    /**
+    * Database connection handle 
+    * @var connection instance
+    */
+    private $dbh;
+
+    /**
+     * Query result
+     * @var mixed
+     */
+    private $result;
 
     /**
     * Database configuration setting 
     * @var Configuration instance
     */
-    private static $database;
+
+    private $database;
 
     public function __construct(ConfigInterface $settings) {
         if ( ! \class_exists ('ezsqlModel') ) {
@@ -45,18 +60,10 @@ final class ez_pdo extends ezsqlModel implements DatabaseInterface
         $this->database = $settings;
 
         // Turn on track errors
-        ini_set('track_errors', 1);
-
-        if ( !empty($this->database->getDsn()) && !empty($this->database->getUser()) && !empty($this->database->getPassword()) ) {
-            $this->connect($this->database->getDsn(), 
-                $this->database->getUser(), 
-                $this->database->getPassword(), 
-                $this->database->getOptions(), 
-                $this->database->getIsFile());
-        }
+        ini_set('track_errors', '1');
         
-        if (empty($GLOBALS['db_'.\Pdo]))
-            $GLOBALS['db_'.\Pdo] = $this;
+        if (empty($GLOBALS['ez'.\Pdo]))
+            $GLOBALS['ez'.\Pdo] = $this;
         \setInstance($this);
     } // __construct
 
@@ -115,19 +122,25 @@ final class ez_pdo extends ezsqlModel implements DatabaseInterface
     *                  Default is false
     * @return boolean
     */
-    public function connect($dsn = '', $user = '', $password = '', $options = array(), $isFile = false) 
+    public function connect(
+        $dsn = '', 
+        $user = '', 
+        $password = '', 
+        $options = array(), 
+        $isFile = false) 
     {
         $this->_connected = false;
-
         if (self::$isSecure)
             $setDsn = empty($dsn) ? $this->database->getDsn().$this->secure : $dsn.$this->secure;
         else
             $setDsn = empty($dsn) ? $this->database->getDsn() : $dsn;
 
+        if (!empty(self::$_options))
+            $this->database->setOptions(self::$_options);
+
         $setUser = empty($user) ? $this->database->getUser() : $user;
-        $setPassword = empty($password) ? $this->database->getPassword() : $password; 
+        $setPassword = empty($password) ? $this->database->getPassword() : $password;        
         $setOptions = empty($options) ? $this->database->getOptions() : $options;
-        
         $IsFile = empty($isFile) ? $this->database->getIsFile() : $isFile;   
         
         if (!$IsFile) {                
@@ -139,7 +152,7 @@ final class ez_pdo extends ezsqlModel implements DatabaseInterface
         } elseif (empty($setDsn)) {
             // Must have a dsn
             $this->register_error($this->_ezsql_pdo_str[2] . ' in ' . __FILE__ . ' on line ' . __LINE__);
-            $this->show_errors ? \trigger_error($this->_ezsql_pdo_str[2], \E_USER_WARNING) : null;        
+            $this->show_errors ? \trigger_error($this->_ezsql_pdo_str[2], \E_USER_WARNING) : null;
         }        
 
         // Establish PDO connection
@@ -178,7 +191,12 @@ final class ez_pdo extends ezsqlModel implements DatabaseInterface
     *                             Default is false
     * @return boolean
     */
-    public function quick_connect($dsn = '', $user = '', $password = '', $options = array(), $isFileBased = false) 
+    public function quick_connect(
+        $dsn = '',
+        $user = '', 
+        $password = '', 
+        $options = array(), 
+        $isFileBased = false) 
     {
         return $this->connect($dsn, $user, $password, $options, $isFileBased);
     } // quick_connect
@@ -372,7 +390,7 @@ final class ez_pdo extends ezsqlModel implements DatabaseInterface
 
             for ( $i=0 ; $i < $col_count ; $i++ ) {              
                 // Start DEBUG by psc!
-                $this->col_info[$i] = new stdClass();
+                $this->col_info[$i] = new \stdClass();
                 // End DEBUG by psc
                 if ( $meta = $sth->getColumnMeta($i) ) {
                     $this->col_info[$i]->name =  $meta['name'];
@@ -427,5 +445,21 @@ final class ez_pdo extends ezsqlModel implements DatabaseInterface
             $this->dbh = null;
             $this->_connected = false;
         }
-     } // disconnect
+     }
+
+    /**
+     * Reset database handle
+     */
+    public function reset()
+    {
+        $this->dbh = null;
+    }
+
+    /**
+     * Get connection handle
+     */
+    public function handle()
+    {
+        return $this->dbh;
+    }
 } // ez_pdo

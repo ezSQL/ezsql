@@ -22,12 +22,22 @@ final class ez_pgsql extends ezsqlModel implements DatabaseInterface
         5 => 'Unexpected error while trying to select database',
     );
 
-    private $rows_affected = false;
-
     protected $preparedValues = array();
 
     private static $isSecure = false;
     private static $secure = null;
+
+    /**
+    * Database connection handle 
+    * @var connection instance
+    */
+    private $dbh;
+
+    /**
+     * Query result
+     * @var mixed
+     */
+    private $result;
 
     /**
      * Database configuration setting
@@ -49,8 +59,8 @@ final class ez_pgsql extends ezsqlModel implements DatabaseInterface
         parent::__construct();
         $this->database = $settings;
 
-        if (empty($GLOBALS['db_'.\PGSQL]))
-            $GLOBALS['db_'.\PGSQL] = $this;
+        if (empty($GLOBALS['ez'.\PGSQL]))
+            $GLOBALS['ez'.\PGSQL] = $this;
         \setInstance($this);
     } // __construct
 
@@ -91,17 +101,22 @@ final class ez_pgsql extends ezsqlModel implements DatabaseInterface
      *                        Default is PostgreSQL default port 5432
      * @return boolean
      */
-    public function connect($user = '', $password = '', $name = '', $host = 'localhost', $port = '5432')
+    public function connect(
+        string $user = '', 
+        string $password = '', 
+        string $name = '', 
+        string $host = 'localhost', 
+        string $port = '5432')
     {
         $this->_connected = false;
 
         $user = empty($user) ? $this->database->getUser() : $user;
         $password = empty($password) ? $this->database->getPassword() : $password;
         $name = empty($name) ? $this->database->getName() : $name;
-        $host = ($host != 'localhost') ? $this->database->getHost() : $host;
+        $host = ($host != 'localhost') ? $host : $this->database->getHost();
         $port = ($port != '5432') ? $port : $this->database->getPort();
 
-        $connect_string = "host=" . $host . " port=" . $port . " dbname=" . $name . " user=" . $user . " password=" . $password;
+        $connect_string = "host=".$host." port=".$port." dbname=".$name." user=".$user." password=".$password;
 
         if (!$user) {
             // Must have a user and a password
@@ -148,7 +163,8 @@ final class ez_pgsql extends ezsqlModel implements DatabaseInterface
      */
     public function showTables()
     {
-        return "SELECT table_name FROM information_schema.tables WHERE table_schema = '$this->database->db' AND table_type='BASE TABLE'";
+        $database = $this->database->getName();
+        return "SELECT table_name FROM information_schema.tables WHERE table_schema = '$database' AND table_type='BASE TABLE'";
     } // showTables
 
     /**
@@ -159,7 +175,8 @@ final class ez_pgsql extends ezsqlModel implements DatabaseInterface
      */
     public function descTable($tbl_name)
     {
-        return "SELECT ordinal_position, column_name, data_type, column_default, is_nullable, character_maximum_length, numeric_precision FROM information_schema.columns WHERE table_name = '$tbl_name' AND table_schema='$this->database->db' ORDER BY ordinal_position";
+        $database = $this->database->getName();
+        return "SELECT ordinal_position, column_name, data_type, column_default, is_nullable, character_maximum_length, numeric_precision FROM information_schema.columns WHERE table_name = '$tbl_name' AND table_schema='$database' ORDER BY ordinal_position";
     } // descTable
 
     /**
@@ -260,7 +277,11 @@ final class ez_pgsql extends ezsqlModel implements DatabaseInterface
         $is_insert = false;
         if (\preg_match("/^(insert|delete|update|replace)\s+/i", $query)) {
             $is_insert = true;
-            $this->rows_affected = @\pg_affected_rows($this->result);
+
+            if (is_bool($this->result))
+                return false;
+
+            $this->_affectedRows = @\pg_affected_rows($this->result);
 
             // Take note of the insert_id
             if (\preg_match("/^(insert|replace)\s+/i", $query)) {
@@ -274,7 +295,7 @@ final class ez_pgsql extends ezsqlModel implements DatabaseInterface
             }
 
             // Return number for rows affected
-            $return_val = $this->rows_affected;
+            $return_val = $this->_affectedRows;
 
             if (\preg_match("/returning/smi", $query)) {
                 while ($row = @\pg_fetch_object($this->result)) {
@@ -334,7 +355,23 @@ final class ez_pgsql extends ezsqlModel implements DatabaseInterface
             \pg_close($this->dbh);
             $this->_connected = false;
         }
-    } // disconnect
+    }
+
+    /**
+     * Reset database handle
+     */
+    public function reset()
+    {
+        $this->dbh = null;
+    }
+    
+    /**
+     * Get connection handle
+     */
+    public function handle()
+    {
+        return $this->dbh;
+    }
 
     /**
      * Returns the current database server host

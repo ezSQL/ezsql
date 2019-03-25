@@ -3,6 +3,7 @@
 namespace ezsql\Tests;
 
 use ezsql\Database;
+use ezsql\Database\ez_pgsql;
 use ezsql\Tests\EZTestCase;
 
 class postgresqlTest extends EZTestCase 
@@ -13,7 +14,7 @@ class postgresqlTest extends EZTestCase
     const TEST_DB_PORT = '5432';
     
     /**
-     * @var ezSQL_postgresql
+     * @var ez_pgsql
      */
     protected $object;
 
@@ -30,7 +31,7 @@ class postgresqlTest extends EZTestCase
         }
         
         $this->object = Database::initialize('pgsql', [self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME, self::TEST_DB_HOST, self::TEST_DB_PORT]); 
-        $this->object->setPrepare();
+        $this->object->prepareOn();
     } // setUp
 
     /**
@@ -43,28 +44,29 @@ class postgresqlTest extends EZTestCase
     } // tearDown
 
     /**
-     * @covers ezSQL_postgresql::quick_connect
+     * @covers ezsql\Database\ez_pgsql::quick_connect
      */
     public function testQuick_connect() {
         $this->assertTrue($this->object->quick_connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME, self::TEST_DB_HOST, self::TEST_DB_PORT));
     } // testQuick_connect
 
     /**
-     * @covers ezSQL_postgresql::connect
+     * @covers ezsql\Database\ez_pgsql::connect
      * 
      */
     public function testConnect() {        
         $this->errors = array();
         set_error_handler(array($this, 'errorHandler')); 
          
-        $this->assertFalse($this->object->connect('',''));  
-        $this->assertFalse($this->object->connect('self::TEST_DB_USER', 'self::TEST_DB_PASSWORD',' self::TEST_DB_NAME', 'self::TEST_DB_CHARSET'));  
+        $this->assertFalse($this->object->connect('self::TEST_DB_USER', 'self::TEST_DB_PASSWORD','self::TEST_DB_NAME', 'self::TEST_DB_CHARSET'));  
         
         $this->assertTrue($this->object->connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME, self::TEST_DB_HOST, self::TEST_DB_PORT));
+        
+        $this->assertTrue($this->object->connect());
     } // testConnect
 
     /**
-     * @covers ezSQL_postgresql::escape
+     * @covers ezsql\Database\ez_pgsql::escape
      */
     public function testEscape() {
         $result = $this->object->escape("This is'nt escaped.");
@@ -73,14 +75,14 @@ class postgresqlTest extends EZTestCase
     } // testEscape
 
     /**
-     * @covers ezSQL_postgresql::sysdate
+     * @covers ezsql\Database\ez_pgsql::sysDate
      */
     public function testSysdate() {
-        $this->assertEquals('NOW()', $this->object->sysdate());
-    } // testSysdate
+        $this->assertEquals('NOW()', $this->object->sysDate());
+    }
 
     /**
-     * @covers ezSQL_postgresql::showTables
+     * @covers ezsql\Database\ez_pgsql::showTables
      */
     public function testShowTables() {
         $this->assertTrue($this->object->connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME, self::TEST_DB_HOST, self::TEST_DB_PORT));
@@ -91,7 +93,7 @@ class postgresqlTest extends EZTestCase
     } // testShowTables
 
     /**
-     * @covers ezSQL_postgresql::descTable
+     * @covers ezsql\Database\ez_pgsql::descTable
      */
     public function testDescTable() {
         $this->assertTrue($this->object->connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME, self::TEST_DB_HOST, self::TEST_DB_PORT));
@@ -107,7 +109,7 @@ class postgresqlTest extends EZTestCase
     } // testDescTable
 
     /**
-     * @covers ezSQL_postgresql::showDatabases
+     * @covers ezsql\Database\ez_pgsql::showDatabases
      */
     public function testShowDatabases() {
         $this->assertTrue($this->object->connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME, self::TEST_DB_HOST, self::TEST_DB_PORT));
@@ -119,7 +121,7 @@ class postgresqlTest extends EZTestCase
     } // testShowDatabases
 
     /**
-     * @covers ezSQL_postgresql::query
+     * @covers ezsql\Database\ez_pgsql::query
      */
     public function testQuery() {
         $this->assertTrue($this->object->connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME, self::TEST_DB_HOST, self::TEST_DB_PORT));
@@ -128,16 +130,16 @@ class postgresqlTest extends EZTestCase
         $this->object->query('CREATE TABLE unit_test(id serial, test_key varchar(50), test_value varchar(50), PRIMARY KEY (ID))');
         $this->assertEquals($this->object->query('INSERT INTO unit_test(test_key, test_value) VALUES(\'test 1\', \'testing string 1\')'), 1);
         
-        $this->object->dbh = null;
-        $this->assertNull($this->object->query('INSERT INTO unit_test(test_key, test_value) VALUES(\'test 2\', \'testing string 2\')'));
+        $this->object->reset();
+        $this->assertNotNull($this->object->query('INSERT INTO unit_test(test_key, test_value) VALUES(\'test 2\', \'testing string 2\')'));
         $this->object->disconnect();
-        $this->assertNull($this->object->query('INSERT INTO unit_test(test_key, test_value) VALUES(\'test 3\', \'testing string 3\')'));    
+        $this->assertFalse($this->object->query('INSERT INTO unit_test(test_key, test_value) VALUES(\'test 3\', \'testing string 3\')'));    
         
         $this->assertEquals(0, $this->object->query('DROP TABLE unit_test'));
     } // testQuery
 
      /**
-     * @covers ezQuery::create
+     * @covers ezsql\ezQuery::create
      */
     public function testCreate()
     {
@@ -149,15 +151,15 @@ class postgresqlTest extends EZTestCase
             primary('id_pk', 'id')), 
         0);
 
-        $this->object->setPrepare(false);
+        $this->object->prepareOff();
         $this->assertEquals($this->object->insert('new_create_test',
             ['create_key' => 'test 2']),
         1);
-        $this->object->setPrepare();
+        $this->object->prepareOn();
     }
 
     /**
-     * @covers ezQuery::drop
+     * @covers ezsql\ezQuery::drop
      */
     public function testDrop()
     {
@@ -167,7 +169,7 @@ class postgresqlTest extends EZTestCase
     }
     
     /**
-     * @covers ezSQLcore::insert
+     * @covers ezsql\ezQuery::insert
      */
     public function testInsert()
     {
@@ -180,7 +182,7 @@ class postgresqlTest extends EZTestCase
     }
        
     /**
-     * @covers ezSQLcore::update
+     * @covers ezsql\ezQuery::update
      */
     public function testUpdate()
     {
@@ -203,7 +205,7 @@ class postgresqlTest extends EZTestCase
     }
     
     /**
-     * @covers ezSQLcore::delete
+     * @covers ezsql\ezQuery::delete
      */
     public function testDelete()
     {
@@ -227,7 +229,7 @@ class postgresqlTest extends EZTestCase
     }  
 	
     /**
-     * @covers ezSQL_postgresql::disconnect
+     * @covers ezsql\Database\ez_pgsql::disconnect
      */
     public function testDisconnect() {
         $this->object->connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME, self::TEST_DB_HOST, self::TEST_DB_PORT);  
@@ -237,14 +239,14 @@ class postgresqlTest extends EZTestCase
     } // testDisconnect
 
     /**
-     * @covers ezSQL_postgresql::getDBHost
+     * @covers ezsql\Database\ez_pgsql::getHost
      */
-    public function testGetDBHost() {
-        $this->assertEquals(self::TEST_DB_HOST, $this->object->getDBHost());
+    public function testGetHost() {
+        $this->assertEquals(self::TEST_DB_HOST, $this->object->getHost());
     } // testGetDBHost
 
     /**
-     * @covers ezSQL_postgresql::getPort
+     * @covers ezsql\Database\ez_pgsql::getPort
      */
     public function testGetPort() {
         $this->object->connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME, self::TEST_DB_HOST, self::TEST_DB_PORT);
@@ -253,7 +255,7 @@ class postgresqlTest extends EZTestCase
     } // testGetPort
 
     /**
-     * @covers ezSQLcore::selecting
+     * @covers ezsql\ezQuery::selecting
      */
     public function testSelecting()
     {
@@ -292,16 +294,10 @@ class postgresqlTest extends EZTestCase
     } 
     
     /**
-     * @covers ezSQL_postgresql::__construct
+     * @covers ezsql\Database\ez_pgsql::__construct
      */
-    public function test__Construct() {     
-        $postgresql = $this->getMockBuilder(ezSQL_postgresql::class)
-        ->setMethods(null)
-        ->disableOriginalConstructor()
-        ->getMock();
-        
-        $this->assertNull($postgresql->__construct());  
-        $this->assertNull($postgresql->__construct('testuser','','','','utf8'));  
+    public function test__Construct() { 
+        $this->expectExceptionMessageRegExp('/[Missing configuration details]/');
+        $this->assertNull(new ez_pgsql);
     } 
-
-} // ezSQL_postgresqlTest
+} // ezsql\Database\ez_pgsqlTest

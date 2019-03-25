@@ -3,13 +3,14 @@
 namespace ezsql\Tests;
 
 use ezsql\Database;
+use ezsql\Database\ez_sqlsrv;
 use ezsql\Tests\EZTestCase;
 
 class sqlsrvTest extends EZTestCase 
 {
 
     /**
-     * @var ezSQL_sqlsrv
+     * @var ez_sqlsrv
      */
     protected $object;   
 
@@ -26,7 +27,7 @@ class sqlsrvTest extends EZTestCase
         }
 
         $this->object = Database::initialize('sqlsrv', [self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME]);
-        $this->object->setPrepare();
+        $this->object->prepareOn();
     } // setUp
 
     /**
@@ -40,7 +41,7 @@ class sqlsrvTest extends EZTestCase
     } // tearDown
 
     /**
-     * @covers ezSQL_sqlsrv::quick_connect
+     * @covers ezsql\Database\ez_sqlsrv::quick_connect
      */
     public function testQuick_connect() 
     {
@@ -49,7 +50,7 @@ class sqlsrvTest extends EZTestCase
     } // testQuick_connect
 
     /**
-     * @covers ezSQL_sqlsrv::connect
+     * @covers ezsql\Database\ez_sqlsrv::connect
      */
     public function testConnect() 
     {
@@ -58,7 +59,7 @@ class sqlsrvTest extends EZTestCase
     } // testConnect
 
     /**
-     * @covers ezSQL_sqlsrv::escape
+     * @covers ezsql\Database\ez_sqlsrv::escape
      */
     public function testEscape() 
     {
@@ -68,25 +69,25 @@ class sqlsrvTest extends EZTestCase
     } // testEscape
 
     /**
-     * @covers ezSQL_sqlsrv::sysdate
+     * @covers ezsql\Database\ez_sqlsrv::sysDate
      */
-    public function testSysdate() 
+    public function testSysDate() 
     {
-        $this->assertEquals('GETDATE()', $this->object->sysdate());
+        $this->assertEquals('GETDATE()', $this->object->sysDate());
     } // testSysdate
     
     /**
-     * @covers ezSQLcore::get_var
+     * @covers ezsql\ezsqlModel::get_var
      */
     public function testGet_var() 
     { 
         $this->object->quick_connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME);    
-        $current_time = $this->object->get_var("SELECT " . $this->object->sysdate() . " AS 'GetDate()'");
+        $current_time = $this->object->get_var("SELECT " . $this->object->sysDate() . " AS 'GetDate()'");
         $this->assertNotNull($current_time);
     } // testGet_var
 
     /**
-     * @covers ezSQLcore::get_results
+     * @covers ezsql\ezsqlModel::get_results
      */
     public function testGet_results() 
     {           
@@ -105,7 +106,7 @@ class sqlsrvTest extends EZTestCase
     } // testGet_results
     
     /**
-     * @covers ezSQL_sqlsrv::query
+     * @covers ezsql\Database\ez_sqlsrv::query
      */
     public function testQuery() 
     {
@@ -113,23 +114,23 @@ class sqlsrvTest extends EZTestCase
         $this->assertEquals($this->object->query('CREATE TABLE unit_test(id integer, test_key varchar(50), PRIMARY KEY (ID))'), 0);
         $this->assertEquals($this->object->query('INSERT INTO unit_test(id, test_key) VALUES(1, \'test 1\')'), 1);
         
-        $this->object->dbh = null;
+        $this->object->reset();
         $this->assertEquals($this->object->query('INSERT INTO unit_test(id, test_key) VALUES(2, \'test 2\')'),1);
         $this->object->disconnect();
         $this->assertFalse($this->object->query('INSERT INTO unit_test(id, test_key) VALUES(3, \'test 3\')'));    
     } // testQuery
 
     /**
-     * @covers ezSQL_sqlsrv::ConvertMySqlTosqlsrv
+     * @covers ezsql\Database\ez_sqlsrv::convert
      */
-    public function testConvertMySqlTosqlsrv() 
+    public function testConvert() 
     {
-        $result = $this->object->ConvertMySqlTosqlsrv("SELECT `test` FROM `unit_test`;");
+        $result = $this->object->convert("SELECT `test` FROM `unit_test`;");
         $this->assertEquals("SELECT test FROM unit_test;", $result);
-    } // testConvertMySqlTosqlsrv
+    }
 
     /**
-     * @covers ezQuery::create
+     * @covers ezsql\ezQuery::create
      */
     public function testCreate()
     {
@@ -141,15 +142,15 @@ class sqlsrvTest extends EZTestCase
             primary('id_pk', 'id')), 
         0);
 
-        $this->object->setPrepare(false);
+        $this->object->prepareOff();
         $this->assertEquals($this->object->insert('new_create_test',
             ['create_key' => 'test 2']),
         0);
-        $this->object->setPrepare();
+        $this->object->prepareOn();
     }
 
     /**
-     * @covers ezQuery::drop
+     * @covers ezsql\ezQuery::drop
      */
     public function testDrop()
     {
@@ -158,17 +159,18 @@ class sqlsrvTest extends EZTestCase
     }
     
     /**
-     * @covers ezSQLcore::insert
+     * @covers ezsql\ezQuery::insert
      */
     public function testInsert()
     {
         $this->object->quick_connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME);
-        $this->object->query('CREATE TABLE unit_test(id integer, test_key varchar(50), PRIMARY KEY (ID))');        
+        $this->object->query('CREATE TABLE unit_test(id integer, test_key varchar(50), PRIMARY KEY (ID))');
+        
         $this->assertNotFalse($this->object->insert('unit_test', ['id'=>7, 'test_key'=>'testInsert() 1' ]));
     }
        
     /**
-     * @covers ezSQLcore::update
+     * @covers ezsql\ezQuery::update
      */
     public function testUpdate()
     {
@@ -183,13 +185,18 @@ class sqlsrvTest extends EZTestCase
         $where="id  =  1";
 
         $this->assertEquals($this->object->update('unit_test', $unit_test, $where), 1);
-        $this->assertEquals($this->object->update('unit_test', $unit_test, eq('id', 3, _AND), eq('test_key', 'testUpdate() 3')), 1);
+
+        $this->assertEquals(1, $this->object->update('unit_test', $unit_test, 
+            eq('id', 3, _AND), 
+            eq('test_key', 'testUpdate() 3'))
+        );
+
         $this->assertEquals($this->object->update('unit_test', $unit_test, "id = 4"), 0);
         $this->assertEquals($this->object->update('unit_test', $unit_test, "test_key  =  testUpdate() 2  and", "id  =  2"), 1);
     }
     
     /**
-     * @covers ezSQLcore::delete
+     * @covers ezsql\ezQuery::delete
      */
     public function testDelete()
     {
@@ -210,14 +217,16 @@ class sqlsrvTest extends EZTestCase
         
         $this->assertEquals($this->object->delete('unit_test', ['id','=',1]), 1);
         $this->assertEquals($this->object->delete('unit_test', eq('id', 3, _AND), eq('test_key', 'testDelete() 3') ), 1);
+
         $where=1;
         $this->assertFalse($this->object->delete('unit_test', array('test_key','=',$where)));
+
         $where="id  =  2";
         $this->assertEquals($this->object->delete('unit_test', $where), 1);
     }  
 
     /**
-     * @covers ezSQLcore::selecting
+     * @covers ezsql\ezQuery::selecting
      */
     public function testSelecting()
     {
@@ -256,7 +265,7 @@ class sqlsrvTest extends EZTestCase
     } 
 	
     /**
-     * @covers ezSQL_sqlsrv::disconnect
+     * @covers ezsql\Database\ez_sqlsrv::disconnect
      */
     public function testDisconnect() 
     {
@@ -266,18 +275,11 @@ class sqlsrvTest extends EZTestCase
     } // testDisconnect
       
     /**
-     * @covers ezSQL_sqlsrv::__construct
+     * @covers ezsql\Database\ez_sqlsrv::__construct
      */
     public function test__Construct() 
-    {   
-        $this->errors = array();
-        set_error_handler(array($this, 'errorHandler'));    
-        
-        $sqlsrv = $this->getMockBuilder(ezSQL_sqlsrv::class)
-        ->setMethods(null)
-        ->disableOriginalConstructor()
-        ->getMock();
-        
-        $this->assertNull($sqlsrv->__construct());  
+    {  
+        $this->expectExceptionMessageRegExp('/[Missing configuration details]/');
+        $this->assertNull(new ez_sqlsrv);
     } 
-} // ezSQL_sqlsrvTest
+} // ezsql\Database\ez_sqlsrvTest
