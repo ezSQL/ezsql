@@ -2,10 +2,10 @@ language: php
 
 # Versions of PHP you want your project run with.
 php:
-  - 5.6
   - 7.0
   - 7.1
   - 7.2
+  - 7.3
 
 env:
   - MYSQL_HOST=127.0.0.1 MYSQL_USER=root
@@ -35,6 +35,6 @@ script:
 # fast_finish: If your build fails do not continue trying to build, just stop.
 matrix:
   allow_failures:
-  - php: 5.6
-  - php: 7.2
+  - php: 7.0
+  - php: 7.3
  
