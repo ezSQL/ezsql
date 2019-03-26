@@ -299,7 +299,7 @@ $db->get-var -- get one variable, from one row, from the database (or previously
 
 **Description**
 
-var **$db->get-var**(string query / null \[,int column offset\[, int row offset\])
+var **$db->get-var**(string query / null [,int column offset[, int row offset])
 
 **$db->get-var**() gets one single variable from the database or previously cached results. This function is very useful for evaluating query results within logic statements such as **if** or **switch**. If the query generates more than one row the first row will always be used by default. If the query generates more than one column the leftmost column will always be used by default. Even so, the full results set will be available within the array $db->last-results should you wish to use them.
 
@@ -310,10 +310,10 @@ $num-users = $db->get-var(“SELECT count(\*) FROM users”) ;
 ```
 #### _Example 2_
 ```php
- // Get a users email from the second row of results (note: col 1, row 1 \[starts at 0\])..
+ // Get a users email from the second row of results (note: col 1, row 1 [starts at 0])..
 $user-email = $db->get-var(“SELECT name, email FROM users”,1,1) ;
 
- // Get the full second row from the cached results (row = 1 \[starts at 0\])..
+ // Get the full second row from the cached results (row = 1 [starts at 0])..
 $user = $db->get-row(null,OBJECT,1);
 
  // Both are the same value..
@@ -351,255 +351,159 @@ $db->get-row -- get one row from the database (or previously cached results)
 
 **Description**
 
-object **$db->get- row**(string query / null \[, OBJECT / ARRAY-A / ARRAY-N \[, int row offset\]\])
+object **$db->get- row**(string query / null [, OBJECT / ARRAY-A / ARRAY-N [, int row offset]])
 
 **$db->get-row**() gets a single row from the database or cached results. If the query returns more than one row and no row offset is supplied the first row within the results set will be returned by default. Even so, the full results will be cached should you wish to use them with another **ezsql** query.
 
-##### Example 1
-
+#### Example 1
+```php
  // Get a users name and email from the database and extract it into an object called user..
-
 $user = $db->get-row(“SELECT name,email FROM users WHERE id = 22”) ;
 
  // Output the values..
-
  echo “$user->name has the email of $user->email”;
 
- _Output:_
-
-_  Amy has the email of amy@foo.com_
-
-### Example 2
-
- // Get users name and date joined as associative array
-
+ Output:
+  Amy has the email of amy@foo.com
+```
+#### Example 2
+```php
+// Get users name and date joined as associative array
 // (Note: we must specify the row offset index in order to use the third argument)
-
  $user = $db->get-row(“SELECT name, UNIX-TIMESTAMP(my-date-joined) as date-joined FROM users WHERE id = 22”,ARRAY-A) ;
 
- // Note how the unix-timestamp command is used with **as** this will ensure that the resulting data will be easily
+// Note how the unix-timestamp command is used with **as** this will ensure that the resulting data will be easily
+// accessible via the created object or associative array. In this case $user[‘date-joined’] (object would be $user->date-joined)
+ echo $user[‘name’] . “ joined us on ” . date(“m/d/y”,$user[‘date-joined’]);
 
-// accessible via the created object or associative array. In this case $user\[‘date-joined’\] (object would be $user->date-joined)
-
- echo $user\[‘name’\] . “ joined us on ” . date(“m/d/y”,$user\[‘date-joined’\]);
-
- _Output:_
-
-_  Amy joined us on 05/02/01_
-
-### Example 3
-
+ Output:
+  Amy joined us on 05/02/01
+```
+#### Example 3
+```php
  // Get second row of cached results.
-
- $user = $db->get-row(null,OBJECT,1) ;
+ $user = $db->get-row(null,OBJECT,1);
 
  // Note: Row offset starts at 0
-
  echo “$user->name joined us on ” . date(“m/d/y”,$user->date-joined);
 
- _Output:_
-
-_  Tyson joined us on 05/02/02_
-
-### Example 4
-
+ Output:
+  Tyson joined us on 05/02/02
+```
+#### Example 4
+```php
  // Get one row as a numerical array..
-
  $user = $db->get-row(“SELECT name,email,address FROM users WHERE id = 1”,ARRAY-N);
 
  // Output the results as a table..
-
  echo “<table>”;
 
  for ( $i=1; $i <= count($user); $i++ )
-
  {
-
-  echo “<tr><td>$i</td><td>$user\[$I\]</td></tr>”;
-
+  echo “<tr><td>$i</td><td>$user[$I]</td></tr>”;
  }
 
  echo “</table>”;
 
- _Output:_
-
-_1_ _amy_
-
-_2_ _amy@foo.com_
-
-_3_ _123 Foo Road_
-
+ Output:
+  1 amy
+  2 amy@foo.com
+  3 123 Foo Road
+```
 **$db->get-results**
 
 $db->get-results – get multiple row result set from the database (or previously cached results)
 
 **Description**
 
-array **$db->get-results**(string query / null \[, OBJECT / ARRAY-A / ARRAY-N \] )
+array **$db->get-results**(string query / null [, OBJECT / ARRAY-A / ARRAY-N ] )
 
 **$db->get-row**() gets multiple rows of results from the database based on _query_ and returns them as a multi dimensional array. Each element of the array contains one row of results and can be specified to be either an object, associative array or numerical array. If no results are found then the function returns false enabling you to use the function within logic statements such as **if.**
 
-_Example 1 – Return results as objects (default)_
-=================================================
-
+#### Example 1 – Return results as objects (default)
 Returning results as an object is the quickest way to get and display results. It is also useful that you are able to put $object->var syntax directly inside print statements without having to worry about causing php parsing errors.
-
+```php
  // Extract results into the array $users (and evaluate if there are any results at the same time)..
-
 if ( $users = $db->get-results(“SELECT name, email FROM users”) )
-
 {
-
- // Loop through the resulting array on the index $users\[n\]
-
+ // Loop through the resulting array on the index $users[n]
   foreach ( $users as $user )
-
   {
-
  // Access data using column names as associative array keys
-
    echo “$user->name - $user->email<br\>”;
-
   }
-
-}
-
-else
-
-{
-
+} else {
  // If no users were found then **if** evaluates to false..
-
 echo “No users found.”;
-
 }
 
- _Output:_
+ Output:
+  Amy - amy@hotmail.com
+  Tyson - tyson@hotmail.com
+ ```
 
-_ Amy - amy@hotmail.com     _
-
- _Tyson - tyson@hotmail.com_
-
-_Example 2 – Return results as associative array_
-=================================================
-
+#### Example 2 – Return results as associative array
 Returning results as an associative array is useful if you would like dynamic access to column names. Here is an example.
-
+```php
  // Extract results into the array $dogs (and evaluate if there are any results at the same time)..
-
 if ( $dogs = $db->get-results(“SELECT breed, owner, name FROM dogs”, ARRAY-A) )
-
 {
-
- // Loop through the resulting array on the index $dogs\[n\]
-
+ // Loop through the resulting array on the index $dogs[n]
   foreach ( $dogs as $dog-detail )
-
   {
-
  // Loop through the resulting array
-
    foreach ( $dogs-detail as $key => $val )
-
    {
-
  // Access and format data using $key and $val pairs..
-
     echo “<b>” . ucfirst($key) . “</b>: $val<br>”;
-
    }
-
  // Do a P between dogs..
-
    echo “<p>”;
-
   }
-
-}
-
-else
-
-{
-
+} else {
  // If no users were found then **if** evaluates to false..
-
 echo “No dogs found.”;
-
 }
 
- _Output:_
-
-_ **Breed:** Boxer_
-
-_ **Owner:** Amy_
-
-_ **Name:** Tyson_
-
-_ **Breed:** Labrador_
-
-_ **Owner:** Lee_
-
-_ **Name:** Henry_
-
-_ **Breed:** Dachshund_
-
-_ **Owner:** Mary_
-
-_ **Name:** Jasmine_
-
-_Example 3 – Return results as numerical array_
-===============================================
-
- Returning results as a numerical array is useful if you are using completely dynamic queries with varying column
-
-names but still need a way to get a handle on the results. Here is an example of this concept in use. Imagine that this
-
-script was responding to a form with $type being submitted as either ‘fish’ or ‘dog’.
-
+Output:
+ Breed: Boxer
+ Owner: Amy
+ Name: Tyson
+ Breed: Labrador
+ Owner: Lee
+ Name: Henry
+ Breed: Dachshund
+ Owner: Mary
+ Name: Jasmine
+```
+#### Example 3 – Return results as numerical array
+Returning results as a numerical array is useful if you are using completely dynamic queries with varying column names but still need a way to get a handle on the results. Here is an example of this concept in use. Imagine that this script was responding to a form with $type being submitted as either ‘fish’ or ‘dog’.
+```php
  // Create an associative array for animal types..
-
   $animal = array ( “fish” => “num-fins”, “dog” => “num-legs” );
 
  // Create a dynamic query on the fly..
-
-  if ( $results = $db->(“SELECT $animal\[$type\] FROM $type”,ARRAY-N))
-
+  if ( $results = $db->(“SELECT $animal[$type] FROM $type”, ARRAY-N))
   {
-
    foreach ( $results as $result )
-
    {
-
-    echo “$result\[0\]<br>”;
-
+    echo “$result[0]<br>”;
    }
-
-  }
-
-  else
-
-  {
-
+  } else {
    echo “No $animal\\s!”;
-
   }
 
- _Output:_
-
+Output:
     4
-
     4
-
     4
+ 
+Note: The dynamic query would be look like one of the following...
+· SELECT num-fins FROM fish
+· SELECT num-legs FROM dogs
 
- _ Note: The dynamic query would be look like one of the following..._
-
-· _SELECT num-fins FROM fish_
-
-· _SELECT num-legs FROM dogs_
-
-_  It would be easy to see which it was by using $db->debug(); after the dynamic query call._
-
+It would be easy to see which it was by using $db->debug(); after the dynamic query call.
+```
 **$db->debug**
 
 $db->debug – print last sql query and returned results (if any)
@@ -610,19 +514,15 @@ $db->debug – print last sql query and returned results (if any)
 
 **$db->debug**() prints last sql query and its results (if any)
 
-_Example 1_
-===========
-
+#### Example 1
 If you need to know what your last query was and what the returned results are here is how you do it.
-
+```php
  // Extract results into the array $users..
-
 $users = $db->get-results(“SELECT name, email FROM users”);
 
 // See what just happened!
-
 $db->debug();
-
+```
 **$db->vardump**
 
 $db->vardump – print the contents and structure of any variable
@@ -633,70 +533,54 @@ $db->vardump – print the contents and structure of any variable
 
 **$db->vardump**() prints the contents and structure of any variable. It does not matter what the structure is be it an object, associative array or numerical array.
 
-_Example 1_
-===========
-
+#### Example 1
 If you need to know what value and structure any of your results variables are here is how you do it.
-
+```php
  // Extract results into the array $users..
-
 $users = $db->get-results(“SELECT name, email FROM users”);
 
 // View the contents and structure of $users
-
 $db->vardump($users);
-
+```
 **$db->get-col**
 
 $db->get-col – get one column from query (or previously cached results) based on column offset
 
 **Description**
 
-**$db->get-col**( string query / null \[, int column offset\] )
+**$db->get-col**( string query / null [, int column offset] )
 
 **$db->get-col**() extracts one column as one dimensional array based on a column offset. If no offset is supplied the offset will defualt to column 0. I.E the first column. If a null query is supplied the previous query results are used.
 
-_Example 1_
-===========
-
+#### Example 1
+```php
  // Extract list of products and print them out at the same time..
-
-foreach ( $db->get-col(“SELECT product FROM product-list”) as $product)
-
+foreach ( $db->get-col(“SELECT product FROM product-list”) as $product
 {
-
  echo $product;
-
 }
-
-_Example 2 – Working with cached results_
-=========================================
-
+```
+#### Example 2 – Working with cached results
+```php
  // Extract results into the array $users..
-
 $users = $db->get-results(“SELECT \* FROM users”);
 
 // Work out how many columns have been selected..
-
 $last-col-num = $db->num-cols - 1;
 
 // Print the last column of the query using cached results..
-
 foreach ( $db->get-col(null, $last-col-num) as $last-col )
-
 {
-
  echo $last-col;
-
 }
-
+```
 **$db->get-col-info**
 
 $db->get-col-info - get information about one or all columns such as column name or type
 
 **Description**
 
-**$db->get-col-info**(string info-type\[, int column offset\])
+**$db->get-col-info**(string info-type[, int column offset])
 
 **$db->get-col-info**()returns meta information about one or all columns such as column name or type. If no information type is supplied then the default information type of **name** is used. If no column offset is supplied then a one dimensional array is returned with the information type for ‘all columns’. For access to the full meta information for all columns you can use the cached variable $db->col-info
 
@@ -705,110 +589,76 @@ Available Info-Types
 **mySQL**
 
 · name - column name
-====================
 
 · table - name of the table the column belongs to
-=================================================
 
 · max-length - maximum length of the column
-============================================
 
 · not-null - 1 if the column cannot be NULL
-============================================
 
 · primary-key - 1 if the column is a primary key
-=================================================
 
 · unique-key - 1 if the column is a unique key
-===============================================
 
 · multiple-key - 1 if the column is a non-unique key
-=====================================================
 
-· numeric \- 1 if the column is numeric
-=======================================
+· numeric - 1 if the column is numeric
 
 · blob - 1 if the column is a BLOB
-==================================
 
 · type - the type of the column
-===============================
 
 · unsigned - 1 if the column is unsigned
-========================================
 
 · zerofill - 1 if the column is zero-filled
-===========================================
 
 **ibase**
 
 · name - column name
-====================
 
 · type - the type of the column
-===============================
 
 · length - size of column
-=========================
 
 · alias - undocumented
-======================
 
-· relation \- undocumented
-==========================
+· relation - undocumented
 
 **MS-SQL / Oracle / Postgress**
 
 · name - column name
-====================
 
 · type - the type of the column
-===============================
 
 · length - size of column
-=========================
 
 **SQLite**
 
 · name - column name
-====================
-
-_Example 1_
-===========
-
+#### Example 1
+```php
  // Extract results into the array $users..
-
 $users = $db->get-results(“SELECT id, name, email FROM users”);
 
 // Output the name for each column type
-
 foreach ( $db->get-col-info(“name”)  as $name )
-
 {
-
  echo “$name<br>”;
-
 }
 
  Output:
-
   id
-
   name
-
   email
-
-_Example 2_
-===========
-
+```
+#### Example 2
+```php
  // Extract results into the array $users..
-
 $users = $db->get-results(“SELECT id, name, email FROM users”);
 
  // View all meta information for all columns..
-
  $db->vardump($db->col-info);
-
+```
 **$db->hide-errors**
 
 $db->hide-errors – turn **ezsql** error output to browser off
@@ -821,71 +671,44 @@ $db->hide-errors – turn **ezsql** error output to browser off
 
 **_Note:_** _If there were no errors then the global error array $EZSQL-ERROR will evaluate to false. If there were one or more errors then it will have  the following structure. Errors are added to the array in order of being called._
 
-$EZSQL-ERROR\[0\] = Array
-
+$EZSQL-ERROR[0] = Array
 (
-
-     \[query\] => SOME BAD QUERY
-
-     \[error-str\] => You have an error in your SQL syntax near ‘SOME BAD QUERY' at line 1
-
+     [query] => SOME BAD QUERY
+     [error-str] => You have an error in your SQL syntax near ‘SOME BAD QUERY' at line 1
 )
 
-$EZSQL-ERROR\[1\] = Array
-
+$EZSQL-ERROR[1] = Array
 (
-
-     \[query\] => ANOTHER BAD QUERY
-
-     \[error-str\] => You have an error in your SQL syntax near ‘ANOTHER BAD QUERY' at line 1
-
+     [query] => ANOTHER BAD QUERY
+     [error-str] => You have an error in your SQL syntax near ‘ANOTHER BAD QUERY' at line 1
 )
 
-$EZSQL-ERROR\[2\] = Array
-
+$EZSQL-ERROR[2] = Array
 (
-
-     \[query\] => THIRD BAD QUERY
-
-     \[error-str\] => You have an error in your SQL syntax near ‘THIRD BAD QUERY' at line 1
-
+     [query] => THIRD BAD QUERY
+     [error-str] => You have an error in your SQL syntax near ‘THIRD BAD QUERY' at line 1
 )
 
-_Example 1_
-===========
-
+#### Example 1
+```php
  // Using a custom error function
-
 $db->hide-errors();
 
 // Make a silly query that will produce an error
-
 $db->query(“INSERT INTO my-table A BAD QUERY THAT GENERATES AN ERROR”);
 
 // And another one, for good measure
-
 $db->query(“ANOTHER BAD QUERY THAT GENERATES AN ERROR”);
 
 // If the global error array exists at all then we know there was 1 or more **ezsql** errors..
-
 if ( $EZSQL-ERROR )
-
 {
-
  // View the errors
-
  $db->vardump($EZSQL-ERROR);
-
-}
-
-else
-
-{
-
+} else {
  echo “No Errors”;
-
 }
-
+```
 **$db->show-errors**
 
 $db->show-errors – turn **ezsql** error output to browser on
@@ -906,39 +729,34 @@ $db->escape – Format a string correctly in order to stop accidental mal formed
 
 **$db->escape**() makes any string safe to use as a value in a query under all PHP conditions. I.E. if magic quotes are turned on or off. Note: Should not be used by itself to guard against SQL injection attacks. The purpose of this function is to stop accidental mal formed queries.
 
-_Example 1_
-===========
-
+#### Example 1
+```php
  // Escape and assign the value..
-
  $title = $db->escape(“Justin’s and Amy’s Home Page”);
 
  // Insert in to the DB..
-
 $db->query(“INSERT INTO pages (title) VALUES (’$title’)”) ;
-
-_Example 2_
-===========
-
+```
+#### Example 2
+```php
  // Assign the value..
-
  $title = “Justin’s and Amy’s Home Page”;
 
  // Insert in to the DB and escape at the same time..
-
 $db->query(“INSERT INTO pages (title) VALUES (’”. $db->escape($title).”’)”) ;
-
+```
 **Disk Caching**
 
+--------------
 **ezsql** has the ability to cache your queries which can make dynamic sites run much faster.
 
 If you want to cache EVERYTHING just do..
 
-$db->use-disk-cache = true;
+**$db->setUse_Disk_Cache(true);**
 
-$db->cache-queries = true;
+**$db->setCache_Queries(true);**
 
-$db->cache-timeout = 24;
+**$db->setCache_Timeout(24);**
 
 For full details and more specific options please see:
 
