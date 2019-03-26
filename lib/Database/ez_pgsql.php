@@ -157,39 +157,6 @@ final class ez_pgsql extends ezsqlModel implements DatabaseInterface
     }
 
     /**
-     * Return PostgreSQL specific values: Return all tables of the current schema
-     *
-     * @return string
-     */
-    public function showTables()
-    {
-        $database = $this->database->getName();
-        return "SELECT table_name FROM information_schema.tables WHERE table_schema = '$database' AND table_type='BASE TABLE'";
-    } // showTables
-
-    /**
-     * Return the description of the given table
-     *
-     * @param string $tbl_name The table name
-     * @return string
-     */
-    public function descTable($tbl_name)
-    {
-        $database = $this->database->getName();
-        return "SELECT ordinal_position, column_name, data_type, column_default, is_nullable, character_maximum_length, numeric_precision FROM information_schema.columns WHERE table_name = '$tbl_name' AND table_schema='$database' ORDER BY ordinal_position";
-    } // descTable
-
-    /**
-     * Return all databases of the current server
-     *
-     * @return string
-     */
-    public function showDatabases()
-    {
-        return "SELECT datname FROM pg_database WHERE datname NOT IN ('template0', 'template1') ORDER BY 1";
-    } // showDatabases
-
-    /**
     * Creates a prepared query, binds the given parameters and returns the result of the executed
     *
     * @param string $query

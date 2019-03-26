@@ -82,45 +82,6 @@ class postgresqlTest extends EZTestCase
     }
 
     /**
-     * @covers ezsql\Database\ez_pgsql::showTables
-     */
-    public function testShowTables() {
-        $this->assertTrue($this->object->connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME, self::TEST_DB_HOST, self::TEST_DB_PORT));
-        
-        $result = $this->object->showTables();
-        
-        $this->assertEquals('SELECT table_name FROM information_schema.tables WHERE table_schema = \'' . self::TEST_DB_NAME . '\' AND table_type=\'BASE TABLE\'', $result);
-    } // testShowTables
-
-    /**
-     * @covers ezsql\Database\ez_pgsql::descTable
-     */
-    public function testDescTable() {
-        $this->assertTrue($this->object->connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME, self::TEST_DB_HOST, self::TEST_DB_PORT));
-        
-        $this->assertEquals(0, $this->object->query('CREATE TABLE unit_test(id integer, test_key varchar(50), PRIMARY KEY (ID))'));
-        
-        $this->assertEquals(
-                "SELECT ordinal_position, column_name, data_type, column_default, is_nullable, character_maximum_length, numeric_precision FROM information_schema.columns WHERE table_name = 'unit_test' AND table_schema='" . self::TEST_DB_NAME . "' ORDER BY ordinal_position",
-                $this->object->descTable('unit_test')
-        );
-        
-        $this->assertEquals(0, $this->object->query('DROP TABLE unit_test'));
-    } // testDescTable
-
-    /**
-     * @covers ezsql\Database\ez_pgsql::showDatabases
-     */
-    public function testShowDatabases() {
-        $this->assertTrue($this->object->connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME, self::TEST_DB_HOST, self::TEST_DB_PORT));
-        
-        $this->assertEquals(
-                "SELECT datname FROM pg_database WHERE datname NOT IN ('template0', 'template1') ORDER BY 1",
-                $this->object->showDatabases()
-        );
-    } // testShowDatabases
-
-    /**
      * @covers ezsql\Database\ez_pgsql::query
      */
     public function testQuery() {

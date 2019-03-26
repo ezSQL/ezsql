@@ -222,5 +222,5 @@ class pdo_pgsqlTest extends EZTestCase
     public function test__Construct() {
         $this->expectExceptionMessageRegExp('/[Missing configuration details]/');
         $this->assertNull(new ez_pdo);
-    }      
+    }
 } // ezsql\Database\ez_pdoTest
