@@ -13,7 +13,7 @@ Is a library/widget that makes it very fast and easy for you to use database(s) 
 - It can dramatically decrease development time and in most cases will streamline your code and make things run faster as well as making it very easy to debug and optimise your database queries.
 - It is a small class and will not add very much overhead to your website.
 
-**_Note:_** _It is assumed that you are familiar with PHP, basic Database concepts and basic SQL constructs. Even if you are a complete beginner **ezsql** can help you once you have read and understood [this tutorial](http://www.jvmultimedia.com/portal/node/14)._
+**_Note:_** _It is assumed that you are familiar with PHP, basic Database concepts and basic SQL constructs._
 
 Quick Examples
 ---
@@ -26,7 +26,8 @@ either
 
 or
 
-    require 'vendor/autoload.php';
+    // composer is required for version 4
+    require 'vendor/autoload.php'; 
 
 ___Example 1___
 
