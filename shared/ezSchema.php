@@ -111,7 +111,7 @@ class ezSchema
 			// check for string data type
             $numberOrString = $args[0];
 			$store = \is_int($numberOrString) ? '('.$numberOrString.')' : '';
-			$store = empty($store) && !empty($numberOrString) ? $numberOrString : $store;
+			$store = empty($store) && !empty($numberOrString) ? ' '.$numberOrString : $store;
 			$value = !empty($args[1]) ? ' '.$args[1] : '';
 			$options = !empty($args[2]) ? ' '.$args[2] : '';
 			$extra = !empty($args[3]) ? ' '.$args[3] : '';
@@ -128,7 +128,7 @@ class ezSchema
             // check for numeric data type
             $numberOrString = $args[0];
             $store = \is_int($numberOrString) ? '('.$numberOrString.')' : '';
-			$store = empty($store) && !empty($numberOrString) ? $numberOrString : $store;
+			$store = empty($store) && !empty($numberOrString) ? ' '.$numberOrString : $store;
 			$value = !empty($args[1]) ? ' '.$args[1] : '';
 			$options = !empty($args[2]) ? ' '.$args[2] : '';
 			$extra = !empty($args[3]) ? ' '.$args[3] : '';
@@ -137,7 +137,7 @@ class ezSchema
 			// check for date time data type
             $numberOrString = $args[0];
 			$store = \is_int($numberOrString) ? '('.$numberOrString.')' : '';
-			$fraction = empty($store) && !empty($numberOrString) ? $numberOrString : $store;
+			$fraction = empty($store) && !empty($numberOrString) ? ' '.$numberOrString : $store;
 			$value = !empty($args[1]) ? ' '.$args[1] : '';
 			$options = !empty($args[2]) ? ' '.$args[2] : '';
 			$data = $type.$fraction.$value.$options;
