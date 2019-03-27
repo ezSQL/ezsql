@@ -1,0 +1,102 @@
+<?php
+
+namespace ezsql\Tests;
+
+use ezsql\ezSchema;
+use ezsql\Tests\EZTestCase;
+
+class ezSchemaTest extends EZTestCase 
+{		
+    /**
+    * @covers ezsql\ezSchema::vendor
+    */
+    public function testVendor()
+    {
+        clearInstance();
+        $this->assertEquals(null, getVendor());
+        $this->assertEquals(false, ezSchema::datatype(BLOB, NULLS));
+        $this->assertFalse(column('id', INTR, 32, AUTO, PRIMARY));
+    }
+
+    /**
+    * @covers ezsql\ezSchema::vendor
+    */
+    public function testVendor_mysqli()
+    {
+        if (!extension_loaded('mysqli')) {
+            $this->markTestSkipped(
+              'The MySQLi extension is not available.'
+            );
+        }
+
+        mysqlInstance([self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME]);
+        $this->assertEquals(MYSQLI, getVendor());
+        $this->assertEquals('BLOB NULL', ezSchema::datatype(BLOB, NULLS));
+        $this->assertEquals('VARCHAR(256) NOT NULL', ezSchema::datatype(VARCHAR, 256, notNULL));
+        $this->assertEquals('id INT(32) AUTO_INCREMENT PRIMARY KEY, ', column('id', INTR, 32, AUTO, PRIMARY));
+    }
+
+    /**
+    * @covers ezsql\ezSchema::vendor
+    */
+    public function testVendor_Pgsql()
+    {
+        if (!extension_loaded('pgsql')) {
+            $this->markTestSkipped(
+              'The PostgreSQL Lib is not available.'
+            );
+        }
+
+        pgsqlInstance([self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME, self::TEST_DB_HOST, self::TEST_DB_PORT]);
+        $this->assertEquals(PGSQL, getVendor());
+        $this->assertEquals('TIMESTAMP NOT NULL', ezSchema::datatype(TIMESTAMP, notNULL));
+        $this->assertEquals('price NUMERIC(6,2) NULL, ', column('price', NUMERIC, 6, 2, NULLS));
+        $this->assertEquals('id SERIAL PRIMARY KEY, ', column('id', AUTO, PRIMARY));
+    }
+
+    /**
+    * @covers ezsql\ezSchema::vendor
+    */
+    public function testVendor_Sqlite3()
+    {
+        if (!extension_loaded('sqlite3')) {
+            $this->markTestSkipped(
+              'The sqlite3 Lib is not available.'
+            );
+        }
+        
+        sqliteInstance([self::TEST_SQLITE_DB_DIR, self::TEST_SQLITE_DB]);
+        $this->assertEquals(SQLITE3, getVendor());
+    }
+
+    /**
+    * @covers ezsql\ezSchema::vendor
+    */
+    public function testVendor_Sqlsrv()
+    {
+        if (!extension_loaded('sqlsrv')) {
+            $this->markTestSkipped(
+              'The sqlsrv Lib is not available.'
+            );
+        }
+
+        mssqlInstance([self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME]);
+        $this->assertEquals(MSSQL, getVendor());
+    }
+
+    /**
+    * @covers ezsql\ezSchema::vendor
+    */
+    public function testVendor_Pdo()
+    {
+        if ( ! \class_exists ('PDO') ) {
+            $this->markTestSkipped(
+              'The PDO Lib is not available.'
+            );
+        }
+
+        $pdo_mysql = pdoInstance(['mysql:host='.self::TEST_DB_HOST.';dbname='.self::TEST_DB_NAME.';port=3306', self::TEST_DB_USER,self::TEST_DB_PASSWORD]);
+        $pdo_mysql->connect();
+        $this->assertEquals(MYSQLI, getVendor());
+    }
+} 

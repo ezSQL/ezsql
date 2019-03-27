@@ -18,12 +18,12 @@ interface DatabaseInterface
      * - getIsFile();
      * - getToMssql();
      * - getPath();
-     *---------------
+     *---
      * - setDriver($args);
      * - setDsn($args);
      * - setUser($args);
      * - setPassword($args);
-     *  - setName($args);
+     * - setName($args);
      * - setHost($args);
      * - setPort($args); 
      * - setCharset($args);

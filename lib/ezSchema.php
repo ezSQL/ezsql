@@ -8,7 +8,7 @@ class ezSchema
     const STRINGS = [
         'common' => ['CHAR', 'VARCHAR', 'TEXT'],
         'mysqli' => ['TINYTEXT', 'MEDIUMTEXT', 'LONGTEXT', 'BINARY', 'VARBINARY'],
-        'pgsql' => ['character', 'character varying'],
+        'pgsql' => ['CHARACTER', 'CHARACTER VARYING'],
         'sqlsrv' => ['NCHAR', 'NVARCHAR', 'NTEXT', 'BINARY', 'VARBINARY', 'IMAGE'],
         'sqlite3' => ['TINYTEXT', 'MEDIUMTEXT', 'LONGTEXT', 'NCHAR', 'NVARCHAR', 'CLOB']
     ];    
@@ -17,9 +17,9 @@ class ezSchema
 		'common' => ['INT'],
         'mysqli' => ['BIT', 'INTEGER', 'TINYINT', 'SMALLINT', 'MEDIUMINT', 'BIGINT', 'FLOAT',
 			'BOOL', 'BOOLEAN'],
-        'pgsql' => ['bit', 'varbit', 'bit varying', 'smallint', 'int', 'integer', 
-            'bigint', 'smallserial', 'serial', 'bigserial', 'double precision', 'real', 
-            'money', 'bool', 'boolean'],
+        'pgsql' => ['BIT', 'VARBIT', 'BIT VARYING', 'SMALLINT', 'INT', 'INTEGER', 
+            'BIGINT', 'SMALLSERIAL', 'SERIAL', 'BIGSERIAL', 'DOUBLE PRECISION', 'REAL', 
+            'MONEY', 'BOOL', 'BOOLEAN'],
         'sqlsrv' => ['BIT', 'TINYINT', 'SMALLINT', 'BIGINT', 'SMALLMONEY', 'MONEY',
 			'FLOAT', 'REAL'],
         'sqlite3' => ['TINYINT', 'SMALLINT', 'MEDIUMINT', 'BIGINT', 'INTEGER', 'INT2', 
@@ -38,8 +38,8 @@ class ezSchema
         'common' => ['DATE', 'TIMESTAMP', 'TIME'],
         'mysqli' => ['DATETIME', 'YEAR'],            
         'pgsql' => [
-            'timestamp without time zone', 'timestamp with time zone', 
-            'time without time zone', 'time with time zone'
+            'TIMESTAMP WITHOUT TIME ZONE', 'TIMESTAMP WITH TIME ZONE', 
+            'TIME WITHOUT TIME ZONE', 'TIME WITH TIME ZONE'
         ],        
         'sqlsrv' => ['DATETIME', 'DATETIME2', 'SMALLDATETIME', 'DATETIMEOFFSET'],
         'sqlite3' => ['DATETIME']
@@ -113,7 +113,7 @@ class ezSchema
 			// check for string data type
             $numberOrString = $args[0];
 			$store = \is_int($numberOrString) ? '('.$numberOrString.')' : '';
-			$store = empty($store) && !empty($numberOrString) ? $numberOrString : $store;
+			$store = empty($store) && !empty($numberOrString) ? ' '.$numberOrString : $store;
 			$value = !empty($args[1]) ? ' '.$args[1] : '';
 			$options = !empty($args[2]) ? ' '.$args[2] : '';
 			$extra = !empty($args[3]) ? ' '.$args[3] : '';
@@ -130,7 +130,7 @@ class ezSchema
             // check for whole number data type
             $numberOrString = $args[0];
             $store = \is_int($numberOrString) ? '('.$numberOrString.')' : '';
-			$store = empty($store) && !empty($numberOrString) ? $numberOrString : $store;
+			$store = empty($store) && !empty($numberOrString) ? ' '.$numberOrString : $store;
 			$value = !empty($args[1]) ? ' '.$args[1] : '';
 			$options = !empty($args[2]) ? ' '.$args[2] : '';
 			$extra = !empty($args[3]) ? ' '.$args[3] : '';
@@ -139,13 +139,13 @@ class ezSchema
 			// check for date time data type
             $numberOrString = $args[0];
 			$store = \is_int($numberOrString) ? '('.$numberOrString.')' : '';
-			$fraction = empty($store) && !empty($numberOrString) ? $numberOrString : $store;
+			$fraction = empty($store) && !empty($numberOrString) ? ' '.$numberOrString : $store;
 			$value = !empty($args[1]) ? ' '.$args[1] : '';
 			$options = !empty($args[2]) ? ' '.$args[2] : '';
 			$data = $type.$fraction.$value.$options;
         } elseif (\preg_match($objectPattern, $type)) {
 			// check for large object data type
-			$value = !empty($args[0]) ? ' '.$args[0] : '';
+			$value = !empty($args[0]) ? ' '.$args[0] : ' ';
 			$data = $type.$value;
         } else {
             throw new \Exception("$type does not exist");

@@ -9,7 +9,7 @@ use ezsql\ezsqlModel;
 use ezsql\ConfigInterface;
 use ezsql\DatabaseInterface;
 
-final class ez_pdo extends ezsqlModel implements DatabaseInterface
+class ez_pdo extends ezsqlModel implements DatabaseInterface
 {
     /**
     * ezSQL error strings - PDO

@@ -8,7 +8,7 @@ use ezsql\ezsqlModel;
 use ezsql\ConfigInterface;
 use ezsql\DatabaseInterface;
 
-final class ez_sqlsrv extends ezsqlModel implements DatabaseInterface
+class ez_sqlsrv extends ezsqlModel implements DatabaseInterface
 {
     /**
      * ezSQL error strings - sqlsrv

@@ -125,6 +125,7 @@ if (!\defined('CONSTANTS')) {
     // String SQL data types
     \define('CHAR', 'CHAR');
     \define('VARCHAR', 'VARCHAR');
+    \define('CHARACTER', 'CHARACTER');
     \define('TEXT', 'TEXT');
     \define('TINY', 'TINYTEXT');
     \define('TINYTEXT', 'TINYTEXT');

@@ -45,6 +45,11 @@ if (!function_exists('ezFunctions')) {
         return \database(\SQLITE3, $databaseSetting, $instanceTag);
     }
 
+    function getVendor()
+    {
+        return ezSchema::vendor();
+    }
+
     function to_string($arrays, $separation = ',')
     {
         return ezQuery::to_string($arrays, $separation);
