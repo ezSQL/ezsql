@@ -152,9 +152,9 @@ With **ezsql** these four functions are all you will need 99.9% of the time. Of 
 
 Need more help, try reading this article: https://wpshout.com/introduction-to-wpdb-why-not/ and https://codex.wordpress.org/Class_Reference/wpdb. 
 
-Any articles referencing WordPress database engine is an good source of what kind of ecosystem can be built with the flexible of what this library provides. 
+Any articles referencing WordPress database engine is an good source of what kind of ecosystem can be built with the flexible of what this library provides. However, the ease of use and process this library initially fostered, spreaded to other areas, leading to hard to follow, and bad coding habits by today's standards.
 
-Version 4 of this library attempts to, beside all the additional features, remove some bad coding styles, bring the library to modern coding practices of which, follow proper __OOP__ and be __PSR__ compliant. 
+Version 4 of this library attempts to, beside all the additional features, _remove some bad coding styles_, _bring the library to modern coding practices of which_, _follow proper __OOP__ and be __PSR__ compliant_. 
 
 This version further break things introduced in version 3 that broke version 2.1.7. See [CHANGE LOG]()
 
