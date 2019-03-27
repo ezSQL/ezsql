@@ -15,3 +15,4 @@ test.php
 *.key
 *.crt
 *.cache
+tmp
