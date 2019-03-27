@@ -183,7 +183,7 @@ class ez_pgsql extends ezsqlModel implements DatabaseInterface
         }
 
         // check for ezQuery placeholder tag and replace tags with proper prepare tag
-        if (!empty($param) && \is_array($param) && ($this->isPrepareActive()) && (\strpos($query, \_TAG) !== false)) {
+        if (!empty($param) && \is_array($param) && ($this->isPrepareOn()) && (\strpos($query, \_TAG) !== false)) {
             foreach ($param as $i => $value) {
                 $parameterized = $i + 1;
                 $needle = \_TAG;
@@ -228,7 +228,7 @@ class ez_pgsql extends ezsqlModel implements DatabaseInterface
         }
 
         // Perform the query via std postgresql_query function..
-        if (!empty($param) && \is_array($param) && ($this->isPrepareActive())) {
+        if (!empty($param) && \is_array($param) && ($this->isPrepareOn())) {
             $this->result = $this->query_prepared($query, $param);
         } else {
             $this->result = @\pg_query($this->dbh, $query);

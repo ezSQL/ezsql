@@ -371,7 +371,7 @@ class ez_mysqli extends ezsqlModel implements DatabaseInterface
         }
 
         // Perform the query via std mysql_query function..
-		if (!empty($param) && \is_array($param) && ($this->isPrepareActive()))		
+		if (!empty($param) && \is_array($param) && ($this->isPrepareOn()))		
 			return $this->query_prepared($query, $param);
 		else 
 			$this->result = \mysqli_query($this->dbh, $query);

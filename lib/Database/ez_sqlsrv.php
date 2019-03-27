@@ -216,7 +216,7 @@ class ez_sqlsrv extends ezsqlModel implements DatabaseInterface
         }
 
         // Perform the query via std sqlsrv_query function..
-        if (!empty($param) && \is_array($param) && ($this->isPrepareActive())) {
+        if (!empty($param) && \is_array($param) && ($this->isPrepareOn())) {
             $this->result = $this->query_prepared($query, $param);
         } else {
             $this->result = @\sqlsrv_query($this->dbh, $query);

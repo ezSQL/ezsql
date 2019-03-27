@@ -351,7 +351,7 @@ class ez_pdo extends ezsqlModel implements DatabaseInterface
 
             // Perform the query and log number of affected rows
             // Perform the query via std PDO query or PDO prepare function..
-            if (!empty($param) && is_array($param) && ($this->isPrepareActive())) {
+            if (!empty($param) && is_array($param) && ($this->isPrepareOn())) {
                 $this->_affectedRows = $this->query_prepared($query, $param, false);
             } else
                 $this->_affectedRows = $this->dbh->exec($query);
@@ -376,7 +376,7 @@ class ez_pdo extends ezsqlModel implements DatabaseInterface
 
             // Perform the query and log number of affected rows
             // Perform the query via std PDO query or PDO prepare function..
-            if (!empty($param) && \is_array($param) && ($this->isPrepareActive())) {
+            if (!empty($param) && \is_array($param) && ($this->isPrepareOn())) {
                 $sth = $this->query_prepared($query, $param, true);
             } else
                 $sth = $this->dbh->query($query);

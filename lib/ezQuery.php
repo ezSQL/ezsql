@@ -98,7 +98,7 @@ class ezQuery implements ezQueryInterface
     /**
     * Return status of prepare function availability in shortcut method calls
     */    
-    protected function isPrepareActive() 
+    protected function isPrepareOn() 
     {
         return $this->prepareActive;
 	}
@@ -140,16 +140,6 @@ class ezQuery implements ezQueryInterface
     }
     
     public function prepareOff()
-    {
-        $this->prepareActive = $this->clearPrepare();
-    }
-
-    public function prepareActive()
-    {
-        $this->prepareActive = true;
-    }
-    
-    public function prepareInActive()
     {
         $this->prepareActive = $this->clearPrepare();
     }
@@ -358,7 +348,7 @@ class ezQuery implements ezQueryInterface
 						else 
                             $myCombineWith = \_AND;
 
-						if ($this->isPrepareActive()) {
+						if ($this->isPrepareOn()) {
 							$where .= "$key ".$isCondition.' '.\_TAG." AND ".\_TAG." $myCombineWith ";
 							$this->addPrepare($val);
 							$this->addPrepare($combineWith);
@@ -369,7 +359,7 @@ class ezQuery implements ezQueryInterface
 					} elseif ($isCondition == \_IN) {
 						$value = '';
 						foreach ($val as $inValues) {
-							if ($this->isPrepareActive()) {
+							if ($this->isPrepareOn()) {
 								$value .= \_TAG.', ';
 								$this->addPrepare($inValues);
 							} else 
@@ -382,7 +372,7 @@ class ezQuery implements ezQueryInterface
                     } elseif ((($isCondition == \_LIKE) || ($isCondition == \_notLIKE)) && ! \preg_match('/[_%?]/', $val)) {
                         return $this->clearPrepare();
                     } else {
-						if ($this->isPrepareActive()) {
+						if ($this->isPrepareOn()) {
 							$where .= "$key ".$isCondition.' '.\_TAG." $combineWith ";
 							$this->addPrepare($val);
 						} else 
@@ -395,7 +385,7 @@ class ezQuery implements ezQueryInterface
             $where = \rtrim($where, " $combineWith ");
         }
 		
-        if (($this->isPrepareActive()) && !empty($this->prepareValues()) && ($where != '1'))
+        if (($this->isPrepareOn()) && !empty($this->prepareValues()) && ($where != '1'))
 			return " $whereOrHaving ".$where.' ';
         
 		return ($where != '1') ? " $whereOrHaving ".$where.' ' : ' ' ;
@@ -481,7 +471,7 @@ class ezQuery implements ezQueryInterface
         if (\is_string($where)) {
             $sql .= $where;
             if ($getSelect_result) 
-                return (($this->isPrepareActive()) && !empty($this->prepareValues())) 
+                return (($this->isPrepareOn()) && !empty($this->prepareValues())) 
                     ? $this->get_results($sql, OBJECT, true) 
                     : $this->get_results($sql);     
             return $sql;
@@ -520,7 +510,7 @@ class ezQuery implements ezQueryInterface
 			
         $newTableFromTable = $this->select_sql($newTable, $fromColumns, ...$fromWhere);			
         if (is_string($newTableFromTable))
-            return (($this->isPrepareActive()) && !empty($this->prepareValues())) 
+            return (($this->isPrepareOn()) && !empty($this->prepareValues())) 
                 ? $this->query($newTableFromTable, true) 
                 : $this->query($newTableFromTable); 
 
@@ -537,7 +527,7 @@ class ezQuery implements ezQueryInterface
 			
         $newTableFromTable = $this->select_sql($newTable, $fromColumns, ...$fromWhere);
         if (is_string($newTableFromTable))
-            return (($this->isPrepareActive()) && !empty($this->prepareValues())) 
+            return (($this->isPrepareOn()) && !empty($this->prepareValues())) 
                 ? $this->query($newTableFromTable, true) 
                 : $this->query($newTableFromTable); 
         
@@ -558,7 +548,7 @@ class ezQuery implements ezQueryInterface
             } elseif(\in_array(\strtolower($val), array( 'current_timestamp()', 'date()', 'now()' ))) {
 				$sql .= "$key = CURRENT_TIMESTAMP(), ";
 			} else {
-				if ($this->isPrepareActive()) {
+				if ($this->isPrepareOn()) {
 					$sql .= "$key = ".\_TAG.", ";
 					$this->addPrepare($val);
 				} else 
@@ -569,7 +559,7 @@ class ezQuery implements ezQueryInterface
         $where = $this->where(...$whereKeys);
         if (\is_string($where)) {   
             $sql = \rtrim($sql, ', ') . $where;
-            return (($this->isPrepareActive()) && !empty($this->prepareValues())) 
+            return (($this->isPrepareOn()) && !empty($this->prepareValues())) 
                 ? $this->query($sql, true) 
                 : $this->query($sql) ;       
         } 
@@ -588,7 +578,7 @@ class ezQuery implements ezQueryInterface
         $where = $this->where(...$whereKeys);
         if (\is_string($where)) {   
             $sql .= $where;						
-            return (($this->isPrepareActive()) && !empty($this->prepareValues())) 
+            return (($this->isPrepareOn()) && !empty($this->prepareValues())) 
                 ? $this->query($sql, true) 
                 : $this->query($sql);  
         }
@@ -622,7 +612,7 @@ class ezQuery implements ezQueryInterface
                 elseif (\in_array(\strtolower($val), array( 'current_timestamp()', 'date()', 'now()' ))) 
                     $value .= "CURRENT_TIMESTAMP(), ";
                 else {
-					if ($this->isPrepareActive()) {
+					if ($this->isPrepareOn()) {
 						$value .= _TAG.", ";
 						$this->addPrepare($val);
 					} else 
@@ -632,7 +622,7 @@ class ezQuery implements ezQueryInterface
             
             $sql .= "(". \rtrim($index, ', ') .") VALUES (". \rtrim($value, ', ') .");";
 
-			if (($this->isPrepareActive()) && !empty($this->prepareValues())) 
+			if (($this->isPrepareOn()) && !empty($this->prepareValues())) 
 				$ok = $this->query($sql, true);
 			else 
 				$ok = $this->query($sql);
@@ -673,7 +663,7 @@ class ezQuery implements ezQueryInterface
         $getFromTable = $this->select_sql($fromTable, $fromColumns, ...$fromWhere);
 
         if (\is_string($putToTable) && \is_string($getFromTable))
-            return (($this->isPrepareActive()) && !empty($this->prepareValues())) 
+            return (($this->isPrepareOn()) && !empty($this->prepareValues())) 
                 ? $this->query($putToTable." ".$getFromTable, true) 
                 : $this->query($putToTable." ".$getFromTable) ;
 
