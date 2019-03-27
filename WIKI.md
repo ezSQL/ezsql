@@ -1,33 +1,35 @@
-# Overview
+Overview
+===
 
-**ezsql**
-----
- Is a libraray that makes it very fast and easy for you to use database(s) within your **PHP** scripts supporting ( **_MySQL_** / **_PostgreSQL_** / **_Microsoft SQL Server_** / **_SQLite3_**), and the **_PDO_** equivalents.
-_____
+ezsql
+-----
 
-· It is one php file that you include at the top of your script. Then, instead of using standard php database functions listed in the php manual, you use a much smaller (and easier) set of **ezsql**  functions and methods.
+Is a library/widget that makes it very fast and easy for you to use database(s) within your **PHP** scripts supporting ( **_MySQL_** / **_PostgreSQL_** / **_Microsoft SQL Server_** / **_SQLite3_**), and the **_PDO_** equivalents.
 
-· It automatically caches query results and allows you to use easy to understand functions to manipulate and extract them without causing extra server overhead.
-
-· It has excellent debug functions making it lightning-fast to see what’s going on in your SQL code.
-
-· Most **ezsql** functions can return results as *Objects*, *Associative Arrays*, *Numerical Arrays* or *Json Encoded*.
-
-· It can dramatically decrease development time and in most cases will streamline your code and make things run faster as well as making it very easy to debug and optimise your database queries.
-
-· It is a small class and will not add very much overhead to your website.
+- It is one php file that you include at the top of your script. Then, instead of using standard php database functions listed in the php manual, you use a much smaller (and easier) set of **ezsql**  functions and methods.
+- It automatically caches query results and allows you to use easy to understand functions to manipulate and extract them without causing extra server overhead.
+- It has excellent debug functions making it lightning-fast to see what’s going on in your SQL code.
+- Most **ezsql** functions can return results as *Objects*, *Associative Arrays*, *Numerical Arrays* or *Json Encoded*.
+- It can dramatically decrease development time and in most cases will streamline your code and make things run faster as well as making it very easy to debug and optimise your database queries.
+- It is a small class and will not add very much overhead to your website.
 
 **_Note:_** _It is assumed that you are familiar with PHP, basic Database concepts and basic SQL constructs. Even if you are a complete beginner **ezsql** can help you once you have read and understood [this tutorial](http://www.jvmultimedia.com/portal/node/14)._
 
-Quick Examples..
-================
+Quick Examples
+---
 
 Note: In all these examples no other code is required other than including: 
-- versions below 4:  **`require 'ez_sql_loader.php'`**
 
-- current version:  **`require 'vendor/autoload.php';`**
+either
 
-_Example 1_
+    require 'ez_sql_loader.php';
+
+or
+
+    require 'vendor/autoload.php';
+
+___Example 1___
+
 ```php
 // Select multiple records from the database and print them out..
 $users = $db->get-results("SELECT name, email FROM users");
@@ -38,7 +40,9 @@ foreach ( $users as $user )
  echo $user->email;
 }
 ```
-_Example 2_
+
+___Example 2___
+
 ```php
 // Get one row from the database and print it out..
 $user = $db->get-row("SELECT name,email FROM users WHERE id = 2");
@@ -46,36 +50,48 @@ $user = $db->get-row("SELECT name,email FROM users WHERE id = 2");
 echo $user->name;
 echo $user->email;
 ```
-_Example 3_
+
+___Example 3___
+
 ```php
 // Get one variable from the database and print it out..
 $var = $db->get-var("SELECT count(\*) FROM users");
 
 echo $var;
 ```
-_Example 4_
+
+___Example 4___
+
 ```php
 // Insert into the database
 $db->query("INSERT INTO users (id, name, email) VALUES (NULL,'justin','jv@foo.com')");
 ```
-_Example 5_
+
+___Example 5___
+
 ```php
 // Update the database
 $db->query("UPDATE users SET name = 'Justin' WHERE id = 2)");
 ```
-_Example 6_
+
+___Example 6___
+
 ```php
 // Display last query and all associated results
 $db->debug();
 ```
-_Example 7_
+
+___Example 7___
+
 ```php
 // Display the structure and contents of any result(s) .. or any variable
 $results = $db->get_results("SELECT name, email FROM users");
 
 $db->varDump($results);
 ```
-_Example 8_
+
+___Example 8___
+
 ```php
 // Get 'one column' (based on column index) and print it out..
 $names = $db->get-col("SELECT name,email FROM users", 0)
@@ -85,7 +101,9 @@ foreach ( $names as $name )
  echo $name;
 }
 ```
-_Example 9_
+
+___Example 9___
+
 ```php
 // Same as above ‘but quicker’
 foreach ( $db->get-col("SELECT name,email FROM users", 0) as $name )
@@ -93,7 +111,9 @@ foreach ( $db->get-col("SELECT name,email FROM users", 0) as $name )
  echo $name;
 }
 ```
-_Example 10_
+
+___Example 10___
+
 ```php
 // Map out the full schema of any given database and print it out..
 $db->select("my_database");
@@ -106,7 +126,9 @@ foreach ( $db->get-col("SHOW TABLES",0) as $table-name )
 
 $db->debug();
 ```
-## Introduction
+
+Introduction
+---
 
 When working with databases most of the time you will want to do one of four types of basic operations.
 
@@ -135,9 +157,8 @@ Version 4 of this library attempts to, beside all the additional features, remov
 
 This version further break things introduced in version 3 that broke version 2.1.7. See [CHANGE LOG]()
 
+Installation
 
-### Installation
----
 To install **ezsql** download, unzip and install the contents of **[ez-sql.zip](http://php.justinvincent.com/download.php?ez_sql)** into the same directory within your web server.
 
 **Put the following at the top of your script:**
@@ -160,8 +181,8 @@ Note: On most systems **localhost** will be fine for the dbhost value. If you ar
 
 If you are running on a local machine and have just installed mySQL for the first time, you can probably leave the user name and password empty ( i.e.  = “”) until you set up a mySQL user account.
 
-****ezsql** functions**
-=====
+**ezsql** functions
+---
 
 **$db->get-results** -- get multiple row result set from the database (or previously cached results)
 
@@ -223,8 +244,8 @@ Does three things. (1) Initiates a new db object. (2) Connects to a database ser
 
 _Note: For the sake of efficiency it is recommended that you only run one instance of the **db** object and use **$db->select** to switch between different databases on the same server connection._
 
-_Example_
-====
+#### Example
+
 ```php
  // Initiate new database object..
 $db2 = new db(”user-name”, ”user-password”, ”database-name”, “database-host”);
@@ -239,6 +260,7 @@ $db2 = new db(”user-name”, ”user-password”, ”database-name”, “data
  $db->debug();
  $db2->debug();
  ```
+
 **$db->select**
 
 $db->select -- select a new database to work with
@@ -250,6 +272,7 @@ bool **$db->select**(string database name)
 **$db->select**() selects a new database to work with using the current database connection as created with **$db = new db**.
 
 ### Example
+
 ```php
  // Get a users name from the user’s database (as initiated with $db = new db)..
 $user-name = $db->get-var(“SELECT name FROM users WHERE id = 22”) ;
@@ -263,6 +286,7 @@ $total-hours = $db->get-var(“SELECT sum(time-logged-in) FROM user-stats WHERE 
  // Re-select the ‘users’ database to continue working as normal..
 $db->select(“users”);
 ```
+
 **$db->query**
 
 $db->query -- send a query to the database (and if any results, cache them)
@@ -272,17 +296,23 @@ $db->query -- send a query to the database (and if any results, cache them)
 bool **$db->query**(string query)
 
 **$db->query**() sends a query to the currently selected database. It should be noted that you can send any type of query to the database using this command. If there are any results generated they will be stored and can be accessed by any **ezsql** function as long as you use a null query. If there are results returned the function will return **true** if no results the return will be **false**
-#### _Example 1_
+
+#### Example 1
+
 ```php
  // Insert a new user into the database..
 $db->query(“INSERT INTO users (id,name) VALUES (1, ’Amy’)”);
 ```
-#### _Example 2_
+
+#### Example 2
+
 ```php
  // Update user into the database..
 $db->query(“UPDATE users SET name = ‘Tyson’ WHERE id = 1”);
 ```
-#### _Example 3_
+
+#### Example 3
+
 ```php
  // Query to get full user list..
 $db->query(“SELECT name,email FROM users”) ;
@@ -293,6 +323,7 @@ $user->details = $db->get->row(null, OBJECT, 1);
  // Display the contents and structure of the variable $user-details..
 $db->varDump($user->details);
 ```
+
 **$db->get-var**
 
 $db->get-var -- get one variable, from one row, from the database (or previously cached results)
@@ -303,12 +334,15 @@ var **$db->get-var**(string query / null [,int column offset[, int row offset])
 
 **$db->get-var**() gets one single variable from the database or previously cached results. This function is very useful for evaluating query results within logic statements such as **if** or **switch**. If the query generates more than one row the first row will always be used by default. If the query generates more than one column the leftmost column will always be used by default. Even so, the full results set will be available within the array $db->last-results should you wish to use them.
 
-#### _Example 1_
+#### Example 1
+
 ```php
  // Get total number of users from the database..
 $num-users = $db->get-var(“SELECT count(\*) FROM users”) ;
 ```
-#### _Example 2_
+
+#### Example 2
+
 ```php
  // Get a users email from the second row of results (note: col 1, row 1 [starts at 0])..
 $user-email = $db->get-var(“SELECT name, email FROM users”,1,1) ;
@@ -320,7 +354,9 @@ $user = $db->get-row(null,OBJECT,1);
  echo $user-email;
  echo $user->email;
 ```
-#### _Example 3_
+
+#### Example 3
+
 ```php
  // Find out how many users there are called Amy..
 if ( $n = $db->get-var(“SELECT count(\*) FROM users WHERE name = ‘Amy’”) ) 
@@ -333,7 +369,9 @@ echo “There are $n users called Amy!”;
 echo “There are no users called Amy.”;
 }
 ```
-#### _Example 4_
+
+#### Example 4
+
 ```php
  // Match a password from a submitted from a form with a password stored in the DB
 if ( $pwd-from-form == $db->get-var(“SELECT pwd FROM users WHERE name = ‘$name-from-form’”) )
@@ -345,6 +383,7 @@ echo “Congratulations you have logged in.”;
 echo “Bad password or Bad user ID”;
 }
 ```
+
 **$db->get-row**
 
 $db->get-row -- get one row from the database (or previously cached results)
@@ -356,6 +395,7 @@ object **$db->get- row**(string query / null [, OBJECT / ARRAY-A / ARRAY-N [, in
 **$db->get-row**() gets a single row from the database or cached results. If the query returns more than one row and no row offset is supplied the first row within the results set will be returned by default. Even so, the full results will be cached should you wish to use them with another **ezsql** query.
 
 #### Example 1
+
 ```php
  // Get a users name and email from the database and extract it into an object called user..
 $user = $db->get-row(“SELECT name,email FROM users WHERE id = 22”) ;
@@ -366,7 +406,9 @@ $user = $db->get-row(“SELECT name,email FROM users WHERE id = 22”) ;
  Output:
   Amy has the email of amy@foo.com
 ```
+
 #### Example 2
+
 ```php
 // Get users name and date joined as associative array
 // (Note: we must specify the row offset index in order to use the third argument)
@@ -379,7 +421,9 @@ $user = $db->get-row(“SELECT name,email FROM users WHERE id = 22”) ;
  Output:
   Amy joined us on 05/02/01
 ```
+
 #### Example 3
+
 ```php
  // Get second row of cached results.
  $user = $db->get-row(null,OBJECT,1);
@@ -390,7 +434,9 @@ $user = $db->get-row(“SELECT name,email FROM users WHERE id = 22”) ;
  Output:
   Tyson joined us on 05/02/02
 ```
+
 #### Example 4
+
 ```php
  // Get one row as a numerical array..
  $user = $db->get-row(“SELECT name,email,address FROM users WHERE id = 1”,ARRAY-N);
@@ -410,18 +456,19 @@ $user = $db->get-row(“SELECT name,email FROM users WHERE id = 22”) ;
   2 amy@foo.com
   3 123 Foo Road
 ```
-**$db->get-results**
 
+**$db->get-results**
 $db->get-results – get multiple row result set from the database (or previously cached results)
 
 **Description**
-
 array **$db->get-results**(string query / null [, OBJECT / ARRAY-A / ARRAY-N ] )
 
 **$db->get-row**() gets multiple rows of results from the database based on _query_ and returns them as a multi dimensional array. Each element of the array contains one row of results and can be specified to be either an object, associative array or numerical array. If no results are found then the function returns false enabling you to use the function within logic statements such as **if.**
 
 #### Example 1 – Return results as objects (default)
+
 Returning results as an object is the quickest way to get and display results. It is also useful that you are able to put $object->var syntax directly inside print statements without having to worry about causing php parsing errors.
+
 ```php
  // Extract results into the array $users (and evaluate if there are any results at the same time)..
 if ( $users = $db->get-results(“SELECT name, email FROM users”) )
@@ -444,6 +491,7 @@ echo “No users found.”;
 
 #### Example 2 – Return results as associative array
 Returning results as an associative array is useful if you would like dynamic access to column names. Here is an example.
+
 ```php
  // Extract results into the array $dogs (and evaluate if there are any results at the same time)..
 if ( $dogs = $db->get-results(“SELECT breed, owner, name FROM dogs”, ARRAY-A) )
@@ -476,8 +524,10 @@ Output:
  Owner: Mary
  Name: Jasmine
 ```
+
 #### Example 3 – Return results as numerical array
 Returning results as a numerical array is useful if you are using completely dynamic queries with varying column names but still need a way to get a handle on the results. Here is an example of this concept in use. Imagine that this script was responding to a form with $type being submitted as either ‘fish’ or ‘dog’.
+
 ```php
  // Create an associative array for animal types..
   $animal = array ( “fish” => “num-fins”, “dog” => “num-legs” );
@@ -497,13 +547,13 @@ Output:
     4
     4
     4
- 
 Note: The dynamic query would be look like one of the following...
 · SELECT num-fins FROM fish
 · SELECT num-legs FROM dogs
 
 It would be easy to see which it was by using $db->debug(); after the dynamic query call.
 ```
+
 **$db->debug**
 
 $db->debug – print last sql query and returned results (if any)
@@ -516,6 +566,7 @@ $db->debug – print last sql query and returned results (if any)
 
 #### Example 1
 If you need to know what your last query was and what the returned results are here is how you do it.
+
 ```php
  // Extract results into the array $users..
 $users = $db->get-results(“SELECT name, email FROM users”);
@@ -523,6 +574,7 @@ $users = $db->get-results(“SELECT name, email FROM users”);
 // See what just happened!
 $db->debug();
 ```
+
 **$db->vardump**
 
 $db->vardump – print the contents and structure of any variable
@@ -535,6 +587,7 @@ $db->vardump – print the contents and structure of any variable
 
 #### Example 1
 If you need to know what value and structure any of your results variables are here is how you do it.
+
 ```php
  // Extract results into the array $users..
 $users = $db->get-results(“SELECT name, email FROM users”);
@@ -542,6 +595,7 @@ $users = $db->get-results(“SELECT name, email FROM users”);
 // View the contents and structure of $users
 $db->vardump($users);
 ```
+
 **$db->get-col**
 
 $db->get-col – get one column from query (or previously cached results) based on column offset
@@ -553,6 +607,7 @@ $db->get-col – get one column from query (or previously cached results) based 
 **$db->get-col**() extracts one column as one dimensional array based on a column offset. If no offset is supplied the offset will defualt to column 0. I.E the first column. If a null query is supplied the previous query results are used.
 
 #### Example 1
+
 ```php
  // Extract list of products and print them out at the same time..
 foreach ( $db->get-col(“SELECT product FROM product-list”) as $product
@@ -560,7 +615,9 @@ foreach ( $db->get-col(“SELECT product FROM product-list”) as $product
  echo $product;
 }
 ```
+
 #### Example 2 – Working with cached results
+
 ```php
  // Extract results into the array $users..
 $users = $db->get-results(“SELECT \* FROM users”);
@@ -574,6 +631,7 @@ foreach ( $db->get-col(null, $last-col-num) as $last-col )
  echo $last-col;
 }
 ```
+
 **$db->get-col-info**
 
 $db->get-col-info - get information about one or all columns such as column name or type
@@ -636,6 +694,7 @@ Available Info-Types
 
 · name - column name
 #### Example 1
+
 ```php
  // Extract results into the array $users..
 $users = $db->get-results(“SELECT id, name, email FROM users”);
@@ -651,7 +710,9 @@ foreach ( $db->get-col-info(“name”)  as $name )
   name
   email
 ```
+
 #### Example 2
+
 ```php
  // Extract results into the array $users..
 $users = $db->get-results(“SELECT id, name, email FROM users”);
@@ -659,6 +720,7 @@ $users = $db->get-results(“SELECT id, name, email FROM users”);
  // View all meta information for all columns..
  $db->vardump($db->col-info);
 ```
+
 **$db->hide-errors**
 
 $db->hide-errors – turn **ezsql** error output to browser off
@@ -690,6 +752,7 @@ $EZSQL-ERROR[2] = Array
 )
 
 #### Example 1
+
 ```php
  // Using a custom error function
 $db->hide-errors();
@@ -709,6 +772,7 @@ if ( $EZSQL-ERROR )
  echo “No Errors”;
 }
 ```
+
 **$db->show-errors**
 
 $db->show-errors – turn **ezsql** error output to browser on
@@ -730,6 +794,7 @@ $db->escape – Format a string correctly in order to stop accidental mal formed
 **$db->escape**() makes any string safe to use as a value in a query under all PHP conditions. I.E. if magic quotes are turned on or off. Note: Should not be used by itself to guard against SQL injection attacks. The purpose of this function is to stop accidental mal formed queries.
 
 #### Example 1
+
 ```php
  // Escape and assign the value..
  $title = $db->escape(“Justin’s and Amy’s Home Page”);
@@ -737,7 +802,9 @@ $db->escape – Format a string correctly in order to stop accidental mal formed
  // Insert in to the DB..
 $db->query(“INSERT INTO pages (title) VALUES (’$title’)”) ;
 ```
+
 #### Example 2
+
 ```php
  // Assign the value..
  $title = “Justin’s and Amy’s Home Page”;
@@ -745,9 +812,9 @@ $db->query(“INSERT INTO pages (title) VALUES (’$title’)”) ;
  // Insert in to the DB and escape at the same time..
 $db->query(“INSERT INTO pages (title) VALUES (’”. $db->escape($title).”’)”) ;
 ```
-**Disk Caching**
 
---------------
+Disk Caching
+
 **ezsql** has the ability to cache your queries which can make dynamic sites run much faster.
 
 If you want to cache EVERYTHING just do..
@@ -757,9 +824,3 @@ If you want to cache EVERYTHING just do..
 **$db->setCache_Queries(true);**
 
 **$db->setCache_Timeout(24);**
-
-For full details and more specific options please see:
-
-· mysql/disk-cache-example.php
-
-· oracle8-9/disk-cache-example.php
