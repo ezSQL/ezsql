@@ -5,20 +5,20 @@ class ezSchema
 {
     const STRINGS = [
         'common' => ['CHAR', 'VARCHAR', 'TEXT'],
-        'mysql' => ['TINYTEXT', 'MEDIUMTEXT', 'LONGTEXT', 'BINARY', 'VARBINARY'],
-        'postgresql' => ['character', 'character varying'],
-        'sqlserver' => ['NCHAR', 'NVARCHAR', 'NTEXT', 'BINARY', 'VARBINARY', 'IMAGE'],
+        'mysqli' => ['TINYTEXT', 'MEDIUMTEXT', 'LONGTEXT', 'BINARY', 'VARBINARY'],
+        'pgsql' => ['character', 'character varying'],
+        'sqlsrv' => ['NCHAR', 'NVARCHAR', 'NTEXT', 'BINARY', 'VARBINARY', 'IMAGE'],
         'sqlite3' => ['TINYTEXT', 'MEDIUMTEXT', 'LONGTEXT', 'NCHAR', 'NVARCHAR', 'CLOB']
     ];    
 
     const NUMBERS = [
 		'common' => ['INT'],
-        'mysql' => ['BIT', 'INTEGER', 'TINYINT', 'SMALLINT', 'MEDIUMINT', 'BIGINT', 'FLOAT',
+        'mysqli' => ['BIT', 'INTEGER', 'TINYINT', 'SMALLINT', 'MEDIUMINT', 'BIGINT', 'FLOAT',
 			'BOOL', 'BOOLEAN'],
-        'postgresql' => ['bit', 'varbit', 'bit varying', 'smallint', 'int', 'integer', 
+        'pgsql' => ['bit', 'varbit', 'bit varying', 'smallint', 'int', 'integer', 
             'bigint', 'smallserial', 'serial', 'bigserial', 'double precision', 'real', 
             'money', 'bool', 'boolean'],
-        'sqlserver' => ['BIT', 'TINYINT', 'SMALLINT', 'BIGINT', 'SMALLMONEY', 'MONEY',
+        'sqlsrv' => ['BIT', 'TINYINT', 'SMALLINT', 'BIGINT', 'SMALLMONEY', 'MONEY',
 			'FLOAT', 'REAL'],
         'sqlite3' => ['TINYINT', 'SMALLINT', 'MEDIUMINT', 'BIGINT', 'INTEGER', 'INT2', 
             'INT4', 'INT8', 'REAL', 'DOUBLE', 'DOUBLE PRECISION', 'FLOAT', 'BOOLEAN']
@@ -26,43 +26,43 @@ class ezSchema
 
     const NUMERICS = [
         'common' => ['NUMERIC', 'DECIMAL'],
-        'mysql' => ['IDENTITY','DEC', 'FIXED', 'FLOAT', 'DOUBLE', 'DOUBLE PRECISION', 'REAL'],
-        'sqlserver' => ['DEC'],
-        'postgresql' => [],
+        'mysqli' => ['IDENTITY','DEC', 'FIXED', 'FLOAT', 'DOUBLE', 'DOUBLE PRECISION', 'REAL'],
+        'sqlsrv' => ['DEC'],
+        'pgsql' => [],
         'sqlite3' => []
     ];
 
     const DATE_TIME = [
         'common' => ['DATE', 'TIMESTAMP', 'TIME'],
-        'mysql' => ['DATETIME', 'YEAR'],            
-        'postgresql' => [
+        'mysqli' => ['DATETIME', 'YEAR'],            
+        'pgsql' => [
             'timestamp without time zone', 'timestamp with time zone', 
             'time without time zone', 'time with time zone'
         ],        
-        'sqlserver' => ['DATETIME', 'DATETIME2', 'SMALLDATETIME', 'DATETIMEOFFSET'],
+        'sqlsrv' => ['DATETIME', 'DATETIME2', 'SMALLDATETIME', 'DATETIMEOFFSET'],
         'sqlite3' => ['DATETIME']
     ];
 
     const OBJECTS  = [
-        'mysql' => ['TINYBLOB', 'BLOB', 'MEDIUMBLOB', 'LONGTEXT'],
+        'mysqli' => ['TINYBLOB', 'BLOB', 'MEDIUMBLOB', 'LONGTEXT'],
         'sqlite3' => ['BLOB'],
-        'postgresql' => [],
-        'sqlserver' => []
+        'pgsql' => [],
+        'sqlsrv' => []
     ];
 
     const OPTIONS  = ['CONSTRAINT', 'PRIMARY KEY', 'FOREIGN KEY', 'UNIQUE', 'INDEX', 'REFERENCES'];
     const ALTERS  = ['ADD', 'DROP COLUMN', 'CHANGE COLUMN', 'RENAME TO', 'MODIFY', 'ALTER COLUMN'];
     const CHANGES  = [
-        'mysql' => 'MODIFY',
-        'postgresql' => 'ALTER COLUMN',
-        'sqlserver' => 'ALTER COLUMN',
+        'mysqli' => 'MODIFY',
+        'pgsql' => 'ALTER COLUMN',
+        'sqlsrv' => 'ALTER COLUMN',
         'sqlite3' => ''
      ];
 
     const autoNUMBERS  = [
-        'mysql' => 'AUTO_INCREMENT',
-        'postgresql' => 'SERIAL',
-        'sqlserver' => 'IDENTITY(1,1)',
+        'mysqli' => 'AUTO_INCREMENT',
+        'pgsql' => 'SERIAL',
+        'sqlsrv' => 'IDENTITY(1,1)',
         'sqlite3' => 'AUTOINCREMENT'
      ];
 
@@ -164,21 +164,21 @@ class ezSchema
         if ($dbSqlite === $instance && !empty($dbSqlite))
             $type = 'sqlite3';
         elseif ($dbPgsql === $instance && !empty($dbPgsql)) 
-            $type = 'postgresql';
+            $type = 'pgsql';
         elseif ($dbMysqli === $instance && !empty($dbMysqli))
-            $type = 'mysql';
+            $type = 'mysqli';
         elseif ($dbMssql === $instance && !empty($dbMssql))
-            $type = 'sqlserver';
+            $type = 'sqlsrv';
         elseif ($dbPdo === $instance && !empty($dbPdo)) {
             $dbh = $dbPdo->connection();
             if (strpos($dbh->getAttribute(\PDO::ATTR_CLIENT_VERSION), 'mysql') !== false) 
-                $type = 'mysql';
+                $type = 'mysqli';
             elseif (strpos($dbh->getAttribute(\PDO::ATTR_CLIENT_VERSION), 'pgsql') !== false) 
-                $type = 'postgresql';
+                $type = 'pgsql';
             elseif (strpos($dbh->getAttribute(\PDO::ATTR_CLIENT_VERSION), 'sqlite') !== false) 
                 $type = 'sqlite3';
             elseif (strpos($dbh->getAttribute(\PDO::ATTR_CLIENT_VERSION), 'sqlsrv') !== false) 
-                $type = 'sqlserver';
+                $type = 'sqlsrv';
         }
 
         return $type;
