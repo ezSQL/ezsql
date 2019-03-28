@@ -156,12 +156,37 @@ Any articles referencing WordPress database engine is an good source of what kin
 
 Version 4 of this library attempts to, beside all the additional features, _remove some bad coding styles_, _bring the library to modern coding practices of which_, _follow proper __OOP__ and be __PSR__ compliant_. 
 
-This version further break things introduced in version 3 that broke version 2.1.7. See [CHANGE LOG]()
+This version further break things introduced in version 3 that broke version 2.1.7. See [CHANGE LOG](https://github.com/ezsql/ezsql/CHANGELOG.md)
 
-Installation
-____
+____Installation and Usage____
+---
 
-To install........
+Note: __****__ is one of '**mysqli**, **pgsql**, **sqlsrv**, **sqlite3**, or **Pdo**'.
+
+Either: ***for version 3.x***
+
+    composer require ezsql/ezsql=^3.1.0
+    require 'vendor/autoload.php';
+    ---------
+    // Manually download https://github.com/ezSQL/ezSQL/archive/v3.zip and extract.
+    require 'ez_sql_loader.php';
+    ---------
+
+    $db = new ezSQL_****(user, password, database, or, other settings);
+
+Or: ***for version 4.x***
+
+    // composer is required for version 4
+    composer require ezsql/ezsql
+    require 'vendor/autoload.php';
+    ---------
+
+    $db = Database::initialize('****', [user, password, database, or, other settings], **optional storage tag);
+
+    Is same as:
+
+    $setting = new Config('****', [user, password, database, or, other settings]);
+    $db = new ez_****($settings);
 
 **ezsql** functions
 ---
@@ -192,7 +217,8 @@ To install........
 
 **$db = new db** -- Initiate new db object.
 
-****ezsql** variables**
+**ezsql** variables
+---
 
 **$db->num-rows** – Number of rows that were returned (by the database) for the last query (if any)
 
@@ -214,11 +240,11 @@ To install........
 
 **$db->cache-timeout –** Number in hours (see mysql/disk-cache-example.php)
 
-**$db = new db**
+____db = new db____
 
-$db = new db -- Initiate new db object. Connect to a database server. Select a database.
+__$db = new db__ -- Initiate new db object. Connect to a database server. Select a database.
 
-**Description**
+____Description____
 
 **$db = new db**(string username, string password, string database name, string database host)
 
@@ -230,24 +256,24 @@ Example
 
 ```php
  // Initiate new database object..
-$db2 = new db(”user-name”, ”user-password”, ”database-name”, “database-host”);
+$db2 = new db(”user-name”, ”user-password”, ”database-name”, “database-host”); // version 2 and 3
 
  // Perform some kind of query..
- $other-db-tables = $db2->get_results(“SHOW TABLES”);
+ $other_db_tables = $db2->get_results(“SHOW TABLES”);
 
  // You can still query the database you were already connected to..
- $existing-connection-tables = $db->get_results(“SHOW TABLES”);
+ $existing_connection_tables = $db->get_results(“SHOW TABLES”);
 
  // Print the results from both of these queries..
  $db->debug();
  $db2->debug();
  ```
 
-**$db->select**
+__$db->select__ - for **mysql** only.
 
-$db->select -- select a new database to work with
+___$db->select___ -- select a new database to work with
 
-**Description**
+____Description____
 
 bool **$db->select**(string database name)
 
@@ -269,11 +295,11 @@ $total-hours = $db->get_var(“SELECT sum(time-logged-in) FROM user-stats WHERE 
 $db->select(“users”);
 ```
 
-**$db->query**
+____$db->query____
 
-$db->query -- send a query to the database (and if any results, cache them)
+__$db->query__ -- send a query to the database (and if any results, cache them)
 
-**Description**
+____Description____
 
 bool **$db->query**(string query)
 

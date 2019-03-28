@@ -5,6 +5,7 @@
 /.travis.yml export-ignore
 /codecov.yml export-ignore
 /examples export-ignore
-#/phpunit.xml.dist export-ignore
-#/tests export-ignore
-#/docs export-ignore
+/phpunit.xml.dist export-ignore
+/tests export-ignore
+/docs export-ignore
+/tmp export-ignore
