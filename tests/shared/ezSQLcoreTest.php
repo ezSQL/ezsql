@@ -195,10 +195,13 @@ class ezSQLcoreTest extends TestCase {
      */
     public function testStore_cache() {
         $sql = 'SELECT * FROM ez_test';
+        $this->object->setCache_Timeout(1);
+        $this->object->setUse_Disk_Cache(true);
+        $this->object->setCache_Queries(true);
+        $this->object->setNum_Rows(5);
+        $this->object->store_cache($sql, false);
         
-        $this->object->store_cache($sql, true);
-        
-        $this->assertNull($this->object->get_cache($sql));
+        $this->assertEquals(5, $this->object->get_cache($sql));
     } // testStore_cache
 
     /**
@@ -206,10 +209,13 @@ class ezSQLcoreTest extends TestCase {
      */
     public function testGet_cache() {
         $sql = 'SELECT * FROM ez_test';
-        
-        $this->object->store_cache($sql, true);
-        
-        $this->assertNull($this->object->get_cache($sql));
+        $this->object->setCache_Timeout(1);
+        $this->object->setUse_Disk_Cache(true);
+        $this->object->setCache_Queries(true);
+        $this->object->setNum_Rows(2);
+        $this->object->store_cache($sql, false);
+                
+        $this->assertEquals(2, $this->object->get_cache($sql));
     } // testGet_cache
 
     /**

@@ -24,16 +24,37 @@ require_once('ezQuery.php');
 		protected $show_errors      = true;
 		protected $num_queries      = 0;
 		protected $conn_queries     = 0;
+		
 		protected $captured_errors  = array();
-		protected $cache_dir        = false;
+
+		
+		// Specify a cache dir. Path is taken from calling script
+		protected $cache_dir        = 'tmp'.\_DS.'ez_cache';
+
+		/**
+		 * if you want to cache EVERYTHING just do..
+		 * 
+		 * $use_disk_cache = true;
+		 * $cache_queries = true;
+		 * $cache_timeout = 24;
+		 */
 		protected $cache_queries    = false;
 		protected $cache_inserts    = false;
 		protected $use_disk_cache   = false;
-		protected $cache_timeout    = 24; // hours
+
+		// Cache expiry
+		protected $cache_timeout    = 24; // Note: this is hours		
+
 		protected $db_connect_time  = 0;
 		protected $sql_log_file     = false;
 		protected $profile_times    = array();
 		protected $insert_id        = null;
+
+		/**
+     * Log number of rows the query returned  
+     * @var int Default is null
+     */
+		protected $num_rows        = null;
 
 		public $last_query       = null;
 		public $last_error       = null;
@@ -90,7 +111,7 @@ require_once('ezQuery.php');
 		*/
 		public function __construct()
 		{
-            parent::__construct();
+      parent::__construct();
 		}
 
 	/**
@@ -312,18 +333,30 @@ require_once('ezQuery.php');
 	}
 	
 	/**
+	* create cache directory if doesn't exists
+	*/
+	public function create_cache(string $path = null) 
+	{
+		$cache_dir = empty($path) ? $this->cache_dir : $path;
+		if ( ! \is_dir($cache_dir) ) {
+			$this->cache_dir = $cache_dir;
+			@\mkdir($cache_dir, ('\\' == \DIRECTORY_SEPARATOR ? null : 0755), true);
+		} 
+	}
+
+	/**
 	* store_cache
 	*/
 	public function store_cache(string $query, $is_insert)
 	{
 		// The would be cache file for this query
-		$cache_file = $this->cache_dir.'/'.\md5($query);
+		$cache_file = $this->cache_dir.\_DS.\md5($query);
 		
 		// disk caching of queries
 		if ( $this->use_disk_cache 
-		&& ( $this->cache_queries && ! $is_insert ) 
-		|| ( $this->cache_inserts && $is_insert )
+			&& ( $this->cache_queries && ! $is_insert ) || ( $this->cache_inserts && $is_insert )
 		) {
+			$this->create_cache();
 			if ( ! \is_dir($this->cache_dir) ) {
 				$this->register_error("Could not open cache dir: $this->cache_dir");
 				$this->show_errors ? \trigger_error("Could not open cache dir: $this->cache_dir", \E_USER_WARNING) : null;
@@ -338,7 +371,7 @@ require_once('ezQuery.php');
 				
 				\file_put_contents($cache_file, \serialize($result_cache));
 				if( \file_exists($cache_file . ".updating") )
-				\unlink($cache_file . ".updating");
+					\unlink($cache_file . ".updating");
 			}
 		}
 	}
@@ -349,14 +382,14 @@ require_once('ezQuery.php');
 	public function get_cache(string $query)
 	{
 		// The would be cache file for this query
-		$cache_file = $this->cache_dir.'/'.\md5($query);
+		$cache_file = $this->cache_dir.\_DS.\md5($query);
 		
 		// Try to get previously cached version
 		if ( $this->use_disk_cache && \file_exists($cache_file) ) {
 			// Only use this cache file if less than 'cache_timeout' (hours)
 			if ( (\time() - \filemtime($cache_file)) > ($this->cache_timeout*3600) 
-			&& !(\file_exists($cache_file . ".updating") 
-			&& (\time() - \filemtime($cache_file . ".updating") < 60)) 
+				&& !(\file_exists($cache_file . ".updating") 
+				&& (\time() - \filemtime($cache_file . ".updating") < 60)) 
 			) {
 				\touch($cache_file . ".updating"); // Show that we in the process of updating the cache
 			} else {
@@ -370,7 +403,6 @@ require_once('ezQuery.php');
 				
 				// If debug ALL queries
 				$this->trace || $this->debug_all ? $this->debug() : null ;
-				
 				return $result_cache['return_value'];
 			}
 		}

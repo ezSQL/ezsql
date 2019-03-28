@@ -186,6 +186,17 @@ use ezsql\ezQueryInterface;
 
         const _DS = \DIRECTORY_SEPARATOR;
 
+        \define('MYSQL', 'mysqli', true);
+        \define('MYSQLI', 'mysqli', true);
+        \define('Pdo', 'pdo');
+        \define('PGSQL', 'pgsql', true);
+        \define('POSTGRESQL', 'pgsql', true);
+        \define('SQLITE', 'sqlite3', true);
+        \define('SQLITE3', 'sqlite3', true);
+        \define('SQLSRV', 'sqlsrv');
+        \define('SQLSERVER', 'sqlsrv', true);
+        \define('MSSQL', 'sqlsrv', true);
+        
         // Global class instances, will be used to create and call methods directly.        
         global $ezInstance;
  
