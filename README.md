@@ -13,7 +13,7 @@ This is [__version 4__](https://github.com/ezSQL/ezSQL/tree/v4) that has many mo
 
 This library has an `Database` class, a combination of the [Factory](https://en.wikipedia.org/wiki/Factory_method_pattern) pattern with an [Dependency Injection](https://en.wikipedia.org/wiki/Dependency_injection) container hosting. The library is following many OOP principles, one in which, properties public access has been removed.
 
- - More Todo...
+* More Todo...
 
 For an full overview see [documentation Wiki](https://github.com/ezSQL/ezSQL/WIKI.md), which is not completely finish.
 
@@ -26,16 +26,16 @@ For an full overview see [documentation Wiki](https://github.com/ezSQL/ezSQL/WIK
 ```php
 require 'vendor/autoload.php';
 
-// '****' is one of **mysqli**, **pgsql**, **sqlsrv**, **sqlite3**, or **Pdo**.
+// **** is one of mysqli, pgsql, sqlsrv, sqlite3, or Pdo.
 use ezsql\Database;
 
-$db = Database::initialize('****', [$dsn_path_user, $password, $database, $or, $other_settings], $optional_instance_tag);
+$db = Database::initialize('****', [$dsn_path_user, $password, $database, $other_settings], $optional_tag);
 
 // Is same as:
 use ezsql\Config;
 use ezsql\Database\ez_****;
 
-$setting = new Config('****', [$dsn_path_user, $password, $database, $or, $other_settings]);
+$setting = new Config('****', [$dsn_path_user, $password, $database, $other_settings]);
 
 $db = new ez_****($settings);
 ```
