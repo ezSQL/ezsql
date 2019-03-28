@@ -15,3 +15,4 @@ build/logs/clover.xml
 test.php
 build
 tmp
+.phpunit.result.cache
