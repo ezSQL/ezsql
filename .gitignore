@@ -14,3 +14,4 @@ build/logs/clover.xml
 *.key
 test.php
 build
+tmp
