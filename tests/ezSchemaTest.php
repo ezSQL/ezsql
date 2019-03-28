@@ -99,4 +99,4 @@ class ezSchemaTest extends EZTestCase
         $pdo_mysql->connect();
         $this->assertEquals(MYSQLI, getVendor());
     }
-} 
+}
