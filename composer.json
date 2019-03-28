@@ -1,0 +1,56 @@
+{
+    "name": "ezsql/ezsql",
+    "description": "Advance database access library. Make interacting with a database ridiculously easy.",
+    "keywords": ["mysql", "mysqli", "postgresql", "mssql", "sqlsrv", "sqlserver", "pdo", "sqlite", "sqlite3", "database", "abstraction", "sql", "dba"],
+    "license": ["LGPL-3.0-or-later", "MIT"],
+    "authors": [
+        {
+            "name": "Justin Vincent",
+            "email": "webmaster@justinvincent.com"
+        },
+        {
+            "name": "Stefanie Janine Stoelting",
+            "email": "mail@stefanie-stoelting.de"
+        },
+        {
+            "name": "l. stubbs",
+            "email": "lstubbs@techno.express"
+        }
+    ],
+    "support": {
+        "issues": "https://github.com/ezSQL/ezSQL/issues"
+    },
+    "require": {
+        "php": "^7.0",
+        "psr/container": "^1.0"
+    },
+    "provide": {
+        "psr/container-implementation": "1.0"
+    },
+    "autoload": {
+        "files": [
+            "lib/Constants.php",
+            "lib/ezFunctions.php"
+        ],
+        "psr-4": {
+            "ezsql\\": "lib/"
+        }
+    },
+    "require-dev": {
+        "phpunit/phpunit": ">5.7.0"
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "ezsql\\Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "test": "phpunit --bootstrap vendor/autoload.php tests"
+    },
+    "minimum-stability": "stable",
+    "extra": {
+        "branch-alias": {
+            "dev-master": "4.0-dev"
+        }
+    }
+}
