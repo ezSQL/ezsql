@@ -1,55 +1,19 @@
 <?php
 
-require 'vendor/autoload.php';
+namespace ezsql\Tests;
 
 use ezsql\ezSchema;
-use PHPUnit\Framework\TestCase;
+use ezsql\Tests\EZTestCase;
 
-class ezSchemaTest extends TestCase 
-{
-    /**
-     * constant string user name
-     */
-    const TEST_DB_USER = 'ez_test';
-
-    /**
-     * constant string password
-     */
-    const TEST_DB_PASSWORD = 'ezTest';
-
-    /**
-     * constant database name
-     */
-    const TEST_DB_NAME = 'ez_test';
-
-    /**
-     * constant database host
-     */
-    const TEST_DB_HOST = 'localhost';
-
-    /**
-     * constant database connection charset
-     */
-    const TEST_DB_CHARSET = 'utf8';
-
-    /**
-     * constant database port 
-     */
-    const TEST_DB_PORT = '5432';
-
-    /**
-     * constant string path and file name of the SQLite test database
-     */
-    const TEST_SQLITE_DB = 'ez_test.sqlite3';
-    const TEST_SQLITE_DB_DIR = './tests/sqlite/';
-
+class ezSchemaTest extends EZTestCase 
+{		
     /**
     * @covers ezsql\ezSchema::vendor
     */
     public function testVendor()
     {
-        setQuery();
-        $this->assertEquals(null, ezSchema::vendor());
+        clearInstance();
+        $this->assertEquals(null, getVendor());
         $this->assertEquals(false, ezSchema::datatype(BLOB, NULLS));
         $this->assertFalse(column('id', INTR, 32, AUTO, PRIMARY));
     }
@@ -65,10 +29,8 @@ class ezSchemaTest extends TestCase
             );
         }
 
-        $object = new ezSQL_mysqli;
-        $object->quick_connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME);
-
-        $this->assertEquals(MYSQLI, ezSchema::vendor());
+        mysqlInstance([self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME]);
+        $this->assertEquals(MYSQLI, getVendor());
         $this->assertEquals('BLOB NULL', ezSchema::datatype(BLOB, NULLS));
         $this->assertEquals('VARCHAR(256) NOT NULL', ezSchema::datatype(VARCHAR, 256, notNULL));
         $this->assertEquals('id INT(32) AUTO_INCREMENT PRIMARY KEY, ', column('id', INTR, 32, AUTO, PRIMARY));
@@ -85,9 +47,8 @@ class ezSchemaTest extends TestCase
             );
         }
 
-        $object = new ezSQL_postgresql; 
-        $object->quick_connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME, self::TEST_DB_HOST, self::TEST_DB_PORT);
-        $this->assertEquals(PGSQL, ezSchema::vendor());
+        pgsqlInstance([self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME, self::TEST_DB_HOST, self::TEST_DB_PORT]);
+        $this->assertEquals(PGSQL, getVendor());
         $this->assertEquals('TIMESTAMP NOT NULL', ezSchema::datatype(TIMESTAMP, notNULL));
         $this->assertEquals('price NUMERIC(6,2) NULL, ', column('price', NUMERIC, 6, 2, NULLS));
         $this->assertEquals('id SERIAL PRIMARY KEY, ', column('id', AUTO, PRIMARY));
@@ -104,8 +65,8 @@ class ezSchemaTest extends TestCase
             );
         }
         
-        $object = new ezSQL_sqlite3(self::TEST_SQLITE_DB_DIR, self::TEST_SQLITE_DB); 
-        $this->assertEquals(SQLITE3, ezSchema::vendor());
+        sqliteInstance([self::TEST_SQLITE_DB_DIR, self::TEST_SQLITE_DB]);
+        $this->assertEquals(SQLITE3, getVendor());
     }
 
     /**
@@ -119,8 +80,23 @@ class ezSchemaTest extends TestCase
             );
         }
 
-        $object = new ezSQL_sqlsrv;
-        $object->quick_connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME);
-        $this->assertEquals(MSSQL, ezSchema::vendor());
+        mssqlInstance([self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME]);
+        $this->assertEquals(MSSQL, getVendor());
+    }
+
+    /**
+    * @covers ezsql\ezSchema::vendor
+    */
+    public function testVendor_Pdo()
+    {
+        if ( ! \class_exists ('PDO') ) {
+            $this->markTestSkipped(
+              'The PDO Lib is not available.'
+            );
+        }
+
+        $pdo_mysql = pdoInstance(['mysql:host='.self::TEST_DB_HOST.';dbname='.self::TEST_DB_NAME.';port=3306', self::TEST_DB_USER,self::TEST_DB_PASSWORD]);
+        $pdo_mysql->connect();
+        $this->assertEquals(MYSQLI, getVendor());
     }
 }
