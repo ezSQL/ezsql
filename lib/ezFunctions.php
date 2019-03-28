@@ -292,11 +292,7 @@ if (!function_exists('ezFunctions')) {
         \array_push($expression, $x, \_notBETWEEN, $y, $y2, ...$args);
         return $expression;
     }
-    
-    function setQuery($ezSQL = null) {
-        \setQuery($ezSQL);
-    }
-    
+        
     /**
     * Using global class instances, setup functions to call class methods directly.
     *

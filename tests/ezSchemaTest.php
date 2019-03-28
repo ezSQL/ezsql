@@ -123,4 +123,4 @@ class ezSchemaTest extends TestCase
         $object->quick_connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME);
         $this->assertEquals(MSSQL, ezSchema::vendor());
     }
-} 
+}
