@@ -1,9 +1,9 @@
 # **ezsql**
 
 [![Build Status](https://travis-ci.org/ezSQL/ezSQL.svg?branch=v4)](https://travis-ci.org/ezSQL/ezSQL)
-[![Build status](https://ci.appveyor.com/api/projects/status/6s8oqnoxa2i5k04f/branch/v4?svg=true)](https://ci.appveyor.com/project/jv2222/ezsql/branch/v4)
+[![Build status](https://ci.appveyor.com/api/projects/status/6s8oqnoxa2i5k04f?svg=true)](https://ci.appveyor.com/project/jv2222/ezsql)
 [![codecov](https://codecov.io/gh/ezSQL/ezSQL/branch/v4/graph/badge.svg)](https://codecov.io/gh/ezSQL/ezSQL)
-[![Maintainability](https://api.codeclimate.com/v1/badges/8db71512a019ab280a16/maintainability)](https://codeclimate.com/github/techno-express/ezSQL/maintainability)
+[![Maintainability](https://api.codeclimate.com/v1/badges/0071eb99ab4f5ac5b1f2/maintainability)](https://codeclimate.com/github/ezSQL/ezSQL/maintainability)
 
 ***Class to make it very easy to deal with database connections.***
 
