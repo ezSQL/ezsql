@@ -391,7 +391,7 @@ class ezQuery implements ezQueryInterface
 		return ($where != '1') ? " $whereOrHaving ".$where.' ' : ' ' ;
     }        
     
-    public function selecting($table ='', $columnFields = '*', ...$conditions) 
+    public function selecting(string $table = null, $columnFields = '*', ...$conditions) 
     {    
 		$getFromTable = $this->fromTable;
 		$getSelect_result = $this->select_result;       
@@ -490,17 +490,17 @@ class ezQuery implements ezQueryInterface
         return $this->selecting($table, $columnFields, ...$conditions);	            
     }
 
-    public function union($table = '', $columnFields = '*', ...$conditions)
+    public function union(string $table = null, $columnFields = '*', ...$conditions)
     {
         return 'UNION '.$this->select_sql($table, $columnFields, ...$conditions);           
     }
 
-    public function unionAll($table = '', $columnFields = '*', ...$conditions)
+    public function unionAll(string $table = null, $columnFields = '*', ...$conditions)
     {
         return 'UNION ALL '.$this->select_sql($table, $columnFields, ...$conditions);             
     }
 
-    public function create_select($newTable, $fromColumns, $oldTable = null, ...$fromWhere) 
+    public function create_select(string $newTable, $fromColumns, $oldTable = null, ...$fromWhere) 
     {
 		if (isset($oldTable))
 			$this->fromTable = $oldTable;
@@ -517,7 +517,7 @@ class ezQuery implements ezQueryInterface
         return $this->clearPrepare();   
     }
     
-    public function select_into($newTable, $fromColumns, $oldTable = null, ...$fromWhere) 
+    public function select_into(string $newTable, $fromColumns, $oldTable = null, ...$fromWhere) 
     {
 		$this->isInto = true;        
 		if (isset($oldTable))
@@ -534,7 +534,7 @@ class ezQuery implements ezQueryInterface
         return $this->clearPrepare();     
     }
 
-    public function update($table = '', $keyAndValue, ...$whereKeys) 
+    public function update(string $table = null, $keyAndValue, ...$whereKeys) 
     {        
         if ( ! is_array( $keyAndValue ) || empty($table) ) {
 			return $this->clearPrepare();
@@ -567,7 +567,7 @@ class ezQuery implements ezQueryInterface
         return $this->clearPrepare();
     }   
          
-    public function delete($table = '', ...$whereKeys) 
+    public function delete(string $table = null, ...$whereKeys) 
     {   
         if ( empty($table) ) {
 			return $this->clearPrepare();         			
@@ -647,17 +647,17 @@ class ezQuery implements ezQueryInterface
         }
 	}
         
-    public function replace($table = '', $keyAndValue) 
+    public function replace(string $table = null, $keyAndValue) 
     {
         return $this->_query_insert_replace($table, $keyAndValue, 'REPLACE');
     }
 
-    public function insert($table = '', $keyAndValue) 
+    public function insert(string $table = null, $keyAndValue) 
     {
         return $this->_query_insert_replace($table, $keyAndValue, 'INSERT');
     }
 
-    public function insert_select($toTable = '', $toColumns = '*', $fromTable = null, $fromColumns = '*', ...$fromWhere) 
+    public function insert_select(string $toTable = null, $toColumns = '*', $fromTable = null, $fromColumns = '*', ...$fromWhere) 
     {
         $putToTable = $this->_query_insert_replace($toTable, $toColumns, 'INSERT', false);
         $getFromTable = $this->select_sql($fromTable, $fromColumns, ...$fromWhere);

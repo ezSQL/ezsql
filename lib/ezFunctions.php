@@ -313,7 +313,7 @@ if (!function_exists('ezFunctions')) {
     function getInstance() {
         global $ezInstance;
 
-        return $ezInstance;
+        return ($ezInstance instanceOf DatabaseInterface) ? $ezInstance : null;
     }
 
     function clearInstance() {

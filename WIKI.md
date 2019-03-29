@@ -161,32 +161,38 @@ This version further break things introduced in version 3 that broke version 2.1
 ____Installation and Usage____
 ---
 
-Note: __****__ is one of '**mysqli**, **pgsql**, **sqlsrv**, **sqlite3**, or **Pdo**'.
 
 Either: ***for version 3.x***
 
-    composer require ezsql/ezsql=^3.1.0
-    require 'vendor/autoload.php';
-    ---------
-    // Manually download https://github.com/ezSQL/ezSQL/archive/v3.zip and extract.
-    require 'ez_sql_loader.php';
-    ---------
+    composer require ezsql/ezsql=^3.1.2
 
-    $db = new ezSQL_****(user, password, database, or, other settings);
+```php
+require 'vendor/autoload.php';
+```
+```php
+// Manually download https://github.com/ezSQL/ezSQL/archive/v3.zip and extract.
+require 'ez_sql_loader.php';
+```
+```php
+$db = new ezSQL_****(user, password, database, or, other settings);
+```
 
 Or: ***for version 4.x***
 
     // composer is required for version 4
     composer require ezsql/ezsql
-    require 'vendor/autoload.php';
-    ---------
 
-    $db = Database::initialize('****', [user, password, database, or, other settings], **optional storage tag);
+```php
+require 'vendor/autoload.php';
 
-    Is same as:
+$db = Database::initialize('****', [user, password, database, other settings], **optional tag);
 
-    $setting = new Config('****', [user, password, database, or, other settings]);
-    $db = new ez_****($settings);
+// Is same as:
+$setting = new Config('****', [user, password, database, other settings]);
+$db = new ez_****($settings);
+```
+
+>Note: __****__ is one of **mysqli**, **pgsql**, **sqlsrv**, **sqlite3**, or **Pdo**.
 
 **ezsql** functions
 ---
