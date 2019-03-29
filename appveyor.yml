@@ -18,15 +18,6 @@ services:
     - mysql
     - postgresql
     
-## Cache composer, chocolatey and php bits
-cache:
-    - composer.phar
-    # Cache chocolatey packages
-    - C:\ProgramData\chocolatey\bin -> .appveyor.yml
-    - C:\ProgramData\chocolatey\lib -> .appveyor.yml
-    # Cache php install
-    - c:\tools\php -> .appveyor.yml
-    
 ## Set up environment variables
 init:
     - SET PATH=C:\Program Files\OpenSSL;c:\tools\php;C:\Program Files\PostgreSQL\9.4\bin\;%PATH%

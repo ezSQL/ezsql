@@ -1,9 +1,6 @@
 # **ezsql**
 
-[![Build Status](https://travis-ci.org/ezSQL/ezSQL.svg?branch=v4)](https://travis-ci.org/ezSQL/ezSQL)
-[![Build status](https://ci.appveyor.com/api/projects/status/6s8oqnoxa2i5k04f?svg=true)](https://ci.appveyor.com/project/jv2222/ezsql)
-[![codecov](https://codecov.io/gh/ezSQL/ezSQL/branch/v4/graph/badge.svg)](https://codecov.io/gh/ezSQL/ezSQL)
-[![Maintainability](https://api.codeclimate.com/v1/badges/0071eb99ab4f5ac5b1f2/maintainability)](https://codeclimate.com/github/ezSQL/ezSQL/maintainability)
+[![Build Status](https://travis-ci.org/ezSQL/ezSQL.svg?branch=master)](https://travis-ci.org/ezSQL/ezSQL)[![Build status](https://ci.appveyor.com/api/projects/status/6s8oqnoxa2i5k04f?svg=true)](https://ci.appveyor.com/project/jv2222/ezsql)[![Coverage Status](https://coveralls.io/repos/github/ezSQL/ezSQL/badge.svg?branch=master)](https://coveralls.io/github/ezSQL/ezSQL?branch=master)[![codecov](https://codecov.io/gh/ezSQL/ezSQL/branch/master/graph/badge.svg)](https://codecov.io/gh/ezSQL/ezSQL)[![Maintainability](https://api.codeclimate.com/v1/badges/0071eb99ab4f5ac5b1f2/maintainability)](https://codeclimate.com/github/ezSQL/ezSQL/maintainability)
 
 ***A class to make it very easy to deal with database connections.***
 
