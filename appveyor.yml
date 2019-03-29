@@ -7,9 +7,8 @@ clone_folder: c:\projects\php-project-workspace
 environment:
   matrix:
   - php_ver_target: 7.1
-    xddl: vc14
-  - php_ver_target: 7.2
-    xddl: vc15
+  - dependencies: current
+    php_ver_target: 7.2
   MYSQL_DATABASE: ez_test
   MYSQL_HOST: localhost
   MYSQL_USER: root
@@ -41,7 +40,11 @@ init:
 install:
     - IF EXIST c:\tools\php (SET PHP=0)
     - ps: >-
-        appveyor-retry cinst --params '""/InstallDir:C:\tools\php""' --ignore-checksums -y php --version ((choco search php --exact --all-versions -r | select-string -pattern $env:php_ver_target | sort { [version]($_ -split '\|' | select -last 1) } -Descending | Select-Object -first 1) -replace '[php|]','')
+        If ($env:php_ver_target -eq "5.6") {
+          appveyor-retry cinst --params '""/InstallDir:C:\tools\php""' --ignore-checksums -y --forcex86 php --version ((choco search php --exact --all-versions -r | select-string -pattern $env:php_ver_target | sort { [version]($_ -split '\|' | select -last 1) } -Descending | Select-Object -first 1) -replace '[php|]','')
+        } Else {
+          appveyor-retry cinst --params '""/InstallDir:C:\tools\php""' --ignore-checksums -y php --version ((choco search php --exact --all-versions -r | select-string -pattern $env:php_ver_target | sort { [version]($_ -split '\|' | select -last 1) } -Descending | Select-Object -first 1) -replace '[php|]','')
+        }
     - appveyor-retry cinst -y sqlite
     - cd c:\tools\php
     # Get the MSSQL DLL's
@@ -84,9 +87,9 @@ install:
     - IF %PHP%==1 echo extension=php_pdo_sqlite.dll >> php.ini
     - IF %PHP%==1 echo extension=php_mysqli.dll >> php.ini
     - IF %PHP%==1 echo extension=php_pdo_mysql.dll >> php.ini
-    - IF %PHP%==1 appveyor-retry appveyor DownloadFile https://xdebug.org/files/php_xdebug-2.6.1-$($env:php_ver_target)-$($env:xddl)-nts-x86_64.dll -FileName c:\tools\php\ext\php_xdebug-2.6.1-$($env:php_ver_target)-$($env:xddl)-nts-x86_64.dll
+    - IF %PHP%==1 appveyor-retry appveyor DownloadFile https://xdebug.org/files/php_xdebug-2.6.1-7.1-vc14-nts-x86_64.dll -FileName c:\tools\php\ext\php_xdebug-2.6.1-7.1-vc14-nts-x86_64.dll
     - IF %PHP%==1 echo [xdebug] >> php.ini
-    - IF %PHP%==1 echo zend_extension=php_xdebug-2.6.1-$($env:php_ver_target)-$($env:xddl)-nts-x86_64.dll >> php.ini
+    - IF %PHP%==1 echo zend_extension=php_xdebug-2.6.1-7.1-vc14-nts-x86_64.dll >> php.ini
     - IF %PHP%==1 echo zend.assertions=1 >> php.ini
     - IF %PHP%==1 echo assert.exception=On >> php.ini
     - IF %PHP%==1 echo xdebug.remote_enable=1 >> php.ini
