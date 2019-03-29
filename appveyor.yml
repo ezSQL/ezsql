@@ -17,7 +17,7 @@ services:
     - mssql2014
     - mysql
     - postgresql
-        
+    
 ## Set up environment variables
 init:
     - SET PATH=C:\Program Files\OpenSSL;c:\tools\php;C:\Program Files\PostgreSQL\9.4\bin\;%PATH%

@@ -1,9 +1,6 @@
 # **ezsql**
 
-[![Build Status](https://travis-ci.org/ezSQL/ezSQL.svg?branch=v4)](https://travis-ci.org/ezSQL/ezSQL)
-[![Build status](https://ci.appveyor.com/api/projects/status/6s8oqnoxa2i5k04f?svg=true)](https://ci.appveyor.com/project/jv2222/ezsql)
-[![codecov](https://codecov.io/gh/ezSQL/ezSQL/branch/v4/graph/badge.svg)](https://codecov.io/gh/ezSQL/ezSQL)
-[![Maintainability](https://api.codeclimate.com/v1/badges/0071eb99ab4f5ac5b1f2/maintainability)](https://codeclimate.com/github/ezSQL/ezSQL/maintainability)
+[![Build Status](https://travis-ci.org/ezSQL/ezSQL.svg?branch=master)](https://travis-ci.org/ezSQL/ezSQL)[![Build status](https://ci.appveyor.com/api/projects/status/6s8oqnoxa2i5k04f?svg=true)](https://ci.appveyor.com/project/jv2222/ezsql)[![Coverage Status](https://coveralls.io/repos/github/ezSQL/ezSQL/badge.svg?branch=master)](https://coveralls.io/github/ezSQL/ezSQL?branch=master)[![codecov](https://codecov.io/gh/ezSQL/ezSQL/branch/master/graph/badge.svg)](https://codecov.io/gh/ezSQL/ezSQL)[![Maintainability](https://api.codeclimate.com/v1/badges/0071eb99ab4f5ac5b1f2/maintainability)](https://codeclimate.com/github/ezSQL/ezSQL/maintainability)
 
 ***A class to make it very easy to deal with database connections.***
 
@@ -15,7 +12,7 @@ This library has an `Database` class, an combination of the [Factory](https://en
 
 * More Todo...
 
-For an full overview see [documentation Wiki](https://github.com/ezSQL/ezSQL/WIKI.md), which is not completely finish.
+For an full overview see [documentation Wiki](https://github.com/ezSQL/ezSQL/wiki/Documentation), which is not completely finish.
 
 ## Installation
 
@@ -106,4 +103,4 @@ prepareOff(); // When off shortcut SQL Methods calls will use vendors escape rou
 
     query_prepared(string $query_string, array $param_array);
 
-**For** **[Authors/Contributors](https://github.com/ezsql/ezsql/CONTRIBUTORS.md)**
+**For** **[Authors/Contributors](https://github.com/ezSQL/ezSQL/blob/master/CONTRIBUTORS.md)**
