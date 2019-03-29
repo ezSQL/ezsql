@@ -40,6 +40,70 @@ $setting = new Config('****', [$dsn_path_user, $password, $database, $other_sett
 $db = new ez_****($settings);
 ```
 
-$db->query_prepared($query_string, $param_array);
+This library will assume the developer is using some sort of IDE with intellisense enabled. The comments/doc-block area will hold any missing documentations. For additional examples see __phpunit__ tests, The tests are fully functional integration tests, meaning the are live database tests, no mocks.
+
+##### General Methods
+---
+    to_string($arrays, $separation = ',');
+    clean($string);
+    create_cache(string $path = null);
+    securePDO($vendor = null,
+        $key = 'certificate.key',
+        $cert = 'certificate.crt',
+        $ca = 'cacert.pem',
+        $path = '.'._DS
+    );
+    createCertificate(string $privatekeyFile = certificate.key,
+        string $certificateFile = certificate.crt,
+        string $signingFile = certificate.csr,
+        string $ssl_path = null, array $details = [commonName => localhost]
+    );
+
+___Shortcut Table Methods___
+
+    create(string $table = null, ...$schemas);// $schemas requires... column()
+    column(string $column = null, string $type = null, ...$args);
+    drop(string $table);
+---
+
+    innerJoin(string $leftTable = null, string $rightTable = null,
+        string $leftColumn = null, string $rightColumn = null, $condition = EQ);
+
+    leftJoin(string $leftTable = null, string $rightTable = null,
+        string $leftColumn = null, string $rightColumn = null, $condition = EQ);
+
+    rightJoin(string $leftTable = null, string $rightTable = null,
+        string $leftColumn = null, string $rightColumn = null, $condition = EQ);
+
+    fullJoin(string $leftTable = null, string $rightTable = null,
+        string $leftColumn = null, string $rightColumn = null, $condition = EQ);
+---
+
+```php
+prepareOn(); // When activated will use prepare statements for all shortcut SQL Methods calls.
+prepareOff(); // When off shortcut SQL Methods calls will use vendors escape routine instead. This is the default behavior.
+```
+
+### Shortcut SQL Methods
+
+* `having(...$having);`
+* `groupBy($groupBy);`
+* `union(string $table = null, $columnFields = '*', ...$conditions);`
+* `unionAll(string $table = null, $columnFields = '*', ...$conditions);`
+* `orderBy($orderBy, $order);`
+* `limit($numberOf, $offset = null)`
+* `where( ...$whereKeyArray);`
+* `selecting(string $table = null, $columnFields = '*', ...$conditions);`
+* `create_select(string $newTable, $fromColumns, $oldTable = null, ...$fromWhere);`
+* `select_into(string $newTable, $fromColumns, $oldTable = null, ...$fromWhere);`
+* `update(string $table = null, $keyAndValue, ...$whereKeys);`
+* `delete(string $table = null, ...$whereKeys);`
+* `replace(string $table = null, $keyAndValue);`
+* `insert(string $table = null, $keyAndValue);`
+* `insert_select(string $toTable = null, $toColumns = '*', $fromTable = null, $fromColumns = '*', ...$fromWhere);`
+
+---
+
+    query_prepared(string $query_string, array $param_array);
 
 **For** **[Authors/Contributors](https://github.com/ezsql/ezsql/CONTRIBUTORS.md)**
