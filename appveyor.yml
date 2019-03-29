@@ -31,7 +31,7 @@ cache:
 init:
     - SET PATH=C:\Program Files\OpenSSL;c:\tools\php;C:\Program Files\PostgreSQL\9.4\bin\;%PATH%
     - SET COMPOSER_NO_INTERACTION=1
-    - SET PHP=0 # This var is connected to PHP install cache
+    - SET PHP=1 # This var is connected to PHP install cache
     - SET ANSICON=121x90 (121x90)
     
 ## Install PHP and composer, and run the appropriate composer command Get the MSSQL DLL's and XDEBUG
