@@ -54,7 +54,15 @@ interface DatabaseInterface
     public function sysDate();
     
 	/**
-     * Creates a prepared query, binds the given parameters and returns the result of the executed
+     * Creates a prepared query, binds the given parameters and returns the result of the executed.
+     * 
+     * Supplying the the whole query string, and placing '?' within, 
+     * then the same number of arguments in an array.
+     * 
+     * Example:
+     *  `query_prepared('INSERT INTO unit_test(id, test_key) VALUES(1, ?)', ['test 1']);`
+     * 
+     * - It will determine arguments type, execute, and return results.
      * 
      * @param string $query
      * @param array $param
