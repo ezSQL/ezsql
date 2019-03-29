@@ -12,7 +12,7 @@ This library has an `Database` class, an combination of the [Factory](https://en
 
 * More Todo...
 
-For an full overview see [documentation Wiki](https://github.com/ezSQL/ezSQL/wiki), which is not completely finish.
+For an full overview see [documentation Wiki](https://github.com/ezSQL/ezSQL/wiki/Documentation), which is not completely finish.
 
 ## Installation
 
