@@ -12,7 +12,7 @@ This library has an `Database` class, an combination of the [Factory](https://en
 
 * More Todo...
 
-For an full overview see [documentation Wiki](https://github.com/ezSQL/ezSQL/WIKI.md), which is not completely finish.
+For an full overview see [documentation Wiki](https://github.com/ezSQL/ezSQL/wiki), which is not completely finish.
 
 ## Installation
 
@@ -103,4 +103,4 @@ prepareOff(); // When off shortcut SQL Methods calls will use vendors escape rou
 
     query_prepared(string $query_string, array $param_array);
 
-**For** **[Authors/Contributors](https://github.com/ezsql/ezsql/CONTRIBUTORS.md)**
+**For** **[Authors/Contributors](https://github.com/ezSQL/ezSQL/blob/master/CONTRIBUTORS.md)**
