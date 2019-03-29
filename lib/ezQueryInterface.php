@@ -224,7 +224,7 @@ interface ezQueryInterface
     *   
     * @return bool|string - false for error
 	*/
-    public function union($table = '', $columnFields = '*', ...$conditions);
+    public function union(string $table = null, $columnFields = '*', ...$conditions);
 
 	/**
     * Returns an `UNION ALL` SELECT SQL string, given the 
@@ -250,7 +250,7 @@ interface ezQueryInterface
     *   
     * @return bool|string - false for error
 	*/
-    public function unionAll($table = '', $columnFields = '*', ...$conditions);
+    public function unionAll(string $table = null, $columnFields = '*', ...$conditions);
 
     /**
     * Specifies an ordering for the query results.  
@@ -332,7 +332,7 @@ interface ezQueryInterface
     *   
     * @return mixed result set - see docs for more details, or false for error
 	*/
-    public function selecting($table = '', $columnFields = '*', ...$conditions);
+    public function selecting(string $table = null, $columnFields = '*', ...$conditions);
 
 	/** 
     * Does an create select statement by calling selecting method
@@ -344,7 +344,7 @@ interface ezQueryInterface
     *
     * @return mixed bool/result - false for error
 	*/
-    public function create_select($newTable, $fromColumns, $oldTable = null, ...$fromWhere);
+    public function create_select(string $newTable, $fromColumns, $oldTable = null, ...$fromWhere);
     
     /**
     * Does an select into statement by calling selecting method
@@ -355,7 +355,7 @@ interface ezQueryInterface
     *
     * @return mixed bool/result - false for error
 	*/
-    public function select_into($newTable, $fromColumns, $oldTable = null, ...$fromWhere);
+    public function select_into(string $newTable, $fromColumns, $oldTable = null, ...$fromWhere);
 		
 	/**
 	* Does an update query with an array, by conditional operator array
@@ -365,13 +365,13 @@ interface ezQueryInterface
 	*
 	* @return mixed bool/results - false for error
 	*/
-    public function update($table = '', $keyAndValue, ...$whereKeys);
+    public function update(string $table = null, $keyAndValue, ...$whereKeys);
          
 	/** 
     * Helper does the actual delete query with an array
 	* @return mixed bool/results - false for error
 	*/
-    public function delete($table = '', ...$whereKeys);
+    public function delete(string $table = null, ...$whereKeys);
 
 	/**
     * Does an replace query with an array
@@ -379,7 +379,7 @@ interface ezQueryInterface
     * @param $keyAndValue - table fields, assoc array with key = value (doesn't need escaped)
     * @return mixed bool/id of replaced record, or false for error
 	*/
-    public function replace($table = '', $keyAndValue);
+    public function replace(string $table = null, $keyAndValue);
 
 	/**
     * Does an insert query with an array
@@ -387,7 +387,7 @@ interface ezQueryInterface
     * @param $keyAndValue - table fields, assoc array with key = value (doesn't need escaped)
     * @return mixed bool/id of inserted record, or false for error
 	*/
-    public function insert($table = '', $keyAndValue);
+    public function insert(string $table = null, $keyAndValue);
     
 	/**
     * Does an insert into select statement by calling insert method helper then selecting method
@@ -397,7 +397,8 @@ interface ezQueryInterface
     *
     * @return mixed bool/id of inserted record, or false for error
 	*/
-    public function insert_select($toTable = '', $toColumns = '*', $fromTable = null, $fromColumns = '*', ...$fromWhere);
+    public function insert_select(
+        string $toTable = null, $toColumns = '*', $fromTable = null, $fromColumns = '*', ...$fromWhere);
 
    /**
     * Creates an database table and columns, by either:

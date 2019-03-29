@@ -97,4 +97,9 @@ interface DatabaseInterface
      * Get connection handle
      */
     public function handle();
+
+    /**
+     * Reset connection handle
+     */
+    public function reset();
 }
