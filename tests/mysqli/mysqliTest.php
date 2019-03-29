@@ -133,13 +133,15 @@ class ez_mysqliTest extends EZTestCase
 
         $this->object->select(self::TEST_DB_NAME);
 
-        $this->assertEquals($this->object->query('CREATE TABLE unit_test(id integer, test_key varchar(50), PRIMARY KEY (ID))'), 0);
-        $this->assertEquals($this->object->query('INSERT INTO unit_test(id, test_key) VALUES(1, \'test 1\')'), 1);
+        $this->assertEquals(0, $this->object->query('CREATE TABLE unit_test(id integer, test_key varchar(50), PRIMARY KEY (ID))'));
+
+        $this->assertEquals(1, $this->object->query('INSERT INTO unit_test(id, test_key) VALUES(1, \'test 1\')'));
         
         $this->object->reset();
-        $this->assertEquals($this->object->query('INSERT INTO unit_test(id, test_key) VALUES(2, \'test 2\')'),1);
+        $this->assertEquals(1, $this->object->query('INSERT INTO unit_test(id, test_key) VALUES(2, \'test 2\')'));
+
         $this->object->disconnect();
-        $this->assertNull($this->object->query('INSERT INTO unit_test(id, test_key) VALUES(3, \'test 3\')'));        
+        $this->assertFalse($this->object->isConnected());        
     }
 
     /**
