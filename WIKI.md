@@ -156,7 +156,7 @@ Any articles referencing WordPress database engine is an good source of what kin
 
 Version 4 of this library attempts to, beside all the additional features, _remove some bad coding styles_, _bring the library to modern coding practices of which_, _follow proper __OOP__ and be __PSR__ compliant_. 
 
-This version further break things introduced in version 3 that broke version 2.1.7. See [CHANGE LOG](https://github.com/ezsql/ezsql/CHANGELOG.md)
+This version further break things introduced in version 3 that broke version 2.1.7. See [CHANGE LOG](https://github.com/ezSQL/ezSQL/blob/master/CHANGELOG.md)
 
 ____Installation and Usage____
 ---
