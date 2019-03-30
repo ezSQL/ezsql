@@ -187,6 +187,10 @@ class ezsqlModel extends ezQuery implements ezsqlModelInterface
 	{
 		$prefix = \substr($function, 0, 3);
 		$property = \strtolower(substr($function, 3, \strlen($function)));
+		// Todo: make properties PSR-1, add following for backward compatibility 
+		//if (\strpos($property, '_') !== false)
+		//	$property = \str_replace('_', '', $property);
+
 		if (($prefix == 'set') && \property_exists($this, $property)) {
 			$this->$property = $args[0];
 		} elseif (($prefix == 'get') && \property_exists($this, $property)) {

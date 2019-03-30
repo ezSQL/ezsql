@@ -4,15 +4,15 @@
 
 ***A class to make it very easy to deal with database connections.***
 
-This is [__version 4__](https://github.com/ezSQL/ezSQL/tree/v4) that has many modern programming practices in which will break users of version 3.
+This is [__version 4__](https://github.com/ezSQL/ezsql/tree/v4) that has many modern programming practices in which will break users of version 3.
 
-[__Version 3__](https://github.com/ezSQL/ezSQL/tree/v3) broke version 2.1.7 in one major way, it required *PHP 5.6*. Which drop mysql extension support, other than that, nothing as far using the library was changed, only additional features.
+[__Version 3__](https://github.com/ezSQL/ezsql/tree/v3) broke version 2.1.7 in one major way, it required *PHP 5.6*. Which drop mysql extension support, other than that, nothing as far using the library was changed, only additional features.
 
-This library has an `Database` class, an combination of the [Factory](https://en.wikipedia.org/wiki/Factory_method_pattern) pattern with an [Dependency Injection](https://en.wikipedia.org/wiki/Dependency_injection) container hosting. This library now is following many OOP principles, one in which, the methods properties public access has been removed. This library also following PSR-2, PSR-4, and PSR-11 conventions.
+This library has an `Database` class, an combination of the [Factory](https://en.wikipedia.org/wiki/Factory_method_pattern) pattern with an [Dependency Injection](https://en.wikipedia.org/wiki/Dependency_injection) container hosting. This library now is following many OOP principles, one in which, the methods properties public access has been removed. This library also following PSR-2, PSR-4, PSR-11 conventions, and mostly PSR-1, that's still an work in progress.
 
 * More Todo...
 
-For an full overview see [documentation Wiki](https://github.com/ezSQL/ezSQL/wiki/Documentation), which is not completely finish.
+For an full overview see [documentation Wiki](https://github.com/ezSQL/ezsql/wiki/Documentation), which is not completely finish.
 
 ## Installation
 
@@ -39,8 +39,10 @@ $db = new ez_****($settings);
 
 This library will assume the developer is using some sort of IDE with intellisense enabled. The comments/doc-block area will hold any missing documentations. For additional examples see __phpunit__ tests, The tests are fully functional integration tests, meaning the are live database tests, no mocks.
 
-##### General Methods
----
+The following has been added since version 2.1.7.
+
+___General Methods___
+
     to_string($arrays, $separation = ',');
     clean($string);
     create_cache(string $path = null);
@@ -103,4 +105,12 @@ prepareOff(); // When off shortcut SQL Methods calls will use vendors escape rou
 
     query_prepared(string $query_string, array $param_array);
 
-**For** **[Authors/Contributors](https://github.com/ezSQL/ezSQL/blob/master/CONTRIBUTORS.md)**
+## For Authors and **[Contributors](https://github.com/ezSQL/ezsql/blob/master/CONTRIBUTORS.md)**
+
+## Contributing
+
+Contributions are encouraged and welcome; I am always happy to get feedback or pull requests on Github :) Create [Github Issues](https://github.com/ezSQL/ezsql/issues) for bugs and new features and comment on the ones you are interested in.
+
+## License
+
+**ezsql** is open-sourced software licensed originally under (LGPL-3.0), and the addon parts under (MIT).

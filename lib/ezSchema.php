@@ -61,7 +61,7 @@ class ezSchema
         'sqlite3' => ''
      ];
 
-    const autoNUMBERS  = [
+    const AUTO_NUMBERS  = [
         'mysqli' => 'AUTO_INCREMENT',
         'pgsql' => 'SERIAL',
         'sqlsrv' => 'IDENTITY(1,1)',
@@ -224,7 +224,7 @@ class ezSchema
             $data = self::datatype($type, ...$args);
             if (!empty($data)) {
 		        // check for sequence placeholder and replace with vendors
-		        $data = \str_replace(\SEQUENCE, self::autoNUMBERS[$vendor], $data);
+		        $data = \str_replace(\SEQUENCE, self::AUTO_NUMBERS[$vendor], $data);
                 $columnData = $column.' '.$data.', ';
             }
         }
