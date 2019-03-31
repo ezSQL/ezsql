@@ -1,12 +1,12 @@
 <?php
 
-namespace ezsql\Tests;
+namespace ezsql\Tests\mysqli;
 
 use ezsql\Database;
 use ezsql\Database\ez_mysqli;
 use ezsql\Tests\EZTestCase;
 
-class ez_mysqliTest extends EZTestCase 
+class mysqliTest extends EZTestCase 
 {
     
     /**
@@ -525,6 +525,6 @@ class ez_mysqliTest extends EZTestCase
     public function test__Construct() {        
         $this->expectException(\Exception::class);
         $this->expectExceptionMessageRegExp('/[Missing configuration details]/');
-        $this->assertNull(new ez_mysqli);  
+        $this->assertNull(new ez_mysqli());  
     } 
 } // ez_mysqliTest

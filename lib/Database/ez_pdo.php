@@ -21,15 +21,13 @@ class ez_pdo extends ezsqlModel implements DatabaseInterface
             2 => 'File based databases require $dsn to create a connection'
         );
     
-    protected $preparedValues = array();
-
     private static $isSecure = false;
     private static $secure = null;
     private static $_options = [];
 
     /**
     * Database connection handle 
-    * @var connection instance
+    * @var resource
     */
     private $dbh;
 
@@ -41,7 +39,7 @@ class ez_pdo extends ezsqlModel implements DatabaseInterface
 
     /**
     * Database configuration setting 
-    * @var Configuration instance
+    * @var ConfigInterface
     */
 
     private $database;
@@ -168,7 +166,6 @@ class ez_pdo extends ezsqlModel implements DatabaseInterface
             $this->register_error($e->getMessage());
             $this->show_errors ? \trigger_error($e->getMessage() . '- $dsn: ' . $dsn, \E_USER_WARNING) : null;
         }
-        $this->isConnected = $this->_connected;
 
         return $this->_connected;
     } // connect
@@ -274,7 +271,7 @@ class ez_pdo extends ezsqlModel implements DatabaseInterface
     * @param string $query
     * @param array $param
     * @param boolean $isSelect - return \PDOStatement, if SELECT SQL statement, otherwise int
-    * @return bool|int|PDOStatement 
+    * @return bool|int|\PDOStatement 
     */
     public function query_prepared(string $query, array $param = null, $isSelect = false)
     { 

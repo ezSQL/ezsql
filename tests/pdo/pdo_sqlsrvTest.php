@@ -1,15 +1,14 @@
 <?php
 
-namespace ezsql\Tests;
+namespace ezsql\Tests\pdo;
 
 use ezsql\Database;
-use ezsql\Database\ez_pdo;
 use ezsql\Tests\EZTestCase;
 
 class pdo_sqlsrvTest extends EZTestCase 
 {    
     /**
-     * @var ezsql\Database\ez_pdo
+     * @var resource
      */
     protected $object;
 
@@ -195,13 +194,5 @@ class pdo_sqlsrvTest extends EZTestCase
         $this->object->disconnect();
 
         $this->assertFalse($this->object->isConnected());
-    } // testSQLsrvDisconnect
-    
-    /**
-     * @covers ezsql\Database\ez_pdo::__construct
-     */
-    public function test__Construct() {
-        $this->expectExceptionMessageRegExp('/[Missing configuration details]/');
-        $this->assertNull(new ez_pdo);
-    }     
+    } // testSQLsrvDisconnect    
 } // ezsql\Database\ez_pdoTest

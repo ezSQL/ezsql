@@ -1,6 +1,6 @@
 <?php
 
-namespace ezsql\Tests;
+namespace ezsql\Tests\sqlsrv;
 
 use ezsql\Database;
 use ezsql\Database\ez_sqlsrv;
@@ -280,6 +280,6 @@ class sqlsrvTest extends EZTestCase
     public function test__Construct() 
     {  
         $this->expectExceptionMessageRegExp('/[Missing configuration details]/');
-        $this->assertNull(new ez_sqlsrv);
+        $this->assertNull(new ez_sqlsrv('bad'));
     } 
 } // ezsql\Database\ez_sqlsrvTest

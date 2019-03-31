@@ -21,14 +21,6 @@ class ezsqlModelTest extends EZTestCase
         $this->object = new ezsqlModel();
     } // setUp
 
-    /**
-     * Tears down the fixture, for example, closes a network connection.
-     * This method is called after a test is executed.
-     */
-    protected function tearDown(): void 
-    {
-        $this->object = null;
-    } // tearDown
 
     /**
      * @covers ezsql\ezsqlModel::get_host_port

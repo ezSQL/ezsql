@@ -37,7 +37,8 @@
         }
     },
     "require-dev": {
-        "phpunit/phpunit": ">5.7.0"
+        "phpunit/phpunit": ">5.7.0",
+        "phpstan/phpstan": "^0.11.5"
     },
     "autoload-dev": {
         "psr-4": {

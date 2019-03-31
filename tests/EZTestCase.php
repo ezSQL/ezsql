@@ -40,7 +40,7 @@ abstract class EZTestCase extends \PHPUnit\Framework\TestCase
     const TEST_SQLITE_DB = 'ez_test.sqlite3';
     const TEST_SQLITE_DB_DIR = './tests/sqlite/';
 
-    private $errors;
+    protected $errors;
  
     function errorHandler($errno, $errstr, $errfile, $errline, $errcontext) 
     {
@@ -55,11 +55,7 @@ abstract class EZTestCase extends \PHPUnit\Framework\TestCase
             }
         }
 
-        $this->fail("Error with level ".$errno
-            ." and message '".$errstr
-            ."' not found in ", 
-            var_export($this->errors, TRUE)
-        );
+        $this->fail();
     }
 
     /**

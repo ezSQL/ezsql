@@ -16,13 +16,12 @@ class ez_sqlite3 extends ezsqlModel implements DatabaseInterface
     private $ezsql_sqlite3_str = array
         (
         1 => 'Require $path and $name to open an SQLite database',
+        2 => 'Failed to make connection to database',
     );
-
-    protected $preparedValues = array();
 
     /**
     * Database connection handle 
-    * @var connection instance
+    * @var resource
     */
     private $dbh;
 
@@ -34,7 +33,7 @@ class ez_sqlite3 extends ezsqlModel implements DatabaseInterface
 
     /**
      * Database configuration setting
-     * @var Configuration instance
+     * @var ConfigInterface
      */
     private $database;
 
@@ -86,8 +85,8 @@ class ez_sqlite3 extends ezsqlModel implements DatabaseInterface
             $this->show_errors ? \trigger_error($this->ezsql_sqlite3_str[1], \E_USER_WARNING) : null;
             // Try to establish the server database handle
         } elseif (!$this->dbh = @new \SQLite3($path . $name)) {
-            $this->register_error($php_errormsg);
-            $this->show_errors ? \trigger_error($php_errormsg, \E_USER_WARNING) : null;
+            $this->register_error($this->ezsql_sqlite3_str[2]);
+            $this->show_errors ? \trigger_error($this->ezsql_sqlite3_str[2], \E_USER_WARNING) : null;
         } else {
             $return_val = true;
             $this->conn_queries = 0;
@@ -200,7 +199,7 @@ class ez_sqlite3 extends ezsqlModel implements DatabaseInterface
         $this->flush();
 
         // Log how the function was called
-        $this->func_call = "\$db->query(\"$query\")";
+        $this->log_query("\$db->query(\"$query\")");
 
         // Keep track of the last query for debug..
         $this->last_query = $query;
@@ -245,7 +244,7 @@ class ez_sqlite3 extends ezsqlModel implements DatabaseInterface
             $i = 0;
             $this->col_info = array();
             while ($i < @$this->result->numColumns()) {
-                $this->col_info[$i] = new \StdClass;
+                $this->col_info[$i] = new \stdClass;
                 $this->col_info[$i]->name = $this->result->columnName($i);
                 $this->col_info[$i]->type = null;
                 $this->col_info[$i]->max_length = null;

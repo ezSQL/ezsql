@@ -83,7 +83,7 @@ class ezSchema
      * @param array $args
      * 
      * @return string
-     * @throws Exception
+     * @throws \Exception
      */
 	public function __call($type, $args) 
 	{

@@ -9,6 +9,8 @@ class ezQuery implements ezQueryInterface
 { 		
 	protected $select_result = true;
 	protected $prepareActive = false;
+    protected $preparedValues = array();
+    protected $insert_id = null;
     
 	private $fromTable = null;
     private $isWhere = true;    
@@ -297,7 +299,12 @@ class ezQuery implements ezQueryInterface
 
         $whereOrHaving = ($this->isWhere) ? 'WHERE' : 'HAVING';
         $this->isWhere = true;
-        
+
+        $whereKey = [];
+        $operator = [];
+        $extra = [];
+        $combiner = [];
+        $combineWith = '';
 		if (\is_string($whereKeyArray[0])) {
             if ((\strpos($whereKeyArray[0], 'WHERE') !== false) 
                 || (\strpos($whereKeyArray[0], 'HAVING') !== false)
@@ -668,6 +675,45 @@ class ezQuery implements ezQueryInterface
                 : $this->query($putToTable." ".$getFromTable) ;
 
 		return $this->clearPrepare();      
+    }
+
+    // get_results call template
+	public function get_results(string $query = null, $output = \OBJECT, 
+		bool $use_prepare = false) 
+	{
+		return array();
+    }
+
+	// query call template
+	public function query(string $query, bool $use_prepare = false) 
+	{
+		return false;
+    }    
+
+	// escape call template if not available by vendor
+	public function escape(string $str) 
+	{
+		if (empty($str) ) 
+			return '';
+		if ( \is_numeric($str) ) 
+			return $str;
+
+        $nonDisplayable = array(
+			'/%0[0-8bcef]/',            // url encoded 00-08, 11, 12, 14, 15
+			'/%1[0-9a-f]/',             // url encoded 16-31
+			'/[\x00-\x08]/',            // 00-08
+			'/\x0b/',                   // 11
+			'/\x0c/',                   // 12
+			'/[\x0e-\x1f]/'             // 14-31
+		);
+                
+        foreach ( $nonDisplayable as $regex )
+			$str = \preg_replace( $regex, '', $str);
+
+        $search = array("\\",  "\x00", "\n",  "\r",  "'",  '"', "\x1a");
+        $replace = array("\\\\","\\0","\\n", "\\r", "\'", '\"', "\\Z");
+
+        return \str_replace($search, $replace, $str);
     }
     
     /**

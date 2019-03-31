@@ -8,17 +8,10 @@ use ezsql\Tests\EZTestCase;
 use ezsql\Exception\ContainerException;
 use ezsql\Exception\NotFoundException;
 
-interface ezInterface{}
-class Foo implements ezInterface{}
-class Bar implements ezInterface{}
-            
-class Baz
-{
-    public function __construct(ezInterface $foo = null)
-    {
-        $this->foo = $foo;
-    }
-}
+use ezsql\Tests\ezInterface;  
+use ezsql\Tests\Baz;  
+use ezsql\Tests\Bar;  
+use ezsql\Tests\Foo;  
 
 class DInjectorTest extends EZTestCase 
 {		

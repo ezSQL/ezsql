@@ -95,7 +95,7 @@ class ezsqlModel extends ezQuery implements ezsqlModelInterface
 	protected $profile_times    = array();
 
 	/**
-	 * ID generated from the AUTO_INCRIMENT of the previous INSERT operation (if any)
+	 * ID generated from the AUTO_INCREMENT of the previous INSERT operation (if any)
 	 * @var int
 	 */
 	protected $insert_id        = null;
@@ -175,14 +175,15 @@ class ezsqlModel extends ezQuery implements ezsqlModelInterface
 	}
 
 	/**
-	* Use for Calling Non-Existent Functions, handling Getters and Setters
-	* @method set/get{property} - a property that needs to be accessed 
-	*
-	* @property-read function
-	* @property-write args
-	*
-	* @return mixed
-	*/
+	 * Use for Calling Non-Existent Functions, handling Getters and Setters
+	 * @method set/get{property} - a property that needs to be accessed 
+	 *
+	 * @property-read function
+	 * @property-write args
+	 *
+	 * @return mixed
+	 * @throws \Exception
+	 */
 	public function __call($function, $args)
 	{
 		$prefix = \substr($function, 0, 3);
@@ -348,6 +349,7 @@ class ezsqlModel extends ezQuery implements ezsqlModelInterface
 		} elseif ( $output == \_JSON ) { 
 			return \json_encode($this->last_result); // return as json output
 		} elseif ( $output == ARRAY_A || $output == ARRAY_N ) {
+			$new_array = [];
 			if ( $this->last_result ) {
 				$i = 0;
 				foreach( $this->last_result as $row ) {
@@ -367,6 +369,7 @@ class ezsqlModel extends ezQuery implements ezsqlModelInterface
 	public function get_col_info(string $info_type = "name", int $col_offset = -1)
 	{
 		if ( $this->col_info ) {
+			$new_array = [];
 			if ( $col_offset == -1 ) {
 				$i=0;
 				foreach($this->col_info as $col ) {
@@ -496,7 +499,7 @@ class ezsqlModel extends ezQuery implements ezsqlModelInterface
 			echo $html;
 		}
 		
-		$this->vardump_called = true;
+		$this->varDump_called = true;
 		
 		return $html;
 	}
@@ -666,36 +669,4 @@ class ezsqlModel extends ezQuery implements ezsqlModelInterface
 	{
         return $this->_affectedRows;
     } // affectedRows
-	
-	// query call template
-	public function query(string $query, bool $use_prepare = false) 
-	{
-		return false;
-	}    
-	
-	// escape call template if not available by vendor
-	public function escape(string $str) 
-	{
-		if ( !isset($str) ) 
-			return '';
-		if ( \is_numeric($str) ) 
-			return $str;
-
-        $nonDisplayable = array(
-			'/%0[0-8bcef]/',            // url encoded 00-08, 11, 12, 14, 15
-			'/%1[0-9a-f]/',             // url encoded 16-31
-			'/[\x00-\x08]/',            // 00-08
-			'/\x0b/',                   // 11
-			'/\x0c/',                   // 12
-			'/[\x0e-\x1f]/'             // 14-31
-		);
-                
-        foreach ( $nonDisplayable as $regex )
-			$str = \preg_replace( $regex, '', $str);
-
-        $search = array("\\",  "\x00", "\n",  "\r",  "'",  '"', "\x1a");
-        $replace = array("\\\\","\\0","\\n", "\\r", "\'", '\"', "\\Z");
-
-        return \str_replace($search, $replace, $str);
-	}        
 } // ezsqlModel

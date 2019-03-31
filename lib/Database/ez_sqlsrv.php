@@ -32,13 +32,11 @@ class ez_sqlsrv extends ezsqlModel implements DatabaseInterface
         -11 => 'uniqueidentifier', -3 => 'varbinary', 12 => 'varchar', -152 => 'xml',
     );
 
-    protected $preparedValues = array();
-
     private static $isSecure = false;
 
     /**
     * Database connection handle 
-    * @var connection instance
+    * @var resource
     */
     private $dbh;
 
@@ -50,7 +48,7 @@ class ez_sqlsrv extends ezsqlModel implements DatabaseInterface
 
     /**
      * Database configuration setting
-     * @var Configuration instance
+     * @var ConfigInterface
      */
     private $database;
 
@@ -258,6 +256,7 @@ class ez_sqlsrv extends ezsqlModel implements DatabaseInterface
             // Take note of column info
             $i = 0;
             foreach (@\sqlsrv_field_metadata($this->result) as $field) {
+                $col = [];
                 foreach ($field as $name => $value) {
                     $name = \strtolower($name);
                     if ($name == "size") {
@@ -267,7 +266,7 @@ class ez_sqlsrv extends ezsqlModel implements DatabaseInterface
                     }
 
                     //DEFINED FOR E_STRICT
-                    $col = new \StdClass();
+                    $col = new \stdClass();
                     $col->{$name} = $value;
                 }
 

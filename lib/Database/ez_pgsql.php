@@ -22,14 +22,12 @@ class ez_pgsql extends ezsqlModel implements DatabaseInterface
         5 => 'Unexpected error while trying to select database',
     );
 
-    protected $preparedValues = array();
-
     private static $isSecure = false;
     private static $secure = null;
 
     /**
     * Database connection handle 
-    * @var connection instance
+    * @var resource
     */
     private $dbh;
 
@@ -41,7 +39,7 @@ class ez_pgsql extends ezsqlModel implements DatabaseInterface
 
     /**
      * Database configuration setting
-     * @var Configuration instance
+     * @var ConfigInterface
      */
     private $database;
 
@@ -85,7 +83,7 @@ class ez_pgsql extends ezsqlModel implements DatabaseInterface
      */
     public function quick_connect($user = '', $password = '', $name = '', $host = 'localhost', $port = '5432')
     {
-        if (!$this->connect($user, $password, $name, $host, $port, true));
+        if (!$this->connect($user, $password, $name, $host, $port));
         return $this->_connected;
     } // quick_connect
 

@@ -56,7 +56,7 @@ class ezResultset implements \Iterator
             throw new \Exception("$query_result is not valid.");
         }
         $this->_resultset = $query_result;
-        $this->position = 0;
+        $this->_position = 0;
     } // __construct
 
     /**
@@ -72,7 +72,7 @@ class ezResultset implements \Iterator
      * default mode, or as array as {field name} => {field value}.
      * @param string $mode Return the current row as array, or object
      *                      Default is RESULT_AS_OBJECT
-     * @return stdClass/array
+     * @return \stdClass|array
      */
     public function current($mode=self::RESULT_AS_OBJECT) 
     {

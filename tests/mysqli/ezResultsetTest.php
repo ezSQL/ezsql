@@ -1,6 +1,6 @@
 <?php
 
-namespace ezsql\Tests;
+namespace ezsql\Tests\mysqli;
 
 use ezsql\ezResultset;
 use ezsql\Tests\EZTestCase;
@@ -14,7 +14,7 @@ class ezResultsetTest extends EZTestCase
     
     /**
      * database connection
-     * @var database
+     * @var resource
      */
     protected $database = null;
 

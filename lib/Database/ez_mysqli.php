@@ -23,14 +23,12 @@ class ez_mysqli extends ezsqlModel implements DatabaseInterface
             5 => 'Unexpected error while trying to select database'
         );
     
-    protected $preparedValues = array();
-
     private static $isSecure = false;
     private static $secure = null;
 
     /**
     * Database connection handle 
-    * @var connection instance
+    * @var resource
     */
     private $dbh;
 
@@ -42,7 +40,7 @@ class ez_mysqli extends ezsqlModel implements DatabaseInterface
 
     /**
      * Database configuration setting 
-     * @var Configuration instance
+     * @var ConfigInterface
      */
     private $database;
 
@@ -222,9 +220,9 @@ class ez_mysqli extends ezsqlModel implements DatabaseInterface
     
     /**
      * Helper fetches rows from a prepared result set 
-     * @param mysqli_stmt $stmt 
+     * @param \mysqli_stmt $stmt 
      * @param string $query
-     * @return bool|mysqli_result
+     * @return bool|\mysqli_result
      */
     private function fetch_prepared_result(&$stmt, $query) 
     {   
@@ -291,7 +289,7 @@ class ez_mysqli extends ezsqlModel implements DatabaseInterface
      * {@link mysqli_stmt}.
      * @param string $query
      * @param array $param
-     * @return bool|mysqli_result
+     * @return bool|\mysqli_result
      */
     public function query_prepared(string $query, array $param = null)
     {

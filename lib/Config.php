@@ -18,7 +18,7 @@ use ezsql\ConfigInterface;
 * @method void setCharset($args);
 * @method void setOptions($args);
 * @method void setIsFile($args);
-* @method void setToMysql($args);
+* @method void setToMssql($args);
 * @method void setPath($args);
 *
 * @method string getDriver();
@@ -31,7 +31,7 @@ use ezsql\ConfigInterface;
 * @method string getCharset();
 * @method string getOptions();
 * @method bool getIsFile();
-* @method bool getToMysql();
+* @method bool getToMssql();
 * @method string getPath();
 */
 class Config extends ConfigAbstract implements ConfigInterface

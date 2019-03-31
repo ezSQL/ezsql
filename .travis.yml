@@ -30,7 +30,8 @@ after_success:
 
 # Commands you want to run that will verify your build.
 script: 
-  - phpunit --coverage-clover=coverage.xml
+  - vendor/bin/phpunit --coverage-clover=coverage.xml
+  - vendor/bin/phpstan analyse lib tests --level=1
 
 # allow_failures: Allow this build to fail under the specified environments.
 # fast_finish: If your build fails do not continue trying to build, just stop.

@@ -1,6 +1,6 @@
 <?php
 
-namespace ezsql\Tests;
+namespace ezsql\Tests\postgresql;
 
 use ezsql\Database;
 use ezsql\Database\ez_pgsql;
@@ -259,6 +259,6 @@ class postgresqlTest extends EZTestCase
      */
     public function test__Construct() { 
         $this->expectExceptionMessageRegExp('/[Missing configuration details]/');
-        $this->assertNull(new ez_pgsql);
+        $this->assertNull(new ez_pgsql('bad'));
     } 
 } // ezsql\Database\ez_pgsqlTest

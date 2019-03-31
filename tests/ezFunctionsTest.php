@@ -216,7 +216,7 @@ class ezFunctionsTest extends EZTestCase
      * @test insert
      */    
     public function testinsert() {
-        $this->assertFalse(insert('field', 'data', 'data2'));
+        $this->assertFalse(insert('field', ['data' => 'data2']));
     } 
 
     /**
@@ -237,6 +237,6 @@ class ezFunctionsTest extends EZTestCase
      * @test replace
      */        
     public function testreplace() {
-        $this->assertFalse(replace('field', 'data', 'data2'));
+        $this->assertFalse(replace('field', ['data' => 'data2']));
     }  
 } //

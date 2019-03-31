@@ -1,9 +1,8 @@
 <?php
 
-namespace ezsql\Tests;
+namespace ezsql\Tests\pdo;
 
 use ezsql\Database;
-use ezsql\Database\ez_pdo;
 use ezsql\Tests\EZTestCase;
 
 class pdo_pgsqlTest extends EZTestCase 
@@ -19,7 +18,7 @@ class pdo_pgsqlTest extends EZTestCase
     const TEST_SQLITE_DB = 'ez_test.sqlite';
 
     /**
-     * @var ez_pdo
+     * @var resource
      */
     protected $object;
 
@@ -214,13 +213,5 @@ class pdo_pgsqlTest extends EZTestCase
         $this->object->disconnect();
 
         $this->assertFalse($this->object->isConnected());
-    } // testPosgreSQLDisconnect
-    
-    /**
-     * @covers ezsql\Database\ez_pdo::__construct
-     */
-    public function test__Construct() {
-        $this->expectExceptionMessageRegExp('/[Missing configuration details]/');
-        $this->assertNull(new ez_pdo);
-    }
+    } // testPosgreSQLDisconnect    
 } // ezsql\Database\ez_pdoTest
