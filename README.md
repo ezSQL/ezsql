@@ -1,8 +1,8 @@
 ezSQL
 =====
-[![Build Status](https://travis-ci.org/ezSQL/ezSQL.svg?branch=master)](https://travis-ci.org/ezSQL/ezSQL)
+[![Build Status](https://travis-ci.org/ezSQL/ezsql.svg?branch=v3)](https://travis-ci.org/ezSQL/ezsql)
 [![Build status](https://ci.appveyor.com/api/projects/status/6s8oqnoxa2i5k04f?svg=true)](https://ci.appveyor.com/project/jv2222/ezsql)
-[![codecov](https://codecov.io/gh/ezSQL/ezSQL/branch/master/graph/badge.svg)](https://codecov.io/gh/ezSQL/ezSQL)
+[![codecov](https://codecov.io/gh/ezSQL/ezSQL/branch/v3/graph/badge.svg)](https://codecov.io/gh/ezSQL/ezSQL)
 [![Maintainability](https://api.codeclimate.com/v1/badges/0071eb99ab4f5ac5b1f2/maintainability)](https://codeclimate.com/github/ezSQL/ezSQL/maintainability)
 
 Installation
