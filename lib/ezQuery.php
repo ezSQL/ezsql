@@ -479,7 +479,7 @@ class ezQuery implements ezQueryInterface
             $sql .= $where;
             if ($getSelect_result) 
                 return (($this->isPrepareOn()) && !empty($this->prepareValues())) 
-                    ? $this->get_results($sql, OBJECT, true) 
+                    ? $this->get_results($sql, \OBJECT, true) 
                     : $this->get_results($sql);     
             return $sql;
         }

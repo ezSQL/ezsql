@@ -1,6 +1,15 @@
 <?php
 
 if (!\defined('CONSTANTS')) {
+    
+    /**
+    * ezsqlModel Constants
+    */
+    \defined('EZSQL_VERSION') or \define('EZSQL_VERSION', '4.0.0');
+    \defined('OBJECT') or \define('OBJECT', 'OBJECT');
+    \defined('ARRAY_A') or \define('ARRAY_A', 'ARRAY_A');
+    \defined('ARRAY_N') or \define('ARRAY_N', 'ARRAY_N');
+
     // Error messages
     \define('MISSING_CONFIGURATION', '<b>Fatal Error:</b> Missing configuration details to connect to database');
     \define('CONFIGURATION_REQUIRES', '<b>Fatal Error:</b> This configuration requires ezsqlModel (ezsqlModel.php) to be included/loaded before it can be used');
