@@ -2,3 +2,7 @@
 *.xml
 *.lock
 vendor
+.phpunit.result.cache
+build
+tests/sqlite/ez_test.sqlite3
+tmp
