@@ -6,3 +6,4 @@ vendor
 build
 tests/sqlite/ez_test.sqlite3
 tmp
+composer.lock
