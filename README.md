@@ -63,6 +63,21 @@ ___Shortcut Table Methods___
     create(string $table = null, ...$schemas);// $schemas requires... column()
     column(string $column = null, string $type = null, ...$args);
     drop(string $table);
+Example
+
+```php
+// Creates an database table
+create('abc_db',
+    // and with database column name, datatype
+    // data types are global CONSTANTS
+    // SEQUENCE|AUTO is placeholder tag, to be replaced with the proper SQL drivers auto number sequencer word.
+    column('id', INTR, 11, AUTO, PRIMARY), // mysqli
+    column('name', VARCHAR, 50, notNULL),
+    column('email', CHAR, 25, NULLS),
+    column('phone', TINYINT)
+);
+```
+
 ---
 
     innerJoin(string $leftTable = null, string $rightTable = null,
@@ -101,9 +116,39 @@ prepareOff(); // When off shortcut SQL Methods calls will use vendors escape rou
 * `insert(string $table = null, $keyAndValue);`
 * `insert_select(string $toTable = null, $toColumns = '*', $fromTable = null, $fromColumns = '*', ...$fromWhere);`
 
----
+```php
+// Supply the the whole query string, and placing '?' within
+// With the same number of arguments in an array.
+// It will determine arguments type, execute, and return results.
+query_prepared(string $query_string, array $param_array);
+```
 
-    query_prepared(string $query_string, array $param_array);
+#### An Example for using prepare statements indirectly, with above shortcut SQL methods
+
+```php
+// To get all shortcut SQL methods calls to use prepare statements
+$db->prepareOn(); // This needs to be called at least once at instance creation
+
+$values = [];
+$values['name'] = $user;
+$values['email'] = $address;
+$values['phone'] = $number;
+$db->insert('abc_db', $values);
+
+$result = $db->selecting('abc_db', 'phone',
+    eq('email', $email, _AND), neq('id', 1)
+);
+
+foreach ($result as $row) {
+    echo $row->phone);
+}
+```
+
+#### An Example for using prepare statements directly, no shortcut SQL methods used
+
+```php
+$db->query_prepared('INSERT INTO abc_db( name, email, phone) VALUES( ?, ?, ? )', [$user, $address, $number]);
+```
 
 ## For Authors and **[Contributors](https://github.com/ezSQL/ezsql/blob/master/CONTRIBUTORS.md)**
 
