@@ -123,7 +123,7 @@ prepareOff(); // When off shortcut SQL Methods calls will use vendors escape rou
 query_prepared(string $query_string, array $param_array);
 ```
 
-#### An Example for using prepare statements indirectly, with above shortcut SQL methods
+#### Example for using prepare statements indirectly, with above shortcut SQL methods
 
 ```php
 // To get all shortcut SQL methods calls to use prepare statements
@@ -134,17 +134,48 @@ $values['name'] = $user;
 $values['email'] = $address;
 $values['phone'] = $number;
 $db->insert('abc_db', $values);
+$db->insert('abc_db', ['name' => 'john john', 'email' => 'john@email', 'phone' => 123456]);
 
+// returns result set given the table name, column fields, and ...conditionals
 $result = $db->selecting('abc_db', 'phone',
+    // ...conditionals are comparison operators($column, $value, _COMBINE_EXPRESSION_CONSTANTS)
+    // these operators are functions returning arrays:
+    //      eq(), neq(), ne(), lt(), lte(),
+    //      gt(), gte(), isNull(), isNotNull(),
+    //      like(), notLike(), in(), notIn(), between(), notBetween(),
+    // _COMBINE_EXPRESSION_CONSTANTS:
+    //      _AND, _OR, _NOT, _andNOT
     eq('email', $email, _AND), neq('id', 1)
 );
 
 foreach ($result as $row) {
     echo $row->phone);
 }
+
+$result = $db->selecting('abc_db', 'name, email',
+    // Conditionals can also be called, stacked with other functions like:
+    //  innerJoin(), leftJoin(), rightJoin(), fullJoin()
+    //      as (leftTable, rightTable, leftColumn, rightColumn, equal condition),
+    //  where( eq( columns, values, _AND ), like( columns, _d ) ),
+    //  groupBy( columns ),
+    //  having( between( columns, values1, values2 ) ),
+    //  orderBy( columns, desc ),
+    //  limit( numberOfRecords, offset ),
+    //  union(table, columnFields, conditions),
+    //  unionAll(table, columnFields, conditions)
+    $db->where( eq('phone', $number, _OR), neq('id', 5) ),
+    //  another way: where( array(key, operator, value, combine, combineShifted) );
+    //  or as strings double spaced: where( "key  operator  value  combine  combineShifted" );
+    $db->orderBy('name'),
+    $db->limit(1)
+);
+
+foreach ($result as $row) {
+    echo $row->name.' '.$row->email);
+}
 ```
 
-#### An Example for using prepare statements directly, no shortcut SQL methods used
+#### Example for using prepare statements directly, no shortcut SQL methods used
 
 ```php
 $db->query_prepared('INSERT INTO abc_db( name, email, phone) VALUES( ?, ?, ? )', [$user, $address, $number]);
