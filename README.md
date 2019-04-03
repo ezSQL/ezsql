@@ -67,7 +67,7 @@ Example
 
 ```php
 // Creates an database table
-create('abc_db',
+create('profile',
     // and with database column name, datatype
     // data types are global CONSTANTS
     // SEQUENCE|AUTO is placeholder tag, to be replaced with the proper SQL drivers auto number sequencer word.
@@ -121,6 +121,8 @@ prepareOff(); // When off shortcut SQL Methods calls will use vendors escape rou
 // With the same number of arguments in an array.
 // It will determine arguments type, execute, and return results.
 query_prepared(string $query_string, array $param_array);
+// Will need to call to get last successful query result, will return an object array
+queryResult();
 ```
 
 #### Example for using prepare statements indirectly, with above shortcut SQL methods
@@ -133,11 +135,11 @@ $values = [];
 $values['name'] = $user;
 $values['email'] = $address;
 $values['phone'] = $number;
-$db->insert('abc_db', $values);
-$db->insert('abc_db', ['name' => 'john john', 'email' => 'john@email', 'phone' => 123456]);
+$db->insert('profile', $values);
+$db->insert('profile', ['name' => 'john john', 'email' => 'john@email', 'phone' => 123456]);
 
 // returns result set given the table name, column fields, and ...conditionals
-$result = $db->selecting('abc_db', 'phone',
+$result = $db->selecting('profile', 'phone',
     // ...conditionals are comparison operators($column, $value, _COMBINE_EXPRESSION_CONSTANTS)
     // these operators are functions returning arrays:
     //      eq(), neq(), ne(), lt(), lte(),
@@ -152,7 +154,7 @@ foreach ($result as $row) {
     echo $row->phone);
 }
 
-$result = $db->selecting('abc_db', 'name, email',
+$result = $db->selecting('profile', 'name, email',
     // Conditionals can also be called, stacked with other functions like:
     //  innerJoin(), leftJoin(), rightJoin(), fullJoin()
     //      as (leftTable, rightTable, leftColumn, rightColumn, equal condition),
@@ -178,7 +180,14 @@ foreach ($result as $row) {
 #### Example for using prepare statements directly, no shortcut SQL methods used
 
 ```php
-$db->query_prepared('INSERT INTO abc_db( name, email, phone) VALUES( ?, ?, ? )', [$user, $address, $number]);
+$db->query_prepared('INSERT INTO profile( name, email, phone) VALUES( ?, ?, ? );', [$user, $address, $number]);
+
+$db->query_prepared('SELECT name, email FROM profile WHERE phone = ? OR id != ?', [$number, 5]);
+$result = $db->queryResult(); // the last query that has results are stored in `last_result` protected property
+
+foreach ($result as $row) {
+    echo $row->name.' '.$row->email);
+}
 ```
 
 ## For Authors and **[Contributors](https://github.com/ezSQL/ezsql/blob/master/CONTRIBUTORS.md)**

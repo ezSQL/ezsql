@@ -626,12 +626,12 @@ class ezsqlModel extends ezQuery implements ezsqlModelInterface
 	}
 	
 	/**
-	* Function for operating query count
-	*
-	* @param bool $all Set to false for function to return queries only during this connection
-	* @param bool $increase Set to true to increase query count (internal usage)
-	* @return int Returns query count base on $all
-	*/
+	 * Function for operating query count
+	 *
+	 * @param bool $all Set to false for function to return queries only during this connection
+	 * @param bool $increase Set to true to increase query count (internal usage)
+	 * @return int Returns query count base on $all
+	 */
 	public function count($all = true, $increase = false) 
 	{
 		if ($increase) {
@@ -642,23 +642,33 @@ class ezsqlModel extends ezQuery implements ezsqlModelInterface
 		return ($all) ? $this->num_queries : $this->conn_queries;
 	}
 
-    /**
-     * Returns, whether a database connection is established, or not
-     *
-     * @return boolean
-     */
+    	/**
+      * Returns, whether a database connection is established, or not
+      *
+      * @return boolean
+      */
 	public function isConnected() 
 	{
         return $this->_connected;
-    } // isConnected
+     } // isConnected
 
-    /**
-     * Returns the affected rows of a query
-     * 
-     * @return int
-     */
+    	/**
+      * Returns the affected rows of a query
+      * 
+      * @return int
+      */
 	public function affectedRows() 
 	{
         return $this->_affectedRows;
-    } // affectedRows
+	} // affectedRows
+
+    	/**
+      * Returns the last query result
+      * 
+      * @return array
+      */
+	public function queryResult() 
+	{
+        return $this->last_result;
+	}
 } // ezsqlModel
