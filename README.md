@@ -67,7 +67,7 @@ Example
 
 ```php
 // Creates an database table
-create('abc_db',
+create('profile',
     // and with database column name, datatype
     // data types are global CONSTANTS
     // SEQUENCE|AUTO is placeholder tag, to be replaced with the proper SQL drivers auto number sequencer word.
@@ -133,11 +133,11 @@ $values = [];
 $values['name'] = $user;
 $values['email'] = $address;
 $values['phone'] = $number;
-$db->insert('abc_db', $values);
-$db->insert('abc_db', ['name' => 'john john', 'email' => 'john@email', 'phone' => 123456]);
+$db->insert('profile', $values);
+$db->insert('profile', ['name' => 'john john', 'email' => 'john@email', 'phone' => 123456]);
 
 // returns result set given the table name, column fields, and ...conditionals
-$result = $db->selecting('abc_db', 'phone',
+$result = $db->selecting('profile', 'phone',
     // ...conditionals are comparison operators($column, $value, _COMBINE_EXPRESSION_CONSTANTS)
     // these operators are functions returning arrays:
     //      eq(), neq(), ne(), lt(), lte(),
@@ -152,7 +152,7 @@ foreach ($result as $row) {
     echo $row->phone);
 }
 
-$result = $db->selecting('abc_db', 'name, email',
+$result = $db->selecting('profile', 'name, email',
     // Conditionals can also be called, stacked with other functions like:
     //  innerJoin(), leftJoin(), rightJoin(), fullJoin()
     //      as (leftTable, rightTable, leftColumn, rightColumn, equal condition),
@@ -178,7 +178,7 @@ foreach ($result as $row) {
 #### Example for using prepare statements directly, no shortcut SQL methods used
 
 ```php
-$db->query_prepared('INSERT INTO abc_db( name, email, phone) VALUES( ?, ?, ? )', [$user, $address, $number]);
+$db->query_prepared('INSERT INTO profile( name, email, phone) VALUES( ?, ?, ? )', [$user, $address, $number]);
 ```
 
 ## For Authors and **[Contributors](https://github.com/ezSQL/ezsql/blob/master/CONTRIBUTORS.md)**
