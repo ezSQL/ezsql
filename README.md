@@ -121,6 +121,8 @@ prepareOff(); // When off shortcut SQL Methods calls will use vendors escape rou
 // With the same number of arguments in an array.
 // It will determine arguments type, execute, and return results.
 query_prepared(string $query_string, array $param_array);
+// Will need to call to get last successful query result, will return an object array
+queryResult();
 ```
 
 #### Example for using prepare statements indirectly, with above shortcut SQL methods
@@ -178,7 +180,14 @@ foreach ($result as $row) {
 #### Example for using prepare statements directly, no shortcut SQL methods used
 
 ```php
-$db->query_prepared('INSERT INTO profile( name, email, phone) VALUES( ?, ?, ? )', [$user, $address, $number]);
+$db->query_prepared('INSERT INTO profile( name, email, phone) VALUES( ?, ?, ? );', [$user, $address, $number]);
+
+$db->query_prepared('SELECT name, email FROM profile WHERE phone = ? OR id != ?', [$number, 5]);
+$result = $db->queryResult(); // the last query that has results are stored in `last_result` protected property
+
+foreach ($result as $row) {
+    echo $row->name.' '.$row->email);
+}
 ```
 
 ## For Authors and **[Contributors](https://github.com/ezSQL/ezsql/blob/master/CONTRIBUTORS.md)**
