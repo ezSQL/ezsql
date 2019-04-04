@@ -151,7 +151,7 @@ $result = $db->selecting('profile', 'phone',
 );
 
 foreach ($result as $row) {
-    echo $row->phone);
+    echo $row->phone;
 }
 
 $result = $db->selecting('profile', 'name, email',
@@ -173,7 +173,7 @@ $result = $db->selecting('profile', 'name, email',
 );
 
 foreach ($result as $row) {
-    echo $row->name.' '.$row->email);
+    echo $row->name.' '.$row->email;
 }
 ```
 
@@ -186,7 +186,7 @@ $db->query_prepared('SELECT name, email FROM profile WHERE phone = ? OR id != ?'
 $result = $db->queryResult(); // the last query that has results are stored in `last_result` protected property
 
 foreach ($result as $row) {
-    echo $row->name.' '.$row->email);
+    echo $row->name.' '.$row->email;
 }
 ```
 
