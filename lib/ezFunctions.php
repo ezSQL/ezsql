@@ -83,12 +83,12 @@ if (!function_exists('ezFunctions')) {
         return \column(\INDEX, $indexName, ...$indexKeys);
     }
 
-    function add(string $columnName, ...$datatype)
+    function addColumn(string $columnName, ...$datatype)
     {
         return \column(\ADD, $columnName, ...$datatype);
     }
 
-    function drop(string $columnName, ...$data)
+    function dropColumn(string $columnName, ...$data)
     {
         return \column(\DROP, $columnName, ...$data);
     }

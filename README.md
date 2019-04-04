@@ -190,6 +190,8 @@ foreach ($result as $row) {
 }
 ```
 
+>Note: `query_prepared()` example works correctly for MySQL, the other drivers will return full query result statement. Will not be stored in `last_result`.
+
 ## For Authors and **[Contributors](https://github.com/ezSQL/ezsql/blob/master/CONTRIBUTORS.md)**
 
 ## Contributing

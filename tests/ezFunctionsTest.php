@@ -12,9 +12,81 @@ class ezFunctionsTest extends EZTestCase
     }
 
     /**
+     * @test getInstance 
+     */
+    public function testGetInstance()
+    {
+        $this->assertNull(getInstance());
+    }
+    
+    /**
+     * @test getVendor 
+     */
+    public function testGetVendor()
+    {
+        $this->assertNull(getVendor());
+    }
+
+    /**
+     * @test column 
+     */
+    public function testColumn()
+    {
+        $this->assertFalse(column('string', VARCHAR, 32));
+    }
+    
+    /**
+     * @test primary 
+     */
+    public function testPrimary()
+    {
+        $this->assertFalse(primary('label', 'column'));
+    }
+
+    /**
+     * @test foreign 
+     */
+    public function testForeign()
+    {
+        $this->assertFalse(foreign('label', 'column'));
+    }
+
+    /**
+     * @test unique 
+     */
+    public function testUnique()
+    {
+        $this->assertFalse(unique('label', 'column'));
+    }
+
+    /**
+     * @test index 
+     */
+    public function testIndex()
+    {
+        $this->assertFalse(index('label', 'column'));
+    }
+
+    /**
+     * @test addColumn 
+     */
+    public function testAddColumn()
+    {
+        $this->assertFalse(addColumn('column', VARCHAR, 32));
+    }
+
+    /**
+     * @test dropColumn 
+     */
+    public function testDropColumn()
+    {
+        $this->assertFalse(dropColumn('column', 'column'));
+    }
+
+    /**
      * @test eq 
      */
-    public function testeq()
+    public function testEq()
     {
         $this->assertInternalType('array',eq('field', 'data'));
         $this->assertArraySubset([1 => EQ], eq('field', 'data'));

@@ -515,8 +515,18 @@ class mysqliTest extends EZTestCase
                 column('prepare_key', VARCHAR, 50))
         );
 
-        $result = $this->object->query_prepared('INSERT INTO unit_test( id, prepare_key ) VALUES( 9, ? )', ['test 1']);
+        $result = $this->object->query_prepared('INSERT INTO unit_test( id, prepare_key ) VALUES( ?, ? )', [ 9, 'test 1']);
         $this->assertEquals(1, $result);
+
+        $this->object->query_prepared('SELECT prepare_key FROM unit_test WHERE id = ?', [9]);
+        $query = $this->object->queryResult();
+        
+        foreach($query as $row) {
+            $result = $row->prepare_key;
+        }
+
+        $this->assertEquals('test 1', $this->object->queryResult()[0]->prepare_key);
+        $this->assertEquals('test 1', $result);
     } // testQuery_prepared
        
     /**
