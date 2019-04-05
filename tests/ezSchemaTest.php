@@ -37,6 +37,72 @@ class ezSchemaTest extends EZTestCase
     }
 
     /**
+    * @covers ezsql\ezSchema::datatype
+    */
+    public function testDatatype_mysqli()
+    {
+        if (!extension_loaded('mysqli')) {
+            $this->markTestSkipped(
+              'The MySQLi extension is not available.'
+            );
+        }
+
+        $db = mysqlInstance([self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME]);
+        $result = $db->create('profile',
+            'id '. ezSchema::datatype(INTR, 11, PRIMARY). ', ',
+            'name '.ezSchema::datatype(VARCHAR, 256, notNULL). ', '
+        );
+
+        $this->assertEquals(0, $result);
+        $db->drop('profile');
+    }
+
+    /**
+    * @covers ezsql\ezSchema::column
+    */
+    public function testColumn()
+    {
+        if (!extension_loaded('mysqli')) {
+            $this->markTestSkipped(
+              'The MySQLi extension is not available.'
+            );
+        }
+
+        $db = mysqlInstance([self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME]);
+        $result = $db->create('profile',
+            column('id', INTR, 32, AUTO, PRIMARY),
+            column('name', CHAR, 32, notNULL)
+        );
+
+        $this->assertEquals(0, $result);
+        $db->drop('profile');
+    }
+
+    /**
+    * @covers ezsql\ezSchema::__call
+    */
+    public function test__call()
+    {
+        if (!extension_loaded('mysqli')) {
+            $this->markTestSkipped(
+              'The MySQLi extension is not available.'
+            );
+        }
+
+        $db = mysqlInstance([self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME]);
+        $result = $db->create('profile',
+            column('id', INTR, 32, AUTO, PRIMARY),
+            column('name', VARCHAR, 256, notNULL), 
+            column('price', NUMERIC, 6,2), 
+            column('date', TIMESTAMP, notNULL), 
+            column('pics', BLOB, NULLS)
+        );
+
+        $this->assertEquals(0, $result);
+        $db->drop('profile');
+    }
+
+    /**
     * @covers ezsql\ezSchema::vendor
     */
     public function testVendor_Pgsql()
