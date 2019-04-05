@@ -36,5 +36,5 @@ interface ConfigInterface
      * @param string $driver
      * @param string|array $arguments
      */
-    public static function initialize(string $driver = '', $arguments = null);
+    public static function initialize(string $driver = '', array $arguments = null);
 }

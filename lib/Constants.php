@@ -88,49 +88,6 @@ if (!\defined('CONSTANTS')) {
     \define('SQLSERVER', 'sqlsrv');
     \define('MSSQL', 'sqlsrv');
 
-    \define('ALLOWED_KEYS', [
-        'host',
-        'hostname',
-        'user',
-        'username',
-        'password',
-        'database',
-        'db',
-        'name',
-        'dsn',
-        'char',
-        'charset',
-        'path',
-        'port',
-        'file',
-        'filebase',
-        'tosql',
-        'tomssql',
-        'options'
-    ]);
-        
-    \define('KEY_MAP', [
-        'host' => 'host',
-        'hostname' => 'host',
-        'user' => 'user',
-        'username' => 'user',
-        'pass' => 'password',
-        'password' => 'password',
-        'database' => 'name',
-        'db' => 'name',
-        'name' => 'name',
-        'dsn' => 'dsn',
-        'char' => 'charset',
-        'charset' => 'charset',
-        'path' => 'path',
-        'port' => 'port',
-        'file' => 'isFile',
-        'filebase' => 'isFile',
-        'tosql' => 'toMssql',
-        'tomssql' => 'toMssql',
-        'options' => 'options'
-    ]);
-
     // String SQL data types
     \define('CHAR', 'CHAR');
     \define('VARCHAR', 'VARCHAR');
