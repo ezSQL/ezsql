@@ -1,6 +1,6 @@
 # **ezsql**
 
-[![Build Status](https://travis-ci.org/ezSQL/ezsql.svg?branch=master)](https://travis-ci.org/ezSQL/ezsql)[![Build status](https://ci.appveyor.com/api/projects/status/6s8oqnoxa2i5k04f?svg=true)](https://ci.appveyor.com/project/jv2222/ezsql)[![codecov](https://codecov.io/gh/ezSQL/ezSQL/branch/master/graph/badge.svg)](https://codecov.io/gh/ezSQL/ezSQL)[![Codacy Badge](https://api.codacy.com/project/badge/Grade/aad1f6aaaaa14f60933e75615da900b8)](https://www.codacy.com/app/techno-express/ezsql?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=ezSQL/ezsql&amp;utm_campaign=Badge_Grade)
+[![Build Status](https://travis-ci.org/ezSQL/ezsql.svg?branch=master)](https://travis-ci.org/ezSQL/ezsql)[![Build status](https://ci.appveyor.com/api/projects/status/6s8oqnoxa2i5k04f?svg=true)](https://ci.appveyor.com/project/jv2222/ezsql)[![codecov](https://codecov.io/gh/ezSQL/ezSQL/branch/master/graph/badge.svg)](https://codecov.io/gh/ezSQL/ezSQL)[![Codacy Badge](https://api.codacy.com/project/badge/Grade/aad1f6aaaaa14f60933e75615da900b8)](https://www.codacy.com/app/techno-express/ezsql?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=ezSQL/ezsql&amp;utm_campaign=Badge_Grade)[![Maintainability](https://api.codeclimate.com/v1/badges/6f6107f25e9de7bf4272/maintainability)](https://codeclimate.com/github/ezSQL/ezsql/maintainability)
 
 ***A class to make it very easy to deal with database connections.***
 
