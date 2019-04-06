@@ -45,13 +45,13 @@ class Config extends ConfigAbstract implements ConfigInterface
             $this->setDriver($sql);
             if ($sql == \Pdo) {
                 $this->setupPdo($arguments);            
-            } elseif (($sql == \POSTGRESQL) || ($sql == \PGSQL)) {
+            } elseif ($sql == \POSTGRESQL) {
                 $this->setupPgsql($arguments);
-            } elseif (($sql == \SQLSRV) || ($sql == \MSSQL) || ($sql == \SQLSERVER)) {
+            } elseif ($sql == \SQLSRV) {
                 $this->setupSqlsrv($arguments);
-            } elseif (($sql == \MYSQLI) || ($sql == \MYSQL)) {
+            } elseif ($sql == \MYSQLI) {
                 $this->setupMysqli($arguments);
-            } elseif (($sql == \SQLITE3) || ($sql == \SQLITE)) {
+            } elseif ($sql == \SQLITE3) {
                 $this->setupSqlite3($arguments);
             }
         }
