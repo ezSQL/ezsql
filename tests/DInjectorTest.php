@@ -16,18 +16,18 @@ use ezsql\Tests\Foo;
 class DInjectorTest extends EZTestCase 
 {		
     /**
-    * @covers ezsql\DInjector::Set
+    * @covers ezsql\DInjector::set
     */
     public function testSet()
     {    
         $container = new DInjector();
         $this->assertTrue($container instanceof ContainerInterface);
-        $container->set('Baz', 'Baz');
+        $container->set('Baz');
         $this->assertTrue($container->has('Baz'));
     }
 
     /**
-    * @covers ezsql\DInjector::Has
+    * @covers ezsql\DInjector::has
     */
     public function testHas()
     {    
@@ -38,7 +38,7 @@ class DInjectorTest extends EZTestCase
     }
 
     /**
-    * @covers ezsql\DInjector::AutoWire
+    * @covers ezsql\DInjector::autoWire
     */
     public function testAutoWire()
     {    
@@ -50,9 +50,6 @@ class DInjectorTest extends EZTestCase
         $this->assertTrue($baz->foo instanceof Foo);
     }
 
-    /**
-    * @covers ezsql\DInjector::AutoWire
-    */
     public function testAutoWire_Exception()
     {    
         $container = new DInjector();
@@ -60,9 +57,6 @@ class DInjectorTest extends EZTestCase
         $baz = $container->autoWire('Baz');
     }
 
-    /**
-    * @covers ezsql\DInjector::AutoWire
-    */
     public function testAutoWire_Error()
     {    
         $container = new DInjector();
@@ -72,7 +66,7 @@ class DInjectorTest extends EZTestCase
     }
 
     /**
-    * @covers ezsql\DInjector::Get
+    * @covers ezsql\DInjector::get
     */
     public function testGet()
     {    
@@ -84,9 +78,6 @@ class DInjectorTest extends EZTestCase
         $this->assertTrue($baz->foo instanceof Bar);
     }
 
-    /**
-    * @covers ezsql\DInjector::Get
-    */
     public function testGet_Error()
     {    
         $container = new DInjector();

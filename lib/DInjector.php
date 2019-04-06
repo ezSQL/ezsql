@@ -31,35 +31,10 @@ class DInjector implements ContainerInterface
 		if ($concrete === NULL) {
 			$concrete = $abstract;
 		}
+		
 		$this->instances[$abstract] = $concrete;
 	}
-
-	/**
-	 * For compatibility with other containers, same as set()
-	 */
-	public function register($abstract, $concrete = NULL)
-	{
-		$this->set($abstract, $concrete);
-	}
 	
-	/** 
-	 * Execute with any dependencies
-	 * 
-	 * @param $abstract
-	 * @param array $values
-	 *
-	 * @return mixed
-	 * @throws ContainerException
-	 */
-	public function call($abstract, $values = [])
-	{		
-		$concrete = $this->instances[$abstract];
-		if ($concrete instanceof \Closure) {
-			return $concrete($this, $values);
-		} else
-			throw new ContainerException("{$concrete} is not callable");
-	}
-
 	/**
 	 * @param $abstract
 	 *
