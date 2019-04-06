@@ -10,7 +10,7 @@
          stopOnFailure="false">
         
     <testsuites>
-        <testsuite name="ezDBA Test Suite">
+        <testsuite name="ezsql Test Suite">
             <directory suffix=".php">./tests/</directory>
         </testsuite>
     </testsuites>
@@ -24,7 +24,7 @@
                 <directory>./docs</directory>
                 <directory>./tests</directory>
                 <directory>./vendor</directory>
-                <file>./ez_sql_loader.php</file>
+                <file>./lib/Constants.php</file>
             </exclude>
         </whitelist>		
     </filter>
