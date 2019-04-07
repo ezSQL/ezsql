@@ -70,8 +70,10 @@ class ezSchemaTest extends EZTestCase
 
         $db = mysqlInstance([self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME]);
         $result = $db->create('profile',
-            column('id', INTR, 32, AUTO, PRIMARY),
-            column('name', CHAR, 32, notNULL)
+            column('id', INTR, 32, AUTO),
+            column('name', CHAR, 32, notNULL),
+            primary('id_pk', 'id'),
+            index('name_dx', 'name')
         );
 
         $this->assertEquals(0, $result);
@@ -100,6 +102,25 @@ class ezSchemaTest extends EZTestCase
 
         $this->assertEquals(0, $result);
         $db->drop('profile');
+    }
+
+    /**
+    * @covers ezsql\ezSchema::__call
+    */
+    public function test__call_Error()
+    {
+        if (!extension_loaded('mysqli')) {
+            $this->markTestSkipped(
+              'The MySQLi extension is not available.'
+            );
+        }
+
+        clearInstance();
+        $this->assertFalse(column('id', INTR, 32, AUTO, PRIMARY));
+        $db = mysqlInstance([self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME]);
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessageRegExp('/[does not exist]/');
+        $this->assertNull(column('id', 'DOS', 32));
     }
 
     /**
@@ -164,5 +185,13 @@ class ezSchemaTest extends EZTestCase
         $pdo_mysql = pdoInstance(['mysql:host='.self::TEST_DB_HOST.';dbname='.self::TEST_DB_NAME.';port=3306', self::TEST_DB_USER,self::TEST_DB_PASSWORD]);
         $pdo_mysql->connect();
         $this->assertEquals(MYSQLI, getVendor());
+    }
+
+    /**
+    * @covers ezsql\ezSchema::__construct
+    */
+    public function test__construct()
+    {
+        $this->assertNotNull(new ezSchema('test'));
     }
 }

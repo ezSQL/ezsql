@@ -107,50 +107,39 @@ class ezSchema
         $numberPattern = "/".\implode('|', $numberTypes)."/i";
         $dateTimePattern = "/".\implode('|', $dateTimeTypes)."/i";
         $objectPattern = "/".\implode('|', $objectTypes)."/i";
-		
-		$data = null;
-		if (\preg_match($stringPattern, $type)) {
+		      
+		$store = '';
+		$value = '';
+		$options = '';
+		$extra = '';
+        if (\preg_match($stringPattern, $type) 
+            || \preg_match($numberPattern, $type) 
+            || \preg_match($dateTimePattern, $type)
+        ) {
 			// check for string data type
-            $numberOrString = $args[0];
-			$store = \is_int($numberOrString) ? '('.$numberOrString.')' : '';
-			$store = empty($store) && !empty($numberOrString) ? ' '.$numberOrString : $store;
-			$value = !empty($args[1]) ? ' '.$args[1] : '';
-			$options = !empty($args[2]) ? ' '.$args[2] : '';
-			$extra = !empty($args[3]) ? ' '.$args[3] : '';
-			$data = $type.$store.$value.$options.$extra;
-		} elseif (\preg_match($numericPattern, $type)) {
-			// check for numeric data type
-			$size = '('.(!empty($args[0]) ? $args[0] : 10 ).',';
-			$size .= (!empty($args[1]) ? $args[1] : 2 ).')';
-			$value = !empty($args[2]) ? ' '.$args[2] : '';
-			$options = !empty($args[3]) ? $args[3] : '';
-			$extra = !empty($args[4]) ? ' '.$args[4] : '';
-			$data = $type.$size.$value.$options.$extra;
-		} elseif (\preg_match($numberPattern, $type)) {
             // check for whole number data type
-            $numberOrString = $args[0];
-            $store = \is_int($numberOrString) ? '('.$numberOrString.')' : '';
-			$store = empty($store) && !empty($numberOrString) ? ' '.$numberOrString : $store;
-			$value = !empty($args[1]) ? ' '.$args[1] : '';
-			$options = !empty($args[2]) ? ' '.$args[2] : '';
-			$extra = !empty($args[3]) ? ' '.$args[3] : '';
-			$data = $type.$store.$value.$options.$extra;
-        } elseif (\preg_match($dateTimePattern, $type)) {
 			// check for date time data type
             $numberOrString = $args[0];
 			$store = \is_int($numberOrString) ? '('.$numberOrString.')' : '';
-			$fraction = empty($store) && !empty($numberOrString) ? ' '.$numberOrString : $store;
+			$store = empty($store) && !empty($numberOrString) ? ' '.$numberOrString : $store;
 			$value = !empty($args[1]) ? ' '.$args[1] : '';
 			$options = !empty($args[2]) ? ' '.$args[2] : '';
-			$data = $type.$fraction.$value.$options;
+			$extra = !empty($args[3]) ? ' '.$args[3] : '';
+		} elseif (\preg_match($numericPattern, $type)) {
+			// check for numeric data type
+			$store = '('.(!empty($args[0]) ? $args[0] : 10 ).',';
+			$store .= (!empty($args[1]) ? $args[1] : 2 ).')';
+			$value = !empty($args[2]) ? ' '.$args[2] : '';
+			$options = !empty($args[3]) ? $args[3] : '';
+			$extra = !empty($args[4]) ? ' '.$args[4] : '';
         } elseif (\preg_match($objectPattern, $type)) {
 			// check for large object data type
-			$value = !empty($args[0]) ? ' '.$args[0] : ' ';
-			$data = $type.$value;
+			$store = !empty($args[0]) ? ' '.$args[0] : ' ';
         } else {
             throw new \Exception("$type does not exist");
         }
 
+		$data = $type.$store.$value.$options.$extra;
 		return $data;
     }
 
