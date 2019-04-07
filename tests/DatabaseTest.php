@@ -15,6 +15,7 @@ class DatabaseTest extends EZTestCase
 {		
     /**
     * @covers ezsql\Database::Initialize
+    * @covers \setInstance
     */
     public function testInitialize()
     {
@@ -35,6 +36,7 @@ class DatabaseTest extends EZTestCase
 
     /**
     * @covers ezsql\Database::Initialize
+    * @covers \setInstance
     */
     public function testInitialize_Pgsql()
     {
@@ -55,6 +57,7 @@ class DatabaseTest extends EZTestCase
 
     /**
     * @covers ezsql\Database::Initialize
+    * @covers \setInstance
     */
     public function testInitialize_Sqlite3()
     {
@@ -75,6 +78,7 @@ class DatabaseTest extends EZTestCase
 
     /**
     * @covers ezsql\Database::Initialize
+    * @covers \setInstance
     */
     public function testInitialize_Sqlsrv()
     {
@@ -95,6 +99,7 @@ class DatabaseTest extends EZTestCase
 
     /**
     * @covers ezsql\Database::Initialize
+    * @covers \setInstance
     */
     public function testInitialize_Pdo()
     {

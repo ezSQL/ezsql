@@ -32,22 +32,98 @@ class ezQueryTest extends EZTestCase
     } // tearDown
  
     /**
-      * @covers ezsql\ezQuery::Clean
+      * @covers ezsql\ezQuery::clean
      */
     public function testClean()
     {
         $this->assertEquals("' help", $this->object->clean("<?php echo 'foo' >' help</php?>"));
     } 
-         
+
+    /**
+     * @covers ezsql\ezQuery::having
+     */
+    public function testHaving()
+    {
+        $this->assertFalse($this->object->having(''));
+        $this->assertEmpty($this->object->having()); 
+
+        $expect = $this->object->having("other_test  in  testing 1  testing 2  testing 3  testing 4  testing 5");
+
+        $this->assertContains('HAVING', $expect);
+    }
+
     /**
      * @covers ezsql\ezQuery::where
+     * @covers ezsql\ezQuery::isPrepareOn
      */
     public function testWhere()
     {
         $this->assertFalse($this->object->where(''));
-        $this->assertEmpty($this->object->where());
+        $this->assertEmpty($this->object->where()); 
+
+        $expect = $this->object->where("where_test  in  testing 1  testing 2  testing 3  testing 4  testing 5");
+
+        $this->assertContains('WHERE', $expect);
+        $this->assertContains('IN', $expect);
+        $this->assertContains('(', $expect);
+        $this->assertContains('testing 2\'', $expect);
+        $this->assertContains('testing 5', $expect);
+        $this->assertContains(')', $expect);
+        
+        $this->assertContains('AND', $this->object->where(
+            array('where_test', '=', 'testing 1', 'bad'),
+			array('test_like', _LIKE, '_good'))
+        );
+
+        $this->object->prepareOn();  
+        $this->assertContains('__ez__', $this->object->where( eq('where_test', 'testing 1') ));        
+        $this->assertFalse($this->object->where( like('where_test', 'fail') ));        
     }
-     
+
+    /**
+     * @covers ezsql\ezQuery::prepareOn
+     * @covers ezsql\ezQuery::where
+     */
+    public function testPrepareOn()
+    {
+        $this->object->prepareOn();            
+        $expect = $this->object->where(
+            ['where_test', _IN, 'testing 1', 'testing 2', 'testing 3', 'testing 4', 'testing 5']
+        );
+        
+        $this->assertEquals(5, preg_match_all('/__ez__/', $expect));
+    }
+    
+    /**
+     * @covers ezsql\ezQuery::prepareOff
+     */
+    public function testPrepareOff()
+    {
+        $this->object->prepareOff();  
+
+        $this->assertFalse($this->object->where(
+            array('where_test', '=', 'testing 1', 'or'),
+			array('test_like', 'LIKE', ':bad'))
+        );            
+    }
+
+    /**
+     * @covers ezsql\ezQuery::addPrepare
+     * @covers ezsql\ezQuery::isPrepareOn
+     * @covers ezsql\ezQuery::prepareValues
+     */
+    public function testAddPrepare()
+    {
+        $this->object->prepareOn();            
+        $expect = $this->object->where( 
+            eq('where_test', 'testing 1', _AND), 
+            neq('some_key', 'other', _OR),
+            like('other_key', '%any')
+        );
+
+        $this->assertEquals(3, preg_match_all('/__ez__/', $expect));     
+    }     
+
     /**
      * @covers ezsql\ezQuery::delete
      */
@@ -59,6 +135,7 @@ class ezQueryTest extends EZTestCase
        
     /**
      * @covers ezsql\ezQuery::selecting
+     * @covers ezsql\ezQuery::clearPrepare
      */
     public function testSelecting()
     {

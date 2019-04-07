@@ -88,124 +88,124 @@ class ezFunctionsTest extends EZTestCase
      */
     public function testEq()
     {
-        $this->assertInternalType('array',eq('field', 'data'));
+        $this->assertInternalType('array', eq('field', 'data'));
         $this->assertArraySubset([1 => EQ], eq('field', 'data'));
     }
 
     /**
      * @test neq
      */
-    public function testneq()
+    public function testNeq()
     {
-        $this->assertInternalType('array',neq('field', 'data'));
+        $this->assertInternalType('array', neq('field', 'data'));
         $this->assertArraySubset([3 => _AND], neq('field', 'data', _AND));
     }
 
     /**
      * @test ne
      */
-    public function testne()
+    public function testNe()
     {
-        $this->assertInternalType('array',ne('field', 'data'));
+        $this->assertInternalType('array', ne('field', 'data'));
         $this->assertArraySubset([4 => 'extra'], ne('field', 'data', _AND, 'extra'));
     }
     
     /**
      * @test lt
      */
-    public function testlt()
+    public function testLt()
     {
-        $this->assertInternalType('array',lt('field', 'data'));
+        $this->assertInternalType('array', lt('field', 'data'));
         $this->assertArraySubset([2 => 'data'], lt('field', 'data'));
     }
 
     /**
      * @test lte
      */
-    public function testlte()
+    public function testLte()
     {
-        $this->assertInternalType('array',lte('field', 'data'));
+        $this->assertInternalType('array', lte('field', 'data'));
         $this->assertArraySubset([0 => 'field'], lte('field', 'data'));
     }
 
     /**
      * @test gt
      */
-    public function testgt()
+    public function testGt()
     {
-        $this->assertInternalType('array',gt('field', 'data'));
+        $this->assertInternalType('array', gt('field', 'data'));
         $this->assertArraySubset([0 => 'field'], gt('field', 'data'));
     }
 
     /**
      * @test gte
      */
-    public function testgte()
+    public function testGte()
     {
-        $this->assertInternalType('array',gte('field', 'data'));
+        $this->assertInternalType('array', gte('field', 'data'));
         $this->assertArraySubset([0 => 'field'], gte('field', 'data'));
     }
 
     /**
      * @test isNull
      */
-    public function testisNull()
+    public function testIsNull()
     {
-        $this->assertInternalType('array',isNull('field'));
+        $this->assertInternalType('array', isNull('field'));
         $this->assertArraySubset([2 => 'null'], isNull('field'));
     }
 
     /**
      * @test isNotNull
      */
-    public function testisNotNull()
+    public function testIsNotNull()
     {
-        $this->assertInternalType('array',isNotNull('field'));
+        $this->assertInternalType('array', isNotNull('field'));
         $this->assertArraySubset([2 => 'null'], isNotNull('field'));
     }
 
     /**
      * @test like
      */
-    public function testlike()
+    public function testLike()
     {
-        $this->assertInternalType('array',like('field', 'data'));
+        $this->assertInternalType('array', like('field', 'data'));
         $this->assertArraySubset([2 => 'data'], like('field', 'data'));
     }
 
     /**
      * @test notLike
      */
-    public function testnotLike()
+    public function testNotLike()
     {
-        $this->assertInternalType('array',notLike('field', 'data'));
+        $this->assertInternalType('array', notLike('field', 'data'));
         $this->assertArraySubset([2 => 'data'], notLike('field', 'data'));
     }
 
     /**
      * @test in
      */
-    public function testin()
+    public function testIn()
     {
-        $this->assertInternalType('array',in('field', 'data'));
+        $this->assertInternalType('array', in('field', 'data'));
         $this->assertArraySubset([8 => 'data6'], in('field', 'data', 'data1', 'data2', 'data3', 'data4', 'data5', 'data6'));
     }
 
     /**
      * @test notIn
      */
-    public function testnotIn()
+    public function testNotIn()
     {
-        $this->assertInternalType('array',notIn('field', 'data'));
+        $this->assertInternalType('array', notIn('field', 'data'));
         $this->assertArraySubset([5 => 'data3'], notIn('field', 'data', 'data1', 'data2', 'data3', 'data4', 'data5', 'data6'));
     }
 
     /**
      * @test between
      */
-    public function testbetween()
+    public function testBetween()
     {
-        $this->assertInternalType('array',between('field', 'data', 'data2'));
+        $this->assertInternalType('array', between('field', 'data', 'data2'));
         $this->assertArraySubset([1 => _BETWEEN], between('field', 'data', 'data2'));
     }
 
@@ -214,7 +214,7 @@ class ezFunctionsTest extends EZTestCase
      */
     public function testNotBetween()
     {
-        $this->assertInternalType('array',notBetween('field', 'data', 'data2'));
+        $this->assertInternalType('array', notBetween('field', 'data', 'data2'));
         $this->assertArraySubset([3 => 'data2'], notBetween('field', 'data', 'data2'));
     }
 
@@ -236,35 +236,35 @@ class ezFunctionsTest extends EZTestCase
     /**
      * @test select_into
      */    
-    public function testselect_into() {
+    public function testSelect_into() {
         $this->assertFalse(select_into('field', 'data', 'data2'));
     } 
 
     /**
      * @test insert_select
      */    
-    public function testinsert_select() {
+    public function testInsert_select() {
         $this->assertFalse(insert_select('field', 'data', 'data2'));
     }     
 
     /**
      * @test create_select
      */    
-    public function testcreate_select() {
+    public function testCreate_select() {
         $this->assertFalse(create_select('field', 'data', 'data2'));
     }  
 
     /**
      * @test where
      */    
-    public function testwhere() {
+    public function testWhere() {
         $this->assertFalse(where('field', 'data', 'data2'));
     } 
 
     /**
      * @test groupBy
      */    
-    public function testgroupBy() {
+    public function testGroupBy() {
         $this->assertFalse(groupBy(''));
         $this->assertNotNull(groupBy('field'));
     } 
@@ -272,14 +272,14 @@ class ezFunctionsTest extends EZTestCase
     /**
      * @test having
      */   
-    public function testhaving() {
+    public function testHaving() {
         $this->assertFalse(having('field', 'data', 'data2'));
     }
 
     /**
      * @test orderBy
      */    
-    public function testorderBy() {
+    public function testOrderBy() {
         $this->assertFalse(orderBy('', 'data'));
         $this->assertNotNull(orderBy('field', 'data'));
     } 
@@ -287,28 +287,28 @@ class ezFunctionsTest extends EZTestCase
     /**
      * @test insert
      */    
-    public function testinsert() {
+    public function testInsert() {
         $this->assertFalse(insert('field', ['data' => 'data2']));
     } 
 
     /**
      * @test update
      */    
-    public function testupdate() {
+    public function testUpdate() {
         $this->assertFalse(update('field', 'data', 'data2'));
     } 
 
     /**
      * @test delete
      */    
-    public function testdelete() {
+    public function testDelete() {
         $this->assertFalse(delete('field', 'data', 'data2'));
     } 
 
     /**
      * @test replace
      */        
-    public function testreplace() {
+    public function testReplace() {
         $this->assertFalse(replace('field', ['data' => 'data2']));
     }  
 } //

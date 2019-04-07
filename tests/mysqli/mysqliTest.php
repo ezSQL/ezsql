@@ -451,6 +451,7 @@ class mysqliTest extends EZTestCase
 	
     /**
      * @covers ezsql\ezQuery::where
+     * @covers \where
      */
     public function testWhere()
     {
@@ -466,34 +467,6 @@ class mysqliTest extends EZTestCase
             array('where_test','bad','testing 1','or'),
 			array('test_null','like','null')
             ));
-            
-        $expect = $this->object->where(
-            ['where_test', _IN, 'testing 1', 'testing 2', 'testing 3', 'testing 4', 'testing 5']
-        );
-        $this->assertContains('WHERE', $expect);
-        $this->assertContains('IN', $expect);
-        $this->assertContains('(', $expect);
-        $this->assertContains('testing 1', $expect);
-        $this->assertContains('testing 4\',', $expect);
-        $this->assertContains(')', $expect);
-
-        $expect = $this->object->where("where_test  in  testing 1  testing 2  testing 3  testing 4  testing 5");
-        $this->assertContains('WHERE', $expect);
-        $this->assertContains('IN', $expect);
-        $this->assertContains('(', $expect);
-        $this->assertContains('testing 2\'', $expect);
-        $this->assertContains('testing 5', $expect);
-        $this->assertContains(')', $expect);
-
-        $this->assertFalse($this->object->where(
-            array('where_test', '=', 'testing 1', 'or'),
-			array('test_like', 'LIKE', ':bad'))
-        );
-            
-        $this->assertContains('_good',$this->object->where(
-            array('where_test','=','testing 1','or'),
-			array('test_like',_LIKE,'_good'))
-        );
             
         $this->object->prepareOn();
         $expect = where(
