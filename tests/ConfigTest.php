@@ -10,7 +10,7 @@ use ezsql\Tests\EZTestCase;
 class ConfigTest extends EZTestCase 
 {
     /**
-    * @covers ezsql\Config::SetupMysqli
+    * @covers ezsql\Config::setupMysqli
     */
     public function testSetupMysqli()
     {
@@ -53,7 +53,7 @@ class ConfigTest extends EZTestCase
     }
 
     /**
-    * @covers ezsql\Config::SetupPdo
+    * @covers ezsql\Config::setupPdo
     */
     public function testSetupPdo()
     {
@@ -114,7 +114,7 @@ class ConfigTest extends EZTestCase
     }
 
     /**
-    * @covers ezsql\Config::SetupPgsql
+    * @covers ezsql\Config::setupPgsql
     */
     public function testSetupPgsql()
     {
@@ -159,7 +159,7 @@ class ConfigTest extends EZTestCase
     }
 
     /**
-    * @covers ezsql\Config::SetupSqlsrv
+    * @covers ezsql\Config::setupSqlsrv
     */
     public function testSetupSqlsrv()
     {
@@ -202,7 +202,7 @@ class ConfigTest extends EZTestCase
     }
 
     /**
-    * @covers ezsql\Config::SetupSqlite3
+    * @covers ezsql\Config::setupSqlite3
     */
     public function testSetupSqlite3()
     {
