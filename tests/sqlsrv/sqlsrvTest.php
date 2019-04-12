@@ -41,6 +41,14 @@ class sqlsrvTest extends EZTestCase
     } // tearDown
 
     /**
+     * @covers ezsql\Database\ez_sqlsrv::settings
+     */
+    public function testSettings()
+    {
+        $this->assertTrue($this->object->settings() instanceof \ezsql\ConfigInterface);    
+    } 
+
+    /**
      * @covers ezsql\Database\ez_sqlsrv::quick_connect
      */
     public function testQuick_connect() 
@@ -228,6 +236,9 @@ class sqlsrvTest extends EZTestCase
 
     /**
      * @covers ezsql\ezQuery::selecting
+     * @covers ezsql\Database\ez_sqlsrv::query
+     * @covers ezsql\Database\ez_sqlsrv::prepareValues
+     * @covers ezsql\Database\ez_sqlsrv::query_prepared
      */
     public function testSelecting()
     {

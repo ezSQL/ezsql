@@ -168,6 +168,9 @@ class pdo_pgsqlTest extends EZTestCase
 
     /**
      * @covers ezsql\ezQuery::selecting
+     * @covers ezsql\Database\ez_pdo::query
+     * @covers ezsql\Database\ez_pdo::prepareValues
+     * @covers ezsql\Database\ez_pdo::query_prepared
      */
     public function testSelecting()
     {

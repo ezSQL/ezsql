@@ -47,7 +47,15 @@ class mysqliTest extends EZTestCase
         }
         $this->object = null;
     }
-       
+
+    /**
+     * @covers ezsql\Database\ez_mysqli::settings
+     */
+    public function testSettings()
+    {
+        $this->assertTrue($this->object->settings() instanceof \ezsql\ConfigInterface);    
+    } 
+
     /**
      * @covers ezsql\Database\ez_mysqli::quick_connect
      */
@@ -85,6 +93,7 @@ class mysqliTest extends EZTestCase
 
     /**
      * @covers ezsql\Database\ez_mysqli::select
+     * @covers ezsql\Database\ez_mysqli::reset
      */
     public function testSelect() 
     {
@@ -99,7 +108,10 @@ class mysqliTest extends EZTestCase
         set_error_handler(array($this, 'errorHandler')); 
         $this->assertTrue($this->object->select(''));
         $this->object->disconnect();
-        $this->assertFalse($this->object->select('notest'));
+        $this->assertFalse($this->object->select('notest'));        
+        $this->object->connect();
+        $this->object->reset();
+        $this->assertFalse($this->object->select(self::TEST_DB_NAME));
         $this->object->connect();
         $this->assertFalse($this->object->select('notest'));
         $this->assertTrue($this->object->select(self::TEST_DB_NAME));        
@@ -189,7 +201,7 @@ class mysqliTest extends EZTestCase
     }
 
     /**
-     * @covers ezsql\Database\ez_mysqli::settings
+     * @covers ezsql\Database\ez_mysqli::getHost
      */
     public function testGetHost() 
     {
@@ -197,7 +209,7 @@ class mysqliTest extends EZTestCase
     }
 
     /**
-     * @covers ezsql\Database\ez_mysqli::settings
+     * @covers ezsql\Database\ez_mysqli::getPort
      */
     public function testGetPort() 
     {
@@ -205,7 +217,7 @@ class mysqliTest extends EZTestCase
     }
 
     /**
-     * @covers ezsql\Database\ez_mysqli::settings
+     * @covers ezsql\Database\ez_mysqli::getCharset
      */
     public function testGetCharset() 
     {
@@ -265,13 +277,14 @@ class mysqliTest extends EZTestCase
    
     /**
      * @covers ezsql\ezQuery::insert
+     * @covers ezsql\Database\ez_mysqli::query
+     * @covers ezsql\Database\ez_mysqli::prepareValues
      */
     public function testInsert()
     {
         $object = Database::initialize('mysqli', [self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME]);
         $this->assertEquals($this->object, $object);        
         $object->connect();
-        $object->prepareOff();
         $object->create('unit_test',
             \column('id', INTR, 11, \AUTO),
             \column('test_key', VARCHAR, 50),
@@ -392,7 +405,7 @@ class mysqliTest extends EZTestCase
             $this->assertEquals('testing 1', $row->test_key);
         }
     }    
-          
+
     /**
      * @covers ezsql\ezQuery::create_select
      */
@@ -479,6 +492,8 @@ class mysqliTest extends EZTestCase
  
     /**
      * @covers ezsql\Database\ez_mysqli::query_prepared
+     * @covers ezsql\Database\ez_mysqli::fetch_prepared_result
+     * @covers ezsql\Database\ez_mysqli::prepareValues
      */
     public function testQuery_prepared() {
         $this->object->prepareOff();

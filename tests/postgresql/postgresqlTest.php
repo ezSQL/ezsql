@@ -42,6 +42,14 @@ class postgresqlTest extends EZTestCase
     {
         $this->object = null;
     } // tearDown
+ 
+    /**
+     * @covers ezsql\Database\ez_pgsql::settings
+     */
+    public function testSettings()
+    {
+        $this->assertTrue($this->object->settings() instanceof \ezsql\ConfigInterface);    
+    } 
 
     /**
      * @covers ezsql\Database\ez_pgsql::quick_connect
@@ -217,6 +225,9 @@ class postgresqlTest extends EZTestCase
 
     /**
      * @covers ezsql\ezQuery::selecting
+     * @covers ezsql\Database\ez_pgsql::query
+     * @covers ezsql\Database\ez_pgsql::prepareValues
+     * @covers ezsql\Database\ez_pgsql::query_prepared
      */
     public function testSelecting()
     {

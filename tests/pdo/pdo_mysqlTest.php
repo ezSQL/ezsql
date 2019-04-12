@@ -44,7 +44,14 @@ class pdo_mysqlTest extends EZTestCase
         $this->object = null;
     } // tearDown
  
-     
+    /**
+     * @covers ezsql\Database\ez_pdo::settings
+     */
+    public function testSettings()
+    {
+        $this->assertTrue($this->object->settings() instanceof \ezsql\ConfigInterface);    
+    } 
+
     /**
      * Here starts the MySQL PDO unit test
      */
@@ -195,6 +202,9 @@ class pdo_mysqlTest extends EZTestCase
 
     /**
      * @covers ezsql\ezQuery::selecting
+     * @covers ezsql\Database\ez_pdo::query
+     * @covers ezsql\Database\ez_pdo::prepareValues
+     * @covers ezsql\Database\ez_pdo::query_prepared
      */
     public function testSelecting()
     {

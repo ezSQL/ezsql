@@ -49,6 +49,14 @@ class sqlite3Test extends EZTestCase
     }
 
     /**
+     * @covers ezsql\Database\ez_sqlite3::settings
+     */
+    public function testSettings()
+    {
+        $this->assertTrue($this->object->settings() instanceof \ezsql\ConfigInterface);    
+    } 
+
+    /**
      * @covers ezsql\Database\ez_sqlite3::connect
      */
     public function testConnect() 
@@ -211,6 +219,9 @@ class sqlite3Test extends EZTestCase
 
     /**
      * @covers ezsql\ezQuery::selecting
+     * @covers ezsql\Database\ez_sqlite3::query
+     * @covers ezsql\Database\ez_sqlite3::prepareValues
+     * @covers ezsql\Database\ez_sqlite3::query_prepared
      */
     public function testSelecting()
     {

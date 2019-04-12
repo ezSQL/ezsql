@@ -154,7 +154,6 @@ class ez_mysqli extends ezsqlModel implements DatabaseInterface
     {
         $this->_connected = false;
         $name = empty($name) ? $this->database->getName() : $name;
-        $charset = empty($charset) ? $this->database->getCharset() : $charset;
         if ( ! $name ) {
             // Must have a database name
             $this->register_error($this->ezsql_mysql_str[3] . ' in ' . __FILE__ . ' on line ' . __LINE__);
@@ -180,13 +179,13 @@ class ez_mysqli extends ezsqlModel implements DatabaseInterface
 
             if ( $charset != '' ) {
                 $encoding = \strtolower(\str_replace('-', '', $charset));
-                $charset = array();
+                $charsetArray = array();
                 $recordSet = \mysqli_query($this->dbh, 'SHOW CHARACTER SET');
                 while ( $row = \mysqli_fetch_array($recordSet, \MYSQLI_ASSOC) ) {
-                        $charset[] = $row['Charset'];
+                        $charsetArray[] = $row['Charset'];
                 }
 
-                if ( \in_array($charset, $charset) ) {
+                if ( \in_array($charset, $charsetArray) ) {
                     \mysqli_query($this->dbh, 'SET NAMES \'' . $encoding . '\'');
                 }
             }
