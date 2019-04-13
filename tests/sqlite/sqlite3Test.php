@@ -78,12 +78,8 @@ class sqlite3Test extends EZTestCase
      */
     public function testConnect() 
     {      
-        $this->assertTrue($this->object->connect());
-        
-        $this->expectExceptionMessageRegExp('/Unable to open database/');        
-        $this->assertTrue($this->object->connect(' ', ' '));
-        
-        $this->assertTrue($this->object->connect(self::TEST_SQLITE_DB_DIR, self::TEST_SQLITE_DB));
+        $this->assertTrue($this->object->connect());    
+        $this->assertTrue($this->object->isConnected());
     } // testSQLiteConnect
 
     /**
