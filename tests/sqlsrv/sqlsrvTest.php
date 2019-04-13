@@ -65,6 +65,9 @@ class sqlsrvTest extends EZTestCase
     {
         $result = $this->object->connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME);
         $this->assertTrue($result);
+        
+        $result = $this->object->connect('self::TEST_DB_USER', 'self::TEST_DB_PASSWORD', 'self::TEST_DB_NAME');
+        $this->assertFalse($result);
     } // testConnect
 
     /**
@@ -131,6 +134,7 @@ class sqlsrvTest extends EZTestCase
 
     /**
      * @covers ezsql\Database\ez_sqlsrv::convert
+     * @covers ezsql\Database\ez_sqlsrv::get_datatype
      */
     public function testConvert() 
     {
@@ -240,6 +244,7 @@ class sqlsrvTest extends EZTestCase
      * @covers ezsql\Database\ez_sqlsrv::query
      * @covers ezsql\Database\ez_sqlsrv::prepareValues
      * @covers ezsql\Database\ez_sqlsrv::query_prepared
+     * @covers ezsql\Database\ez_sqlsrv::get_datatype
      */
     public function testSelecting()
     {
@@ -297,13 +302,14 @@ class sqlsrvTest extends EZTestCase
     public function test__Construct_Error() 
     {  
         $this->expectExceptionMessageRegExp('/[Missing configuration details]/');
-        $this->assertNull(new ez_sqlsrv('bad'));
+        $this->assertNull(new ez_sqlsrv());
     } 
 
     /**
      * @covers ezsql\Database\ez_sqlsrv::__construct
      */
     public function test__construct() {
+        unset($GLOBALS['ez'.\SQLSRV]);
         $settings = Config::initialize('sqlsrv', [self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME]);
         $this->assertNotNull(new ez_sqlsrv($settings));
     } 

@@ -2,6 +2,7 @@
 
 namespace ezsql\Tests\sqlite;
 
+use Exception;
 use ezsql\Database;
 use ezsql\Config;
 use ezsql\Database\ez_sqlite3;
@@ -276,13 +277,14 @@ class sqlite3Test extends EZTestCase
      */
     public function test__Construct_Error() {
         $this->expectExceptionMessageRegExp('/[Missing configuration details]/');
-        $this->assertNull(new ez_sqlite3('bad'));
+        $this->assertNull(new ez_sqlite3());
     }
 
     /**
      * @covers ezsql\Database\ez_sqlite3::__construct
      */
     public function test__construct() {
+        unset($GLOBALS['ez'.\SQLITE3]);
         $settings = new Config('sqlite3', [self::TEST_SQLITE_DB_DIR, self::TEST_SQLITE_DB]);
         $this->assertNotNull(new ez_sqlite3($settings));
     } 

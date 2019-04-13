@@ -274,16 +274,18 @@ class postgresqlTest extends EZTestCase
     /**
      * @covers ezsql\Database\ez_pgsql::__construct
      */
-    public function test__Construct_Error() { 
+    public function test__Construct_Error() 
+    { 
         $this->expectExceptionMessageRegExp('/[Missing configuration details]/');
-        $this->assertNull(new ez_pgsql('bad'));
+        $this->assertNull(new ez_pgsql());
     } 
        
     /**
      * @covers ezsql\Database\ez_pgsql::__construct
      */
-    public function test__construct() {
-        
+    public function test__construct() 
+    {
+        unset($GLOBALS['ez'.\PGSQL]);
         $settings = new Config('pgsql', [self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME, self::TEST_DB_HOST, self::TEST_DB_PORT]);
         $this->assertNotNull(new ez_pgsql($settings));
     } 

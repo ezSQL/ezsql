@@ -32,14 +32,14 @@ class ez_sqlite3 extends ezsqlModel implements DatabaseInterface
      *  Constructor - allow the user to perform a quick connect at the
      *  same time as initializing the ez_sqlite3 class
      */
-    public function __construct(ConfigInterface $settings)
+    public function __construct(ConfigInterface $settings = null)
     {
-        if ( ! \class_exists ('ezsqlModel') ) {
+        if ( ! \class_exists('ezsqlModel') ) {
             if ( ! \interface_exists('Psr\Container\ContainerInterface') )
                 throw new Exception(\CONFIGURATION_REQUIRES);
         }
         
-        if (empty($settings) || (!$settings instanceof ConfigInterface)) {
+        if (empty($settings)) {
             throw new Exception(\MISSING_CONFIGURATION);
         }
         
@@ -49,7 +49,7 @@ class ez_sqlite3 extends ezsqlModel implements DatabaseInterface
         // Turn on track errors
         ini_set('track_errors', '1');
 
-        if (empty($GLOBALS['ez'.\SQLITE3]))
+        if (!isset($GLOBALS['ez'.\SQLITE3]))
             $GLOBALS['ez'.\SQLITE3] = $this;
         \setInstance($this);
     }

@@ -270,16 +270,18 @@ class pdo_mysqlTest extends EZTestCase
     /**
      * @covers ezsql\Database\ez_pdo::__construct
      */
-    public function test__Construct_Error() {        
+    public function test__Construct_Error() 
+    {        
         $this->expectExceptionMessageRegExp('/[Missing configuration details]/');
-        $this->assertNull(new ez_pdo('bad'));
+        $this->assertNull(new ez_pdo());
     }
 
     /**
      * @covers ezsql\Database\ez_pdo::__construct
      */
-    public function test__construct() {
-        
+    public function test__construct() 
+    {
+        unset($GLOBALS['ez'.\Pdo]);
         $dsn = 'mysql:host='.self::TEST_DB_HOST.';dbname='. self::TEST_DB_NAME.';port=3306';
         $settings = Config::initialize('pdo', [$dsn, self::TEST_DB_USER, self::TEST_DB_PASSWORD]);
         $this->assertNotNull(new ez_pdo($settings));

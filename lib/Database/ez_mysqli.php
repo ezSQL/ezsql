@@ -9,18 +9,7 @@ use ezsql\ConfigInterface;
 use ezsql\DatabaseInterface;
 
 class ez_mysqli extends ezsqlModel implements DatabaseInterface
-{
-    /*
-     * ezSQL error strings - mySQLi
-     * @var array
-     */
-    private $ezsql_mysql_str = array
-        (
-            1 => 'Require $name to select a database',
-            2 => 'mySQL database connection is not active',
-            3 => 'Unexpected error while trying to select database'
-        );
-    
+{    
     private static $isSecure = false;
     private static $secure = null;
 
@@ -43,12 +32,12 @@ class ez_mysqli extends ezsqlModel implements DatabaseInterface
     private $database;
 
     public function __construct(ConfigInterface $settings = null) {
-        if ( ! \class_exists ('ezsqlModel') ) {
+        if ( ! \class_exists('ezsqlModel') ) {
             if ( ! \interface_exists('Psr\Container\ContainerInterface') )
                 throw new Exception(\CONFIGURATION_REQUIRES);
         }
 
-        if (empty($settings) || (!$settings instanceof ConfigInterface)) {
+        if (empty($settings)) {
             throw new Exception(\MISSING_CONFIGURATION);
         }
         
@@ -147,19 +136,15 @@ class ez_mysqli extends ezsqlModel implements DatabaseInterface
     {
         $this->_connected = false;
         $name = empty($name) ? $this->database->getName() : $name;
-        if ( ! $name ) {
-            // Must have a database name
-            $this->register_error($this->ezsql_mysql_str[1] . ' in ' . __FILE__ . ' on line ' . __LINE__);
-            $this->show_errors ? \trigger_error($this->ezsql_mysql_str[1], \E_USER_WARNING) : null;
-        } elseif ( ! $this->dbh ) {
+        if ( ! $this->dbh ) {
             // Must have an active database connection
-            $this->register_error($this->ezsql_mysql_str[2] . ' in ' . __FILE__ . ' on line ' . __LINE__);
-            $this->show_errors ? \trigger_error($this->ezsql_mysql_str[2], \E_USER_WARNING) : null;
+            $this->register_error(\FAILED_CONNECTION . ' in ' . __FILE__ . ' on line ' . __LINE__);
+            $this->show_errors ? \trigger_error(\FAILED_CONNECTION, \E_USER_WARNING) : null;
         } elseif ( !\mysqli_select_db($this->dbh, $name) ) {
             // Try to connect to the database
             // Try to get error supplied by mysql if not use our own
             if ( !$str = \mysqli_error($this->dbh)) {
-                $str = $this->ezsql_mysql_str[3];
+                $str = 'Unexpected error while trying to select database';
             }
 
             $this->register_error($str . ' in ' .__FILE__ . ' on line ' . __LINE__);

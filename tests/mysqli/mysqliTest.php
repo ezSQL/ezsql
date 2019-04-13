@@ -526,8 +526,8 @@ class mysqliTest extends EZTestCase
     /**
      * @covers ezsql\Database\ez_mysqli::__construct
      */
-    public function test__construct_Error() {        
-        $this->expectException(\Exception::class);
+    public function test__construct_Error() 
+    {
         $this->expectExceptionMessageRegExp('/[Missing configuration details]/');
         $this->assertNull(new ez_mysqli());
     } 
@@ -535,7 +535,9 @@ class mysqliTest extends EZTestCase
     /**
      * @covers ezsql\Database\ez_mysqli::__construct
      */
-    public function test__construct() {
+    public function test__construct() 
+    {
+        unset($GLOBALS['ez'.\MYSQLI]);
         $settings = new Config('mysqli', [self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME]);
         $this->assertNotNull(new ez_mysqli($settings));
     } 

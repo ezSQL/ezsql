@@ -11,16 +11,6 @@ use ezsql\DatabaseInterface;
 
 class ez_pdo extends ezsqlModel implements DatabaseInterface
 {
-    /**
-    * ezSQL error strings - PDO
-    * @var array
-    */
-    private $_ezsql_pdo_str = array
-        (
-            1 => 'Require $dsn and $user and $password to create a connection',
-            2 => 'File based databases require $dsn to create a connection'
-        );
-    
     private static $isSecure = false;
     private static $secure = null;
     private static $_options = [];
@@ -44,13 +34,13 @@ class ez_pdo extends ezsqlModel implements DatabaseInterface
 
     private $database;
 
-    public function __construct(ConfigInterface $settings) {
-        if ( ! \class_exists ('ezsqlModel') ) {
+    public function __construct(ConfigInterface $settings = null) {
+        if ( ! \class_exists('ezsqlModel') ) {
             if ( ! \interface_exists('Psr\Container\ContainerInterface') )
                 throw new Exception(\CONFIGURATION_REQUIRES);
         }
         
-        if (empty($settings) || (!$settings instanceof ConfigInterface)) {
+        if (empty($settings)) {
             throw new Exception(\MISSING_CONFIGURATION);
         }
         
@@ -139,19 +129,7 @@ class ez_pdo extends ezsqlModel implements DatabaseInterface
         $setUser = empty($user) ? $this->database->getUser() : $user;
         $setPassword = empty($password) ? $this->database->getPassword() : $password;        
         $setOptions = empty($options) ? $this->database->getOptions() : $options;
-        $IsFile = empty($isFile) ? $this->database->getIsFile() : $isFile;   
-        
-        if (!$IsFile) {                
-            // Must have a user and a password if not file based
-            if ( empty($setDsn) || empty($setUser) || empty($setPassword )) {
-                $this->register_error($this->_ezsql_pdo_str[1] . ' in ' . __FILE__ . ' on line ' . __LINE__);
-                $this->show_errors ? \trigger_error($this->_ezsql_pdo_str[1], \E_USER_WARNING) : null;
-            }
-        } elseif (empty($setDsn)) {
-            // Must have a dsn
-            $this->register_error($this->_ezsql_pdo_str[2] . ' in ' . __FILE__ . ' on line ' . __LINE__);
-            $this->show_errors ? \trigger_error($this->_ezsql_pdo_str[2], \E_USER_WARNING) : null;
-        }        
+        $IsFile = empty($isFile) ? $this->database->getIsFile() : $isFile;
 
         // Establish PDO connection
         try  {
