@@ -301,7 +301,7 @@ class sqlsrvTest extends EZTestCase
     } 
 
     /**
-     * @covers ezsql\Database\ez_sqlite3::__construct
+     * @covers ezsql\Database\ez_sqlsrv::__construct
      */
     public function test__construct() {
         $settings = Config::initialize('sqlsrv', [self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME]);
