@@ -42,12 +42,12 @@ abstract class EZTestCase extends \PHPUnit\Framework\TestCase
 
     protected $errors;
  
-    function errorHandler($errno, $errstr, $errfile, $errline, $errcontext) 
+    public function errorHandler($errno, $errstr, $errfile, $errline, $errcontext) 
     {
         $this->errors[] = compact("errno", "errstr", "errfile", "errline", "errcontext");
     }
 
-    function assertError($errstr, $errno) 
+    public function assertError($errstr, $errno) 
     {
         foreach ($this->errors as $error) {
             if ($error["errstr"] === $errstr && $error["errno"] === $errno) {
@@ -67,7 +67,7 @@ abstract class EZTestCase extends \PHPUnit\Framework\TestCase
      *
      * @return mixed Method return.
      */
-    function invokeMethod(&$object, $methodName, array $parameters = array())
+    public function invokeMethod(&$object, $methodName, array $parameters = array())
     {
         $reflection = new \ReflectionClass(get_class($object));
         $method = $reflection->getMethod($methodName);

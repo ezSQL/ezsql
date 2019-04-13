@@ -3,6 +3,7 @@
 namespace ezsql\Tests\postgresql;
 
 use ezsql\Database;
+use ezsql\Config;
 use ezsql\Database\ez_pgsql;
 use ezsql\Tests\EZTestCase;
 
@@ -199,12 +200,17 @@ class postgresqlTest extends EZTestCase
 	
     /**
      * @covers ezsql\Database\ez_pgsql::disconnect
+     * @covers ezsql\Database\ez_pgsql::reset
+     * @covers ezsql\Database\ez_pgsql::handle
      */
     public function testDisconnect() {
-        $this->object->connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME, self::TEST_DB_HOST, self::TEST_DB_PORT);  
+        $this->object->connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME, self::TEST_DB_HOST, self::TEST_DB_PORT); 
+        $this->assertTrue($this->object->isConnected());
+        $this->assertNotNull($this->object->handle());
         $this->object->disconnect();
-        
         $this->assertFalse($this->object->isConnected());
+        $this->object->reset();
+        $this->assertNull($this->object->handle());
     } // testDisconnect
 
     /**
@@ -268,8 +274,17 @@ class postgresqlTest extends EZTestCase
     /**
      * @covers ezsql\Database\ez_pgsql::__construct
      */
-    public function test__Construct() { 
+    public function test__Construct_Error() { 
         $this->expectExceptionMessageRegExp('/[Missing configuration details]/');
         $this->assertNull(new ez_pgsql('bad'));
+    } 
+       
+    /**
+     * @covers ezsql\Database\ez_pgsql::__construct
+     */
+    public function test__construct() {
+        
+        $settings = new Config('pgsql', [self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME, self::TEST_DB_HOST, self::TEST_DB_PORT]);
+        $this->assertNotNull(new ez_pgsql($settings));
     } 
 } // ezsql\Database\ez_pgsqlTest

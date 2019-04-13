@@ -3,6 +3,7 @@
 namespace ezsql\Tests\sqlite;
 
 use ezsql\Database;
+use ezsql\Config;
 use ezsql\Database\ez_sqlite3;
 use ezsql\Tests\EZTestCase;
 
@@ -57,15 +58,30 @@ class sqlite3Test extends EZTestCase
     } 
 
     /**
+     * @covers ezsql\Database\ez_sqlite3::disconnect
+     * @covers ezsql\Database\ez_sqlite3::reset
+     * @covers ezsql\Database\ez_sqlite3::handle
+     */
+    public function testDisconnect() 
+    {
+        $this->object->connect();
+        $this->assertTrue($this->object->isConnected());
+        $this->assertNotNull($this->object->handle());
+        $this->object->disconnect();
+        $this->assertFalse($this->object->isConnected());
+        $this->object->reset();
+        $this->assertNull($this->object->handle());
+    } // testDisconnect
+
+    /**
      * @covers ezsql\Database\ez_sqlite3::connect
      */
     public function testConnect() 
-    { 
-        //$this->errors = array();
-        //set_error_handler(array($this, 'errorHandler'));        
-        $this->assertFalse($this->object->connect());
+    {      
+        $this->assertTrue($this->object->connect());
         
-        $this->assertFalse($this->object->connect('null:', ''));
+        $this->expectExceptionMessageRegExp('/Unable to open database/');
+        $this->assertFalse($this->object->connect('null:', 'null:'));
         
         $this->assertTrue($this->object->connect(self::TEST_SQLITE_DB_DIR, self::TEST_SQLITE_DB));
     } // testSQLiteConnect
@@ -262,8 +278,16 @@ class sqlite3Test extends EZTestCase
     /**
      * @covers ezsql\Database\ez_sqlite3::__construct
      */
-    public function test__Construct() {
+    public function test__Construct_Error() {
         $this->expectExceptionMessageRegExp('/[Missing configuration details]/');
         $this->assertNull(new ez_sqlite3('bad'));
-    }     
+    }
+
+    /**
+     * @covers ezsql\Database\ez_sqlite3::__construct
+     */
+    public function test__construct() {
+        $settings = new Config('sqlite3', [self::TEST_SQLITE_DB_DIR, self::TEST_SQLITE_DB]);
+        $this->assertNotNull(new ez_sqlite3($settings));
+    } 
 }

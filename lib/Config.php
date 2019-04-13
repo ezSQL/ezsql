@@ -101,10 +101,10 @@ class Config extends ConfigAbstract implements ConfigInterface
 
     private function setupMysqli($args) 
     {
-        if ( ! \function_exists ('mysqli_connect') ) 
+        if ( ! \function_exists('mysqli_connect') ) 
             throw new Exception('<b>Fatal Error:</b> ez_mysql requires mySQLi Lib to be compiled and or linked in to the PHP engine');
         
-        if (\count($args)>=3) {
+        if (\count($args) >= 3) {
             $this->setUser($args[0]);
             $this->setPassword($args[1]);
             $this->setName($args[2]);
@@ -118,9 +118,9 @@ class Config extends ConfigAbstract implements ConfigInterface
 
     private function setupPdo($args) 
     {
-        if ( ! \class_exists ('PDO') )
+        if ( ! \class_exists('PDO') )
             throw new Exception('<b>Fatal Error:</b> ez_pdo requires PDO Lib to be compiled and or linked in to the PHP engine');           
-        if (\count($args)>=3) {
+        if (\count($args) >= 3) {
             $this->setDsn($args[0]);
             $this->setUser($args[1]);
             $this->setPassword($args[2]);
@@ -132,10 +132,10 @@ class Config extends ConfigAbstract implements ConfigInterface
 
     private function setupSqlsrv($args) 
     {
-        if ( ! \function_exists ('sqlsrv_connect') ) 
+        if ( ! \function_exists('sqlsrv_connect') ) 
             throw new Exception('<b>Fatal Error:</b> ez_sqlsrv requires the php_sqlsrv.dll or php_pdo_sqlsrv.dll to be installed. Also enable MS-SQL extension in PHP.ini file ');
         
-        if (\count($args)>=3) {
+        if (\count($args) >= 3) {
             $this->setUser($args[0]);
             $this->setPassword($args[1]);
             $this->setName($args[2]);
@@ -147,10 +147,10 @@ class Config extends ConfigAbstract implements ConfigInterface
 
     private function setupPgsql($args) 
     {
-        if ( ! \function_exists ('pg_connect') )
+        if ( ! \function_exists('pg_connect') )
             throw new Exception('<b>Fatal Error:</b> ez_pgsql requires PostgreSQL Lib to be compiled and or linked in to the PHP engine');
         
-        if (count($args)>=3) {
+        if (count($args) >= 3) {
             $this->setUser($args[0]);
             $this->setPassword($args[1]);
             $this->setName($args[2]);
@@ -161,10 +161,10 @@ class Config extends ConfigAbstract implements ConfigInterface
     }
 
     private function setupSqlite3($args) {
-        if ( ! \class_exists ('SQLite3') ) 
+        if ( ! \class_exists('SQLite3') ) 
             throw new Exception('<b>Fatal Error:</b> ez_sqlite3 requires SQLite3 Lib to be compiled and or linked in to the PHP engine');
         
-        if (\count($args)==2) {
+        if (\count($args) == 2) {
             $this->setPath($args[0]);
             $this->setName($args[1]);
         } else

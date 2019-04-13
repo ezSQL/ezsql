@@ -3,6 +3,7 @@
 namespace ezsql\Tests\mysqli;
 
 use ezsql\Database;
+use ezsql\Config;
 use ezsql\Database\ez_mysqli;
 use ezsql\Tests\EZTestCase;
 
@@ -226,13 +227,18 @@ class mysqliTest extends EZTestCase
     
     /**
      * @covers ezsql\Database\ez_mysqli::disconnect
+     * @covers ezsql\Database\ez_mysqli::reset
+     * @covers ezsql\Database\ez_mysqli::handle
      */
     public function testDisconnect() 
     {
         $this->object->connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD);
         $this->object->select(self::TEST_DB_NAME);
+        $this->assertNotNull($this->object->handle());
         $this->object->disconnect();
         $this->assertFalse($this->object->isConnected());
+        $this->object->reset();
+        $this->assertNull($this->object->handle());
     } // testDisconnect
 
     /**
@@ -520,9 +526,17 @@ class mysqliTest extends EZTestCase
     /**
      * @covers ezsql\Database\ez_mysqli::__construct
      */
-    public function test__Construct() {        
+    public function test__construct_Error() {        
         $this->expectException(\Exception::class);
         $this->expectExceptionMessageRegExp('/[Missing configuration details]/');
-        $this->assertNull(new ez_mysqli());  
+        $this->assertNull(new ez_mysqli());
+    } 
+
+    /**
+     * @covers ezsql\Database\ez_mysqli::__construct
+     */
+    public function test__construct() {
+        $settings = new Config('mysqli', [self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME]);
+        $this->assertNotNull(new ez_mysqli($settings));
     } 
 } // ez_mysqliTest

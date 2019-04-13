@@ -11,15 +11,6 @@ use ezsql\DatabaseInterface;
 class ez_sqlite3 extends ezsqlModel implements DatabaseInterface
 {
     /**
-     * ezSQL error strings - SQLite
-     */
-    private $ezsql_sqlite3_str = array
-        (
-        1 => 'Require $path and $name to open an SQLite database',
-        2 => 'Failed to make connection to database',
-    );
-
-    /**
     * Database connection handle 
     * @var resource
     */
@@ -73,27 +64,21 @@ class ez_sqlite3 extends ezsqlModel implements DatabaseInterface
      */
     public function connect($path = '', $name = '')
     {
-        $return_val = false;
         $this->_connected = false;
 
         $path = empty($path) ? $this->database->getPath() : $path;
-        $setPassword = empty($name) ? $this->database->getName() : $name;   
+        $name = empty($name) ? $this->database->getName() : $name;   
 
-        // Must have a user and a password
-        if (!$path || !$name) {
-            $this->register_error($this->ezsql_sqlite3_str[1] . ' in ' . __FILE__ . ' on line ' . __LINE__);
-            $this->show_errors ? \trigger_error($this->ezsql_sqlite3_str[1], \E_USER_WARNING) : null;
-            // Try to establish the server database handle
-        } elseif (!$this->dbh = @new \SQLite3($path . $name)) {
-            $this->register_error($this->ezsql_sqlite3_str[2]);
-            $this->show_errors ? \trigger_error($this->ezsql_sqlite3_str[2], \E_USER_WARNING) : null;
+        // Try to establish the server database handle
+        if (!$this->dbh = @new \SQLite3($path . $name)) {
+            //$this->register_error(\FAILED_CONNECTION);
+            //$this->show_errors ? \trigger_error(\FAILED_CONNECTION, \E_USER_WARNING) : null;
         } else {
-            $return_val = true;
             $this->conn_queries = 0;
             $this->_connected = true;
         }
 
-        return $return_val;
+        return $this->_connected;
     }
 
     /**

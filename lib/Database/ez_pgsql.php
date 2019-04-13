@@ -10,18 +10,6 @@ use ezsql\DatabaseInterface;
 
 class ez_pgsql extends ezsqlModel implements DatabaseInterface
 {
-    /**
-     * ezSQL error strings - PostgreSQL
-     */
-    private $_ezsql_postgresql_str = array
-        (
-        1 => 'Require $user and $password to connect to a database server',
-        2 => 'Error establishing PostgreSQL database connection. Correct user/password? Correct hostname? Database server running?',
-        3 => 'Require $dbname to select a database',
-        4 => 'mySQL database connection is not active',
-        5 => 'Unexpected error while trying to select database',
-    );
-
     private static $isSecure = false;
     private static $secure = null;
 
@@ -116,14 +104,10 @@ class ez_pgsql extends ezsqlModel implements DatabaseInterface
 
         $connect_string = "host=".$host." port=".$port." dbname=".$name." user=".$user." password=".$password;
 
-        if (!$user) {
-            // Must have a user and a password
-            $this->register_error($this->_ezsql_postgresql_str[1] . ' in ' . __FILE__ . ' on line ' . __LINE__);
-            $this->show_errors ? \trigger_error($this->_ezsql_postgresql_str[1], \E_USER_WARNING) : null;
-        } else if (!$this->dbh = \pg_connect($connect_string, true)) {
-            // Try to establish the server database handle
-            $this->register_error($this->_ezsql_postgresql_str[2] . ' in ' . __FILE__ . ' on line ' . __LINE__);
-            $this->show_errors ? \trigger_error($this->_ezsql_postgresql_str[2], \E_USER_WARNING) : null;
+        // Try to establish the server database handle
+        if (!$this->dbh = \pg_connect($connect_string, true)) {
+            $this->register_error(\FAILED_CONNECTION . ' in ' . __FILE__ . ' on line ' . __LINE__);
+            $this->show_errors ? \trigger_error(\FAILED_CONNECTION, \E_USER_WARNING) : null;
         } else {
             $this->_connected = true;
         }

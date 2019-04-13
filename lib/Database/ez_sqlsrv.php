@@ -11,18 +11,6 @@ use ezsql\DatabaseInterface;
 class ez_sqlsrv extends ezsqlModel implements DatabaseInterface
 {
     /**
-     * ezSQL error strings - sqlsrv
-     */
-    private $ezsql_sqlsrv_str = array
-        (
-        1 => 'Require $user and $password to connect to a database server',
-        2 => 'Error establishing sqlsrv database connection. Correct user/password? Correct hostname? Database server running?',
-        3 => 'Require $name to select a database',
-        4 => 'SQL Server database connection is not active',
-        5 => 'Unexpected error while trying to select database',
-    );
-
-    /**
      * ezSQL non duplicating data type id's; converting type ids to str
      */
     private $ezsql_sqlsrv_type2str_non_dup = array
@@ -95,7 +83,6 @@ class ez_sqlsrv extends ezsqlModel implements DatabaseInterface
      */
     public function connect($user = '', $password = '', $name = '', $host = 'localhost')
     {
-        $return_val = false;
         $this->_connected = false;
 
         $user = empty($user) ? $this->database->getUser() : $user;
@@ -122,16 +109,16 @@ class ez_sqlsrv extends ezsqlModel implements DatabaseInterface
             );
         }
 
+        // Try to establish the server database handle
         if (($this->dbh = @\sqlsrv_connect($host, $connectionOptions)) === false) {
-            $this->register_error($this->ezsql_sqlsrv_str[2] . ' in ' . __FILE__ . ' on line ' . __LINE__);
-            $this->show_errors ? \trigger_error($this->ezsql_sqlsrv_str[2], \E_USER_WARNING) : null;
+            $this->register_error(\FAILED_CONNECTION . ' in ' . __FILE__ . ' on line ' . __LINE__);
+            $this->show_errors ? \trigger_error(\FAILED_CONNECTION, \E_USER_WARNING) : null;
         } else {
-            $return_val = true;
             $this->_connected = true;
             $this->conn_queries = 0;
         }
 
-        return $return_val;
+        return $this->_connected;
     }
 
     /**

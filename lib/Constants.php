@@ -13,6 +13,8 @@ if (!\defined('CONSTANTS')) {
     // Error messages
     \define('MISSING_CONFIGURATION', '<b>Fatal Error:</b> Missing configuration details to connect to database');
     \define('CONFIGURATION_REQUIRES', '<b>Fatal Error:</b> This configuration requires ezsqlModel (ezsqlModel.php) to be included/loaded before it can be used');
+    \define('FAILED_CONNECTION', 'Failed to make connection to database');
+
     // ezQuery prepare placeholder/positional tag
     \define('_TAG', '__ez__');
     // Use to set get_result output as json 

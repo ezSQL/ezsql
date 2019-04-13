@@ -3,6 +3,7 @@
 namespace ezsql\Tests\sqlsrv;
 
 use ezsql\Database;
+use ezsql\Config;
 use ezsql\Database\ez_sqlsrv;
 use ezsql\Tests\EZTestCase;
 
@@ -277,20 +278,33 @@ class sqlsrvTest extends EZTestCase
 	
     /**
      * @covers ezsql\Database\ez_sqlsrv::disconnect
+     * @covers ezsql\Database\ez_sqlsrv::reset
+     * @covers ezsql\Database\ez_sqlsrv::handle
      */
-    public function testDisconnect() 
-    {
-        $this->object->quick_connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME);    
+    public function testDisconnect() {
+        $this->object->quick_connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME);
+        $this->assertTrue($this->object->isConnected());
+        $this->assertNotNull($this->object->handle());
         $this->object->disconnect();
         $this->assertFalse($this->object->isConnected());
+        $this->object->reset();
+        $this->assertNull($this->object->handle());
     } // testDisconnect
-      
+
     /**
      * @covers ezsql\Database\ez_sqlsrv::__construct
      */
-    public function test__Construct() 
+    public function test__Construct_Error() 
     {  
         $this->expectExceptionMessageRegExp('/[Missing configuration details]/');
         $this->assertNull(new ez_sqlsrv('bad'));
+    } 
+
+    /**
+     * @covers ezsql\Database\ez_sqlite3::__construct
+     */
+    public function test__construct() {
+        $settings = Config::initialize('sqlsrv', [self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME]);
+        $this->assertNotNull(new ez_sqlsrv($settings));
     } 
 } // ezsql\Database\ez_sqlsrvTest

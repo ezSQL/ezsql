@@ -3,6 +3,7 @@
 namespace ezsql\Tests\pdo;
 
 use ezsql\Database;
+use ezsql\Config;
 use ezsql\Database\ez_pdo;
 use ezsql\Tests\EZTestCase;
 
@@ -242,14 +243,18 @@ class pdo_mysqlTest extends EZTestCase
     
     /**
      * @covers ezsql\Database\ez_pdo::disconnect
+     * @covers ezsql\Database\ez_pdo::reset
+     * @covers ezsql\Database\ez_pdo::handle
      */
     public function testMySQLDisconnect() {
         $this->assertTrue($this->object->connect('mysql:host=' . self::TEST_DB_HOST . ';dbname=' . self::TEST_DB_NAME . ';port=' . self::TEST_DB_PORT, self::TEST_DB_USER, self::TEST_DB_PASSWORD));
-
+        $this->assertTrue($this->object->isConnected());
+        $this->assertNotNull($this->object->handle());
         $this->object->disconnect();
-
         $this->assertFalse($this->object->isConnected());
-    }
+        $this->object->reset();
+        $this->assertNull($this->object->handle());
+    } // testDisconnect
 
     /**
      * @covers ezsql\Database\ez_pdo::connect
@@ -265,8 +270,18 @@ class pdo_mysqlTest extends EZTestCase
     /**
      * @covers ezsql\Database\ez_pdo::__construct
      */
-    public function test__Construct() {        
+    public function test__Construct_Error() {        
         $this->expectExceptionMessageRegExp('/[Missing configuration details]/');
         $this->assertNull(new ez_pdo('bad'));
-    }      
+    }
+
+    /**
+     * @covers ezsql\Database\ez_pdo::__construct
+     */
+    public function test__construct() {
+        
+        $dsn = 'mysql:host='.self::TEST_DB_HOST.';dbname='. self::TEST_DB_NAME.';port=3306';
+        $settings = Config::initialize('pdo', [$dsn, self::TEST_DB_USER, self::TEST_DB_PASSWORD]);
+        $this->assertNotNull(new ez_pdo($settings));
+    } 
 }
