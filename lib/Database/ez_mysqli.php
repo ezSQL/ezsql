@@ -31,12 +31,8 @@ class ez_mysqli extends ezsqlModel implements DatabaseInterface
      */
     private $database;
 
-    public function __construct(ConfigInterface $settings = null) {
-        if ( ! \class_exists('ezsqlModel') ) {
-            if ( ! \interface_exists('Psr\Container\ContainerInterface') )
-                throw new Exception(\CONFIGURATION_REQUIRES);
-        }
-
+    public function __construct(ConfigInterface $settings = null) 
+    {
         if (empty($settings)) {
             throw new Exception(\MISSING_CONFIGURATION);
         }

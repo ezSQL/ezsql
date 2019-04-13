@@ -33,12 +33,7 @@ class ez_sqlite3 extends ezsqlModel implements DatabaseInterface
      *  same time as initializing the ez_sqlite3 class
      */
     public function __construct(ConfigInterface $settings = null)
-    {
-        if ( ! \class_exists('ezsqlModel') ) {
-            if ( ! \interface_exists('Psr\Container\ContainerInterface') )
-                throw new Exception(\CONFIGURATION_REQUIRES);
-        }
-        
+    {        
         if (empty($settings)) {
             throw new Exception(\MISSING_CONFIGURATION);
         }
