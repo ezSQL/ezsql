@@ -113,9 +113,12 @@ class pdo_mysqlTest extends EZTestCase
      /**
      * @covers ezsql\ezsqlModel::secureSetup
      * @covers ezsql\ezsqlModel::secureReset
+     * @covers ezsql\Database\ez_pdo::connect
      * @covers ezsql\Database\ez_pdo::handle
      * @covers ezsql\ezQuery::drop
+     * @covers ezsql\ezQuery::create
      * @covers \primary
+     * @covers \insert
      */
     public function testSecureSetup()
     {
@@ -129,7 +132,7 @@ class pdo_mysqlTest extends EZTestCase
             primary('id_pk', 'id'))
         );
 
-        $this->assertEquals(1, $this->object->insert('new_create_test2',
+        $this->assertEquals(1, insert('new_create_test2',
             ['create_key' => 'test 2'])
         );
 
@@ -142,6 +145,7 @@ class pdo_mysqlTest extends EZTestCase
 
     /**
      * @covers ezsql\ezQuery::create
+     * @covers ezsql\Database\ez_pdo::connect
      */
     public function testCreate()
     {
@@ -186,6 +190,7 @@ class pdo_mysqlTest extends EZTestCase
        
     /**
      * @covers ezsql\ezQuery::update
+     * @covers \update
      */
     public function testUpdate()
     {
@@ -196,7 +201,7 @@ class pdo_mysqlTest extends EZTestCase
         $this->object->insert('unit_test', array('id'=>'3', 'test_key'=>'test 3' ));
         $unit_test['test_key'] = 'testing';
         $where="id  =  1";
-        $this->assertEquals($this->object->update('unit_test', $unit_test, $where), 1);
+        $this->assertEquals(update('unit_test', $unit_test, $where), 1);
         $this->assertEquals($this->object->update('unit_test', $unit_test, eq('test_key','test 3', _AND), eq('id','3')), 1);
         $this->assertEquals($this->object->update('unit_test', $unit_test, "id = 4"), 0);
         $this->assertEquals($this->object->update('unit_test', $unit_test, "test_key  =  test 2  and", "id  =  2"), 1);
@@ -235,6 +240,7 @@ class pdo_mysqlTest extends EZTestCase
      * @covers ezsql\Database\ez_pdo::query
      * @covers ezsql\Database\ez_pdo::prepareValues
      * @covers ezsql\Database\ez_pdo::query_prepared
+     * @covers \select
      */
     public function testSelecting()
     {
@@ -253,7 +259,7 @@ class pdo_mysqlTest extends EZTestCase
         }
         
         $where=array('test_key','=','testing 2');
-        $result = $this->object->selecting('unit_test', 'id', $where);
+        $result = select('unit_test', 'id', $where);
         foreach ($result as $row) {
             $this->assertEquals(2, $row->id);
         }
