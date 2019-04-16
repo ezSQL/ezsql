@@ -28,7 +28,7 @@ class Database
      * @param mixed $setting - SQL connection parameters
      * @param mixed $tag - Store the instance for later use
      */
-    public static function initialize(string $vendor = null, $setting = null, string $tag = null)
+    public static function initialize(string $vendor = null, array $setting = null, string $tag = null)
     {
         if (isset(self::$instances[$vendor]))
             return \setInstance(self::$instances[$vendor]) ? self::$instances[$vendor] : false;

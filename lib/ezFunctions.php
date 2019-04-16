@@ -10,7 +10,7 @@ use ezsql\Database\ez_pdo;
 global $ezInstance;
 
 if (!function_exists('ezFunctions')) {
-    function database(string $sqlDriver = null, $connectionSetting = null, string $instanceTag = null)
+    function database(string $sqlDriver = null, array $connectionSetting = null, string $instanceTag = null)
     {
         return Database::initialize($sqlDriver, $connectionSetting, $instanceTag);
     }
@@ -20,27 +20,27 @@ if (!function_exists('ezFunctions')) {
         return \database($getTag);
     }
 
-    function mysqlInstance($databaseSetting = null, $instanceTag = null)
+    function mysqlInstance(array $databaseSetting = null, string $instanceTag = null)
     {
         return \database(\MYSQLI, $databaseSetting, $instanceTag);
     }
 
-    function pgsqlInstance($databaseSetting = null, $instanceTag = null)
+    function pgsqlInstance(array $databaseSetting = null, string $instanceTag = null)
     {
         return \database(\PGSQL, $databaseSetting, $instanceTag);
     }
 
-    function mssqlInstance($databaseSetting = null, $instanceTag = null)
+    function mssqlInstance(array $databaseSetting = null, string $instanceTag = null)
     {
         return \database(\MSSQL, $databaseSetting, $instanceTag);
     }
 
-    function pdoInstance($databaseSetting = null, $instanceTag = null)
+    function pdoInstance(array $databaseSetting = null, string $instanceTag = null)
     {
         return \database(\Pdo, $databaseSetting, $instanceTag);
     }
 
-    function sqliteInstance($databaseSetting = null, $instanceTag = null)
+    function sqliteInstance(array $databaseSetting = null, string $instanceTag = null)
     {
         return \database(\SQLITE3, $databaseSetting, $instanceTag);
     }

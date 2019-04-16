@@ -17,6 +17,7 @@ class DatabaseTest extends EZTestCase
     * @covers ezsql\Database::Initialize
     * @covers ezsql\Database::benchmark
     * @covers \setInstance
+    * @covers \tagInstance
     */
     public function testInitialize()
     {
@@ -26,13 +27,14 @@ class DatabaseTest extends EZTestCase
             );
         }
 
-        $mysqli = Database::initialize(MYSQLI, [self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME]);
+        $mysqli = Database::initialize(MYSQLI, [self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME], MYSQLI);
         $this->assertFalse($mysqli instanceof ConfigInterface);
         $this->assertTrue($mysqli->settings() instanceof ConfigInterface);
         $this->assertTrue($mysqli instanceof ez_mysqli);
         $this->assertTrue($mysqli->getShow_Errors());
         $benchmark = Database::benchmark();
         $this->assertNotNull($benchmark['start']);
+        $this->assertSame($mysqli, \tagInstance(MYSQLI));
     }
 
     /**
