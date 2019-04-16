@@ -10,9 +10,6 @@ use ezsql\DatabaseInterface;
 
 class ez_pgsql extends ezsqlModel implements DatabaseInterface
 {
-    private static $isSecure = false;
-    private static $secure = null;
-
     /**
     * Database connection handle 
     * @var resource

@@ -20,8 +20,6 @@ class ez_sqlsrv extends ezsqlModel implements DatabaseInterface
         -11 => 'uniqueidentifier', -3 => 'varbinary', 12 => 'varchar', -152 => 'xml',
     );
 
-    private static $isSecure = false;
-
     /**
     * Database connection handle 
     * @var resource
@@ -86,7 +84,7 @@ class ez_sqlsrv extends ezsqlModel implements DatabaseInterface
         $host = ($host != 'localhost') ? $this->database->getHost() : $host;
 
         // Blank user assumes Windows Authentication
-        if (self::$isSecure) {
+        if ($this->isSecure) {
             $connectionOptions = array(
                 "UID" => $user,
                 "PWD" => $password,

@@ -11,6 +11,13 @@ use ezsql\ezsqlModelInterface;
  */	
 class ezsqlModel extends ezQuery implements ezsqlModelInterface
 {
+    protected $isSecure = false;
+	protected $secureOptions = null;
+	protected $sslKey = null;
+	protected $sslCert = null;
+	protected $sslCa = null;
+	protected $sslPath = null;
+
 	/**
 	 * If set to true (i.e. $db->debug_all = true;) Then it will print out ALL queries and ALL results of your script.
 	 * @var boolean
@@ -642,7 +649,39 @@ class ezsqlModel extends ezQuery implements ezsqlModelInterface
 		return ($all) ? $this->num_queries : $this->conn_queries;
 	}
 
-    	/**
+    public function secureSetup(
+        string $key = 'certificate.key', 
+        string $cert = 'certificate.crt', 
+        string $ca = 'cacert.pem', 
+        string $path = '.'.\_DS) 
+    {
+		if (! \file_exists($path.$cert) || ! \file_exists($path.$key)) {
+			$vendor = \getVendor();
+			if (($vendor != \SQLITE) || ($vendor != \MSSQL))
+            	$path = ezQuery::createCertificate();
+		} elseif ($path == '.'.\_DS) {
+            $ssl_path = \getcwd();
+            $path = \preg_replace('/\\\/', \_DS, $ssl_path). \_DS;
+        }
+
+        $this->isSecure = true;
+        $this->sslKey = $key;
+        $this->sslCert = $cert;
+		$this->sslCa = $ca;
+		$this->sslPath = $path;
+	}
+
+    public function secureReset() 
+    {
+        $this->isSecure = false;
+        $this->sslKey = null;
+        $this->sslCert = null;
+		$this->sslCa = null;
+		$this->sslPath = null;
+		$this->secureOptions = null;
+	}
+
+    /**
       * Returns, whether a database connection is established, or not
       *
       * @return boolean

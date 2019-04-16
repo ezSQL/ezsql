@@ -109,14 +109,43 @@ class pdo_mysqlTest extends EZTestCase
 
         $this->assertEquals(0, $this->object->query('DROP TABLE unit_test'));
     } 
- 
+
+     /**
+     * @covers ezsql\ezsqlModel::secureSetup
+     * @covers ezsql\ezsqlModel::secureReset
+     * @covers ezsql\Database\ez_pdo::handle
+     * @covers ezsql\ezQuery::drop
+     * @covers \primary
+     */
+    public function testSecureSetup()
+    {
+        $this->object->secureSetup();
+        $this->object->connect('mysql:host=' . self::TEST_DB_HOST . ';dbname=' . self::TEST_DB_NAME . ';port=' . self::TEST_DB_PORT, self::TEST_DB_USER, self::TEST_DB_PASSWORD);
+             
+        $this->assertEquals(0, $this->object->drop('new_create_test2'));
+        $this->assertEquals(0, $this->object->create('new_create_test2',
+            column('id', INTR, 11, notNULL, AUTO),
+            column('create_key', VARCHAR, 50),
+            primary('id_pk', 'id'))
+        );
+
+        $this->assertEquals(1, $this->object->insert('new_create_test2',
+            ['create_key' => 'test 2'])
+        );
+
+        $conn = $this->object->handle();
+        $res = $conn->query("SHOW STATUS LIKE 'Ssl_cipher';")->fetchAll();
+        $this->assertEquals('Ssl_cipher', $res[0]['Variable_name']);
+        $this->assertEquals(0, $this->object->drop('new_create_test2'));
+        $this->object->secureReset();
+    }
 
     /**
-     * @covers  ezsql\ezQuery::create
+     * @covers ezsql\ezQuery::create
      */
     public function testCreate()
     {
-        $this->assertTrue($this->object->connect('mysql:host=' . self::TEST_DB_HOST . ';dbname=' . self::TEST_DB_NAME . ';port=' . self::TEST_DB_PORT, self::TEST_DB_USER, self::TEST_DB_PASSWORD));
+        $this->assertTrue($this->object->connect());
              
         $this->assertEquals($this->object->create('new_create_test',
             column('id', INTR, 11, notNULL, AUTO),
@@ -132,7 +161,7 @@ class pdo_mysqlTest extends EZTestCase
     }
 
     /**
-     * @covers  ezsql\ezQuery::drop
+     * @covers ezsql\ezQuery::drop
      */
     public function testDrop()
     {
@@ -142,7 +171,7 @@ class pdo_mysqlTest extends EZTestCase
     }
    
     /**
-     * @covers  ezsql\ezQuery::insert
+     * @covers ezsql\ezQuery::insert
      */
     public function testInsert()
     {

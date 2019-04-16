@@ -11,10 +11,6 @@ use ezsql\DatabaseInterface;
 
 class ez_pdo extends ezsqlModel implements DatabaseInterface
 {
-    private static $isSecure = false;
-    private static $secure = null;
-    private static $_options = [];
-
     /**
     * Database connection handle 
     * @var resource
@@ -56,56 +52,21 @@ class ez_pdo extends ezsqlModel implements DatabaseInterface
         return $this->database;
     }
 
-    public static function securePDO(
-        $vendor = null, 
-        $key = 'certificate.key', 
-        $cert = 'certificate.crt', 
-        $ca = 'cacert.pem', 
-        $path = '.'.\_DS) 
-    {
-        if (\array_key_exists(\strtolower($vendor), \VENDOR) 
-            && (! \file_exists($path.$cert) || ! \file_exists($path.$key)))
-            $path = ezQuery::createCertificate();
-        elseif ($path == '.'.\_DS) {
-            $ssl_path = \getcwd();
-            $path = \preg_replace('/\\\/', \_DS, $ssl_path). \_DS;
-        }
-
-        if (($vendor == \PGSQL) || ($vendor == \POSTGRESQL)) {
-            self::$secure = "sslmode=require;sslcert=".$path.$cert.";sslkey=".$path.$key.";sslrootcert=".$path.$ca.";";
-            self::$isSecure = true;
-        } elseif (($vendor == \MYSQL) || ($vendor == \MYSQLI)) {
-            self::$_options = array(
-                \PDO::MYSQL_ATTR_SSL_KEY => $path.$key,
-                \PDO::MYSQL_ATTR_SSL_CERT => $path.$cert,
-                \PDO::MYSQL_ATTR_SSL_CA => $path.$ca,
-                \PDO::MYSQL_ATTR_SSL_CAPATH => $path,
-                \PDO::MYSQL_ATTR_SSL_CIPHER => 'DHE-RSA-AES256-SHA',
-                \PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT => false
-            );
-        } elseif (($vendor == \SQLSERVER) || ($vendor == \MSSQL) || ($vendor == \SQLSRV)) {
-            self::$secure = ";Encrypt=true;TrustServerCertificate=true";
-            self::$isSecure = true;
-        }
-    }
-
     /**
-    * Try to connect to the database server in the DSN parameters
-    *
-    * @param string $dsn The connection parameter string
-    *                  Default is empty string
-    * @param string $user The database user name
-    *                  Default is empty string
-    * @param string $password The database password
-    *                  Default is empty string
-    * @param array $options Array for setting connection options as MySQL
-    * charset for example
-    *                  Default is an empty array
-    * @param boolean $isFileBased File based databases like SQLite don't need user and password, 
-    * they work with path in the dsn parameter
-    *                  Default is false
-    * @return boolean
-    */
+     * Try to connect to the database server in the DSN parameters
+     *
+     * @param string $dsn The connection parameter string
+     *                  Default is empty string
+     * @param string $user The database user name
+     *                  Default is empty string
+     * @param string $password The database password
+     *                  Default is empty string
+     * @param array $options Array for setting connection options
+     *                  Default is an empty array
+     * @param boolean $isFileBased File based databases like SQLite don't need user and password, 
+     *                  Default is false
+     * @return boolean
+     */
     public function connect(
         $dsn = '', 
         $user = '', 
@@ -113,27 +74,51 @@ class ez_pdo extends ezsqlModel implements DatabaseInterface
         $options = array(), 
         $isFile = false) 
     {
-        $this->_connected = false;
-        if (self::$isSecure)
-            $setDsn = empty($dsn) ? $this->database->getDsn().$this->secure : $dsn.$this->secure;
+        $this->_connected = false;	
+        $key = $this->sslKey;
+        $cert = $this->sslCert;
+		$ca = $this->sslCa;
+        $path = $this->sslPath;
+        
+        $vendor = $this->database->getDsn();
+        if ($this->isSecure) {
+            if (\strpos($vendor, \PGSQL) !== false) {
+                $this->secureOptions = 'sslmode=require;sslcert='.$path.$cert.';sslkey='.$path.$key.';sslrootcert='.$path.$ca.';';
+            } elseif (\strpos($vendor, 'mysql') !== false) {
+                $this->secureOptions = array(
+                    \PDO::MYSQL_ATTR_SSL_KEY => $path.$key,
+                    \PDO::MYSQL_ATTR_SSL_CERT => $path.$cert,
+                    \PDO::MYSQL_ATTR_SSL_CA => $path.$ca,
+                    \PDO::MYSQL_ATTR_SSL_CAPATH => $path,
+                    \PDO::MYSQL_ATTR_SSL_CIPHER => 'DHE-RSA-AES256-SHA',
+                    \PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT => false
+                );
+            } elseif (\strpos($vendor, \MSSQL) !== false) {
+                $this->secureOptions = ';Encrypt=true;TrustServerCertificate=true';
+            }
+        }
+
+        if ($this->isSecure && \is_string($this->secureOptions))
+            $dsn = empty($dsn) ? $vendor.$this->secureOptions : $dsn.$this->secureOptions;
         else
-            $setDsn = empty($dsn) ? $this->database->getDsn() : $dsn;
+            $dsn = empty($dsn) ? $vendor : $dsn;
 
-        if (!empty(self::$_options))
-            $this->database->setOptions(self::$_options);
+        if ($this->isSecure && \is_array($this->secureOptions))       
+            $options = $this->secureOptions;
+        else 
+            $options = empty($options) ? $this->database->getOptions() : $options;
 
-        $setUser = empty($user) ? $this->database->getUser() : $user;
-        $setPassword = empty($password) ? $this->database->getPassword() : $password;        
-        $setOptions = empty($options) ? $this->database->getOptions() : $options;
-        $IsFile = empty($isFile) ? $this->database->getIsFile() : $isFile;
+        $user = empty($user) ? $this->database->getUser() : $user;
+        $password = empty($password) ? $this->database->getPassword() : $password; 
+        $isFile = empty($isFile) ? $this->database->getIsFile() : $isFile;
 
         // Establish PDO connection
         try  {
-            if ($IsFile) {
-                $this->dbh = new \PDO($setDsn, null, null, null);
+            if ($isFile) {
+                $this->dbh = new \PDO($dsn, null, null, null);
                 $this->_connected = true;
             } else {
-                $this->dbh = new \PDO($setDsn, $setUser, $setPassword, $setOptions);
+                $this->dbh = new \PDO($dsn, $user, $password, $options);
                 $this->_connected = true;
             }
         } catch (\PDOException $e) {

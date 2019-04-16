@@ -102,30 +102,12 @@ if (!function_exists('ezFunctions')) {
         array $details = ["commonName" => "localhost"]
     ) 
     {
-        ezQuery::createCertificate($privatekeyFile, $certificateFile, $signingFile, $ssl_path, $details);
-    }
-
-    function securePDO(
-        $vendor = null, 
-        $key = 'certificate.key', 
-        $cert = 'certificate.crt', 
-        $ca = 'cacert.pem', 
-        $path = '.'.\_DS) 
-    {
-        ez_pdo::securePDO($vendor, $key, $cert, $ca, $path);
-    }
-
-    function secureSQL(
-        $key = 'certificate.key', 
-        $cert = 'certificate.crt', 
-        $ca = 'cacert.pem', 
-        $path = '.'.\_DS) 
-    {
-        // todo
+        return ezQuery::createCertificate($privatekeyFile, $certificateFile, $signingFile, $ssl_path, $details);
     }
 
 	/**
      * Creates an array from expressions in the following format
+     * 
      * @param strings $x, - The left expression.
      * @param strings $operator, - One of 
      *      '<', '>', '=', '!=', '>=', '<=', '<>', 'IN',, 'NOT IN', 'LIKE', 
