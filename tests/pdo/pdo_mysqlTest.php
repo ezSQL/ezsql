@@ -115,6 +115,7 @@ class pdo_mysqlTest extends EZTestCase
      * @covers ezsql\ezsqlModel::secureReset
      * @covers ezsql\Database\ez_pdo::connect
      * @covers ezsql\Database\ez_pdo::handle
+     * @covers ezsql\ezQuery::createCertificate
      * @covers ezsql\ezQuery::drop
      * @covers ezsql\ezQuery::create
      * @covers \primary

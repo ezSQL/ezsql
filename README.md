@@ -46,12 +46,12 @@ ___General Methods___
     to_string($arrays, $separation = ',');
     clean($string);
     create_cache(string $path = null);
-    securePDO($vendor = null,
-        $key = 'certificate.key',
+    secureSetup($key = 'certificate.key',
         $cert = 'certificate.crt',
         $ca = 'cacert.pem',
         $path = '.'._DS
     );
+    secureReset();
     createCertificate(string $privatekeyFile = certificate.key,
         string $certificateFile = certificate.crt,
         string $signingFile = certificate.csr,
@@ -62,6 +62,8 @@ ___Shortcut Table Methods___
 
     create(string $table = null, ...$schemas);// $schemas requires... column()
     column(string $column = null, string $type = null, ...$args);
+    primary(string $constraintName, ...$primaryKeys);
+    index(string $indexName, ...$indexKeys);
     drop(string $table);
 Example
 
