@@ -46,10 +46,10 @@ ___General Methods___
     to_string($arrays, $separation = ',');
     clean($string);
     create_cache(string $path = null);
-    secureSetup($key = 'certificate.key',
-        $cert = 'certificate.crt',
-        $ca = 'cacert.pem',
-        $path = '.'._DS
+    secureSetup(string $key = 'certificate.key',
+        string $cert = 'certificate.crt',
+        string $ca = 'cacert.pem',
+        string $path = '.'._DS
     );
     secureReset();
     createCertificate(string $privatekeyFile = certificate.key,
@@ -62,7 +62,7 @@ ___Shortcut Table Methods___
 
     create(string $table = null, ...$schemas);// $schemas requires... column()
     column(string $column = null, string $type = null, ...$args);
-    primary(string $constraintName, ...$primaryKeys);
+    primary(string $primaryName, ...$primaryKeys);
     index(string $indexName, ...$indexKeys);
     drop(string $table);
 Example
@@ -108,15 +108,38 @@ prepareOff(); // When off shortcut SQL Methods calls will use vendors escape rou
 * `unionAll(string $table = null, $columnFields = '*', ...$conditions);`
 * `orderBy($orderBy, $order);`
 * `limit($numberOf, $offset = null)`
-* `where( ...$whereKeyArray);`
+* `where( ...$whereConditions);`
 * `selecting(string $table = null, $columnFields = '*', ...$conditions);`
-* `create_select(string $newTable, $fromColumns, $oldTable = null, ...$fromWhere);`
-* `select_into(string $newTable, $fromColumns, $oldTable = null, ...$fromWhere);`
-* `update(string $table = null, $keyAndValue, ...$whereKeys);`
-* `delete(string $table = null, ...$whereKeys);`
+* `create_select(string $newTable, $fromColumns, $oldTable = null, ...$conditions);`
+* `select_into(string $newTable, $fromColumns, $oldTable = null, ...$conditions);`
+* `update(string $table = null, $keyAndValue, ...$whereConditions);`
+* `delete(string $table = null, ...$whereConditions);`
 * `replace(string $table = null, $keyAndValue);`
 * `insert(string $table = null, $keyAndValue);`
-* `insert_select(string $toTable = null, $toColumns = '*', $fromTable = null, $fromColumns = '*', ...$fromWhere);`
+* `insert_select(string $toTable = null, $toColumns = '*', $fromTable = null, $fromColumns = '*', ...$conditions);`
+
+```php
+// The variadic ...$whereConditions, and ..$conditions parameters,
+//  represent the following global functions.
+// They are comparison expressions returning an array with the given arguments,
+//  the last arguments of _AND, _OR, _NOT, _andNOT will combine expressions
+eq('key/Field/Column', $value, _AND), // combine next expression
+neq('key/Field/Column', $value, _OR), // will combine next expression again
+ne('key/Field/Column', $value)
+lt('key/Field/Column', $value)
+lte('key/Field/Column', $value)
+gt('key/Field/Column', $value)
+gte('key/Field/Column', $value)
+isNull('key/Field/Column')
+isNotNull('key/Field/Column')
+like('key/Field/Column', '_%')
+notLike('key/Field/Column', '_%')
+in('key/Field/Column', $value)
+notIn('key/Field/Column', $value)
+between('key/Field/Column', $value, $value2)
+notBetween('key/Field/Column', $value, $value2)
+// The above should be used within the where( ...$whereConditions) clause
+```
 
 ```php
 // Supply the the whole query string, and placing '?' within
@@ -140,17 +163,8 @@ $values['phone'] = $number;
 $db->insert('profile', $values);
 $db->insert('profile', ['name' => 'john john', 'email' => 'john@email', 'phone' => 123456]);
 
-// returns result set given the table name, column fields, and ...conditionals
-$result = $db->selecting('profile', 'phone',
-    // ...conditionals are comparison operators($column, $value, _COMBINE_EXPRESSION_CONSTANTS)
-    // these operators are functions returning arrays:
-    //      eq(), neq(), ne(), lt(), lte(),
-    //      gt(), gte(), isNull(), isNotNull(),
-    //      like(), notLike(), in(), notIn(), between(), notBetween(),
-    // _COMBINE_EXPRESSION_CONSTANTS:
-    //      _AND, _OR, _NOT, _andNOT
-    eq('email', $email, _AND), neq('id', 1)
-);
+// returns result set given the table name, column fields, and ...conditions
+$result = $db->selecting('profile', 'phone', eq('email', $email, _AND), neq('id', 1));
 
 foreach ($result as $row) {
     echo $row->phone;

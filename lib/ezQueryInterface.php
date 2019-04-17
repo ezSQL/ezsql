@@ -283,7 +283,7 @@ interface ezQueryInterface
     *   `where( array(key, operator, value, combine, extra) );` or 
     *   `where( "key  operator  value  combine  extra" );` // Strings will need to be double spaced
     *
-    * @param array $whereKeyArray
+    * @param array $whereConditions like
     * @param $key, - table column  
     * @param $operator, - set the operator condition, 
     *                   either '<','>', '=', '!=', '>=', '<=', '<>', 'in', 'like', 
@@ -296,7 +296,7 @@ interface ezQueryInterface
     *
 	* @return mixed bool/string - WHERE SQL statement, or false on error
 	*/        
-    public function where( ...$whereKeyArray);
+    public function where( ...$whereConditions);
     
 	/**
     * Returns an SQL string or result set, given the 
@@ -344,7 +344,7 @@ interface ezQueryInterface
     *
     * @return mixed bool/result - false for error
 	*/
-    public function create_select(string $newTable, $fromColumns, $oldTable = null, ...$fromWhere);
+    public function create_select(string $newTable, $fromColumns, $oldTable = null, ...$conditions);
     
     /**
     * Does an select into statement by calling selecting method
@@ -355,7 +355,7 @@ interface ezQueryInterface
     *
     * @return mixed bool/result - false for error
 	*/
-    public function select_into(string $newTable, $fromColumns, $oldTable = null, ...$fromWhere);
+    public function select_into(string $newTable, $fromColumns, $oldTable = null, ...$conditions);
 		
 	/**
 	* Does an update query with an array, by conditional operator array
@@ -365,13 +365,13 @@ interface ezQueryInterface
 	*
 	* @return mixed bool/results - false for error
 	*/
-    public function update(string $table = null, $keyAndValue, ...$whereKeys);
+    public function update(string $table = null, $keyAndValue, ...$whereConditions);
          
 	/** 
     * Helper does the actual delete query with an array
 	* @return mixed bool/results - false for error
 	*/
-    public function delete(string $table = null, ...$whereKeys);
+    public function delete(string $table = null, ...$whereConditions);
 
 	/**
     * Does an replace query with an array
@@ -398,7 +398,7 @@ interface ezQueryInterface
     * @return mixed bool/id of inserted record, or false for error
 	*/
     public function insert_select(
-        string $toTable = null, $toColumns = '*', $fromTable = null, $fromColumns = '*', ...$fromWhere);
+        string $toTable = null, $toColumns = '*', $fromTable = null, $fromColumns = '*', ...$conditions);
 
    /**
     * Creates an database table and columns, by either:

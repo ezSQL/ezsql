@@ -60,22 +60,22 @@ if (!function_exists('ezFunctions')) {
         return ezSchema::column($column, $type, ...$args);
     }
 
-    function primary(string $constraintName, ...$primaryKeys)
+    function primary(string $primaryName, ...$primaryKeys)
     {
         array_unshift($primaryKeys, \PRIMARY);
-        return \column(\CONSTRAINT, $constraintName, ...$primaryKeys);
+        return \column(\CONSTRAINT, $primaryName, ...$primaryKeys);
     }
 
-    function foreign(string $constraintName, ...$foreignKeys)
+    function foreign(string $foreignName, ...$foreignKeys)
     {
         array_unshift($foreignKeys, \FOREIGN);
-        return \column(\CONSTRAINT, $constraintName, ...$foreignKeys);
+        return \column(\CONSTRAINT, $foreignName, ...$foreignKeys);
     }
 
-    function unique(string $constraintName, ...$uniqueKeys)
+    function unique(string $uniqueName, ...$uniqueKeys)
     {
         array_unshift($uniqueKeys, \UNIQUE);
-        return \column(\CONSTRAINT, $constraintName, ...$uniqueKeys);
+        return \column(\CONSTRAINT, $uniqueName, ...$uniqueKeys);
     }
 
     function index(string $indexName, ...$indexKeys)
