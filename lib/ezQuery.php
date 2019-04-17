@@ -15,6 +15,8 @@ class ezQuery implements ezQueryInterface
 	private $fromTable = null;
     private $isWhere = true;    
     private $isInto = false;
+    private $whereSQL = null;
+    private $combineWith = null;
 
     public function __construct()
     {
@@ -292,6 +294,52 @@ class ezQuery implements ezQueryInterface
         return 'LIMIT '.$rows.$value;
     }
 
+    private function conditions($key, $condition, $value, $combine) 
+    {        
+        if ($this->isPrepareOn()) {
+            $this->whereSQL .= "$key $condition ".\_TAG." $combine ";
+            $this->addPrepare($value);
+        } else 
+            $this->whereSQL .= "$key $condition '".$this->escape($value)."' $combine ";
+    }
+
+    private function conditionBetween($key, $condition, $valueOne, $valueTwo, $combine) 
+    {
+        $_valueTwo = $this->escape($valueTwo);
+        $andCombineWith = \_AND;
+        if (\in_array(\strtoupper($combine), \_COMBINERS)) 
+            $andCombineWith = \strtoupper($combine);
+
+        if ($this->isPrepareOn()) {
+            $this->whereSQL .= "$key ".$condition.' '.\_TAG." AND ".\_TAG." $andCombineWith ";
+            $this->addPrepare($valueOne);
+            $this->addPrepare($valueTwo);
+        } else 
+            $this->whereSQL .= "$key $condition '".$this->escape($valueOne)."' AND '".$_valueTwo."' $andCombineWith ";
+        
+		$this->combineWith = $andCombineWith;
+    }
+
+    private function conditionIn($key, $condition, $valueRow, $combine) 
+    {
+        $value = '';
+        foreach ($valueRow as $splitValue) {
+            if ($this->isPrepareOn()) {
+                $value .= \_TAG.', ';
+                $this->addPrepare($splitValue);
+            } else 
+                $value .= "'".$this->escape($splitValue)."', ";
+        }
+        
+        $this->whereSQL .= "$key $condition ( ".\rtrim($value, ', ')." ) $combine ";
+    }
+
+    private function conditionIs($key, $condition, $combine) 
+    {        
+        $isCondition = (($condition == 'IS') || ($condition == 'IS NOT')) ? $condition : 'IS';
+        $this->whereSQL .= "$key $isCondition NULL $combine ";
+    }
+
     public function where( ...$whereConditions) 
     {
         if (empty($whereConditions))
@@ -304,7 +352,7 @@ class ezQuery implements ezQueryInterface
         $operator = [];
         $extra = [];
         $combiner = [];
-        $combineWith = '';
+        $this->combineWith = '';
         
 		$storeWhereConditions = $whereConditions;
 		if (\is_string($whereConditions[0])) {
@@ -336,63 +384,41 @@ class ezQuery implements ezQueryInterface
         
         $where = '1';    
         if (! isset($whereClause['1'])) {
-            $where = '';
+            $this->whereSQL = '';
             $i = 0;
             foreach($whereClause as $key => $val) {
                 $isCondition = \strtoupper($operator[$i]);
 				$combine = $combiner[$i];
-                $combineWith = \_AND;
-				if ( \in_array(\strtoupper($combine), \_COMBINERS) || isset($extra[$i])) 
-					$combineWith = (isset($extra[$i])) ? $combine : \strtoupper($combine);
+                $this->combineWith = \_AND;
+				if ( \in_array(\strtoupper($combine), \_COMBINERS) || isset($extra[$i]))                  
+                    $this->combineWith = isset($extra[$i]) ? $combine : \strtoupper($combine);
 
                 if (! \in_array( $isCondition, \_BOOLEAN_OPERATORS))
                     return $this->clearPrepare();
 
                 if (($isCondition == \_BETWEEN) || ($isCondition == \_notBETWEEN)) {
-				    $value = $this->escape($combineWith);
-                    $myCombineWith = \_AND;
-					if (\in_array(\strtoupper($extra[$i]), \_COMBINERS)) 
-						$myCombineWith = \strtoupper($extra[$i]);
-
-					if ($this->isPrepareOn()) {
-						$where .= "$key ".$isCondition.' '.\_TAG." AND ".\_TAG." $myCombineWith ";
-						$this->addPrepare($val);
-						$this->addPrepare($combineWith);
-					} else 
-                        $where .= "$key ".$isCondition." '".$this->escape($val)."' AND '".$value."' $myCombineWith ";
-                            
-					$combineWith = $myCombineWith;
+                    $this->conditionBetween($key, $isCondition, $val, $this->combineWith, $extra[$i]);
 				} elseif ($isCondition == \_IN) {
-					$value = '';
-					foreach ($val as $inValues) {
-						if ($this->isPrepareOn()) {
-							$value .= \_TAG.', ';
-							$this->addPrepare($inValues);
-						} else 
-							$value .= "'".$this->escape($inValues)."', ";
-                    }                        
-					$where .= "$key ".$isCondition." ( ".\rtrim($value, ', ')." ) $combineWith ";
+                    $this->conditionIn($key, $isCondition, $val, $this->combineWith);
 				} elseif (((\strtolower($val) == 'null') || ($isCondition == 'IS') || ($isCondition == 'IS NOT'))) {
-                     $isCondition = (($isCondition == 'IS') || ($isCondition == 'IS NOT')) ? $isCondition : 'IS';
-                    $where .= "$key ".$isCondition." NULL $combineWith ";
+                    $this->conditionIs($key, $isCondition, $this->combineWith);
                 } elseif ((($isCondition == \_LIKE) || ($isCondition == \_notLIKE)) && ! \preg_match('/[_%?]/', $val)) {
                     return $this->clearPrepare();
                 } else {
-					if ($this->isPrepareOn()) {
-						$where .= "$key ".$isCondition.' '.\_TAG." $combineWith ";
-						$this->addPrepare($val);
-					} else 
-						$where .= "$key ".$isCondition." '".$this->escape($val)."' $combineWith ";
-                }                    
+                    $this->conditions($key, $isCondition, $val, $this->combineWith);
+                }
+
                 $i++;
             }
-            $where = \rtrim($where, " $combineWith ");
+
+            $where = \rtrim($this->whereSQL, " $this->combineWith ");
+            $this->whereSQL = null;
         }
 		
         if (($this->isPrepareOn()) && !empty($this->prepareValues()) && ($where != '1'))
-			return " $whereOrHaving ".$where.' ';
+			return " $whereOrHaving $where ";
         
-		return ($where != '1') ? " $whereOrHaving ".$where.' ' : ' ' ;
+		return ($where != '1') ? " $whereOrHaving $where " : ' ' ;
     }        
     
     public function selecting(string $table = null, $columnFields = '*', ...$conditions) 

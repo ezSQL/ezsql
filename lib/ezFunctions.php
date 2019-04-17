@@ -261,7 +261,7 @@ if (!function_exists('ezFunctions')) {
     function between($x, $y, $y2, ...$args)
     {
         $expression = array();
-        \array_push($expression, $x, \_BETWEEN,$y, $y2, ...$args);
+        \array_push($expression, $x, \_BETWEEN,$y, $y2, \_AND, ...$args);
         return $expression;
     }
 

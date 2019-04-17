@@ -54,6 +54,10 @@ class ezQueryTest extends EZTestCase
 
     /**
      * @covers ezsql\ezQuery::where
+     * @covers ezsql\ezQuery::conditionIs
+     * @covers ezsql\ezQuery::conditionBetween
+     * @covers ezsql\ezQuery::conditions
+     * @covers ezsql\ezQuery::conditionIn
      * @covers ezsql\ezQuery::isPrepareOn
      */
     public function testWhere()
@@ -71,7 +75,7 @@ class ezQueryTest extends EZTestCase
         $this->assertContains(')', $expect);
         
         $this->assertContains('AND', $this->object->where(
-            array('where_test', '=', 'testing 1', 'bad'),
+            array('where_test', '=', 'testing 1'),
 			array('test_like', _LIKE, '_good'))
         );
 
@@ -83,6 +87,10 @@ class ezQueryTest extends EZTestCase
     /**
      * @covers ezsql\ezQuery::prepareOn
      * @covers ezsql\ezQuery::where
+     * @covers ezsql\ezQuery::conditionIs
+     * @covers ezsql\ezQuery::conditionBetween
+     * @covers ezsql\ezQuery::conditions
+     * @covers ezsql\ezQuery::conditionIn
      */
     public function testPrepareOn()
     {
@@ -116,7 +124,7 @@ class ezQueryTest extends EZTestCase
     {
         $this->object->prepareOn();            
         $expect = $this->object->where( 
-            eq('where_test', 'testing 1', _AND), 
+            eq('where_test', 'testing 1'), 
             neq('some_key', 'other', _OR),
             like('other_key', '%any')
         );

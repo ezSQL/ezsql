@@ -125,7 +125,7 @@ prepareOff(); // When off shortcut SQL Methods calls will use vendors escape rou
 //  the last arguments of _AND, _OR, _NOT, _andNOT will combine expressions
 eq('key/Field/Column', $value, _AND), // combine next expression
 neq('key/Field/Column', $value, _OR), // will combine next expression again
-ne('key/Field/Column', $value)
+ne('key/Field/Column', $value), // the default is _AND so will combine next expression
 lt('key/Field/Column', $value)
 lte('key/Field/Column', $value)
 gt('key/Field/Column', $value)
@@ -164,7 +164,7 @@ $db->insert('profile', $values);
 $db->insert('profile', ['name' => 'john john', 'email' => 'john@email', 'phone' => 123456]);
 
 // returns result set given the table name, column fields, and ...conditions
-$result = $db->selecting('profile', 'phone', eq('email', $email, _AND), neq('id', 1));
+$result = $db->selecting('profile', 'phone', eq('email', $email), between('id', 1, $values));
 
 foreach ($result as $row) {
     echo $row->phone;

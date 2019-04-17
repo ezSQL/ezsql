@@ -470,21 +470,25 @@ class mysqliTest extends EZTestCase
 	
     /**
      * @covers ezsql\ezQuery::where
+     * @covers ezsql\ezQuery::conditionIs
+     * @covers ezsql\ezQuery::conditionBetween
+     * @covers ezsql\ezQuery::conditions
+     * @covers ezsql\ezQuery::conditionIn
      * @covers \where
      */
     public function testWhere()
     {
         $this->object->prepareOff();
         $expect = where(
-            between('where_test','testing 1','testing 2','bad'),
-			like('test_null','null')
+            between('where_test', 'testing 1', 'testing 2'),
+			like('test_null', 'null')
 			);
-
+            
         $this->assertContains('WHERE where_test BETWEEN \'testing 1\' AND \'testing 2\' AND test_null IS NULL', $expect);
 
         $this->assertFalse(where(
-            array('where_test','bad','testing 1','or'),
-			array('test_null','like','null')
+            array('where_test', 'bad', 'testing 1', 'or'),
+			array('test_null', 'like', 'null')
             ));
             
         $this->object->prepareOn();
