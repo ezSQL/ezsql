@@ -119,26 +119,27 @@ prepareOff(); // When off shortcut SQL Methods calls will use vendors escape rou
 * `insert_select(string $toTable = null, $toColumns = '*', $fromTable = null, $fromColumns = '*', ...$conditions);`
 
 ```php
-// The variadic ...$whereConditions, and ..$conditions parameters,
+// The variadic ...$whereConditions, and ...$conditions parameters,
 //  represent the following global functions.
 // They are comparison expressions returning an array with the given arguments,
 //  the last arguments of _AND, _OR, _NOT, _andNOT will combine expressions
-eq('key/Field/Column', $value, _AND), // combine next expression
-neq('key/Field/Column', $value, _OR), // will combine next expression again
-ne('key/Field/Column', $value), // the default is _AND so will combine next expression
-lt('key/Field/Column', $value)
-lte('key/Field/Column', $value)
-gt('key/Field/Column', $value)
-gte('key/Field/Column', $value)
-isNull('key/Field/Column')
-isNotNull('key/Field/Column')
-like('key/Field/Column', '_%')
-notLike('key/Field/Column', '_%')
-in('key/Field/Column', $value)
-notIn('key/Field/Column', $value)
-between('key/Field/Column', $value, $value2)
-notBetween('key/Field/Column', $value, $value2)
+eq('column', $value, _AND), // combine next expression
+neq('column', $value, _OR), // will combine next expression again
+ne('column', $value), // the default is _AND so will combine next expression
+lt('column', $value)
+lte('column', $value)
+gt('column', $value)
+gte('column', $value)
+isNull('column')
+isNotNull('column')
+like('column', '_%?')
+notLike('column', '_%?')
+in('column', ...$value)
+notIn('column', ...$value)
+between('column', $value, $value2)
+notBetween('column', $value, $value2)
 // The above should be used within the where( ...$whereConditions) clause
+// $value will protected by either using escape or prepare statement
 ```
 
 ```php
