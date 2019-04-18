@@ -273,29 +273,34 @@ interface ezQueryInterface
     public function limit($numberOf, $offset = null);
 
  	/**
-    * Helper returns an WHERE sql clause string. 
-    *
-    * format:
-    *   `where( array(x, =, y, and, extra) )` or 
-    *   `where( "x  =  y  and  extra" );` // Strings will need to be double spaced
-    *
-    * example: 
-    *   `where( array(key, operator, value, combine, extra) );` or 
-    *   `where( "key  operator  value  combine  extra" );` // Strings will need to be double spaced
-    *
-    * @param array $whereConditions like
-    * @param $key, - table column  
-    * @param $operator, - set the operator condition, 
-    *                   either '<','>', '=', '!=', '>=', '<=', '<>', 'in', 'like', 
-    *                       'not like', 'between', 'not between', 'is null', 'is not null'
-	* @param $value, - will be escaped
-    * @param $combine, - combine additional where clauses with, 
-    *               either 'AND','OR', 'NOT', 'AND NOT' 
-    *                   or carry over of `value` in the case the `operator` is 'between' or 'not between'
-    * @param $extra - carry over of `combine` in the case the operator is 'between' or 'not between')"
-    *
-	* @return mixed bool/string - WHERE SQL statement, or false on error
-	*/        
+     * Helper returns an WHERE sql clause string. 
+     *
+     * format:
+     *   `where( comparison(x, y, and) )` 
+     *
+     * example: 
+     *   `where( eq(key, value ), like('key', '_%?');`
+     *
+     * @param array $whereConditions - In the following format:
+     * 
+     *   eq('key/Field/Column', $value, _AND), // combine next expression
+     *   neq('key/Field/Column', $value, _OR), // will combine next expression again
+     *   ne('key/Field/Column', $value), // the default is _AND so will combine next expression
+     *   lt('key/Field/Column', $value)
+     *   lte('key/Field/Column', $value)
+     *   gt('key/Field/Column', $value)
+     *   gte('key/Field/Column', $value)
+     *   isNull('key/Field/Column')
+     *   isNotNull('key/Field/Column')
+     *   like('key/Field/Column', '_%')
+     *   notLike('key/Field/Column', '_%')
+     *   in('key/Field/Column', $values)
+     *   notIn('key/Field/Column', $values)
+     *   between('key/Field/Column', $value, $value2)
+     *   notBetween('key/Field/Column', $value, $value2)
+     *
+	 * @return mixed bool/string - WHERE SQL statement, or false on error
+	 */        
     public function where( ...$whereConditions);
     
 	/**
@@ -323,9 +328,9 @@ interface ezQueryInterface
     * @param mixed $conditions - of the following parameters:
     *
     *   @param $joins, - join clause (type, left table, right table, left column, right column, condition = EQ)
-    *   @param $whereKey, - where clause ( array(x, =, y, and, extra) ) or ( "x  =  y  and  extra" )
+    *   @param $whereKey, - where clause ( comparison(x, y, and) )
     *   @param $groupBy, - grouping over clause the results
-    *   @param $having, - having clause ( array(x, =, y, and, extra) ) or ( "x  =  y  and  extra" )
+    *   @param $having, - having clause ( comparison(x, y, and) )
     *   @param $orderby, - ordering by clause for the query
     *   @param $limit, - limit clause the number of records
     *   @param $union/$unionAll - union clause combine the result sets and removes duplicate rows/does not remove

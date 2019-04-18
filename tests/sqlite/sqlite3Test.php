@@ -190,19 +190,22 @@ class sqlite3Test extends EZTestCase
         $this->assertEquals($result, 3);
 
         $test_table['test_key'] = 'the key string';
-        $where="test_key  =  test 1";
-        $this->assertEquals(1, $this->object->update('test_table', $test_table, $where));
+        $where=['test_key', '=', 'test 1'];
+        $this->assertEquals(1, 
+            $this->object->update('test_table', $test_table, $where));
 
         $this->assertEquals(1, $this->object->update('test_table', 
             $test_table,
-            eq('test_key','test 3', _AND),
+            eq('test_key','test 3'),
             eq('test_value','testing string 3'))
         );
 
         $where=eq('test_value','testing string 4');
-        $this->assertEquals(0, $this->object->update('test_table', $test_table, $where));
+        $this->assertEquals(0, 
+            $this->object->update('test_table', $test_table, $where));
 
-        $this->assertEquals(1, $this->object->update('test_table', $test_table, "test_key  =  test 2"));
+        $this->assertEquals(1, 
+            $this->object->update('test_table', $test_table, ['test_key', '=', 'test 2']));
     }
     
     /**
@@ -226,7 +229,7 @@ class sqlite3Test extends EZTestCase
         $where = array('test_value', '=', 'testing 2');
         $this->assertEquals(0, $this->object->delete('test_table', $where));
 
-        $where = "test_key  =  test 2";
+        $where = ['test_key', '=', 'test 2'];
         $this->assertEquals(1, $this->object->delete('test_table', $where));
     }  
 
@@ -254,7 +257,7 @@ class sqlite3Test extends EZTestCase
             ++$i;
         }
         
-        $where = eq('id',2);
+        $where = eq('id', 2);
         $result = $this->object->selecting('test_table', 'id', $this->object->where($where));
         foreach ($result as $row) {
             $this->assertEquals(2, $row->id);

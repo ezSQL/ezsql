@@ -323,7 +323,7 @@ class mysqliTest extends EZTestCase
         $this->object->insert('unit_test', array('id '=> 13, 'test_key' => 'testUpdate() 13' ));
 
         $unit_test['test_key'] = 'testing testUpdate()';
-        $where="id  =  11";
+        $where = ['id', '=', 11];
         $this->assertEquals(1, $this->object->update('unit_test', $unit_test, $where));
 
         $this->assertEquals(1, 
@@ -331,11 +331,11 @@ class mysqliTest extends EZTestCase
         );
 
         $this->assertEquals(0, 
-            $this->object->update('unit_test', $unit_test, "id = 14")
+            $this->object->update('unit_test', $unit_test, eq('id', 14))
         );
 
         $this->assertEquals(1, 
-            $this->object->update('unit_test', $unit_test, "test_key  =  testUpdate() 12  and", "id  =  12")
+            $this->object->update('unit_test', $unit_test, eq('test_key', 'testUpdate() 12'), ['id', '=', 12])
         );
 
         $this->assertEquals(0, $this->object->drop('unit_test'));
@@ -367,9 +367,9 @@ class mysqliTest extends EZTestCase
             ['test_key', '=', $unit_test['test_key'], 'and'], ['id','=', 3]));
 
         $where = 1;
-        $this->assertEquals(0, $this->object->delete('unit_test', ['test_key','=',$where]));
+        $this->assertEquals(0, $this->object->delete('unit_test', ['test_key', '=', $where]));
 
-        $where="id  =  2";
+        $where = ['id', '=', 2];
         $this->assertEquals(1, $this->object->delete('unit_test', $where));
     }  
        

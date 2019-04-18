@@ -41,13 +41,15 @@ class ezQueryTest extends EZTestCase
 
     /**
      * @covers ezsql\ezQuery::having
+     * @covers ezsql\ezQuery::retrieveConditions
+     * @covers \in
      */
     public function testHaving()
     {
         $this->assertFalse($this->object->having(''));
         $this->assertEmpty($this->object->having()); 
 
-        $expect = $this->object->having("other_test  in  testing 1  testing 2  testing 3  testing 4  testing 5");
+        $expect = $this->object->having(in('other_test', 'testing 1', 'testing 2', 'testing 3', 'testing 4', 'testing 5'));
 
         $this->assertContains('HAVING', $expect);
     }
@@ -56,16 +58,19 @@ class ezQueryTest extends EZTestCase
      * @covers ezsql\ezQuery::where
      * @covers ezsql\ezQuery::conditionIs
      * @covers ezsql\ezQuery::conditionBetween
+     * @covers ezsql\ezQuery::retrieveConditions
      * @covers ezsql\ezQuery::conditions
      * @covers ezsql\ezQuery::conditionIn
      * @covers ezsql\ezQuery::isPrepareOn
+     * @covers \in
+     * @covers \like
      */
     public function testWhere()
     {
         $this->assertFalse($this->object->where(''));
         $this->assertEmpty($this->object->where()); 
 
-        $expect = $this->object->where("where_test  in  testing 1  testing 2  testing 3  testing 4  testing 5");
+        $expect = $this->object->where(in('where_test', 'testing 1', 'testing 2', 'testing 3', 'testing 4', 'testing 5'));
 
         $this->assertContains('WHERE', $expect);
         $this->assertContains('IN', $expect);
@@ -89,6 +94,7 @@ class ezQueryTest extends EZTestCase
      * @covers ezsql\ezQuery::where
      * @covers ezsql\ezQuery::conditionIs
      * @covers ezsql\ezQuery::conditionBetween
+     * @covers ezsql\ezQuery::retrieveConditions
      * @covers ezsql\ezQuery::conditions
      * @covers ezsql\ezQuery::conditionIn
      */
@@ -138,7 +144,7 @@ class ezQueryTest extends EZTestCase
     public function testDelete()
     {
         $this->assertFalse($this->object->delete(''));
-        $this->assertFalse($this->object->delete('test_unit_delete',array('good','bad')));
+        $this->assertFalse($this->object->delete('test_unit_delete', array('good', 'bad')));
     }
        
     /**
@@ -147,10 +153,8 @@ class ezQueryTest extends EZTestCase
      */
     public function testSelecting()
     {
-        $this->assertFalse($this->object->selecting('',''));
-        //$this->expectException(\Error::class);
-        //$this->expectExceptionMessageRegExp('/[Call to undefined method ezsql\ezQuery::get_results()]/');
-        $this->assertNotNull($this->object->selecting('table','columns','WHERE','GROUP BY','HAVING','ORDER BY','LIMIT'));
+        $this->assertFalse($this->object->selecting('', ''));
+        $this->assertNotNull($this->object->selecting('table', 'columns', 'WHERE', 'GROUP BY', 'HAVING', 'ORDER BY', 'LIMIT'));
     }
     
     /**
@@ -158,7 +162,7 @@ class ezQueryTest extends EZTestCase
      */
     public function testCreate_select()
     {
-        $this->assertFalse($this->object->create_select('','',''));
+        $this->assertFalse($this->object->create_select('', '', ''));
     }
     
     /**
@@ -166,7 +170,7 @@ class ezQueryTest extends EZTestCase
      */
     public function testInsert_select()
     {
-        $this->assertFalse($this->object->insert_select('','',''));
+        $this->assertFalse($this->object->insert_select('', '', ''));
     }
     
     /**
@@ -174,7 +178,7 @@ class ezQueryTest extends EZTestCase
      */
     public function testInsert()
     {
-        $this->assertFalse($this->object->insert('',''));
+        $this->assertFalse($this->object->insert('', ''));
     }
     
     /**
@@ -182,8 +186,8 @@ class ezQueryTest extends EZTestCase
      */
     public function testUpdate()
     {
-        $this->assertFalse($this->object->update('',''));
-        $this->assertFalse($this->object->update('test_unit_delete',array('test_unit_update'=>'date()'),''));
+        $this->assertFalse($this->object->update('', ''));
+        $this->assertFalse($this->object->update('test_unit_delete', array('test_unit_update' => 'date()'),''));
     }
 	
     /**
@@ -191,7 +195,7 @@ class ezQueryTest extends EZTestCase
      */
     public function testReplace()
     {
-        $this->assertFalse($this->object->replace('',''));
+        $this->assertFalse($this->object->replace('', ''));
     }
     
     /**

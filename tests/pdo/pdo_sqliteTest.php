@@ -157,16 +157,16 @@ class pdo_sqliteTest extends EZTestCase
         $this->assertEquals($result, 3);
 
         $unit_test['test_key'] = 'the key string';
-        $where="test_key  =  test 1";
+        $where=eq('test_key','test 1');
         $this->assertEquals(1, $this->object->update('unit_test', $unit_test, $where));
         $this->assertEquals(1, $this->object->update('unit_test', $unit_test, 
-            eq('test_key','test 3', _AND),
+            eq('test_key','test 3'),
             eq('test_value','testing string 3')));
 
         $where=eq('test_value','testing string 4');
         $this->assertEquals(0, $this->object->update('unit_test', $unit_test, $where));
 
-        $this->assertEquals(1, $this->object->update('unit_test', $unit_test, "test_key  =  test 2"));
+        $this->assertEquals(1, $this->object->update('unit_test', $unit_test, eq('test_key', 'test 2')));
         $this->assertEquals(1, $this->object->query('DROP TABLE unit_test'));
     }
     
@@ -185,12 +185,15 @@ class pdo_sqliteTest extends EZTestCase
         $this->assertEquals($this->object->delete('unit_test', $where), 1);
         
         $this->assertEquals($this->object->delete('unit_test', 
-            array('test_key','=','test 3'),
-            array('test_value','=','testing string 3')), 1);
+            array('test_key', '=', 'test 3'),
+            array('test_value', '=', 'testing string 3')), 1);
+
         $where=array('test_value','=','testing 2');
         $this->assertEquals(0, $this->object->delete('unit_test', $where));
-        $where="test_key  =  test 2";
+
+        $where = eq('test_key', 'test 2');
         $this->assertEquals(1, $this->object->delete('unit_test', $where));
+        
         $this->assertEquals(1, $this->object->query('DROP TABLE unit_test'));
     }  
 

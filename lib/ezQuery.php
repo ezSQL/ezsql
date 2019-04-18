@@ -340,6 +340,29 @@ class ezQuery implements ezQueryInterface
         $this->whereSQL .= "$key $isCondition NULL $combine ";
     }
 
+    private function retrieveConditions($whereConditions) 
+    {        
+		foreach ($whereConditions as $checkFields) {
+            $operator[] = (isset($checkFields[1])) ? $checkFields[1]: '';
+            if (empty($checkFields[1])) {
+                $this->clearPrepare();
+                return [[],[],[],[]];
+            }
+
+            if (\strtoupper($checkFields[1]) == 'IN') {
+				$whereClause[ $checkFields[0] ] = \array_slice((array) $checkFields, 2);
+				$combiner[] = \_AND;
+				$extra[] = null;
+			} else {
+				$whereClause[ (isset($checkFields[0])) ? $checkFields[0] : '1' ] = (isset($checkFields[2])) ? $checkFields[2] : '' ;
+				$combiner[] = (isset($checkFields[3])) ? $checkFields[3]: \_AND;
+				$extra[] = (isset($checkFields[4])) ? $checkFields[4]: null;
+			}           
+        }
+
+        return [$operator, $whereClause, $combiner, $extra];
+    }
+
     public function where( ...$whereConditions) 
     {
         if (empty($whereConditions))
@@ -348,53 +371,29 @@ class ezQuery implements ezQueryInterface
         $whereOrHaving = ($this->isWhere) ? 'WHERE' : 'HAVING';
         $this->isWhere = true;
 
-        $whereClause = [];
-        $operator = [];
-        $extra = [];
-        $combiner = [];
         $this->combineWith = '';
         
-		$storeWhereConditions = $whereConditions;
-		if (\is_string($whereConditions[0])) {
-            if ((\strpos($whereConditions[0], 'WHERE') !== false) 
-                || (\strpos($whereConditions[0], 'HAVING') !== false)
-            )
-                return $whereConditions[0];
+        if (\is_string($whereConditions[0]) 
+            && ((\strpos($whereConditions[0], 'WHERE') !== false) || (\strpos($whereConditions[0], 'HAVING') !== false)))
+            return $whereConditions[0];
+        
+        list($operator, $whereClause, $combiner, $extra) = $this->retrieveConditions($whereConditions);
+        if (empty($operator))
+            return false;
 
-            $storeWhereConditions = [];
-			foreach ($whereConditions as $makeWhereArray)
-				$storeWhereConditions[] = \explode('  ', $makeWhereArray);	
-		}
-        
-		foreach ($storeWhereConditions as $checkFields) {
-            $operator[] = (isset($checkFields[1])) ? $checkFields[1]: '';            
-            if (empty($checkFields[1]))
-                return $this->clearPrepare();
-            
-            if (\strtoupper($checkFields[1]) == 'IN') {
-				$whereClause[ $checkFields[0] ] = \array_slice((array) $checkFields, 2);
-				$combiner[] = (isset($checkFields[3])) ? $checkFields[3]: \_AND;
-				$extra[] = (isset($checkFields[4])) ? $checkFields[4]: null;				
-			} else {
-				$whereClause[ (isset($checkFields[0])) ? $checkFields[0] : '1' ] = (isset($checkFields[2])) ? $checkFields[2] : '' ;
-				$combiner[] = (isset($checkFields[3])) ? $checkFields[3]: \_AND;
-				$extra[] = (isset($checkFields[4])) ? $checkFields[4]: null;
-			}           
-		}
-        
         $where = '1';    
         if (! isset($whereClause['1'])) {
             $this->whereSQL = '';
             $i = 0;
             foreach($whereClause as $key => $val) {
                 $isCondition = \strtoupper($operator[$i]);
+                if (! \in_array( $isCondition, \_BOOLEAN_OPERATORS))
+                    return $this->clearPrepare();
+
 				$combine = $combiner[$i];
                 $this->combineWith = \_AND;
 				if ( \in_array(\strtoupper($combine), \_COMBINERS) || isset($extra[$i]))                  
                     $this->combineWith = isset($extra[$i]) ? $combine : \strtoupper($combine);
-
-                if (! \in_array( $isCondition, \_BOOLEAN_OPERATORS))
-                    return $this->clearPrepare();
 
                 if (($isCondition == \_BETWEEN) || ($isCondition == \_notBETWEEN)) {
                     $this->conditionBetween($key, $isCondition, $val, $this->combineWith, $extra[$i]);
@@ -418,7 +417,7 @@ class ezQuery implements ezQueryInterface
         if (($this->isPrepareOn()) && !empty($this->prepareValues()) && ($where != '1'))
 			return " $whereOrHaving $where ";
         
-		return ($where != '1') ? " $whereOrHaving $where " : ' ' ;
+		return ($where != '1') ? " $whereOrHaving $where " : ' ';
     }        
     
     public function selecting(string $table = null, $columnFields = '*', ...$conditions) 

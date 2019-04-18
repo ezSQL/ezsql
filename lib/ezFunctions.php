@@ -238,20 +238,20 @@ if (!function_exists('ezFunctions')) {
     /**
      * Creates a IN () comparison expression with the given arguments.
      */
-    function in($x, $y, $and = null, ...$args)
+    function in($x, $y, ...$args)
     {
         $expression = array();
-        \array_push($expression, $x, \_IN, $y, $and, ...$args);
+        \array_push($expression, $x, \_IN, $y, ...$args);
         return $expression;
     }
 
     /**
      * Creates a NOT IN () comparison expression with the given arguments.
      */
-    function notIn($x, $y, $and = null, ...$args)
+    function notIn($x, $y, ...$args)
     {
         $expression = array();
-        \array_push($expression, $x, \_notIN, $y, $and, ...$args);
+        \array_push($expression, $x, \_notIN, $y, ...$args);
         return $expression;
     }
 
@@ -271,7 +271,7 @@ if (!function_exists('ezFunctions')) {
     function notBetween($x, $y, $y2, ...$args)
     {
         $expression = array();
-        \array_push($expression, $x, \_notBETWEEN, $y, $y2, ...$args);
+        \array_push($expression, $x, \_notBETWEEN, $y, $y2, \_AND, ...$args);
         return $expression;
     }
         
