@@ -410,7 +410,53 @@ class mysqliTest extends EZTestCase
         foreach ($result as $row) {
             $this->assertEquals('testing 1', $row->test_key);
         }
-    }    
+    }
+
+    /**
+     * @covers ezsql\ezQuery::create
+     * @covers ezsql\ezQuery::insert
+     * @covers ezsql\ezQuery::selecting
+     * @covers ezsql\ezQuery::drop
+     */
+    public function testSelectingAndCreateTable()
+    {        
+        $this->object->prepareOff();
+        $this->object->create('users',
+            column('id', INTR, 11, PRIMARY),
+            column('tel_num', INTR, 32, notNULL),
+            column('user_name ', VARCHAR, 128),
+            column('email', CHAR, 50)
+        );
+
+        $this->object->insert('users', ['id'=> 1, 
+            'tel_num' => 123456, 
+            'email' => 'walker@email.com', 
+            'user_name ' => 'walker']
+        );
+
+        $this->object->insert('users', ['id'=> 2, 
+            'tel_num' => 654321, 
+            'email' => 'email@host.com', 
+            'user_name ' => 'email']
+        );
+
+        $this->object->insert('users', ['id'=> 3, 
+            'tel_num' => 456123, 
+            'email' => 'host@email.com', 
+            'user_name ' => 'host']
+        );
+                
+        $result = $this->object->selecting('users', 'id, tel_num, email', eq('user_name ', 'walker'));
+        
+        foreach ($result as $row) {
+            $this->assertEquals(1, $row->id);
+            $this->assertEquals(123456, $row->tel_num);
+            $this->assertEquals('walker@email.com', $row->email);
+        }
+
+        $this->object->drop('users');        
+        $this->object->prepareOn();    
+    }
 
     /**
      * @covers ezsql\ezQuery::create_select
