@@ -367,6 +367,24 @@ class ezQuery implements ezQueryInterface
         return [$operator, $whereClause, $combiner, $extra];
     }
 
+    private function processConditions($column, $condition, $value, $valueOrCombine, $extraCombine) 
+    {
+        if (! \in_array( $condition, \_BOOLEAN_OPERATORS))
+            return $this->clearPrepare();
+
+        if (($condition == \_BETWEEN) || ($condition == \_notBETWEEN)) {
+            $this->conditionBetween($column, $condition, $value, $valueOrCombine, $extraCombine);
+        } elseif ($condition == \_IN) {
+            $this->conditionIn($column, $condition, $value, $valueOrCombine);
+        } elseif (((\strtolower($value) == 'null') || ($condition == 'IS') || ($condition == 'IS NOT'))) {
+            $this->conditionIs($column, $condition, $valueOrCombine);
+        } elseif ((($condition == \_LIKE) || ($condition == \_notLIKE)) && ! \preg_match('/[_%?]/', $value)) {
+            return $this->clearPrepare();
+        } else {
+            $this->conditions($column, $condition, $value, $valueOrCombine);
+        }
+    }
+
     public function where( ...$whereConditions) 
     {
         if (empty($whereConditions))
@@ -377,8 +395,7 @@ class ezQuery implements ezQueryInterface
 
         $this->combineWith = '';
         
-        if (\is_string($whereConditions[0]) 
-            && ((\strpos($whereConditions[0], 'WHERE') !== false) || (\strpos($whereConditions[0], 'HAVING') !== false)))
+        if (\is_string($whereConditions[0]) && \strpos($whereConditions[0],  $whereOrHaving) !== false)
             return $whereConditions[0];
         
         list($operator, $whereClause, $combiner, $extra) = $this->retrieveConditions($whereConditions);
@@ -391,25 +408,13 @@ class ezQuery implements ezQueryInterface
             $i = 0;
             foreach($whereClause as $key => $val) {
                 $isCondition = \strtoupper($operator[$i]);
-                if (! \in_array( $isCondition, \_BOOLEAN_OPERATORS))
-                    return $this->clearPrepare();
-
 				$combine = $combiner[$i];
                 $this->combineWith = \_AND;
 				if ( \in_array(\strtoupper($combine), \_COMBINERS) || isset($extra[$i]))                  
                     $this->combineWith = isset($extra[$i]) ? $combine : \strtoupper($combine);
 
-                if (($isCondition == \_BETWEEN) || ($isCondition == \_notBETWEEN)) {
-                    $this->conditionBetween($key, $isCondition, $val, $this->combineWith, $extra[$i]);
-				} elseif ($isCondition == \_IN) {
-                    $this->conditionIn($key, $isCondition, $val, $this->combineWith);
-				} elseif (((\strtolower($val) == 'null') || ($isCondition == 'IS') || ($isCondition == 'IS NOT'))) {
-                    $this->conditionIs($key, $isCondition, $this->combineWith);
-                } elseif ((($isCondition == \_LIKE) || ($isCondition == \_notLIKE)) && ! \preg_match('/[_%?]/', $val)) {
-                    return $this->clearPrepare();
-                } else {
-                    $this->conditions($key, $isCondition, $val, $this->combineWith);
-                }
+                if ($this->processConditions($key, $isCondition, $val,  $this->combineWith, $extra[$i]) === false) 
+                    return false;
 
                 $i++;
             }
