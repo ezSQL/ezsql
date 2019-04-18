@@ -419,8 +419,7 @@ class mysqliTest extends EZTestCase
      * @covers ezsql\ezQuery::drop
      */
     public function testSelectingAndCreateTable()
-    {        
-        $this->object->prepareOff();
+    {
         $this->object->create('users',
             column('id', INTR, 11, PRIMARY),
             column('tel_num', INTR, 32, notNULL),
@@ -428,34 +427,32 @@ class mysqliTest extends EZTestCase
             column('email', CHAR, 50)
         );
 
-        $this->object->insert('users', ['id'=> 1, 
+        $this->assertEquals(0, $this->object->insert('users', ['id'=> 1, 
             'tel_num' => 123456, 
             'email' => 'walker@email.com', 
-            'user_name ' => 'walker']
+            'user_name ' => 'walker'])
         );
 
-        $this->object->insert('users', ['id'=> 2, 
+        $this->assertEquals(0, $this->object->insert('users', ['id'=> 2, 
             'tel_num' => 654321, 
             'email' => 'email@host.com', 
-            'user_name ' => 'email']
+            'user_name ' => 'email'])
         );
 
-        $this->object->insert('users', ['id'=> 3, 
+        $this->assertEquals(0, $this->object->insert('users', ['id'=> 3, 
             'tel_num' => 456123, 
             'email' => 'host@email.com', 
-            'user_name ' => 'host']
+            'user_name ' => 'host'])
         );
                 
         $result = $this->object->selecting('users', 'id, tel_num, email', eq('user_name ', 'walker'));
-        
         foreach ($result as $row) {
             $this->assertEquals(1, $row->id);
             $this->assertEquals(123456, $row->tel_num);
             $this->assertEquals('walker@email.com', $row->email);
         }
 
-        $this->object->drop('users');        
-        $this->object->prepareOn();    
+        $this->object->drop('users');
     }
 
     /**
@@ -547,30 +544,33 @@ class mysqliTest extends EZTestCase
     }     
  
     /**
+     * @covers ezsql\ezQuery::drop
      * @covers ezsql\Database\ez_mysqli::query_prepared
-     * @covers ezsql\Database\ez_mysqli::fetch_prepared_result
+     * @covers ezsql\Database\ez_mysqli::prepared_result
      * @covers ezsql\Database\ez_mysqli::prepareValues
      */
     public function testQuery_prepared() {
-        $this->object->prepareOff();
+        $this->object->prepareOff();        
+        $this->object->drop('prepare_test');
         $this->assertEquals(0, 
-            $this->object->create('unit_test',
-                column('id', INTR, 11, notNULL, AUTO, PRIMARY),
+            $this->object->create('prepare_test',
+                column('id', INTR, 11, notNULL, PRIMARY),
                 column('prepare_key', VARCHAR, 50))
         );
 
-        $result = $this->object->query_prepared('INSERT INTO unit_test( id, prepare_key ) VALUES( ?, ? )', [ 9, 'test 1']);
+        $result = $this->object->query_prepared('INSERT INTO prepare_test( id, prepare_key ) VALUES( ?, ? )', [ 9, 'test 1']);
         $this->assertEquals(1, $result);
 
-        $this->object->query_prepared('SELECT prepare_key FROM unit_test WHERE id = ?', [9]);
+        $this->object->query_prepared('SELECT prepare_key FROM prepare_test WHERE id = ?', [9]);
         $query = $this->object->queryResult();
-        
         foreach($query as $row) {
             $result = $row->prepare_key;
         }
 
         $this->assertEquals('test 1', $this->object->queryResult()[0]->prepare_key);
         $this->assertEquals('test 1', $result);
+
+        $this->object->drop('prepare_test');   
     } // testQuery_prepared
        
     /**

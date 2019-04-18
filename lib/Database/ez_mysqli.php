@@ -10,6 +10,7 @@ use ezsql\DatabaseInterface;
 
 class ez_mysqli extends ezsqlModel implements DatabaseInterface
 {
+    private $shortcutUsed = false;
     /**
     * Database connection handle 
     * @var resource
@@ -213,7 +214,67 @@ class ez_mysqli extends ezsqlModel implements DatabaseInterface
        
                 // Take note of column info
                 while($field = $meta->fetch_field())
-                    $variables[] = &$this->col_info[$field->name]; // pass by reference
+                    $variables[] = $this->col_info[$field->name];
+                
+                // Binds variables to a prepared statement for result storage
+                \call_user_func_array([$stmt, 'bind_result'], $variables);
+       
+                $i = 0;
+                // Store Query Results
+                while($stmt->fetch()) {
+                    // Store results as an objects within main array
+                    foreach($this->col_info as $key => $value)
+                        $this->last_result[$i] = (object) array( $key => $value );
+                    $i++;           
+                }
+            }       
+            
+            // If there is an error then take note of it..
+            if ( $str = $stmt->error ) {
+                $is_insert = true;
+                $this->register_error($str);
+                $this->show_errors ? \trigger_error($str, \E_USER_WARNING) : null;
+                
+                // If debug ALL queries
+                $this->trace || $this->debug_all ? $this->debug() : null ;
+                return false;
+            }
+               
+            // Return number of rows affected
+            $return_val = $this->_affectedRows;
+            
+            // disk caching of queries
+            $this->store_cache($query, $is_insert);
+
+            // If debug ALL queries
+            $this->trace || $this->debug_all ? $this->debug() : null ;
+            
+            return $return_val;
+        }
+
+        return false;
+    }
+
+    private function prepared_result(&$stmt, $query) 
+    {   
+        if ($stmt instanceof \mysqli_stmt) {
+            $stmt->store_result();       
+            $variables = array();
+            $is_insert = false;
+            if ( \preg_match("/^(insert|delete|update|replace)\s+/i", $query) ) {
+                $this->_affectedRows = \mysqli_stmt_affected_rows($stmt);
+
+                // Take note of the insert_id
+                if ( \preg_match("/^(insert|replace)\s+/i", $query) ){
+                    $this->insert_id = $stmt->insert_id;
+                }
+            } else {
+                $this->_affectedRows = $stmt->num_rows;
+                $meta = $stmt->result_metadata();
+       
+                // Take note of column info
+                while($field = $meta->fetch_field())
+                    $variables[] = &$this->col_info[$field->name];
                 
                 // Binds variables to a prepared statement for result storage
                 \call_user_func_array([$stmt, 'bind_result'], $variables);
@@ -263,9 +324,9 @@ class ez_mysqli extends ezsqlModel implements DatabaseInterface
      */
     public function query_prepared(string $query, array $param = null)
     {
-        $stmt   = $this->dbh->prepare($query);
+        $stmt = $this->dbh->prepare($query);
         $params = [];
-        $types  = \array_reduce($param,
+        $types = \array_reduce($param,
             function ($string, &$arg) use (&$params) {
                 $params[] = &$arg;
                 if (\is_float($arg))
@@ -276,20 +337,26 @@ class ez_mysqli extends ezsqlModel implements DatabaseInterface
                     $string .= 's';
                 else    
                     $string .= 'b';
-                return $string;
+
+                return  $string;
             }, ''
         );
         
         \array_unshift($params, $types);
             
         \call_user_func_array([$stmt, 'bind_param'], $params);
-        
-        $result = ($stmt->execute()) ? $this->fetch_prepared_result($stmt, $query) : false;  
+                  
+        if ($this->shortcutUsed === true) 
+            $result = ($stmt->execute()) ? $this->fetch_prepared_result($stmt, $query) : false;  
+        else 
+            $result = $stmt->execute() ? $this->prepared_result($stmt, $query) : false;
+            //$result = $stmt->execute() ? $stmt->get_result() : false;
         
         // free and closes a prepared statement
         $stmt->free_result();
         $stmt->close();
 
+        $this->shortcutUsed = false;
         return $result;
     }
     
@@ -339,10 +406,12 @@ class ez_mysqli extends ezsqlModel implements DatabaseInterface
         }
 
         // Perform the query via std mysql_query function..
-		if (!empty($param) && \is_array($param) && ($this->isPrepareOn()))		
-			return $this->query_prepared($query, $param);
-		else 
-			$this->result = \mysqli_query($this->dbh, $query);
+		if (!empty($param) && \is_array($param) && ($this->isPrepareOn())) {
+            $this->shortcutUsed = true;
+            return $this->query_prepared($query, $param);
+        }
+        
+        $this->result = \mysqli_query($this->dbh, $query);
 
         // If there is an error then take note of it..
         if ( $str = \mysqli_error($this->dbh) ) {
