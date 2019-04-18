@@ -341,7 +341,11 @@ class ezQuery implements ezQueryInterface
     }
 
     private function retrieveConditions($whereConditions) 
-    {        
+    {
+        $whereClause = [];
+        $operator = [];
+        $extra = [];
+        $combiner = [];
 		foreach ($whereConditions as $checkFields) {
             $operator[] = (isset($checkFields[1])) ? $checkFields[1]: '';
             if (empty($checkFields[1])) {
