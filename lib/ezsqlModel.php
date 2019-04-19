@@ -87,41 +87,41 @@ class ezsqlModel extends ezQuery implements ezsqlModelInterface
      * Log number of rows the query returned  
      * @var int Default is null
      */
-	protected $num_rows        = null;
+	protected $num_rows = null;
 
-	protected $db_connect_time  = 0;
-	protected $sql_log_file     = false;
-	protected $profile_times    = array();
+	protected $db_connect_time = 0;
+	protected $sql_log_file = false;
+	protected $profile_times = array();
 
 	/**
 	 * ID generated from the AUTO_INCREMENT of the previous INSERT operation (if any)
 	 * @var int
 	 */
-	protected $insert_id        = null;
+	protected $insert_id = null;
 
 	/**
 	 * Use to keep track of the last query for debug..
 	 * @var string
 	 */
-	protected $last_query       = null;
+	protected $last_query = null;
 
 	/**
 	 * Use to keep track of last error
 	 * @var string
 	 */
-	protected $last_error       = null;
+	protected $last_error = null;
 
 	/**
 	 * Saved info on the table column
  	 * @var mixed
  	 */
-	protected $col_info			= array();
+	protected $col_info = array();
 
-	protected $timers           = array();
+	protected $timers = array();
 	protected $total_query_time = 0;
-	protected $trace_log        = array();
-	protected $use_trace_log    = false;
-	protected $do_profile       = false;
+	protected $trace_log = array();
+	protected $use_trace_log = false;
+	protected $do_profile = false;
 		
 	/**
 	* The last query result
@@ -246,7 +246,7 @@ class ezsqlModel extends ezQuery implements ezsqlModelInterface
 	{
 		// Get rid of these
 		$this->last_result = null;
-		$this->col_info = null;
+		$this->col_info = array();
 		$this->last_query = null;
 		$this->from_disk_cache = false;
 		$this->clearPrepare();
@@ -516,34 +516,34 @@ class ezsqlModel extends ezQuery implements ezsqlModelInterface
 		// Start output buffering
 		\ob_start();
 		
-		echo "<blockquote>";
+		echo "\n\n<blockquote>";
 		
 		// Only show ezSQL credits once..
 		if ( ! $this->debug_called ) {
-			echo "<font color=800080 face=arial size=2><b>ezSQL</b> (v".EZSQL_VERSION.") <b>Debug..</b></font><p>\n";
+			echo "<font color=800080 face=arial size=2><b>ezSQL</b> (v".EZSQL_VERSION.")\n <b>Debug.. \n</b></font><p>";
 		}
 		
 		if ( $this->last_error ) {
-			echo "<font face=arial size=2 color=000099><b>Last Error --</b> [<font color=000000><b>$this->last_error</b></font>]<p>";
+			echo "<font face=arial size=2 color=000099><b>Last Error --</b> [<font color=000000><b>$this->last_error \n</b></font>]<p>";
 		}
 		
 		if ( $this->from_disk_cache ) {
-			echo "<font face=arial size=2 color=000099><b>Results retrieved from disk cache</b></font><p>";
+			echo "<font face=arial size=2 color=000099><b>Results retrieved from disk cache</b></font><p>\n";
 		}
 		
-		echo "<font face=arial size=2 color=000099><b>Query</b> [$this->num_queries] <b>--</b> ";
-		echo "[<font color=000000><b>$this->last_query</b></font>]</font><p>";
+		echo "<font face=arial size=2 color=000099><b>Query</b> [$this->num_queries]  \n<b>--</b>";
+		echo "[<font color=000000><b>$this->last_query \n</b></font>]</font><p>";
 		
-		echo "<font face=arial size=2 color=000099><b>Query Result..</b></font>";
-		echo "<blockquote>";
+		echo "<font face=arial size=2 color=000099><b>Query Result..</b></font>\n";
+		echo "<blockquote>\n";
 		
 		if ( $this->col_info ) {
 			// Results top rows
-			echo "<table cellpadding=5 cellspacing=1 bgcolor=555555>";
-			echo "<tr bgcolor=eeeeee><td nowrap valign=bottom><font color=555599 face=arial size=2><b>(row)</b></font></td>";			
+			echo "<table cellpadding=5 cellspacing=1 bgcolor=555555>\n";
+			echo "<tr bgcolor=eeeeee><td nowrap valign=bottom><font color=555599 face=arial size=2><b>(row)</b></font></td>\n";			
 			
 			for ( $i=0, $j=count($this->col_info); $i < $j; $i++ ) {
-				echo "<td nowrap align=left valign=top><font size=1 color=555599 face=arial>";
+				echo "<td nowrap align=left valign=top><font size=1 color=555599 face=arial>\n";
 				/* when selecting count(*) the maxlengh is not set, size is set instead. */
 				if (isset($this->col_info[$i]->type))
 					echo "{$this->col_info[$i]->type}";
@@ -554,36 +554,36 @@ class ezsqlModel extends ezQuery implements ezsqlModelInterface
 				if (isset($this->col_info[$i]->max_length))
 					echo "{$this->col_info[$i]->max_length}";
 
-				echo "</font><br><span style='font-family: arial; font-size: 10pt; font-weight: bold;'>";
+				echo "\n</font><br><span style='font-family: arial; font-size: 10pt; font-weight: bold;'>";
 
 				if (isset($this->col_info[$i]->name))
 					echo "{$this->col_info[$i]->name}";
 
-				echo "</span></td>";					
+				echo "\n</span></td>";					
 			}
-			echo "</tr>";
+			echo "</tr>\n";
 			
 			// print main results
 			if ( $this->last_result ) {
 				$i = 0;
 				foreach ( $this->get_results(null, ARRAY_N) as $one_row ) {
 					$i++;
-					echo "<tr bgcolor=ffffff><td bgcolor=eeeeee nowrap align=middle><font size=2 color=555599 face=arial>$i</font></td>";
+					echo "<tr bgcolor=ffffff><td bgcolor=eeeeee nowrap align=middle><font size=2 color=555599 face=arial>$i \n</font></td>";
 					
 					foreach ( $one_row as $item ) {
-						echo "<td nowrap><font face=arial size=2>$item</font></td>";
+						echo "<td nowrap><font face=arial size=2>$item \n</font></td>";
 					}
-					echo "</tr>";
+					echo "</tr>\n";
 				}
 			} else {
 				// if last result 
-				echo "<tr bgcolor=ffffff><td colspan=".(\count($this->col_info) + 1)."><font face=arial size=2>No Results</font></td></tr>";
+				echo "<tr bgcolor=ffffff><td colspan=".(\count($this->col_info) + 1)."><font face=arial size=2>No Results</font></td></tr>\n";
 			}
 			
-			echo "</table>";
+			echo "</table>\n";
 		} else {
 			// if col_info
-			echo "<font face=arial size=2>No Results</font>";
+			echo "<font face=arial size=2>No Results \n</font>";
 		}
 		
 		//echo "</blockquote></blockquote>".$this->donation()."<hr noshade color=dddddd size=1>";

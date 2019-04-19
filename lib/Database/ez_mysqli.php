@@ -10,7 +10,6 @@ use ezsql\DatabaseInterface;
 
 class ez_mysqli extends ezsqlModel implements DatabaseInterface
 {
-    private $shortcutUsed = false;
     /**
     * Database connection handle 
     * @var resource
@@ -201,6 +200,7 @@ class ez_mysqli extends ezsqlModel implements DatabaseInterface
             $stmt->store_result();       
             $variables = array();
             $is_insert = false;
+            $col_info = array();
             if ( \preg_match("/^(insert|delete|update|replace)\s+/i", $query) ) {
                 $this->_affectedRows = \mysqli_stmt_affected_rows($stmt);
 
@@ -213,21 +213,26 @@ class ez_mysqli extends ezsqlModel implements DatabaseInterface
                 $meta = $stmt->result_metadata();
        
                 // Take note of column info
-                while($field = $meta->fetch_field())
-                    $variables[] = $this->col_info[$field->name];
+                while($field = $meta->fetch_field()) {
+                    $variables[] = &$col_info[$field->name];
+                }
                 
                 // Binds variables to a prepared statement for result storage
                 \call_user_func_array([$stmt, 'bind_result'], $variables);
        
+                $x = 0;
                 $i = 0;
                 // Store Query Results
                 while($stmt->fetch()) {
                     // Store results as an objects within main array
-                    foreach($this->col_info as $key => $value)
+                    foreach($col_info[$x] as $key => $value) {
                         $this->last_result[$i] = (object) array( $key => $value );
-                    $i++;           
+                        $i++;
+                    } 
+                    $x++;
                 }
-            }       
+                $this->col_info = $col_info;
+            }
             
             // If there is an error then take note of it..
             if ( $str = $stmt->error ) {
@@ -254,66 +259,6 @@ class ez_mysqli extends ezsqlModel implements DatabaseInterface
 
         return false;
     }
-
-    private function prepared_result(&$stmt, $query) 
-    {   
-        if ($stmt instanceof \mysqli_stmt) {
-            $stmt->store_result();       
-            $variables = array();
-            $is_insert = false;
-            if ( \preg_match("/^(insert|delete|update|replace)\s+/i", $query) ) {
-                $this->_affectedRows = \mysqli_stmt_affected_rows($stmt);
-
-                // Take note of the insert_id
-                if ( \preg_match("/^(insert|replace)\s+/i", $query) ){
-                    $this->insert_id = $stmt->insert_id;
-                }
-            } else {
-                $this->_affectedRows = $stmt->num_rows;
-                $meta = $stmt->result_metadata();
-       
-                // Take note of column info
-                while($field = $meta->fetch_field())
-                    $variables[] = &$this->col_info[$field->name];
-                
-                // Binds variables to a prepared statement for result storage
-                \call_user_func_array([$stmt, 'bind_result'], $variables);
-       
-                $i = 0;
-                // Store Query Results
-                while($stmt->fetch()) {
-                    // Store results as an objects within main array
-                    foreach($this->col_info as $key => $value)
-                        $this->last_result[$i] = (object) array( $key => $value );
-                    $i++;           
-                }
-            }       
-            
-            // If there is an error then take note of it..
-            if ( $str = $stmt->error ) {
-                $is_insert = true;
-                $this->register_error($str);
-                $this->show_errors ? \trigger_error($str, \E_USER_WARNING) : null;
-                
-                // If debug ALL queries
-                $this->trace || $this->debug_all ? $this->debug() : null ;
-                return false;
-            }
-               
-            // Return number of rows affected
-            $return_val = $this->_affectedRows;
-            
-            // disk caching of queries
-            $this->store_cache($query, $is_insert);
-
-            // If debug ALL queries
-            $this->trace || $this->debug_all ? $this->debug() : null ;
-            
-            return $return_val;
-        }
-
-        return false;
-    }	
 
 	/**
      * Creates a prepared query, binds the given parameters and returns the result of the executed
@@ -346,17 +291,12 @@ class ez_mysqli extends ezsqlModel implements DatabaseInterface
             
         \call_user_func_array([$stmt, 'bind_param'], $params);
                   
-        if ($this->shortcutUsed === true) 
-            $result = ($stmt->execute()) ? $this->fetch_prepared_result($stmt, $query) : false;  
-        else 
-            $result = $stmt->execute() ? $this->prepared_result($stmt, $query) : false;
-            //$result = $stmt->execute() ? $stmt->get_result() : false;
+        $result = ($stmt->execute()) ? $this->fetch_prepared_result($stmt, $query) : false;
         
         // free and closes a prepared statement
         $stmt->free_result();
         $stmt->close();
 
-        $this->shortcutUsed = false;
         return $result;
     }
     
@@ -407,7 +347,6 @@ class ez_mysqli extends ezsqlModel implements DatabaseInterface
 
         // Perform the query via std mysql_query function..
 		if (!empty($param) && \is_array($param) && ($this->isPrepareOn())) {
-            $this->shortcutUsed = true;
             return $this->query_prepared($query, $param);
         }
         
@@ -437,8 +376,8 @@ class ez_mysqli extends ezsqlModel implements DatabaseInterface
             // Return number of rows affected
             $return_val = $this->_affectedRows;
         } else {
+            // Query was a select            
             if ( !\is_numeric($this->result) && !\is_bool($this->result)) {
-                // Query was a select
 
                 // Take note of column info
                 $i = 0;

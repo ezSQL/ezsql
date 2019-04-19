@@ -424,6 +424,7 @@ class mysqliTest extends EZTestCase
      */
     public function testSelectingAndCreateTable()
     {
+        $this->object->drop('users');
         $this->object->create('users',
             column('id', INTR, 11, PRIMARY),
             column('tel_num', INTR, 32, notNULL),
@@ -450,6 +451,7 @@ class mysqliTest extends EZTestCase
         );
                 
         $result = $this->object->selecting('users', 'id, tel_num, email', eq('user_name ', 'walker'));
+        //$this->object->debug(true);
         foreach ($result as $row) {
             $this->assertEquals(1, $row->id);
             $this->assertEquals(123456, $row->tel_num);
@@ -551,11 +553,12 @@ class mysqliTest extends EZTestCase
     /**
      * @covers ezsql\ezQuery::drop
      * @covers ezsql\Database\ez_mysqli::query_prepared
-     * @covers ezsql\Database\ez_mysqli::prepared_result
+     * @covers ezsql\Database\ez_mysqli::fetch_prepared_result
      * @covers ezsql\Database\ez_mysqli::prepareValues
      */
     public function testQuery_prepared() {
         $this->object->prepareOff();        
+        $this->object->select(self::TEST_DB_NAME);
         $this->object->drop('prepare_test');
         $this->assertEquals(0, 
             $this->object->create('prepare_test',
@@ -566,14 +569,14 @@ class mysqliTest extends EZTestCase
         $result = $this->object->query_prepared('INSERT INTO prepare_test( id, prepare_key ) VALUES( ?, ? )', [ 9, 'test 1']);
         $this->assertEquals(1, $result);
 
-        $this->object->query_prepared('SELECT prepare_key FROM prepare_test WHERE id = ?', [9]);
-        $query = $this->object->queryResult();
-        foreach($query as $row) {
-            $result = $row->prepare_key;
-        }
+        $this->object->query_prepared('SELECT id, prepare_key FROM prepare_test WHERE id = ?', [9]);
 
-        $this->assertEquals('test 1', $this->object->queryResult()[0]->prepare_key);
-        $this->assertEquals('test 1', $result);
+        $query = $this->object->queryResult();
+        //$this->object->debug(true);
+        foreach($query as $row) {
+            $this->assertEquals(9, $row->id);
+            $this->assertEquals('test 1', $row->prepare_key);
+        }
 
         $this->object->drop('prepare_test');   
     } // testQuery_prepared
