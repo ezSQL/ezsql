@@ -72,12 +72,17 @@ interface ezsqlModelInterface
 	 * Get host and port from an "host:port" notation.
 	 * @return array of host and port. If port is omitted, returns $default
 	 */
-	public function get_host_port( $host, $default = false );
-	
+	public function get_host_port( $host, $default = false );	
+
 	/**
-	 * Print SQL/DB error - over-ridden by specific DB class
+	 * Store Query/SQL/DB error - over-ridden by specific DB class
+	 * 
+	 * @param string $err_str
+	 * @param bool $displayError 
+	 * @return bool
+	 * @throws Exception
 	 */
-	public function register_error($err_str);
+	public function register_error(string $err_str, bool $displayError = true);
 	
 	/**
 	 * Turn error output to browser on.
@@ -103,7 +108,8 @@ interface ezsqlModelInterface
 	
 	/**
 	 * Log how the query function was called
-	 * @param string
+	 * 
+	 * @param string $query
 	 */
 	public function log_query(string $query);
 	
@@ -116,13 +122,12 @@ interface ezsqlModelInterface
 	 * - Even so, the full results set will be available within the 
 	 * 	array `$db->last_results` should you wish to use them.
 	 * 
-     * @param string $query
-     * @param int $x - column offset
-     * @param int $y - row offset
-     * @return bool|mixed
+      * @param string $query
+      * @param int $x - column offset
+      * @param int $y - row offset
+      * @return bool|mixed
 	 */
-	public function get_var(string $query = null, int $x = 0, int $y = 0, 
-		bool $use_prepare = false);
+	public function get_var(string $query = null, int $x = 0, int $y = 0, bool $use_prepare = false);
 	
 	/**
 	 * Get one row from the database (or previously cached results)
@@ -133,13 +138,12 @@ interface ezsqlModelInterface
 	 * - Even so, the full results will be cached should you wish
 	 * to use them with another ezSQL query.
 	 * 
-     * @param string $query
-     * @param OBJECT|ARRAY_A|ARRAY_N $output
-     * @param int $y - row offset
-     * @return bool|mixed
+      * @param string $query
+      * @param OBJECT|ARRAY_A|ARRAY_N $output
+      * @param int $y - row offset
+      * @return bool|mixed
 	 */
-	public function get_row(string $query = null, $output = \OBJECT, int $y = 0, 
-		bool $use_prepare = false);
+	public function get_row(string $query = null, $output = \OBJECT, int $y = 0, bool $use_prepare = false);
 	
 	/**
 	 * Get one column from query (or previously cached results) based on column offset
@@ -150,12 +154,11 @@ interface ezsqlModelInterface
 	 * - If a null query is supplied the previous query results are used.
 	 * 
 	 * @param string $query
-     * @param int $x - column offset
-     * @param bool $use_prepare - has prepare statements been activated
-     * @return bool|mixed
+      * @param int $x - column offset
+      * @param bool $use_prepare - has prepare statements been activated
+      * @return bool|mixed
 	 */
-	public function get_col(string $query = null, int $x = 0, 
-		bool $use_prepare = false);
+	public function get_col(string $query = null, int $x = 0, bool $use_prepare = false);
 	
 	/**
 	 * Get multiple row result set from the database 
@@ -184,12 +187,11 @@ interface ezsqlModelInterface
 	 * a way to get a handle on the results. 
 	 * 
 	 * @param string $query
-     * @param OBJECT|ARRAY_A|ARRAY_N $output
-     * @param bool $use_prepare - has prepare statements been activated
-     * @return bool|mixed - results as objects (default)
+      * @param OBJECT|ARRAY_A|ARRAY_N $output
+      * @param bool $use_prepare - has prepare statements been activated
+      * @return bool|mixed - results as objects (default)
 	 */
-	public function get_results(string $query = null, $output = \OBJECT, 
-		bool $use_prepare = false);
+	public function get_results(string $query = null, $output = \OBJECT, bool $use_prepare = false);
 	
 	/**
 	 * Get information about one or all columns such as column name or type.
@@ -225,18 +227,31 @@ interface ezsqlModelInterface
 	 * - name - column name  
 	 * 
 	 * @param string $info_type
-     * @param int $col_offset
-     * @return mixed
+      * @param int $col_offset
+      * @return mixed
 	 */
-	public function get_col_info(string $info_type = "name", int $col_offset = -1);
+	public function get_col_info(string $info_type = "name", int $col_offset = -1);	
+
+	/**
+	 * create cache directory if doesn't exists
+	 * 
+	 * @param string $path
+	 */
+	public function create_cache(string $path = null);
 	
 	/**
-	 * store_cache
+	 * Store cache
+	 * 
+	 * @param string $query
+	 * @param bool $is_insert
 	 */
 	public function store_cache(string $query, bool $is_insert);
 	
 	/**
-	 * get_cache
+	 * Get stored cache 
+	 * 
+	 * @param string $query
+	 * @return mixed
 	 */
 	public function get_cache(string $query);
 	
@@ -245,7 +260,7 @@ interface ezsqlModelInterface
 	 * formatted and easy to understand way.
 	 * 
 	 * @param mixed $mixed- any type Object, public or Array
-	 * @return string
+	 * @return string|void
 	 */
 	public function varDump($mixed = null);
 	
@@ -271,12 +286,12 @@ interface ezsqlModelInterface
 	public function timer_update_global($timer_name);
 
 	/**
-	* Function for operating query count
-	*
-	* @param bool $all Set to false for function to return queries only during this connection
-	* @param bool $increase Set to true to increase query count (internal usage)
-	* @return int Returns query count base on $all
-	*/
+	 * Function for operating query count
+	 *
+	 * @param bool $all Set to false for function to return queries only during this connection
+	 * @param bool $increase Set to true to increase query count (internal usage)
+	 * @return int Returns query count base on $all
+	 */
 	public function count($all = true, $increase = false);
 
     /**

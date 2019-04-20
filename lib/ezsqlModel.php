@@ -11,7 +11,7 @@ use ezsql\ezsqlModelInterface;
  */	
 class ezsqlModel extends ezQuery implements ezsqlModelInterface
 {
-    protected $isSecure = false;
+	protected $isSecure = false;
 	protected $secureOptions = null;
 	protected $sslKey = null;
 	protected $sslCert = null;
@@ -139,7 +139,7 @@ class ezsqlModel extends ezQuery implements ezsqlModelInterface
 	*  Needed for echo of debug function
 	* @var boolean Default is false
 	*/
-	protected $debug_echo_is_on = true;
+	protected $debug_echo_is_on = false;
 
 	/**
 	* Whether the database connection is established, or not
@@ -214,10 +214,7 @@ class ezsqlModel extends ezQuery implements ezsqlModelInterface
 		return array( $host, $port );
 	}
 	
-	/**
-	* Print SQL/DB error - over-ridden by specific DB class
-	*/
-	public function register_error($err_str)
+	public function register_error(string $err_str, bool $displayError = true)
 	{
 		// Keep track of last error
 		$this->last_error = $err_str;
@@ -226,7 +223,12 @@ class ezsqlModel extends ezQuery implements ezsqlModelInterface
 		$this->captured_errors[] = array(
 			'error_str' => $err_str,
 			'query'     => $this->last_query
-		);
+		);		
+		
+		if ($this->show_errors && $displayError)
+			\trigger_error(\htmlentities($err_str), \E_USER_WARNING); 
+		
+		return false;
 	}
 	
 	public function show_errors()
@@ -265,8 +267,7 @@ class ezsqlModel extends ezQuery implements ezsqlModelInterface
 		\array_push($this->all_func_calls, $this->func_call);
 	}
 	
-	public function get_var(string $query = null, int $x = 0, int $y = 0, 
-		bool $use_prepare = false)
+	public function get_var(string $query = null, int $x = 0, int $y = 0, bool $use_prepare = false)
 	{		
 		// Log how the function was called
 		$this->log_query("\$db->get_var(\"$query\",$x,$y)");
@@ -285,8 +286,7 @@ class ezsqlModel extends ezQuery implements ezsqlModelInterface
 		return (isset($values[$x]) && $values[$x] !== null) ? $values[$x] :null;
 	}
 	
-	public function get_row(string $query = null, $output = OBJECT, int $y = 0, 
-		bool $use_prepare = false)
+	public function get_row(string $query = null, $output = OBJECT, int $y = 0, bool $use_prepare = false)
 	{
 		// Log how the function was called
 		$this->log_query("\$db->get_row(\"$query\",$output,$y)");
@@ -311,8 +311,7 @@ class ezsqlModel extends ezQuery implements ezsqlModelInterface
 		}
 	}
 	
-	public function get_col(string $query = null, int $x = 0, 
-		bool $use_prepare = false)
+	public function get_col(string $query = null, int $x = 0, bool $use_prepare = false)
 	{
 		$new_array = array();
 		
@@ -332,8 +331,7 @@ class ezsqlModel extends ezQuery implements ezsqlModelInterface
 		return $new_array;
 	}
 	
-	public function get_results(string $query = null, $output = \OBJECT, 
-		bool $use_prepare = false) 
+	public function get_results(string $query = null, $output = \OBJECT, 	bool $use_prepare = false) 
 	{
 		// Log how the function was called
 		$this->log_query("\$db->get_results(\"$query\", $output, $use_prepare)");
@@ -358,10 +356,8 @@ class ezsqlModel extends ezQuery implements ezsqlModelInterface
 					}
 					$i++;
 				}
-				return $new_array;
-			} else {
-				return array();
 			}
+			return $new_array;
 		}
 	}
 	
@@ -377,14 +373,15 @@ class ezsqlModel extends ezQuery implements ezsqlModelInterface
 				}
 				
 				return $new_array;
-			} else {
-				return $this->col_info[$col_offset]->{$info_type};
 			}
+
+			return $this->col_info[$col_offset]->{$info_type};
 		}
 	}
 
 	/**
 	 * create cache directory if doesn't exists
+	 * 
 	 * @param string $path
 	 */
 	public function create_cache(string $path = null) 
@@ -396,10 +393,7 @@ class ezsqlModel extends ezQuery implements ezsqlModelInterface
 		} 
 	}
 
-	/**
-	* store_cache
-	*/
-	public function store_cache(string $query, bool $is_insert)
+	public function store_cache(string $query, bool $is_insert = false)
 	{
 		// The would be cache file for this query
 		$cache_file = $this->cache_dir.\_DS.\md5($query);
@@ -410,8 +404,7 @@ class ezsqlModel extends ezQuery implements ezsqlModelInterface
 		) {
 			$this->create_cache();
 			if ( ! \is_dir($this->cache_dir) ) {
-				$this->register_error("Could not open cache dir: $this->cache_dir");
-				$this->show_errors ? \trigger_error("Could not open cache dir: $this->cache_dir", \E_USER_WARNING) : null;
+				return $this->register_error("Could not open cache dir: $this->cache_dir");
 			} else {
 				// Cache all result values
 				$result_cache = array(
@@ -428,9 +421,6 @@ class ezsqlModel extends ezQuery implements ezsqlModelInterface
 		}
 	}
 	
-	/**
-	* get_cache
-	*/
 	public function get_cache(string $query)
 	{
 		// The would be cache file for this query

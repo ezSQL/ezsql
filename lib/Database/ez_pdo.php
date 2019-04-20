@@ -122,8 +122,7 @@ class ez_pdo extends ezsqlModel implements DatabaseInterface
                 $this->_connected = true;
             }
         } catch (\PDOException $e) {
-            $this->register_error($e->getMessage());
-            $this->show_errors ? \trigger_error($e->getMessage() . '- $dsn: ' . $dsn, \E_USER_WARNING) : null;
+            $this->register_error($e->getMessage(). '- $dsn: ' . $dsn);
         }
 
         return $this->_connected;
@@ -217,8 +216,7 @@ class ez_pdo extends ezsqlModel implements DatabaseInterface
 
             $error_str = \substr($error_str, 0, -2);
 
-            $this->register_error($error_str);
-            $this->show_errors ? \trigger_error($error_str . ' ' . $this->last_query, \E_USER_WARNING) : null;
+            $this->register_error($error_str. ' ' . $this->last_query);
 
             return true;
         }

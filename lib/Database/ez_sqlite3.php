@@ -118,9 +118,7 @@ class ez_sqlite3 extends ezsqlModel implements DatabaseInterface
             case 'string':return \SQLITE3_TEXT;
             default:
                 $type_error = 'Argument is of invalid type ' . \gettype($arg);
-                $this->register_error($type_error);
-                $this->show_errors ? \trigger_error($type_error, \E_USER_WARNING) : null;
-                return false;
+                return $this->register_error($type_error);
         }
     }
 
@@ -143,9 +141,7 @@ class ez_sqlite3 extends ezsqlModel implements DatabaseInterface
 
             if (!$ok) {
                 $type_error = "Unable to bind param: $val";
-                $this->register_error($type_error);
-                $this->show_errors ? \trigger_error($type_error, \E_USER_WARNING) : null;
-                return false;
+                return $this->register_error($type_error);
             }
         }
 
@@ -201,9 +197,7 @@ class ez_sqlite3 extends ezsqlModel implements DatabaseInterface
         // If there is an error then take note of it..
         if (@$this->dbh->lastErrorCode()) {
             $err_str = $this->dbh->lastErrorMsg();
-            $this->register_error($err_str);
-            $this->show_errors ? \trigger_error($err_str, \E_USER_WARNING) : null;
-            return false;
+            return $this->register_error($err_str);
         }
 
         // Query was an insert, delete, update, replace

@@ -66,10 +66,17 @@ class ezsqlModelTest extends EZTestCase
     public function testRegister_error() 
     {
         $err_str = 'Test error string';
-        
+
+        $this->object->hide_errors();
         $this->object->register_error($err_str);
         
         $this->assertEquals($err_str, $this->object->getLast_Error());
+
+        $this->object->show_errors();
+        set_error_handler([$this, 'errorHandler']);
+        $this->assertFalse($this->object->register_error($err_str));
+        $this->object->hide_errors();
+
     } // testRegister_error
 
     /**
@@ -201,7 +208,7 @@ class ezsqlModelTest extends EZTestCase
     {
         $this->object->setDebug_Echo_Is_On(false);
         $this->object->setLast_Result(['test 1']);
-        $this->assertNotEmpty($this->object->vardump($this->object->getLast_Result()));
+        $this->assertNotEmpty($this->object->varDump($this->object->getLast_Result()));
         $this->object->setDebug_Echo_Is_On(true);
         $this->expectOutputRegex('/[Last Function Call]/');
         $this->object->varDump('');        
@@ -213,6 +220,7 @@ class ezsqlModelTest extends EZTestCase
      */
     public function testDump_var() 
     {
+        $this->object->setDebug_Echo_Is_On(true);
         $this->object->setLast_Result(['Test 1', 'Test 2']);
         $this->expectOutputRegex('/[Last Function Call]/');
         $this->object->dump_var();
@@ -223,17 +231,16 @@ class ezsqlModelTest extends EZTestCase
      */
     public function testDebug() 
     {
+        $this->object->setDebug_Echo_Is_On(true);
         $this->assertNotEmpty($this->object->debug(false));
         
         // In addition of getting a result, it fills the console
-        $this->expectOutputRegex('/[make a donation]/');
-        $this->object->debug(true);
         $this->object->setLast_Error("test last");
         $this->expectOutputRegex('/[test last]/');
-        $this->object->debug(true);
+        $this->object->debug();
         $this->object->setFrom_Disk_Cache(true);
         $this->expectOutputRegex('/[Results retrieved from disk cache]/');
-        $this->object->debug(true);
+        $this->object->debug();
         $this->object->setCol_Info(["just another test"]);
         $this->object->debug(false);   
         $this->object->setCol_Info(null);

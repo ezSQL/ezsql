@@ -421,6 +421,7 @@ class mysqliTest extends EZTestCase
      * @covers ezsql\ezQuery::insert
      * @covers ezsql\ezQuery::selecting
      * @covers ezsql\ezQuery::drop
+     * @covers ezsql\ezsqlModel::debug
      */
     public function testSelectingAndCreateTable()
     {
@@ -451,7 +452,12 @@ class mysqliTest extends EZTestCase
         );
                 
         $result = $this->object->selecting('users', 'id, tel_num, email', eq('user_name ', 'walker'));
-        //$this->object->debug(true);
+
+        $this->object->setDebug_Echo_Is_On(true); 
+        $this->expectOutputRegex('/[123456]/');
+        $this->expectOutputRegex('/[walker@email.com]/');
+        $this->object->debug();
+        
         foreach ($result as $row) {
             $this->assertEquals(1, $row->id);
             $this->assertEquals(123456, $row->tel_num);

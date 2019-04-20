@@ -99,7 +99,6 @@ class ez_pgsql extends ezsqlModel implements DatabaseInterface
         // Try to establish the server database handle
         if (!$this->dbh = \pg_connect($connect_string, true)) {
             $this->register_error(\FAILED_CONNECTION . ' in ' . __FILE__ . ' on line ' . __LINE__);
-            $this->show_errors ? \trigger_error(\FAILED_CONNECTION, \E_USER_WARNING) : null;
         } else {
             $this->_connected = true;
         }
@@ -210,9 +209,7 @@ class ez_pgsql extends ezsqlModel implements DatabaseInterface
 
         // If there is an error then take note of it..
         if ($str = @\pg_last_error($this->dbh)) {
-            $this->register_error($str);
-            $this->show_errors ? \trigger_error($str, \E_USER_WARNING) : null;
-            return false;
+            return $this->register_error($str);
         }
         // Query was an insert, delete, update, replace
         $is_insert = false;

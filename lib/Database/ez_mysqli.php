@@ -109,7 +109,6 @@ class ez_mysqli extends ezsqlModel implements DatabaseInterface
         // Try to establish the server database handle
         if ( ! $this->dbh = \mysqli_connect($host, $user, $password, $this->database->getName(),  (int) $port) ) {
             $this->register_error(\FAILED_CONNECTION . ' in ' . __FILE__ . ' on line ' . __LINE__);
-            $this->show_errors ? \trigger_error(\FAILED_CONNECTION, \E_USER_WARNING) : null;
         } else {
             \mysqli_set_charset($this->dbh, $charset);
             $this->_connected = true;
@@ -132,16 +131,13 @@ class ez_mysqli extends ezsqlModel implements DatabaseInterface
         if ( ! $this->dbh ) {
             // Must have an active database connection
             $this->register_error(\FAILED_CONNECTION . ' in ' . __FILE__ . ' on line ' . __LINE__);
-            $this->show_errors ? \trigger_error(\FAILED_CONNECTION, \E_USER_WARNING) : null;
         } elseif ( !\mysqli_select_db($this->dbh, $name) ) {
             // Try to connect to the database
             // Try to get error supplied by mysql if not use our own
             if ( !$str = \mysqli_error($this->dbh)) {
                 $str = 'Unexpected error while trying to select database';
             }
-
             $this->register_error($str . ' in ' .__FILE__ . ' on line ' . __LINE__);
-            $this->show_errors ? \trigger_error($str, \E_USER_WARNING) : null;
         } else {
             $this->database->setName($name);
             if ( $charset == '') {
@@ -241,7 +237,6 @@ class ez_mysqli extends ezsqlModel implements DatabaseInterface
             if ( $str = $stmt->error ) {
                 $is_insert = true;
                 $this->register_error($str);
-                $this->show_errors ? \trigger_error($str, \E_USER_WARNING) : null;
                 
                 // If debug ALL queries
                 $this->trace || $this->debug_all ? $this->debug() : null ;
@@ -359,7 +354,6 @@ class ez_mysqli extends ezsqlModel implements DatabaseInterface
         if ( $str = \mysqli_error($this->dbh) ) {
             $is_insert = true;
             $this->register_error($str);
-            $this->show_errors ? \trigger_error($str, \E_USER_WARNING) : null;
             
             // If debug ALL queries
             $this->trace || $this->debug_all ? $this->debug() : null ;

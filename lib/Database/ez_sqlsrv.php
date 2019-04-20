@@ -105,7 +105,6 @@ class ez_sqlsrv extends ezsqlModel implements DatabaseInterface
         // Try to establish the server database handle
         if (($this->dbh = @\sqlsrv_connect($host, $connectionOptions)) === false) {
             $this->register_error(\FAILED_CONNECTION . ' in ' . __FILE__ . ' on line ' . __LINE__);
-            $this->show_errors ? \trigger_error(\FAILED_CONNECTION, \E_USER_WARNING) : null;
         } else {
             $this->_connected = true;
             $this->conn_queries = 0;
@@ -207,7 +206,6 @@ class ez_sqlsrv extends ezsqlModel implements DatabaseInterface
                 foreach ($errors as $error) {
                     $sqlError = "ErrorCode: " . $error['code'] . " ### State: " . $error['SQLSTATE'] . " ### Error Message: " . $error['message'] . " ### Query: " . $query;
                     $this->register_error($sqlError);
-                    $this->show_errors ? \trigger_error($sqlError, \E_USER_WARNING) : null;
                 }
             }
 
