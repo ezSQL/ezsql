@@ -105,7 +105,7 @@ class ezsqlModelTest extends EZTestCase
         
         $this->assertNull($this->object->getLast_Result());
         $this->assertNull($this->object->getLast_Query());
-        $this->assertIsArray($this->object->getCol_Info());
+        $this->assertEquals([], $this->object->getCol_Info());
         $this->assertFalse($this->object->getFrom_Disk_Cache());
     } // testFlush
 

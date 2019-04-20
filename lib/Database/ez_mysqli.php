@@ -212,26 +212,29 @@ class ez_mysqli extends ezsqlModel implements DatabaseInterface
                 $this->_affectedRows = $stmt->num_rows;
                 $meta = $stmt->result_metadata();
        
+                $x = 0;
                 // Take note of column info
                 while($field = $meta->fetch_field()) {
-                    $variables[] = &$col_info[$field->name];
+                    $col_info[$field->name] = "";
+                    $variables[$field->name] = &$col_info[$field->name];
+                    $this->col_info[$x] = $field;
+                    $x++;
                 }
                 
                 // Binds variables to a prepared statement for result storage
                 \call_user_func_array([$stmt, 'bind_result'], $variables);
        
-                $x = 0;
                 $i = 0;
                 // Store Query Results
                 while($stmt->fetch()) {
-                    // Store results as an objects within main array
-                    foreach($col_info[$x] as $key => $value) {
-                        $this->last_result[$i] = (object) array( $key => $value );
-                        $i++;
+                    // Store results as an objects within main array                    
+                    $resultObject = new \stdClass();
+                    foreach($variables as $key => $value) {
+                        $resultObject->$key = $value;
                     } 
-                    $x++;
+                    $this->last_result[$i] = $resultObject;
+                    $i++;
                 }
-                $this->col_info = $col_info;
             }
             
             // If there is an error then take note of it..
