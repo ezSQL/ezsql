@@ -9,7 +9,11 @@ use ezsql\ConfigInterface;
 use ezsql\DatabaseInterface;
 
 class ez_sqlsrv extends ezsqlModel implements DatabaseInterface
-{
+{    
+    private $return_val = 0;
+    private $is_insert = false;
+    private $shortcutUsed = false;
+
     /**
      * ezSQL non duplicating data type id's; converting type ids to str
      */
@@ -135,69 +139,27 @@ class ez_sqlsrv extends ezsqlModel implements DatabaseInterface
     */
     public function query_prepared(string $query, array $param = null)
     { 
-        return @\sqlsrv_query($this->dbh, $query, $param);
+        $result = @\sqlsrv_query($this->dbh, $query, $param);
+        if ($this->shortcutUsed) 
+            return $result; 
+            
+        $this->return_val = 0;
+        return $this->processQueryResult($query, $result); 
     }
 
     /**
-     * Perform sqlsrv query and try to determine result value
-     * @param string
-     * @param bool
-     * @return object
+     * Perform post processing on SQL query call
+     *
+     * @param string $query
+     * @param mixed $result
+     * @return bool|void
      */
-    public function query(string $query, bool $use_prepare = false)
+    private function processQueryResult(string $query, $result = null)  
     {
-        $param = [];
-        if ($use_prepare) {
-            $param = &$this->prepareValues();
-        }
-
-        // check for ezQuery placeholder tag and replace tags with proper prepare tag
-        $query = \str_replace(\_TAG, '?', $query);
-
-        // if flag to convert query from MySql syntax to MS-Sql syntax is true
-        // convert the query
-        if ($this->database->getToMssql()) {
-            $query = $this->convert($query);
-        }
-
-        // Initialize return
-        $return_val = 0;
-
-        // Flush cached values..
-        $this->flush();
-
-        // For reg expressions
-        $query = \trim($query);
-
-        // Log how the function was called
-        $this->log_query("\$db->query(\"$query\")");
-
-        // Keep track of the last query for debug..
-        $this->last_query = $query;
-
-        // Count how many queries there have been
-        $this->count(true, true);
-
-        // Use core file cache function
-        if ($cache = $this->get_cache($query)) {
-            return $cache;
-        }
-
-        // If there is no existing database connection then try to connect
-        if (!isset($this->dbh) || !$this->dbh) {
-            $this->connect($this->database->getUser(),
-                $this->database->getPassword(),
-                $this->database->getName(),
-                $this->database->getHost()
-            );
-        }
-
-        // Perform the query via std sqlsrv_query function..
-        if (!empty($param) && \is_array($param) && ($this->isPrepareOn())) {
-            $this->result = $this->query_prepared($query, $param);
-        } else {
-            $this->result = @\sqlsrv_query($this->dbh, $query);
-        }
+        $this->shortcutUsed = false;
+        
+        if (!empty($result))
+            $this->result = $result;
 
         // If there is an error then take note of it..
         if ($this->result === false) {
@@ -213,9 +175,9 @@ class ez_sqlsrv extends ezsqlModel implements DatabaseInterface
         }
 
         // Query was an insert, delete, update, replace
-        $is_insert = false;
+        $this->is_insert = false;
         if (\preg_match("/^(insert|delete|update|replace)\s+/i", $query)) {
-            $is_insert = true;
+            $this->is_insert = true;
             $this->_affectedRows = @\sqlsrv_rows_affected($this->result);
 
             // Take note of the insert_id
@@ -229,7 +191,7 @@ class ez_sqlsrv extends ezsqlModel implements DatabaseInterface
 
             }
             // Return number of rows affected
-            $return_val = $this->_affectedRows;
+            $this->return_val = $this->_affectedRows;
         } else { // Query was a select
             // Take note of column info
             $i = 0;
@@ -269,16 +231,85 @@ class ez_sqlsrv extends ezsqlModel implements DatabaseInterface
             $this->num_rows = $num_rows;
 
             // Return number of rows selected
-            $return_val = $this->num_rows;
+            $this->return_val = $this->num_rows;
         }
 
+        return $this->return_val;
+    }
+
+    /**
+     * Perform sqlsrv query and try to determine result value
+     * 
+     * @param string
+     * @param bool
+     * @return bool|mixed
+     */
+    public function query(string $query, bool $use_prepare = false)
+    {
+        $param = [];
+        if ($use_prepare) {
+            $param = &$this->prepareValues();
+        }
+
+        // check for ezQuery placeholder tag and replace tags with proper prepare tag
+        $query = \str_replace(\_TAG, '?', $query);
+
+        // if flag to convert query from MySql syntax to MS-Sql syntax is true
+        // convert the query
+        if ($this->database->getToMssql()) {
+            $query = $this->convert($query);
+        }
+
+        // Initialize return
+        $this->return_val = 0;
+
+        // Flush cached values..
+        $this->flush();
+
+        // For reg expressions
+        $query = \trim($query);
+
+        // Log how the function was called
+        $this->log_query("\$db->query(\"$query\")");
+
+        // Keep track of the last query for debug..
+        $this->last_query = $query;
+
+        // Count how many queries there have been
+        $this->count(true, true);
+
+        // Use core file cache function
+        if ($cache = $this->get_cache($query)) {
+            return $cache;
+        }
+
+        // If there is no existing database connection then try to connect
+        if (!isset($this->dbh) || !$this->dbh) {
+            $this->connect($this->database->getUser(),
+                $this->database->getPassword(),
+                $this->database->getName(),
+                $this->database->getHost()
+            );
+        }
+
+        // Perform the query via std sqlsrv_query function..
+        if (!empty($param) && \is_array($param) && $this->isPrepareOn()) {
+            $this->shortcutUsed = true;
+            $this->result = $this->query_prepared($query, $param);
+        } else {
+            $this->result = @\sqlsrv_query($this->dbh, $query);
+        }
+
+        if ($this->processQueryResult($query) === false) 
+            return false;
+
         // disk caching of queries
-        $this->store_cache($query, $is_insert);
+        $this->store_cache($query, $this->is_insert);
 
         // If debug ALL queries
         $this->trace || $this->debug_all ? $this->debug() : null;
 
-        return $return_val;
+        return $this->return_val;
     }
 
     /**

@@ -119,6 +119,7 @@ class sqlsrvTest extends EZTestCase
     
     /**
      * @covers ezsql\Database\ez_sqlsrv::query
+     * @covers ezsql\Database\ez_sqlsrv::processQueryResult
      */
     public function testQuery() 
     {
@@ -249,6 +250,7 @@ class sqlsrvTest extends EZTestCase
     /**
      * @covers ezsql\ezQuery::selecting
      * @covers ezsql\Database\ez_sqlsrv::query
+     * @covers ezsql\Database\ez_sqlsrv::processQueryResult
      * @covers ezsql\Database\ez_sqlsrv::prepareValues
      * @covers ezsql\Database\ez_sqlsrv::query_prepared
      * @covers ezsql\Database\ez_sqlsrv::get_datatype
@@ -301,7 +303,54 @@ class sqlsrvTest extends EZTestCase
         $this->assertFalse($this->object->isConnected());
         $this->object->reset();
         $this->assertNull($this->object->handle());
+        $this->object->quick_connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME);
+        $this->assertTrue($this->object->isConnected());
     } // testDisconnect
+
+    /**
+     * @covers ezsql\ezQuery::drop
+     * @covers ezsql\ezQuery::create
+     * @covers ezsql\ezsqlModel::queryResult
+     * @covers ezsql\Database\ez_sqlsrv::query
+     * @covers ezsql\Database\ez_sqlsrv::processQueryResult
+     * @covers ezsql\Database\ez_sqlsrv::prepareValues
+     * @covers ezsql\Database\ez_sqlsrv::query_prepared
+     * @covers ezsql\Database\ez_sqlsrv::get_datatype
+     */
+    public function testQuery_prepared() {
+        $this->object->prepareOff();
+        $this->object->create('prepare_test',
+            column('id', INTEGERS, PRIMARY),
+            column('prepare_key', VARCHAR, 50)
+        );
+
+        $this->object->insert('prepare_test', ['id' => 1, 'prepare_key' => 'test 2']);
+        $this->object->query_prepared('INSERT INTO prepare_test( id, prepare_key ) VALUES( ?, ? )', [ 4, 'test 10']);
+        $this->object->query_prepared('INSERT INTO prepare_test( id, prepare_key ) VALUES( ?, ? )', [ 9, 'test 3']);
+
+        $this->object->query_prepared('SELECT id, prepare_key FROM prepare_test WHERE id = ?', [9]);
+        $query = $this->object->queryResult();
+        foreach($query as $row) {
+            $this->assertEquals(9, $row->id);
+            $this->assertEquals('test 3', $row->prepare_key);
+        }
+
+        $this->object->query_prepared('SELECT id, prepare_key FROM prepare_test WHERE id = ?', [1]);
+        $query = $this->object->queryResult();
+        foreach($query as $row) {
+            $this->assertEquals(1, $row->id);
+            $this->assertEquals('test 2', $row->prepare_key);
+        }
+
+        $this->object->query_prepared('SELECT id, prepare_key FROM prepare_test WHERE id = ?', [4]);
+        $query = $this->object->queryResult();
+        foreach($query as $row) {
+            $this->assertEquals(4, $row->id);
+            $this->assertEquals('test 10', $row->prepare_key);
+        }
+
+        $this->object->drop('prepare_test');   
+    } // testQuery_prepared
 
     /**
      * @covers ezsql\Database\ez_sqlsrv::__construct

@@ -111,6 +111,7 @@ class sqlite3Test extends EZTestCase
 
     /**
      * @covers ezsql\Database\ez_sqlite3::query
+     * @covers ezsql\Database\ez_sqlite3::processQueryResult
      */
     public function testQuery()
     {
@@ -168,6 +169,10 @@ class sqlite3Test extends EZTestCase
     
     /**
      * @covers ezsql\ezQuery::insert
+     * @covers ezsql\Database\ez_sqlite3::query
+     * @covers ezsql\Database\ez_sqlite3::processQueryResult
+     * @covers ezsql\Database\ez_sqlite3::query_prepared
+     * @covers ezsql\Database\ez_sqlite3::getArgType
      */
     public function testInsert()
     {
@@ -210,6 +215,10 @@ class sqlite3Test extends EZTestCase
     
     /**
      * @covers ezsql\ezQuery::delete
+     * @covers ezsql\Database\ez_sqlite3::query
+     * @covers ezsql\Database\ez_sqlite3::processQueryResult
+     * @covers ezsql\Database\ez_sqlite3::query_prepared
+     * @covers ezsql\Database\ez_sqlite3::getArgType
      */
     public function testDelete()
     {
@@ -236,8 +245,10 @@ class sqlite3Test extends EZTestCase
     /**
      * @covers ezsql\ezQuery::selecting
      * @covers ezsql\Database\ez_sqlite3::query
+     * @covers ezsql\Database\ez_sqlite3::processQueryResult
      * @covers ezsql\Database\ez_sqlite3::prepareValues
      * @covers ezsql\Database\ez_sqlite3::query_prepared
+     * @covers ezsql\Database\ez_sqlite3::getArgType
      */
     public function testSelecting()
     {
@@ -273,8 +284,53 @@ class sqlite3Test extends EZTestCase
         foreach ($result as $row) {
             $this->assertEquals('testing string 1', $row->test_value);
         }
-    } 
-    
+    }
+
+    /**
+     * @covers ezsql\ezQuery::drop
+     * @covers ezsql\ezQuery::create
+     * @covers ezsql\ezsqlModel::queryResult
+     * @covers ezsql\Database\ez_sqlite3::query
+     * @covers ezsql\Database\ez_sqlite3::processQueryResult
+     * @covers ezsql\Database\ez_sqlite3::prepareValues
+     * @covers ezsql\Database\ez_sqlite3::query_prepared
+     * @covers ezsql\Database\ez_sqlite3::getArgType
+     */
+    public function testQuery_prepared() {
+        $this->object->prepareOff();
+        $this->object->create('prepare_test',
+            column('id', INTEGERS, PRIMARY),
+            column('prepare_key', VARCHAR, 50)
+        );
+
+        $this->object->insert('prepare_test', ['id' => 1, 'prepare_key' => 'test 2']);
+        $this->object->query_prepared('INSERT INTO prepare_test( id, prepare_key ) VALUES( ?, ? )', [ 4, 'test 10']);
+        $this->object->query_prepared('INSERT INTO prepare_test( id, prepare_key ) VALUES( ?, ? )', [ 9, 'test 3']);
+
+        $this->object->query_prepared('SELECT id, prepare_key FROM prepare_test WHERE id = ?', [9]);
+        $query = $this->object->queryResult();
+        foreach($query as $row) {
+            $this->assertEquals(9, $row->id);
+            $this->assertEquals('test 3', $row->prepare_key);
+        }
+
+        $this->object->query_prepared('SELECT id, prepare_key FROM prepare_test WHERE id = ?', [1]);
+        $query = $this->object->queryResult();
+        foreach($query as $row) {
+            $this->assertEquals(1, $row->id);
+            $this->assertEquals('test 2', $row->prepare_key);
+        }
+
+        $this->object->query_prepared('SELECT id, prepare_key FROM prepare_test WHERE id = ?', [4]);
+        $query = $this->object->queryResult();
+        foreach($query as $row) {
+            $this->assertEquals(4, $row->id);
+            $this->assertEquals('test 10', $row->prepare_key);
+        }
+
+        $this->object->drop('prepare_test');   
+    } // testQuery_prepared
+
     /**
      * @covers ezsql\Database\ez_sqlite3::__construct
      */

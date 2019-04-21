@@ -10,6 +10,10 @@ use ezsql\DatabaseInterface;
 
 class ez_pgsql extends ezsqlModel implements DatabaseInterface
 {
+    private $return_val = 0;
+    private $is_insert = false;
+    private $shortcutUsed = false;
+
     /**
     * Database connection handle 
     * @var resource
@@ -130,15 +134,100 @@ class ez_pgsql extends ezsqlModel implements DatabaseInterface
     }
 
     /**
-    * Creates a prepared query, binds the given parameters and returns the result of the executed
-    *
-    * @param string $query
-    * @param array $param
-    * @return bool|mixed
-    */
+     * Creates a prepared query, binds the given parameters and returns the result of the executed
+     *
+     * @param string $query
+     * @param array $param
+     * @return bool|mixed
+     */
     public function query_prepared(string $query, array $param = null)
     { 
-        return @\pg_query_params($this->dbh, $query, $param); 
+        $result = @\pg_query_params($this->dbh, $query, $param);
+        return ($this->shortcutUsed) ? $result : $this->processQueryResult($query, $result); 
+    }
+
+    /**
+     * Perform post processing on SQL query call
+     *
+     * @param string $query
+     * @param mixed $result
+     * @return bool|void
+     */
+    private function processQueryResult(string $query, $result = null)  
+    {
+        $this->shortcutUsed = false;
+
+        if (!empty($result))
+            $this->result = $result;
+
+        // If there is an error then take note of it..
+        if ($str = @\pg_last_error($this->dbh)) {
+            return $this->register_error($str);
+        }
+
+        // Query was an insert, delete, update, replace
+        $this->is_insert = false;
+        if (\preg_match("/^(insert|delete|update|replace)\s+/i", $query)) {
+            $this->is_insert = true;
+
+            if (\is_bool($this->result))
+                return false;
+
+            $this->_affectedRows = @\pg_affected_rows($this->result);
+
+            // Take note of the insert_id
+            if (\preg_match("/^(insert|replace)\s+/i", $query)) {
+                //$this->insert_id = @postgresql_insert_id($this->dbh);
+                //$this->insert_id = pg_last_oid($this->result);
+
+                // Thx. Rafael Bernal
+                $insert_query = \pg_query("SELECT lastval();");
+                $insert_row = \pg_fetch_row($insert_query);
+                $this->insert_id = $insert_row[0];
+            }
+
+            // Return number for rows affected
+            $this->return_val = $this->_affectedRows;
+
+            if (\preg_match("/returning/smi", $query)) {
+                while ($row = @\pg_fetch_object($this->result)) {
+                    $return_affected[] = $row;
+                }
+                $this->return_val = $return_affected;
+            }
+        } else {
+            // Query was a select
+            $num_rows = 0;
+            //may be needed but my tests did not
+            if ($this->result) {
+                // Take note of column info
+                $i = 0;
+                while ($i < @\pg_num_fields($this->result)) {
+                    $this->col_info[$i]->name = \pg_field_name($this->result, $i);
+                    $this->col_info[$i]->type = \pg_field_type($this->result, $i);
+                    $this->col_info[$i]->size = \pg_field_size($this->result, $i);
+                    $i++;
+                }
+
+                /**
+                 * Store Query Results
+                 * while ( $row = @pg_fetch_object($this->result, $i, PGSQL_ASSOC) ) doesn't work? donno
+                 * while ( $row = @pg_fetch_object($this->result,$num_rows) ) does work
+                 */
+                while ($row = @\pg_fetch_object($this->result)) {
+                    // Store results as an objects within main array
+                    $this->last_result[$num_rows] = $row;
+                    $num_rows++;
+                }
+
+                @\pg_free_result($this->result);
+            }
+            // Log number of rows the query returned
+            $this->num_rows = $num_rows;
+
+            // Return number of rows selected
+            $this->return_val = $this->num_rows;
+        }
     }
 
     /**
@@ -146,7 +235,7 @@ class ez_pgsql extends ezsqlModel implements DatabaseInterface
      *
      * @param string
      * @param bool
-     * @return object
+     * @return bool|mixed
      */
     public function query(string $query, bool $use_prepare = false)
     {
@@ -164,12 +253,11 @@ class ez_pgsql extends ezsqlModel implements DatabaseInterface
                 if ($pos !== false) {
                     $query = \substr_replace($query, '$' . $parameterized, $pos, \strlen($needle));
                 }
-
             }
         }
 
         // Initialize return
-        $return_val = 0;
+        $this->return_val = 0;
 
         // Flush cached values..
         $this->flush();
@@ -202,86 +290,22 @@ class ez_pgsql extends ezsqlModel implements DatabaseInterface
 
         // Perform the query via std postgresql_query function..
         if (!empty($param) && \is_array($param) && ($this->isPrepareOn())) {
+            $this->shortcutUsed = true;
             $this->result = $this->query_prepared($query, $param);
         } else {
             $this->result = @\pg_query($this->dbh, $query);
         }
-
-        // If there is an error then take note of it..
-        if ($str = @\pg_last_error($this->dbh)) {
-            return $this->register_error($str);
-        }
-        // Query was an insert, delete, update, replace
-        $is_insert = false;
-        if (\preg_match("/^(insert|delete|update|replace)\s+/i", $query)) {
-            $is_insert = true;
-
-            if (is_bool($this->result))
-                return false;
-
-            $this->_affectedRows = @\pg_affected_rows($this->result);
-
-            // Take note of the insert_id
-            if (\preg_match("/^(insert|replace)\s+/i", $query)) {
-                //$this->insert_id = @postgresql_insert_id($this->dbh);
-                //$this->insert_id = pg_last_oid($this->result);
-
-                // Thx. Rafael Bernal
-                $insert_query = \pg_query("SELECT lastval();");
-                $insert_row = \pg_fetch_row($insert_query);
-                $this->insert_id = $insert_row[0];
-            }
-
-            // Return number for rows affected
-            $return_val = $this->_affectedRows;
-
-            if (\preg_match("/returning/smi", $query)) {
-                while ($row = @\pg_fetch_object($this->result)) {
-                    $return_affected[] = $row;
-                }
-                $return_val = $return_affected;
-            }
-            // Query was a select
-        } else {
-            $num_rows = 0;
-            //may be needed but my tests did not
-            if ($this->result) {
-                // Take note of column info
-                $i = 0;
-                while ($i < @\pg_num_fields($this->result)) {
-                    $this->col_info[$i]->name = \pg_field_name($this->result, $i);
-                    $this->col_info[$i]->type = \pg_field_type($this->result, $i);
-                    $this->col_info[$i]->size = \pg_field_size($this->result, $i);
-                    $i++;
-                }
-
-                /**
-                 * Store Query Results
-                 * while ( $row = @pg_fetch_object($this->result, $i, PGSQL_ASSOC) ) doesn't work? donno
-                 * while ( $row = @pg_fetch_object($this->result,$num_rows) ) does work
-                 */
-                while ($row = @\pg_fetch_object($this->result)) {
-                    // Store results as an objects within main array
-                    $this->last_result[$num_rows] = $row;
-                    $num_rows++;
-                }
-
-                @\pg_free_result($this->result);
-            }
-            // Log number of rows the query returned
-            $this->num_rows = $num_rows;
-
-            // Return number of rows selected
-            $return_val = $this->num_rows;
-        }
+            
+        if ($this->processQueryResult($query) === false)
+            return false;
 
         // disk caching of queries
-        $this->store_cache($query, $is_insert);
+        $this->store_cache($query, $this->is_insert);
 
         // If debug ALL queries
         $this->trace || $this->debug_all ? $this->debug() : null;
 
-        return $return_val;
+        return $this->return_val;
     } // query
 
     /**

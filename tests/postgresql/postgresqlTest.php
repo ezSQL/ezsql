@@ -92,6 +92,7 @@ class postgresqlTest extends EZTestCase
 
     /**
      * @covers ezsql\Database\ez_pgsql::query
+     * @covers ezsql\Database\ez_pgsql::processQueryResult
      */
     public function testQuery() {
         $this->assertTrue($this->object->connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME, self::TEST_DB_HOST, self::TEST_DB_PORT));
@@ -245,6 +246,7 @@ class postgresqlTest extends EZTestCase
     /**
      * @covers ezsql\ezQuery::selecting
      * @covers ezsql\Database\ez_pgsql::query
+     * @covers ezsql\Database\ez_pgsql::processQueryResult
      * @covers ezsql\Database\ez_pgsql::prepareValues
      * @covers ezsql\Database\ez_pgsql::query_prepared
      */
@@ -282,8 +284,42 @@ class postgresqlTest extends EZTestCase
             $this->assertEquals('testing string 1', $row->test_value);
         }
         $this->assertEquals(0, $this->object->query('DROP TABLE unit_test'));
-    } 
-    
+    }
+
+    /**
+     * @covers ezsql\ezQuery::drop
+     * @covers ezsql\ezQuery::create
+     * @covers ezsql\ezsqlModel::queryResult
+     * @covers ezsql\Database\ez_pgsql::query
+     * @covers ezsql\Database\ez_pgsql::processQueryResult
+     * @covers ezsql\Database\ez_pgsql::prepareValues
+     * @covers ezsql\Database\ez_pgsql::query_prepared
+     */
+    public function testQuery_prepared() {
+        $this->object->prepareOff();
+        $this->object->connect();
+        $this->object->drop('prepare_test');
+        $this->assertEquals(0, 
+            $this->object->create('prepare_test',
+                column('id', AUTO, PRIMARY),
+                column('prepare_key', VARCHAR, 50))
+        );
+
+        $this->object->insert('prepare_test', array('prepare_key' => 'test 1' ));
+        $result = $this->object->insert('prepare_test', array('prepare_key' => 'test 2' ));
+        $this->assertEquals(2, $result);
+
+        $this->object->query_prepared('SELECT id, prepare_key FROM prepare_test WHERE id = $1', [1]);
+
+        $query = $this->object->queryResult();
+        foreach($query as $row) {
+            $this->assertEquals(1, $row->id);
+            $this->assertEquals('test 1', $row->prepare_key);
+        }
+
+        $this->object->drop('prepare_test');   
+    } // testQuery_prepared
+
     /**
      * @covers ezsql\Database\ez_pgsql::__construct
      */

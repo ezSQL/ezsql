@@ -101,6 +101,8 @@ class pdo_mysqlTest extends EZTestCase
 
     /**
      * @covers ezsql\Database\ez_pdo::query
+     * @covers ezsql\Database\ez_pdo::processQuery
+     * @covers ezsql\Database\ez_pdo::processResult
      */
     public function testMySQLQuery() {
         $this->assertTrue($this->object->connect('mysql:host=' . self::TEST_DB_HOST . ';dbname=' . self::TEST_DB_NAME . ';port=' . self::TEST_DB_PORT, self::TEST_DB_USER, self::TEST_DB_PASSWORD));
@@ -254,6 +256,8 @@ class pdo_mysqlTest extends EZTestCase
     /**
      * @covers ezsql\ezQuery::selecting
      * @covers ezsql\Database\ez_pdo::query
+     * @covers ezsql\Database\ez_pdo::processQuery
+     * @covers ezsql\Database\ez_pdo::processResult
      * @covers ezsql\Database\ez_pdo::prepareValues
      * @covers ezsql\Database\ez_pdo::query_prepared
      * @covers \select
@@ -317,6 +321,40 @@ class pdo_mysqlTest extends EZTestCase
         
         $this->assertTrue($this->object->connect('mysql:host=' . self::TEST_DB_HOST . ';dbname=' . self::TEST_DB_NAME . ';port=' . self::TEST_DB_PORT, self::TEST_DB_USER, self::TEST_DB_PASSWORD, $options));
     }
+
+    /**
+     * @covers ezsql\ezQuery::drop
+     * @covers ezsql\ezQuery::create
+     * @covers ezsql\ezsqlModel::queryResult
+     * @covers ezsql\Database\ez_pdo::query
+     * @covers ezsql\Database\ez_pdo::query_prepared
+     * @covers ezsql\Database\ez_pdo::processQuery
+     * @covers ezsql\Database\ez_pdo::processResult
+     * @covers ezsql\Database\ez_pdo::prepareValues
+     */
+    public function testQuery_prepared() {
+        $this->object->prepareOff();
+        $this->object->connect();
+        $this->object->drop('prepare_test');
+        $this->assertEquals(0, 
+            $this->object->create('prepare_test',
+                column('id', INTR, 11, notNULL, PRIMARY),
+                column('prepare_key', VARCHAR, 50))
+        );
+
+        $result = $this->object->query_prepared('INSERT INTO prepare_test( id, prepare_key ) VALUES( ?, ? )', [ 9, 'test 1']);
+        $this->assertEquals(1, $result);
+
+        $this->object->query_prepared('SELECT id, prepare_key FROM prepare_test WHERE id = ?', [9]);
+
+        $query = $this->object->queryResult();
+        foreach($query as $row) {
+            $this->assertEquals(9, $row->id);
+            $this->assertEquals('test 1', $row->prepare_key);
+        }
+
+        $this->object->drop('prepare_test');   
+    } // testQuery_prepared
 
     /**
      * @covers ezsql\Database\ez_pdo::__construct

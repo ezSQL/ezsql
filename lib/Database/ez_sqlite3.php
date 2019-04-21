@@ -10,6 +10,10 @@ use ezsql\DatabaseInterface;
 
 class ez_sqlite3 extends ezsqlModel implements DatabaseInterface
 {
+    private $return_val = 0;
+    private $is_insert = false;
+    private $shortcutUsed = false;
+
     /**
     * Database connection handle 
     * @var resource
@@ -124,6 +128,7 @@ class ez_sqlite3 extends ezsqlModel implements DatabaseInterface
 
     /**
      * Creates a prepared query, binds the given parameters and returns the result of the executed
+     * 
      * @param string $query
      * @param array $param
      * @return bool \SQLite3Result
@@ -145,52 +150,31 @@ class ez_sqlite3 extends ezsqlModel implements DatabaseInterface
             }
         }
 
-        return $stmt->execute();
+        $result = $stmt->execute();        
+        if ($this->shortcutUsed)
+            return $result;
+            
+        $this->processQueryResult($query, $result);        
+        if ((\strpos($query, 'SELECT ') !== false) || (\strpos($query, 'select ') !== false))
+            $this->result->finalize();
+
+        return $this->return_val;
     }
 
     /**
-     * Perform SQLite query and try to determine result value
-     * Basic Query    - see docs for more detail
-     * @param string
-     * @param bool
-     * @return object
+     * Perform post processing on SQL query call
+     *
+     * @param string $query
+     * @param mixed $result
+     * @param array $param
+     * @return bool|void
      */
-    public function query(string $query, bool $use_prepare = false)
+    private function processQueryResult(string $query, $result = null)  
     {
-        $param = [];
-        if ($use_prepare) {
-            $param = $this->prepareValues();
-        }
+        $this->shortcutUsed = false;
 
-        // check for ezQuery placeholder tag and replace tags with proper prepare tag
-        $query = \str_replace(\_TAG, '?', $query);
-
-        // For reg expressions
-        $query = \str_replace("/[\n\r]/", '', \trim($query));
-
-        // initialize return
-        $return_val = 0;
-
-        // Flush cached values..
-        $this->flush();
-
-        // Log how the function was called
-        $this->log_query("\$db->query(\"$query\")");
-
-        // Keep track of the last query for debug..
-        $this->last_query = $query;
-
-        // If there is no existing database connection then try to connect
-        if ( ! isset($this->dbh) || ! $this->dbh ) {
-            $this->connect($this->database->getPath(), $this->database->getName());
-        }
-
-        // Perform the query via std SQLite3 query or SQLite3 prepare function..
-        if (!empty($param) && \is_array($param) && ($this->isPrepareOn())) {
-            $this->result = $this->query_prepared($query, $param);
-        } else {
-            $this->result = $this->dbh->query($query);
-        }
+        if (!empty($result))
+            $this->result = $result;
 
         $this->count(true, true);
 
@@ -210,7 +194,7 @@ class ez_sqlite3 extends ezsqlModel implements DatabaseInterface
             }
 
             // Return number of rows affected
-            $return_val = $this->_affectedRows;
+            $this->return_val = $this->_affectedRows;
 
             // Query was an select
         } else {
@@ -238,17 +222,65 @@ class ez_sqlite3 extends ezsqlModel implements DatabaseInterface
             $this->num_rows = $num_rows;
 
             // Return number of rows selected
-            $return_val = $this->num_rows;
+            $this->return_val = $this->num_rows;
+        }
+    }
+
+    /**
+     * Perform SQLite query and try to determine result value
+     * Basic Query    - see docs for more detail
+     * @param string
+     * @param bool
+     * @return bool|mixed
+     */
+    public function query(string $query, bool $use_prepare = false)
+    {
+        $param = [];
+        if ($use_prepare) {
+            $param = $this->prepareValues();
         }
 
-        if (($param) && \is_array($param) && ($this->isPrepareOn())) {
-            $this->result->finalize();
+        // check for ezQuery placeholder tag and replace tags with proper prepare tag
+        $query = \str_replace(\_TAG, '?', $query);
+
+        // For reg expressions
+        $query = \str_replace("/[\n\r]/", '', \trim($query));
+
+        // initialize return
+        $this->return_val = 0;
+
+        // Flush cached values..
+        $this->flush();
+
+        // Log how the function was called
+        $this->log_query("\$db->query(\"$query\")");
+
+        // Keep track of the last query for debug..
+        $this->last_query = $query;
+
+        // If there is no existing database connection then try to connect
+        if ( ! isset($this->dbh) || ! $this->dbh ) {
+            $this->connect($this->database->getPath(), $this->database->getName());
         }
+
+        // Perform the query via std SQLite3 query or SQLite3 prepare function..
+        if (!empty($param) && \is_array($param) && ($this->isPrepareOn())) {
+            $this->shortcutUsed = true;
+            $this->result = $this->query_prepared($query, $param);
+        } else {
+            $this->result = $this->dbh->query($query);
+        }
+
+        if ($this->processQueryResult($query) === false) 
+            return false;
+
+        if (!empty($param) && \is_array($param) && $this->isPrepareOn()) 
+            $this->result->finalize();
 
         // If debug ALL queries
         $this->trace || $this->debug_all ? $this->debug() : null;
 
-        return $return_val;
+        return $this->return_val;
     }
 
     /**

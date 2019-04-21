@@ -9,7 +9,11 @@ use ezsql\ConfigInterface;
 use ezsql\DatabaseInterface;
 
 class ez_mysqli extends ezsqlModel implements DatabaseInterface
-{
+{    
+    private $return_val = 0;
+    private $is_insert = false;
+    private $shortcutUsed = false;
+
     /**
     * Database connection handle 
     * @var resource
@@ -297,13 +301,79 @@ class ez_mysqli extends ezsqlModel implements DatabaseInterface
 
         return $result;
     }
-    
+
+    /**
+     * Perform post processing on SQL query call
+     *
+     * @param string $query
+     * @param mixed $result
+     * @return bool|void
+     */
+    private function processQueryResult(string $query, $result = null)  
+    {
+        $this->shortcutUsed = false;
+
+        if (!empty($result))
+            $this->result = $result;
+
+        // If there is an error then take note of it..
+        if ( $str = \mysqli_error($this->dbh) ) {
+            $this->register_error($str);
+            
+            // If debug ALL queries
+            $this->trace || $this->debug_all ? $this->debug() : null ;
+            return false;
+        }
+
+        // Query was an insert, delete, update, replace
+        $this->is_insert = false;
+        if ( \preg_match("/^(insert|delete|update|replace)\s+/i", $query) ) {
+            $this->is_insert = true;
+            $this->_affectedRows = \mysqli_affected_rows($this->dbh);
+
+            // Take note of the insert_id
+            if ( \preg_match("/^(insert|replace)\s+/i", $query) ) {
+                $this->insert_id = \mysqli_insert_id($this->dbh);
+            }
+
+            // Return number of rows affected
+            $this->return_val = $this->_affectedRows;
+        } else {
+            // Query was a select            
+            if ( !\is_numeric($this->result) && !\is_bool($this->result)) {
+
+                // Take note of column info
+                $i = 0;
+                while ($i < \mysqli_num_fields($this->result)) {
+                    $this->col_info[$i] = \mysqli_fetch_field($this->result);
+                    $i++;
+                }
+
+                // Store Query Results
+                $num_rows = 0;
+                while ( $row = \mysqli_fetch_object($this->result) ) {
+                    // Store results as an objects within main array
+                    $this->last_result[$num_rows] = $row;
+                    $num_rows++;
+                }
+
+                \mysqli_free_result($this->result);
+
+                // Log number of rows the query returned
+                $this->num_rows = $num_rows;
+
+                // Return number of rows selected
+                $this->return_val = $this->num_rows;
+            }
+        }
+    }
+
     /**
      * Perform mySQL query and try to determine result value
      *
      * @param string $query
      * @param bool $use_prepare
-     * @return mixed|bool
+     * @return bool|mixed
      */
     public function query(string $query, bool $use_prepare = false)
     {
@@ -315,7 +385,7 @@ class ez_mysqli extends ezsqlModel implements DatabaseInterface
 		$query = \str_replace(\_TAG, '?', $query);
 		
         // Initialize return
-        $return_val = 0;
+        $this->return_val = 0;
 
         // Flush cached values..
         $this->flush();
@@ -345,69 +415,22 @@ class ez_mysqli extends ezsqlModel implements DatabaseInterface
 
         // Perform the query via std mysql_query function..
 		if (!empty($param) && \is_array($param) && ($this->isPrepareOn())) {
+            $this->shortcutUsed = true;
             return $this->query_prepared($query, $param);
         }
         
         $this->result = \mysqli_query($this->dbh, $query);
 
-        // If there is an error then take note of it..
-        if ( $str = \mysqli_error($this->dbh) ) {
-            $is_insert = true;
-            $this->register_error($str);
-            
-            // If debug ALL queries
-            $this->trace || $this->debug_all ? $this->debug() : null ;
+        if ($this->processQueryResult($query) === false)
             return false;
-        }
-
-        // Query was an insert, delete, update, replace
-        $is_insert = false;
-        if ( \preg_match("/^(insert|delete|update|replace)\s+/i", $query) ) {
-            $this->_affectedRows = \mysqli_affected_rows($this->dbh);
-
-            // Take note of the insert_id
-            if ( \preg_match("/^(insert|replace)\s+/i", $query) ) {
-                $this->insert_id = \mysqli_insert_id($this->dbh);
-            }
-
-            // Return number of rows affected
-            $return_val = $this->_affectedRows;
-        } else {
-            // Query was a select            
-            if ( !\is_numeric($this->result) && !\is_bool($this->result)) {
-
-                // Take note of column info
-                $i = 0;
-                while ($i < \mysqli_num_fields($this->result)) {
-                    $this->col_info[$i] = \mysqli_fetch_field($this->result);
-                    $i++;
-                }
-
-                // Store Query Results
-                $num_rows = 0;
-                while ( $row = \mysqli_fetch_object($this->result) ) {
-                    // Store results as an objects within main array
-                    $this->last_result[$num_rows] = $row;
-                    $num_rows++;
-                }
-
-                \mysqli_free_result($this->result);
-
-                // Log number of rows the query returned
-                $this->num_rows = $num_rows;
-
-                // Return number of rows selected
-                $return_val = $this->num_rows;
-            }
-        }
 
         // disk caching of queries
-        $this->store_cache($query, $is_insert);
+        $this->store_cache($query, $this->is_insert);
 
         // If debug ALL queries
         $this->trace || $this->debug_all ? $this->debug() : null ;
 
-        return $return_val;
+        return $this->return_val;
     } // query
 	
     /**

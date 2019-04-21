@@ -200,11 +200,7 @@ class ezsqlModel extends ezQuery implements ezsqlModelInterface
 		}
 	}
 
-	/**
-	* Get host and port from an "host:port" notation.
-	* @return array of host and port. If port is omitted, returns $default
-	*/
-	public function get_host_port( $host, $default = false )
+	public function get_host_port(string $host, bool $default = false)
 	{
 		$port = $default;
 		if ( false !== \strpos( $host, ':' ) ) {
@@ -241,9 +237,6 @@ class ezsqlModel extends ezQuery implements ezsqlModelInterface
 		$this->show_errors = false;
 	}
 	
-	/**
-	* Kill cached query results
-	*/
 	public function flush()
 	{
 		// Get rid of these
@@ -254,10 +247,6 @@ class ezsqlModel extends ezQuery implements ezsqlModelInterface
 		$this->clearPrepare();
 	}
 	
-	/**
-	* Log how the query function was called
-	* @param string
-	*/
 	public function log_query(string $query)
 	{
 		// Log how the last function was called
@@ -379,11 +368,6 @@ class ezsqlModel extends ezQuery implements ezsqlModelInterface
 		}
 	}
 
-	/**
-	 * create cache directory if doesn't exists
-	 * 
-	 * @param string $path
-	 */
 	public function create_cache(string $path = null) 
 	{
 		$cache_dir = empty($path) ? $this->cache_dir : $path;
@@ -592,9 +576,6 @@ class ezsqlModel extends ezQuery implements ezsqlModelInterface
 		return $html;
 	}
 		
-	/**
-	* Timer related functions
-	*/
 	public function timer_get_cur()
 	{
 		list($usec, $sec) = \explode(" ",\microtime());
@@ -622,13 +603,6 @@ class ezsqlModel extends ezQuery implements ezsqlModelInterface
 		$this->total_query_time += $this->timer_elapsed($timer_name);
 	}
 	
-	/**
-	 * Function for operating query count
-	 *
-	 * @param bool $all Set to false for function to return queries only during this connection
-	 * @param bool $increase Set to true to increase query count (internal usage)
-	 * @return int Returns query count base on $all
-	 */
 	public function count($all = true, $increase = false) 
 	{
 		if ($increase) {
@@ -671,31 +645,16 @@ class ezsqlModel extends ezQuery implements ezsqlModelInterface
 		$this->secureOptions = null;
 	}
 
-    /**
-      * Returns, whether a database connection is established, or not
-      *
-      * @return boolean
-      */
-	public function isConnected() 
+    public function isConnected() 
 	{
         return $this->_connected;
      } // isConnected
 
-    	/**
-      * Returns the affected rows of a query
-      * 
-      * @return int
-      */
 	public function affectedRows() 
 	{
         return $this->_affectedRows;
 	} // affectedRows
 
-    	/**
-      * Returns the last query result
-      * 
-      * @return array
-      */
 	public function queryResult() 
 	{
         return $this->last_result;

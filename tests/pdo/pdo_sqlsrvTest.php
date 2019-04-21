@@ -81,6 +81,8 @@ class pdo_sqlsrvTest extends EZTestCase
 
     /**
      * @covers ezsql\Database\ez_pdo::query
+     * @covers ezsql\Database\ez_pdo::processQuery
+     * @covers ezsql\Database\ez_pdo::processResult
      */
     public function testSQLsrvQuery() {
         $this->assertTrue($this->object->connect('sqlsrv:Server=' . self::TEST_DB_HOST . ';Database=' . self::TEST_DB_NAME, self::TEST_DB_USER, self::TEST_DB_PASSWORD));
@@ -168,6 +170,8 @@ class pdo_sqlsrvTest extends EZTestCase
     /**
      * @covers ezsql\ezQuery::selecting
      * @covers ezsql\Database\ez_pdo::query
+     * @covers ezsql\Database\ez_pdo::processQuery
+     * @covers ezsql\Database\ez_pdo::processResult
      * @covers ezsql\Database\ez_pdo::prepareValues
      * @covers ezsql\Database\ez_pdo::query_prepared
      */

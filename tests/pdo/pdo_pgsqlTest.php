@@ -91,6 +91,8 @@ class pdo_pgsqlTest extends EZTestCase
 
     /**
      * @covers ezsql\Database\ez_pdo::query
+     * @covers ezsql\Database\ez_pdo::processQuery
+     * @covers ezsql\Database\ez_pdo::processResult
      */
     public function testPosgreSQLQuery() {
         $this->assertTrue($this->object->connect('pgsql:host=' . self::TEST_DB_HOST . ';dbname=' . self::TEST_DB_NAME . ';port=' . self::TEST_DB_PORT, self::TEST_DB_USER, self::TEST_DB_PASSWORD));
@@ -171,6 +173,8 @@ class pdo_pgsqlTest extends EZTestCase
     /**
      * @covers ezsql\ezQuery::selecting
      * @covers ezsql\Database\ez_pdo::query
+     * @covers ezsql\Database\ez_pdo::processQuery
+     * @covers ezsql\Database\ez_pdo::processResult
      * @covers ezsql\Database\ez_pdo::prepareValues
      * @covers ezsql\Database\ez_pdo::query_prepared
      */

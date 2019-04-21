@@ -139,6 +139,7 @@ class mysqliTest extends EZTestCase
 
     /**
      * @covers ezsql\Database\ez_mysqli::query
+     * @covers ezsql\Database\ez_mysqli::processQueryResult
      */
     public function testQueryInsert() 
     {
@@ -159,6 +160,7 @@ class mysqliTest extends EZTestCase
 
     /**
      * @covers ezsql\Database\ez_mysqli::query
+     * @covers ezsql\Database\ez_mysqli::processQueryResult
      */
     public function testQuerySelect() 
     {
@@ -283,8 +285,14 @@ class mysqliTest extends EZTestCase
    
     /**
      * @covers ezsql\ezQuery::insert
+     * @covers ezsql\ezQuery::create
+     * @covers ezsql\Database::initialize
      * @covers ezsql\Database\ez_mysqli::query
+     * @covers ezsql\Database\ez_mysqli::processQueryResult
+     * @covers ezsql\Database\ez_mysqli::query_prepared
      * @covers ezsql\Database\ez_mysqli::prepareValues
+     * @covers \column
+     * @covers \primary
      */
     public function testInsert()
     {
@@ -296,7 +304,7 @@ class mysqliTest extends EZTestCase
             \column('test_key', VARCHAR, 50),
             \primary('id_pk', 'id')
         );
-        $this->assertEquals($this->object->insert('unit_test', array('test_key'=>'test 2' )), 1);
+        $this->assertEquals(1, $this->object->insert('unit_test', array('test_key'=>'test 2' )));
     }
         
     /**
@@ -414,6 +422,7 @@ class mysqliTest extends EZTestCase
 
     /**
      * @covers ezsql\Database\ez_mysqli::query
+     * @covers ezsql\Database\ez_mysqli::processQueryResult
      * @covers ezsql\Database\ez_mysqli::query_prepared
      * @covers ezsql\Database\ez_mysqli::fetch_prepared_result
      * @covers ezsql\Database\ez_mysqli::prepareValues
@@ -422,6 +431,7 @@ class mysqliTest extends EZTestCase
      * @covers ezsql\ezQuery::selecting
      * @covers ezsql\ezQuery::drop
      * @covers ezsql\ezsqlModel::debug
+     * @covers ezsql\ezsqlModel::queryResult
      */
     public function testSelectingAndCreateTable()
     {
@@ -558,30 +568,54 @@ class mysqliTest extends EZTestCase
  
     /**
      * @covers ezsql\ezQuery::drop
+     * @covers ezsql\ezQuery::create
+     * @covers ezsql\Database\ez_mysqli::query
      * @covers ezsql\Database\ez_mysqli::query_prepared
      * @covers ezsql\Database\ez_mysqli::fetch_prepared_result
      * @covers ezsql\Database\ez_mysqli::prepareValues
+     * @covers ezsql\Database\ez_mysqli::processQueryResult
+     * @covers ezsql\ezsqlModel::queryResult
      */
     public function testQuery_prepared() {
-        $this->object->prepareOff();        
-        $this->object->select(self::TEST_DB_NAME);
+        $this->object->prepareOff();
         $this->object->drop('prepare_test');
-        $this->assertEquals(0, 
-            $this->object->create('prepare_test',
-                column('id', INTR, 11, notNULL, PRIMARY),
-                column('prepare_key', VARCHAR, 50))
+        $this->object->create('prepare_test',
+            column('id', INTR, 11, notNULL, PRIMARY),
+            column('prepare_key', VARCHAR, 50),
+            column('prepare_price', DECIMAL, 12, 2)
         );
 
-        $result = $this->object->query_prepared('INSERT INTO prepare_test( id, prepare_key ) VALUES( ?, ? )', [ 9, 'test 1']);
-        $this->assertEquals(1, $result);
+        $this->object->query_prepared('INSERT INTO prepare_test( id, prepare_key, prepare_price ) VALUES( ?, ?, ? )', 
+            [ 9, 'test 1', 7.12]);
 
-        $this->object->query_prepared('SELECT id, prepare_key FROM prepare_test WHERE id = ?', [9]);
+        $this->object->query_prepared('INSERT INTO prepare_test( id, prepare_key, prepare_price ) VALUES( ?, ?, ? )', 
+            [ 3, 'test 21', 44.01]);
 
+        $this->object->query_prepared('INSERT INTO prepare_test( id, prepare_key, prepare_price ) VALUES( ?, ?, ? )', 
+            [ 99, 'all good', 1200.50]);
+
+        $this->object->query_prepared('SELECT id, prepare_key, prepare_price FROM prepare_test WHERE id = ?', [3]);
         $query = $this->object->queryResult();
-        //$this->object->debug(true);
+        foreach($query as $row) {
+            $this->assertEquals(3, $row->id);
+            $this->assertEquals('test 21', $row->prepare_key);
+            $this->assertEquals(44.01, $row->prepare_price);
+        }
+
+        $this->object->query_prepared('SELECT id, prepare_key, prepare_price FROM prepare_test WHERE id = ?', [9]);
+        $query = $this->object->queryResult();
         foreach($query as $row) {
             $this->assertEquals(9, $row->id);
             $this->assertEquals('test 1', $row->prepare_key);
+            $this->assertEquals(7.12, $row->prepare_price);
+        }
+
+        $this->object->query_prepared('SELECT id, prepare_key, prepare_price FROM prepare_test WHERE id = ?', [99]);
+        $query = $this->object->queryResult();
+        foreach($query as $row) {
+            $this->assertEquals(99, $row->id);
+            $this->assertEquals('all good', $row->prepare_key);
+            $this->assertEquals(1200.50, $row->prepare_price);
         }
 
         $this->object->drop('prepare_test');   

@@ -11,10 +11,14 @@ use ezsql\DatabaseInterface;
 
 class ez_pdo extends ezsqlModel implements DatabaseInterface
 {
+    private $return_val = 0;
+    private $is_insert = false;
+    private $shortcutUsed = false;
+
     /**
-    * Database connection handle 
-    * @var resource
-    */
+     * Database connection handle 
+     * @var resource
+     */
     private $dbh;
 
     /**
@@ -24,10 +28,9 @@ class ez_pdo extends ezsqlModel implements DatabaseInterface
     private $result;
 
     /**
-    * Database configuration setting 
-    * @var ConfigInterface
-    */
-
+     * Database configuration setting 
+     * @var ConfigInterface
+     */
     private $database;
 
     public function __construct(ConfigInterface $settings = null) 
@@ -129,23 +132,21 @@ class ez_pdo extends ezsqlModel implements DatabaseInterface
     } // connect
 
     /**
-    * With PDO it is only an alias for the connect method
-    *
-    * @param string $dsn The connection parameter string
-    *                    Default is empty string
-    * @param string $user The database user name
-    *                     Default is empty string
-    * @param string $password The database password
-    *                         Default is empty string
-    * @param array $options Array for setting connection options as MySQL
-    *                       charset for example
-    *                       Default is an empty array
-    * @param boolean $isFileBased File based databases like SQLite don't need
-    *                             user and password, they work with path in the
-    *                             dsn parameter
-    *                             Default is false
-    * @return boolean
-    */
+     * With PDO it is only an alias for the connect method
+     *
+     * @param string $dsn The connection parameter string
+     *   - Default is empty string
+     * @param string $user The database user name
+     *   - Default is empty string
+     * @param string $password The database password
+     *   - Default is empty string
+     * @param array $options Array for setting connection options
+     *   - Default is an empty array
+     * @param boolean $isFileBased File based databases 
+     * like SQLite don't need user and password, they work with path in the dsn parameter
+     *   - Default is false
+     * @return boolean
+     */
     public function quick_connect(
         $dsn = '',
         $user = '', 
@@ -157,16 +158,16 @@ class ez_pdo extends ezsqlModel implements DatabaseInterface
     } // quick_connect
 
     /**
-    *  Format a SQLite string correctly for safe SQLite insert
-    *  (no mater if magic quotes are on or not)
-    */
+     *  Format a SQLite string correctly for safe SQLite insert
+     *  (no mater if magic quotes are on or not)
+     */
 
     /**
-    * Escape a string with the PDO method
-    *
-    * @param string $str
-    * @return string
-    */
+     * Escape a string with the PDO method
+     *
+     * @param string $str
+     * @return string
+     */
     public function escape(string $str) 
     {
         // If there is no existing database connection then try to connect
@@ -185,21 +186,21 @@ class ez_pdo extends ezsqlModel implements DatabaseInterface
     } // escape
 
     /**
-    * Return SQLite specific system date syntax
-    * i.e. Oracle: SYSDATE Mysql: NOW()
-    *
-    * @return string
-    */
+     * Return SQLite specific system date syntax
+     * i.e. Oracle: SYSDATE Mysql: NOW()
+     *
+     * @return string
+     */
     public function sysDate() 
     {
         return "datetime('now')";
     }
 
     /**
-    * Hooks into PDO error system and reports it to user
-    *
-    * @return string
-    */
+     * Hooks into PDO error system and reports it to user
+     *
+     * @return string
+     */
     public function catch_error()
     {
         $error_str = 'No error info';
@@ -223,25 +224,146 @@ class ez_pdo extends ezsqlModel implements DatabaseInterface
     } // catch_error    
     
     /**
-    * Creates a prepared query, binds the given parameters and returns the result of the executed
-    *
-    * @param string $query
-    * @param array $param
-    * @param boolean $isSelect - return \PDOStatement, if SELECT SQL statement, otherwise int
-    * @return bool|int|\PDOStatement 
-    */
+     * Creates a prepared query, binds the given parameters and returns the result of the executed
+     *
+     * @param string $query
+     * @param array $param
+     * @param boolean $isSelect - return \PDOStatement, if SELECT SQL statement, otherwise int
+     * @return bool|int|\PDOStatement 
+     */
     public function query_prepared(string $query, array $param = null, $isSelect = false)
     { 
         $stmt = $this->dbh->prepare($query);
         $result = false;
         if( $stmt && $stmt->execute($param) ) {
             $result = $stmt->rowCount();
-            while( $stmt->fetch(\PDO::FETCH_ASSOC) ) {
+            // Store Query Results
+            $num_rows=0;
+            while( $row = @$stmt->fetch(\PDO::FETCH_ASSOC) ) {
+                // Store results as an objects within main array
+                $this->last_result[$num_rows] = (object) $row;
+                $num_rows++;
             }
+
+            $this->num_rows = $num_rows;
         }
-        return ($isSelect) ? $stmt : $result; 
+
+        $return = ($isSelect) ? $stmt : $result;
+        if ($this->shortcutUsed)
+            return $return;
+
+        $status = ((\strpos($query, 'SELECT ') !== false) || (\strpos($query, 'select ') !== false));
+        $prepareOnly = ($status) ? $stmt : $result;
+        return $this->processResult($query, $prepareOnly, $status);
     }
-        
+
+    /**
+     * Perform post processing on SQL query call
+     *
+     * @param string $query
+     * @param mixed $result
+     * @param bool $isSelect
+     * @return bool|void
+     */
+    private function processResult(string $query, $result = null, bool $isSelect = false)  
+    {
+        $this->shortcutUsed = false;
+
+        // If there is an error then take note of it..
+        if ( $this->catch_error() ) {
+            return false;
+        }
+
+        if ($isSelect) {
+            $this->is_insert = false;
+
+            if (!empty($result)) {
+                $col_count = $result->columnCount();
+                for ( $i=0 ; $i < $col_count ; $i++ ) {              
+                    // Start DEBUG by psc!
+                    $this->col_info[$i] = new \stdClass();
+                    // End DEBUG by psc
+                    if ( $meta = $result->getColumnMeta($i) ) {
+                        $this->col_info[$i]->name =  $meta['name'];
+                        $this->col_info[$i]->type =  $meta['native_type'];
+                        $this->col_info[$i]->max_length =  '';
+                    } else {
+                        $this->col_info[$i]->name =  'undefined';
+                        $this->col_info[$i]->type =  'undefined';
+                        $this->col_info[$i]->max_length = '';
+                    }
+                }
+
+                // Store Query Results
+                $num_rows=0;
+                while ( $row = @$result->fetch(\PDO::FETCH_ASSOC) ) {
+                    // Store results as an objects within main array
+                    $this->last_result[$num_rows] = (object) $row;
+                    $num_rows++;
+                }
+
+                // Log number of rows the query returned
+                $this->num_rows = empty($num_rows) ? $this->num_rows : $num_rows;
+
+                // Return number of rows selected
+                $this->return_val = $this->num_rows;
+            }
+        } else {
+            $this->is_insert = true;
+
+            if (!empty($result))
+                $this->_affectedRows = $result;
+
+            // Take note of the insert_id
+            if ( \preg_match("/^(insert|replace)\s+/i", $query) ) {
+                $this->insert_id = @$this->dbh->lastInsertId();
+            }
+
+            // Return number of rows affected
+            $this->return_val = $this->_affectedRows;
+        }
+            
+        return $this->return_val;
+    }
+
+    /**
+     * Perform SQL query
+     *
+     * @param string $query
+     * @param array $param
+     * @return bool|void
+     */
+    private function processQuery(string $query, array $param = null)  
+    {        
+        // Query was an insert, delete, update, replace
+        if ( \preg_match("/^(insert|delete|update|replace|drop|create)\s+/i", $query) ) {
+            // Perform the query and log number of affected rows
+            // Perform the query via std PDO query or PDO prepare function..
+            if (!empty($param) && \is_array($param) && $this->isPrepareOn()) {
+                $this->shortcutUsed = true;
+                $this->_affectedRows = $this->query_prepared($query, $param, false);
+            } else
+                $this->_affectedRows = $this->dbh->exec($query);
+
+            if ($this->processResult($query) === false) 
+                return false;
+
+        } else {
+            // Query was an select
+
+            // Perform the query and log number of affected rows
+            // Perform the query via std PDO query or PDO prepare function..
+            if (!empty($param) && \is_array($param) && $this->isPrepareOn()) {
+                $this->shortcutUsed = true;
+                $sth = $this->query_prepared($query, $param, true);
+            } else
+                $sth = $this->dbh->query($query);
+
+            if ($this->processResult($query, $sth, true) === false)
+                return false;
+        }
+    }
+
     /**
      * Basic Query	- see docs for more detail
      *
@@ -262,7 +384,7 @@ class ez_pdo extends ezsqlModel implements DatabaseInterface
         $query = \str_replace("/[\n\r]/", '', \trim($query));
 
         // Initialize return
-        $return_val = 0;
+        $this->return_val = 0;
 
         // Flush cached values..
         $this->flush();
@@ -300,80 +422,11 @@ class ez_pdo extends ezsqlModel implements DatabaseInterface
                 $this->database->getIsFile());
         }
 
-        // Query was an insert, delete, update, replace
-        if ( \preg_match("/^(insert|delete|update|replace|drop|create)\s+/i", $query) ) {
-
-            // Perform the query and log number of affected rows
-            // Perform the query via std PDO query or PDO prepare function..
-            if (!empty($param) && is_array($param) && ($this->isPrepareOn())) {
-                $this->_affectedRows = $this->query_prepared($query, $param, false);
-            } else
-                $this->_affectedRows = $this->dbh->exec($query);
-
-            // If there is an error then take note of it..
-            if ( $this->catch_error() ) {
-                return false;
-            }
-
-            $is_insert = true;
-
-            // Take note of the insert_id
-            if ( \preg_match("/^(insert|replace)\s+/i", $query) ) {
-                $this->insert_id = @$this->dbh->lastInsertId();
-            }
-
-            // Return number of rows affected
-            $return_val = $this->_affectedRows;
-
-        } else {
-            // Query was an select
-
-            // Perform the query and log number of affected rows
-            // Perform the query via std PDO query or PDO prepare function..
-            if (!empty($param) && \is_array($param) && ($this->isPrepareOn())) {
-                $sth = $this->query_prepared($query, $param, true);
-            } else
-                $sth = $this->dbh->query($query);
-
-            // If there is an error then take note of it..
-            if ( $this->catch_error() ) return false;
-
-            $is_insert = false;
-
-            $col_count = $sth->columnCount();
-
-            for ( $i=0 ; $i < $col_count ; $i++ ) {              
-                // Start DEBUG by psc!
-                $this->col_info[$i] = new \stdClass();
-                // End DEBUG by psc
-                if ( $meta = $sth->getColumnMeta($i) ) {
-                    $this->col_info[$i]->name =  $meta['name'];
-                    $this->col_info[$i]->type =  $meta['native_type'];
-                    $this->col_info[$i]->max_length =  '';
-                } else {
-                    $this->col_info[$i]->name =  'undefined';
-                    $this->col_info[$i]->type =  'undefined';
-                    $this->col_info[$i]->max_length = '';
-                }
-            }
-
-            // Store Query Results
-            $num_rows=0;
-            while ( $row = @$sth->fetch(\PDO::FETCH_ASSOC) ) {
-                // Store results as an objects within main array
-                $this->last_result[$num_rows] = (object) $row;
-                $num_rows++;
-            }
-
-            // Log number of rows the query returned
-            $this->num_rows = $num_rows;
-
-            // Return number of rows selected
-            $return_val = $this->num_rows;
-        }
+        if ($this->processQuery($query, $param) === false) 
+            return false;
 
         // disk caching of queries
-        $this->store_cache($query, $is_insert);
+        $this->store_cache($query, $this->is_insert);
 
         // If debug ALL queries
         $this->trace || $this->debug_all ? $this->debug() : null ;
@@ -386,7 +439,7 @@ class ez_pdo extends ezsqlModel implements DatabaseInterface
             $this->trace_log[] = $this->debug(false);
         }
 
-        return $return_val;
+        return $this->return_val;
 
     } // query
 
