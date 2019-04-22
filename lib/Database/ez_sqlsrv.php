@@ -13,6 +13,7 @@ class ez_sqlsrv extends ezsqlModel implements DatabaseInterface
     private $return_val = 0;
     private $is_insert = false;
     private $shortcutUsed = false;
+    private $isTransactional = false;
 
     /**
      * ezSQL non duplicating data type id's; converting type ids to str
@@ -427,5 +428,26 @@ class ez_sqlsrv extends ezsqlModel implements DatabaseInterface
     public function handle()
     {
         return $this->dbh;
+    }
+        
+    /**
+     * Begin sqlsrv Transaction
+     */
+    public function beginTransaction()
+    {
+        @\sqlsrv_begin_transaction($this->dbh);
+        $this->isTransactional = true;
+    }
+
+    public function commit()
+    {
+        @\sqlsrv_commit($this->dbh);
+        $this->isTransactional = false;
+    }
+
+    public function rollback()
+    {
+        @\sqlsrv_rollback($this->dbh);
+        $this->isTransactional = false;
     }
 } // end class

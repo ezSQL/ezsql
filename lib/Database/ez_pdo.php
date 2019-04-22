@@ -14,6 +14,7 @@ class ez_pdo extends ezsqlModel implements DatabaseInterface
     private $return_val = 0;
     private $is_insert = false;
     private $shortcutUsed = false;
+    private $isTransactional = false;
 
     /**
      * Database connection handle 
@@ -468,5 +469,26 @@ class ez_pdo extends ezsqlModel implements DatabaseInterface
     public function handle()
     {
         return $this->dbh;
+    }
+        
+    /**
+     * Begin PDO Transaction
+     */
+    public function beginTransaction()
+    {
+        $this->dbh->beginTransaction();
+        $this->isTransactional = true;
+    }
+
+    public function commit()
+    {
+        $this->dbh->commit();
+        $this->isTransactional = false;
+    }
+    
+    public function rollback()
+    {
+        $this->dbh->rollback();
+        $this->isTransactional = false;
     }
 } // ez_pdo

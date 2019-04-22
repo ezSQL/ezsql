@@ -13,6 +13,7 @@ class ez_mysqli extends ezsqlModel implements DatabaseInterface
     private $return_val = 0;
     private $is_insert = false;
     private $shortcutUsed = false;
+    private $isTransactional = false;
 
     /**
     * Database connection handle 
@@ -501,4 +502,29 @@ class ez_mysqli extends ezsqlModel implements DatabaseInterface
     {
         return \mysqli_insert_id($this->dbh);
     } // getInsertId
+        
+    /**
+     * Begin Mysql Transaction
+     */
+    public function beginTransaction()
+    {
+        /* turn autocommit off */
+        $this->dbh->autocommit(false);
+        $this->dbh->begin_transaction(MYSQLI_TRANS_START_READ_WRITE);
+        $this->isTransactional = true;
+    }
+
+    public function commit()
+    {
+        $this->dbh->commit();
+        $this->dbh->autocommit(true);
+        $this->isTransactional = false;
+    }
+    
+    public function rollback()
+    {
+        $this->dbh->rollBack();
+        $this->dbh->autocommit(true);
+        $this->isTransactional = false;
+    }
 } // ez_mysqli

@@ -102,4 +102,19 @@ interface DatabaseInterface
      * Reset connection handle
      */
     public function reset();
+    
+    /**
+     * Begin Transaction
+     */
+    public function beginTransaction();
+
+    /**
+     * Commit Transaction
+     */
+    public function commit();
+
+    /**
+     * Rollback Transaction
+     */
+    public function rollback();
 }

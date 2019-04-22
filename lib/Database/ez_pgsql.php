@@ -13,6 +13,7 @@ class ez_pgsql extends ezsqlModel implements DatabaseInterface
     private $return_val = 0;
     private $is_insert = false;
     private $shortcutUsed = false;
+    private $isTransactional = false;
 
     /**
     * Database connection handle 
@@ -354,4 +355,25 @@ class ez_pgsql extends ezsqlModel implements DatabaseInterface
     {
         return $this->database->getPort();
     } // getPort
+    
+    /**
+     * Begin Postgresql Transaction
+     */
+    public function beginTransaction()
+    {
+        @\pg_query($this->dbh, "BEGIN");
+        $this->isTransactional = true;
+    }
+
+    public function commit()
+    {
+        @\pg_query($this->dbh, "COMMIT");
+        $this->isTransactional = false;
+    }
+
+    public function rollback()
+    {
+        @\pg_query($this->dbh, "ROLLBACK");
+        $this->isTransactional = false;
+    }
 } // ez_pgsql

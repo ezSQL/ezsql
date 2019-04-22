@@ -13,6 +13,7 @@ class ez_sqlite3 extends ezsqlModel implements DatabaseInterface
     private $return_val = 0;
     private $is_insert = false;
     private $shortcutUsed = false;
+    private $isTransactional = false;
 
     /**
     * Database connection handle 
@@ -308,5 +309,26 @@ class ez_sqlite3 extends ezsqlModel implements DatabaseInterface
     public function handle()
     {
         return $this->dbh;
+    }
+       
+    /**
+     * Begin sqlite3 Transaction
+     */
+    public function beginTransaction()
+    {
+        $this->dbh->exec('BEGIN');
+        $this->isTransactional = true;
+    }
+
+    public function commit()
+    {
+        $this->dbh->exec('COMMIT');
+        $this->isTransactional = false;
+    }
+
+    public function rollback()
+    {
+        $this->dbh->exec('ROLLBACK');
+        $this->isTransactional = false;
     }
 }
