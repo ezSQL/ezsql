@@ -3,3 +3,9 @@ build
 tmp
 *.lock
 *.cache
+tests/pdo/ez_test.sqlite
+certificate.crt
+certificate.csr
+certificate.key
+tests/sqlite/ez_test.sqlite3
+vendor
