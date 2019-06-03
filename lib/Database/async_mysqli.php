@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace ezsql\Database;
 
 use Exception;
+use ezsql\ConfigInterface;
 use ezsql\Database\ez_mysqli;
 
 class async_mysqli extends ez_mysqli
