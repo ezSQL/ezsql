@@ -16,3 +16,4 @@ test.php
 *.crt
 *.cache
 tmp
+.vscode/sftp.json
