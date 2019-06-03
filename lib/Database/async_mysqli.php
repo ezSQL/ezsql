@@ -6,11 +6,10 @@ namespace ezsql\Database;
 use Exception;
 use ezsql\ConfigInterface;
 use ezsql\Database\ez_mysqli;
+use ezsql\Database\async_interface;
 
-class async_mysqli extends ez_mysqli
+class async_mysqli extends ez_mysqli implements async_interface
 {
-    private $links;
-
     public function __construct(ConfigInterface $settings = null) 
     {
         if (empty($settings)) {
@@ -30,6 +29,21 @@ class async_mysqli extends ez_mysqli
 
     public function query_prepared(string $query, array $param = null) {
         return false;
+    }
+
+    public function query_wait() 
+    {        
+        $connection = $this->dbh;
+        do {
+            yield;
+            $links = $errors = $reject = array($this->dbh);
+            \mysqli_poll($links, $errors, $reject, 0, 1);
+        } while (!\in_array($connection, $links, true) 
+            && !\in_array($connection, $errors, true) 
+            && !\in_array($connection, $reject, true)
+        );
+
+        return $connection;
     }
 
     /**
@@ -71,13 +85,8 @@ class async_mysqli extends ez_mysqli
         }
         
         \mysqli_query($this->dbh, $query, \MYSQLI_ASYNC);
-        $connection = $this->dbh;
-        
-        do {
-            yield;
-            $links = $errors = $reject = array($this->dbh);
-			\mysqli_poll($links, $errors, $reject, 0, 1);
-		} while (!\in_array($connection, $links, true) && !\in_array($connection, $errors, true) && !\in_array($connection, $reject, true));
+        // Do things while the connection is getting ready
+        $connection = yield $this->query_wait();
 
         $result = \mysqli_reap_async_query($connection);
         // If there is an error then take note of it..
