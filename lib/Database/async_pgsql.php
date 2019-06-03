@@ -100,7 +100,8 @@ class async_pgsql extends ez_pgsql implements async_interface
         $poll_outcome = \PGSQL_POLLING_WRITING;
 
         while (true) {
-            $socket = [\pg_socket($conn)]; // "Caution: do not assume that the socket remains the same across PQconnectPoll calls."        
+            $socket = [\pg_socket($conn)]; // "Caution: do not assume that the socket remains the same across `pg_connect_poll` calls."
+            \stream_set_blocking($socket, false);
             
             if (!$socket) {
                 $this->register_error(\FAILED_CONNECTION . ' in ' . __FILE__ . ' on line ' . __LINE__);
