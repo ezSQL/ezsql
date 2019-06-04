@@ -450,7 +450,7 @@ if (!function_exists('ezFunctions')) {
             : false;
     } 
     
-    function delete($table = '', ...$args) {
+    function deleting($table = '', ...$args) {
         $ezQuery = \getInstance();
         return ($ezQuery instanceOf DatabaseInterface) 
             ? $ezQuery->delete($table, ...$args) 
