@@ -301,8 +301,8 @@ class ezFunctionsTest extends EZTestCase
     /**
      * @test delete
      */    
-    public function testDeleting() {
-        $this->assertFalse(deleting('field', 'data', 'data2'));
+    public function testDelete() {
+        $this->assertFalse(delete('field', 'data', 'data2'));
     } 
 
     /**
