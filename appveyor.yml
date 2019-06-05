@@ -83,6 +83,7 @@ install:
     - cd c:\projects\php-project-workspace
     - composer self-update
     - composer require php-coveralls/php-coveralls
+    - composer require phpstan/phpstan
     
 build_script:
   # postgres

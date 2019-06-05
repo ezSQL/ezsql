@@ -18,6 +18,7 @@ services:
 before_script:
   - composer self-update 
   - composer require php-coveralls/php-coveralls
+  - composer require phpstan/phpstan
   - mysql -e 'CREATE DATABASE IF NOT EXISTS ez_test;'
   - mysql -e "CREATE USER ez_test@localhost IDENTIFIED BY 'ezTest'; GRANT ALL ON ez_test.* TO ez_test@localhost; FLUSH PRIVILEGES;"
   - psql -c 'CREATE DATABASE ez_test;' -U postgres
