@@ -97,10 +97,10 @@ class ezResultset implements \Iterator
                     $return_val = \json_encode($this->_resultset[$this->_position]);                    
                     break;
                 default:
-                    throw new \Exception("Invalid result fetch type");
+                    throw new \Error("Invalid result fetch type");
             }
         } else {
-            $return_val = false;
+            $result = false;
         }        
         return $return_val;
     } // current
@@ -109,7 +109,7 @@ class ezResultset implements \Iterator
      * Returns the current position in the resultset
      * @return int
      */
-    public function key(): int
+    public function key() 
     {
         return $this->_position;
     } // key
@@ -139,7 +139,7 @@ class ezResultset implements \Iterator
      * Whether the current position contains a row, or not
      * @return boolean
      */
-    public function valid(): bool
+    public function valid() 
     {
         return isset($this->_resultset[$this->_position]);
     } // valid

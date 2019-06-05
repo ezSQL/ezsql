@@ -10,28 +10,28 @@ use ezsql\DatabaseInterface;
 
 class ez_pgsql extends ezsqlModel implements DatabaseInterface
 {
-    protected $return_val = 0;
-    protected $is_insert = false;
-    protected $shortcutUsed = false;
-    protected $isTransactional = false;
+    private $return_val = 0;
+    private $is_insert = false;
+    private $shortcutUsed = false;
+    private $isTransactional = false;
 
     /**
     * Database connection handle 
     * @var resource
     */
-    protected $dbh;
+    private $dbh;
 
     /**
      * Query result
      * @var mixed
      */
-    protected $result;
+    private $result;
 
     /**
      * Database configuration setting
      * @var ConfigInterface
      */
-    protected $database;
+    private $database;
 
     public function __construct(ConfigInterface $settings = null)
     {        
