@@ -295,6 +295,105 @@ class pdo_mysqlTest extends EZTestCase
         }
         $this->assertEquals(0, $this->object->query('DROP TABLE unit_test'));
     } 
+
+    /**
+     * @covers ezsql\Database\ez_pdo::commit
+     * @covers ezsql\Database\ez_pdo::beginTransaction
+     * @covers ezsql\Database\ez_pdo::query
+     * @covers ezsql\Database\ez_pdo::processQuery
+     * @covers ezsql\Database\ez_pdo::processResult
+     * @covers ezsql\Database\ez_pdo::prepareValues
+     * @covers ezsql\Database\ez_pdo::query_prepared
+     * @covers \select
+     */
+    public function testBeginTransactionCommit()
+    {
+        $this->object->connect();
+        $this->object->query('CREATE TABLE unit_test(id integer, test_key varchar(50), PRIMARY KEY (ID))');
+
+        $commit = null;
+        try {
+            $commit = true;
+            $this->object->beginTransaction();
+            $this->object->insert('unit_test', array('id'=>'1', 'test_key'=>'testing 1' ));
+            $this->object->insert('unit_test', array('id'=>'2', 'test_key'=>'testing 2' ));
+            $this->object->insert('unit_test', array('id'=>'3', 'test_key'=>'testing 3' ));
+            $this->object->commit();
+        } catch(\PDOException $ex) {
+            $this->object->rollback();
+            $this->fail("Error! This message shouldn't have been displayed.");
+        }
+
+        if ($commit) {
+            $result = $this->object->selecting('unit_test');
+            $i = 1;
+            foreach ($result as $row) {
+                $this->assertEquals($i, $row->id);
+                $this->assertEquals('testing ' . $i, $row->test_key);
+                ++$i;
+            }
+            
+            $where = array('test_key', '=', 'testing 2');
+            $result = select('unit_test', 'id', $where);
+            foreach ($result as $row) {
+                $this->assertEquals(2, $row->id);
+            }
+            
+            $result = $this->object->selecting('unit_test', 'test_key', array( 'id', '=', '3' ));
+            foreach ($result as $row) {
+                $this->assertEquals('testing 3', $row->test_key);
+            }
+            
+            $result = $this->object->selecting('unit_test', array ('test_key'), eq('id', 1));
+            foreach ($result as $row) {
+                $this->assertEquals('testing 1', $row->test_key);
+            }
+
+            $this->assertEquals(0, $this->object->query('DROP TABLE unit_test'));
+        }
+    } 
+
+    /**
+     * @covers ezsql\Database\ez_pdo::rollback
+     * @covers ezsql\Database\ez_pdo::beginTransaction
+     * @covers ezsql\Database\ez_pdo::query
+     * @covers ezsql\Database\ez_pdo::processQuery
+     * @covers ezsql\Database\ez_pdo::processResult
+     * @covers ezsql\Database\ez_pdo::prepareValues
+     * @covers ezsql\Database\ez_pdo::query_prepared
+     * @covers \select
+     */
+    public function testBeginTransactionRollback()
+    {
+        $this->object->connect();
+        $this->object->query('CREATE TABLE unit_test(id integer, test_key varchar(50), PRIMARY KEY (ID))');
+
+        $commit = null;
+        try {
+            $commit = true;
+            $this->object->beginTransaction();
+            $this->object->insert('unit_test', array( 0 => 3, 'test_key'=>'testing 3' ));
+            $this->object->commit();
+        } catch(\PDOException $ex) {
+            $commit = false;
+            $this->object->rollback();
+        }
+
+        if ($commit) {
+            //echo ("Error! This message shouldn't have been displayed.");
+            $result = $this->object->selecting('unit_test');
+            $i = 1;
+            foreach ($result as $row) {
+                $this->assertEquals('should be seen ' . $i, $row->test_key);
+                ++$i;
+            }
+            $this->assertEquals(0, $this->object->query('DROP TABLE unit_test'));
+        } else {
+            $result = $this->object->selecting('unit_test');
+            $this->assertEquals(0, $result);
+            $this->assertEquals(0, $this->object->query('DROP TABLE unit_test'));
+        }
+    } 
     
     /**
      * @covers ezsql\Database\ez_pdo::disconnect
