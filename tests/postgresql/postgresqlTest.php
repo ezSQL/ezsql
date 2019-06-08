@@ -287,6 +287,102 @@ class postgresqlTest extends EZTestCase
     }
 
     /**
+     * @covers ezsql\ezQuery::selecting
+     * @covers ezsql\Database\ez_pgsql::commit
+     * @covers ezsql\Database\ez_pgsql::beginTransaction
+     * @covers ezsql\Database\ez_pgsql::query
+     * @covers ezsql\Database\ez_pgsql::processQueryResult
+     * @covers ezsql\Database\ez_pgsql::prepareValues
+     * @covers ezsql\Database\ez_pgsql::query_prepared
+     */
+    public function testBeginTransactionCommit()
+    {
+        $this->object->connect();
+        $this->object->query('CREATE TABLE unit_test(id serial, test_key varchar(50), test_value varchar(50), PRIMARY KEY (ID))');
+
+        $commit = null;
+        try {
+            $commit = true;
+            $this->object->beginTransaction();
+            $this->object->insert('unit_test', array('test_key'=>'test 1', 'test_value'=>'testing string 1' ));
+            $this->object->insert('unit_test', array('test_key'=>'test 2', 'test_value'=>'testing string 2' ));
+            $this->object->insert('unit_test', array('test_key'=>'test 3', 'test_value'=>'testing string 3' ));   
+            $this->object->commit();
+        } catch(\Exception $ex) {
+            $commit = false;
+            $this->object->rollback();
+            echo ("Error! This rollback message shouldn't have been displayed: ").$ex->getMessage();
+        }
+
+        if ($commit) {
+            $result = $this->object->selecting('unit_test');        
+            $i = 1;
+            foreach ($result as $row) {
+                $this->assertEquals($i, $row->id);
+                $this->assertEquals('testing string ' . $i, $row->test_value);
+                $this->assertEquals('test ' . $i, $row->test_key);
+                ++$i;
+            }
+            
+            $this->assertEquals(0, $this->object->drop('unit_test'));
+        }
+    } 
+
+    /**
+     * @covers ezsql\Database\ez_pgsql::rollback
+     * @covers ezsql\Database\ez_pgsql::beginTransaction
+     * @covers ezsql\Database\ez_pgsql::query
+     * @covers ezsql\Database\ez_pgsql::processQueryResult
+     * @covers ezsql\Database\ez_pgsql::prepareValues
+     * @covers ezsql\Database\ez_pgsql::query_prepared
+     */
+    public function testBeginTransactionRollback()
+    {
+        $this->object->connect();
+        $this->object->query('CREATE TABLE unit_test(id int(11) NOT NULL AUTO_INCREMENT, test_key varchar(50), PRIMARY KEY (ID)');
+
+        $commit = null;
+        try {
+            $commit = true;
+            $this->object->beginTransaction();
+            $this->object->insert('unit_test', array('test_key'=>'test 1', 'test_value'=>'testing string 1' ));
+            $this->object->insert('unit_test', array('test_key'=>'test 2', 'test_value'=>'testing string 2' ));
+            $this->object->insert('unit_test', array('test_key'=>'test 3', 'test_value'=>'testing string 3' ));   
+            $this->object->commit();
+        } catch(\Exception $ex) {
+            $commit = false;
+            $this->object->rollback();
+        }
+
+        if ($commit) {
+            echo ("Error! This message shouldn't have been displayed.");
+            $result = $this->object->selecting('unit_test');
+            $i = 1;
+            foreach ($result as $row) {
+                $this->assertEquals($i, $row->id);
+                $this->assertEquals('should not be seen ' . $i, $row->test_value);
+                $this->assertEquals('test ' . $i, $row->test_key);
+                ++$i;
+            }
+
+            $this->object->drop('unit_test');
+        } else {
+            //echo ("Error! rollback.");
+            $result = $this->object->selecting('unit_test');
+            $i = 1;
+            foreach ($result as $row) {
+                $this->assertEquals($i, $row->id);
+                $this->assertEquals('should not be seen ' . $i, $row->test_value);
+                $this->assertEquals('test ' . $i, $row->test_key);
+                ++$i;
+            }
+            
+            $this->assertEquals(0, $result);
+            $this->object->drop('unit_test');
+        }
+    } 
+
+    /**
      * @covers ezsql\ezQuery::drop
      * @covers ezsql\ezQuery::create
      * @covers ezsql\ezsqlModel::queryResult

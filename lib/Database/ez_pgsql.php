@@ -297,8 +297,12 @@ class ez_pgsql extends ezsqlModel implements DatabaseInterface
             $this->result = @\pg_query($this->dbh, $query);
         }
             
-        if ($this->processQueryResult($query) === false)
+        if ($this->processQueryResult($query) === false) {
+            if ($this->isTransactional)
+                throw new \Exception($this->getLast_Error());
+
             return false;
+        }
 
         // disk caching of queries
         $this->store_cache($query, $this->is_insert);

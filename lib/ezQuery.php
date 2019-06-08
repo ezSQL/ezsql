@@ -779,7 +779,7 @@ class ezQuery implements ezQueryInterface
         if (empty($table) || empty($schemas) || empty($vendor))
            return false;
 
-        $sql = 'CREATE TABLE '.$table.'( ';
+        $sql = 'CREATE TABLE IF NOT EXISTS '.$table.'( ';
 
         $skipSchema = false;
         if (\is_string($schemas[0])) {
