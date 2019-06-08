@@ -320,8 +320,9 @@ class pdo_mysqlTest extends EZTestCase
             $this->object->insert('unit_test', array('id'=>'3', 'test_key'=>'testing 3' ));
             $this->object->commit();
         } catch(\PDOException $ex) {
+            $commit = false;
             $this->object->rollback();
-            $this->fail("Error! This message shouldn't have been displayed.");
+            echo ("Error! This rollback message shouldn't have been displayed: ").$ex->getMessage();
         }
 
         if ($commit) {
@@ -333,23 +334,7 @@ class pdo_mysqlTest extends EZTestCase
                 ++$i;
             }
             
-            $where = array('test_key', '=', 'testing 2');
-            $result = select('unit_test', 'id', $where);
-            foreach ($result as $row) {
-                $this->assertEquals(2, $row->id);
-            }
-            
-            $result = $this->object->selecting('unit_test', 'test_key', array( 'id', '=', '3' ));
-            foreach ($result as $row) {
-                $this->assertEquals('testing 3', $row->test_key);
-            }
-            
-            $result = $this->object->selecting('unit_test', array ('test_key'), eq('id', 1));
-            foreach ($result as $row) {
-                $this->assertEquals('testing 1', $row->test_key);
-            }
-
-            $this->assertEquals(0, $this->object->query('DROP TABLE unit_test'));
+            $this->assertEquals(0, $this->object->drop('unit_test'));
         }
     } 
 
@@ -372,7 +357,9 @@ class pdo_mysqlTest extends EZTestCase
         try {
             $commit = true;
             $this->object->beginTransaction();
-            $this->object->insert('unit_test', array( 0 => 3, 'test_key'=>'testing 3' ));
+            $this->object->insert('unit_test', array('id'=>'1', 'test_key'=>'testing 1' ));
+            $this->object->insert('unit_test', array('id'=>'2', 'test_key'=>'testing 2' ));
+            $this->object->insert('unit_test', array( 'idx' => 3, 'test_key'=>'testing 3' ));
             $this->object->commit();
         } catch(\PDOException $ex) {
             $commit = false;
@@ -380,18 +367,25 @@ class pdo_mysqlTest extends EZTestCase
         }
 
         if ($commit) {
-            //echo ("Error! This message shouldn't have been displayed.");
+            echo ("Error! This message shouldn't have been displayed.");
             $result = $this->object->selecting('unit_test');
             $i = 1;
             foreach ($result as $row) {
-                $this->assertEquals('should be seen ' . $i, $row->test_key);
+                $this->assertEquals('should not be seen ' . $i, $row->test_key);
                 ++$i;
             }
-            $this->assertEquals(0, $this->object->query('DROP TABLE unit_test'));
+            $this->object->drop('unit_test');
         } else {
+            //echo ("Error! rollback.");
             $result = $this->object->selecting('unit_test');
+            $i = 1;
+            foreach ($result as $row) {
+                $this->assertEquals('should not be seen ' . $i, $row->test_key);
+                ++$i;
+            }
+
             $this->assertEquals(0, $result);
-            $this->assertEquals(0, $this->object->query('DROP TABLE unit_test'));
+            $this->object->drop('unit_test');
         }
     } 
     

@@ -423,8 +423,12 @@ class ez_pdo extends ezsqlModel implements DatabaseInterface
                 $this->database->getIsFile());
         }
 
-        if ($this->processQuery($query, $param) === false) 
+        if ($this->processQuery($query, $param) === false) {
+            if ($this->isTransactional)
+                throw new \PDOException($this->getLast_Error());
+
             return false;
+        }
 
         // disk caching of queries
         $this->store_cache($query, $this->is_insert);

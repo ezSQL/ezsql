@@ -273,6 +273,13 @@ class ez_mysqli extends ezsqlModel implements DatabaseInterface
     public function query_prepared(string $query, array $param = null)
     {
         $stmt = $this->dbh->prepare($query);
+        if (!$stmt instanceof \mysqli_stmt) {
+            if ($this->isTransactional)
+                throw new \Exception($this->getLast_Error());
+
+            return false;
+        }
+
         $params = [];
         $types = \array_reduce($param,
             function ($string, &$arg) use (&$params) {
@@ -422,8 +429,12 @@ class ez_mysqli extends ezsqlModel implements DatabaseInterface
         
         $this->result = \mysqli_query($this->dbh, $query);
 
-        if ($this->processQueryResult($query) === false)
+        if ($this->processQueryResult($query) === false) {
+            if ($this->isTransactional)
+                throw new \Exception($this->getLast_Error());
+
             return false;
+        }
 
         // disk caching of queries
         $this->store_cache($query, $this->is_insert);

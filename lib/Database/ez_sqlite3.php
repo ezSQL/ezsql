@@ -137,6 +137,13 @@ class ez_sqlite3 extends ezsqlModel implements DatabaseInterface
     public function query_prepared(string $query, array $param = null)
     {
         $stmt = $this->dbh->prepare($query);
+        if (!$stmt instanceof \SQLite3Stmt) {
+            if ($this->isTransactional)
+                throw new \Exception($this->getLast_Error());
+
+            return false;
+        }
+
         foreach ($param as $index => $val) {
             // indexing start from 1 in Sqlite3 statement
             if (\is_array($val)) {
@@ -272,8 +279,12 @@ class ez_sqlite3 extends ezsqlModel implements DatabaseInterface
             $this->result = $this->dbh->query($query);
         }
 
-        if ($this->processQueryResult($query) === false) 
+        if ($this->processQueryResult($query) === false) {
+            if ($this->isTransactional)
+                throw new \Exception($this->getLast_Error());
+
             return false;
+        }
 
         if (!empty($param) && \is_array($param) && $this->isPrepareOn()) 
             $this->result->finalize();
@@ -316,19 +327,19 @@ class ez_sqlite3 extends ezsqlModel implements DatabaseInterface
      */
     public function beginTransaction()
     {
-        $this->dbh->exec('BEGIN');
+        $this->dbh->exec('BEGIN;');
         $this->isTransactional = true;
     }
 
     public function commit()
     {
-        $this->dbh->exec('COMMIT');
+        $this->dbh->exec('COMMIT;');
         $this->isTransactional = false;
     }
 
     public function rollback()
     {
-        $this->dbh->exec('ROLLBACK');
+        $this->dbh->exec('ROLLBACK;');
         $this->isTransactional = false;
     }
 }

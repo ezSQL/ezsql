@@ -421,6 +421,93 @@ class mysqliTest extends EZTestCase
     }
 
     /**
+     * @covers ezsql\Database\ez_mysqli::commit
+     * @covers ezsql\Database\ez_mysqli::beginTransaction
+     * @covers ezsql\Database\ez_mysqli::query
+     * @covers ezsql\Database\ez_mysqli::processQueryResult
+     */
+    public function testBeginTransactionCommit()
+    {
+        $this->object->connect();
+        $this->object->query('CREATE TABLE unit_test(id int(11) NOT NULL AUTO_INCREMENT, test_key varchar(50), PRIMARY KEY (ID))ENGINE=MyISAM  DEFAULT CHARSET=utf8');
+        $this->object->query('"ALTER TABLE unit_test Type=InnoDB"');
+
+        $commit = null;
+        try {
+            $commit = true;
+            $this->object->beginTransaction();
+            $this->object->insert('unit_test', array('id'=>'1', 'test_key'=>'testing 1' ));
+            $this->object->insert('unit_test', array('id'=>'2', 'test_key'=>'testing 2' ));
+            $this->object->insert('unit_test', array('id'=>'3', 'test_key'=>'testing 3' ));
+            $this->object->commit();
+        } catch(\Exception $ex) {
+            $commit = false;
+            $this->object->rollback();
+            echo ("Error! This rollback message shouldn't have been displayed: ").$ex->getMessage();
+        }
+
+        if ($commit) {
+            $result = $this->object->selecting('unit_test');
+            $i = 1;
+            foreach ($result as $row) {
+                $this->assertEquals($i, $row->id);
+                $this->assertEquals('testing ' . $i, $row->test_key);
+                ++$i;
+            }
+
+            $this->assertEquals(0, $this->object->drop('unit_test'));
+        }
+    } 
+
+    /**
+     * @covers ezsql\Database\ez_mysqli::rollback
+     * @covers ezsql\Database\ez_mysqli::beginTransaction
+     * @covers ezsql\Database\ez_mysqli::query
+     * @covers ezsql\Database\ez_mysqli::processQueryResult
+     */
+    public function testBeginTransactionRollback()
+    {
+        $this->object->connect();
+        $this->object->query('CREATE TABLE unit_test(id int(11) NOT NULL AUTO_INCREMENT, test_key varchar(50), PRIMARY KEY (ID)');
+        $this->object->query('"ALTER TABLE unit_test Type=InnoDB"');
+
+        $commit = null;
+        try {
+            $commit = true;
+            $this->object->beginTransaction();
+            $this->object->insert('unit_test', array('id'=>'1', 'test_key'=>'testing 1' ));
+            $this->object->insert('unit_test', array('id'=>'2', 'test_key'=>'testing 2' ));
+            $this->object->insert('unit_test', array('idx' => 1, 'test_key2'=>'testing 1' ));
+            $this->object->commit();
+        } catch(\Exception $ex) {
+            $commit = false;
+            $this->object->rollback();
+        }
+
+        if ($commit) {
+            echo ("Error! This message shouldn't have been displayed.");
+            $result = $this->object->selecting('unit_test');
+            $i = 1;
+            foreach ($result as $row) {
+                $this->assertEquals('should not be seen ' . $i, $row->test_key);
+                ++$i;
+            }
+            $this->object->drop('unit_test');
+        } else {
+            //echo ("Error! rollback.");
+            $result = $this->object->selecting('unit_test');
+            $i = 1;
+            foreach ($result as $row) {
+                $this->assertEquals('should not be seen ' . $i, $row->test_key);
+                ++$i;
+            }
+            
+            $this->assertEquals(0, $result);
+            $this->object->drop('unit_test');
+        }
+    } 
+
+    /**
      * @covers ezsql\Database\ez_mysqli::query
      * @covers ezsql\Database\ez_mysqli::processQueryResult
      * @covers ezsql\Database\ez_mysqli::query_prepared

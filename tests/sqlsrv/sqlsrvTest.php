@@ -289,7 +289,106 @@ class sqlsrvTest extends EZTestCase
             $this->assertEquals('testing 8', $row->test_key);
         }
     } 
-	
+
+    /**
+     * @covers ezsql\ezQuery::selecting
+     * @covers ezsql\Database\ez_sqlsrv::commit
+     * @covers ezsql\Database\ez_sqlsrv::beginTransaction
+     * @covers ezsql\Database\ez_sqlsrv::query
+     * @covers ezsql\Database\ez_sqlsrv::processQueryResult
+     * @covers ezsql\Database\ez_sqlsrv::prepareValues
+     * @covers ezsql\Database\ez_sqlsrv::query_prepared
+     * @covers ezsql\Database\ez_sqlsrv::get_datatype
+     */
+    public function testBeginTransactionCommit()
+    {
+        $this->object->quick_connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME);   
+        $this->object->query('CREATE TABLE unit_test(id integer, test_key varchar(50), PRIMARY KEY (ID))');
+
+        $commit = null;
+        try {
+            $commit = true;
+            $this->object->beginTransaction();
+            $this->object->insert('unit_test', array('id'=>8, 'test_key'=>'testing 8' ));
+            $this->object->insert('unit_test', array('id'=>9, 'test_key'=>'testing 9' ));
+            $this->object->insert('unit_test', array('id'=>10, 'test_key'=>'testing 10' ));
+            $this->object->commit();
+        } catch(\Exception $ex) {
+            $commit = false;
+            $this->object->rollback();
+            echo ("Error! This rollback message shouldn't have been displayed: ").$ex->getMessage();
+        }
+
+        if ($commit) {
+            $result = $this->object->selecting('unit_test');
+            $i = 8;
+    
+            foreach ($result as $row) {
+                $this->assertEquals($i, $row->id);
+                $this->assertEquals('testing ' . $i, $row->test_key);
+                ++$i;
+            }
+
+            $this->object->drop('unit_test');
+        }
+    } 
+
+    /**
+     * @covers ezsql\ezQuery::selecting
+     * @covers ezsql\Database\ez_sqlsrv::rollback
+     * @covers ezsql\Database\ez_sqlsrv::beginTransaction
+     * @covers ezsql\Database\ez_sqlsrv::query
+     * @covers ezsql\Database\ez_sqlsrv::processQueryResult
+     * @covers ezsql\Database\ez_sqlsrv::prepareValues
+     * @covers ezsql\Database\ez_sqlsrv::query_prepared
+     * @covers ezsql\Database\ez_sqlsrv::get_datatype
+     */
+    public function testBeginTransactionRollback()
+    {
+        $this->object->quick_connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME);   
+        $this->object->query('CREATE TABLE unit_test(id integer, test_key varchar(50), PRIMARY KEY (ID))');
+
+        $commit = null;
+        try {
+            $commit = true;
+            $this->object->beginTransaction();
+            $this->object->insert('unit_test', array('id'=>8, 'test_key'=>'testing 8' ));
+            $this->object->insert('unit_test', array('id'=>9, 'test_key'=>'testing 9' ));
+            $this->object->insert('unit_test', array('idx'=>10, 'test_key'=>'testing 10' )); 
+            $this->object->commit();
+        } catch(\Exception $ex) {
+            $commit = false;
+            $this->object->rollback();
+        }
+
+        if ($commit) {
+            echo ("Error! This message shouldn't have been displayed.");
+            $result = $this->object->selecting('unit_test');
+            $i = 8;
+    
+            foreach ($result as $row) {
+                $this->assertEquals($i, $row->id);
+                $this->assertEquals('should not be seen ' . $i, $row->test_key);
+                ++$i;
+            }
+
+            $this->object->drop('unit_test');
+        } else {
+            //echo ("Error! rollback.");
+            $result = $this->object->selecting('unit_test');
+            $i = 8;
+    
+            foreach ($result as $row) {
+                $this->assertEquals($i, $row->id);
+                $this->assertEquals('should not be seen ' . $i, $row->test_key);
+                ++$i;
+            }
+            
+            $this->assertEquals(0, $result);
+            $this->object->drop('test_table');
+        }
+    } 
+
     /**
      * @covers ezsql\Database\ez_sqlsrv::disconnect
      * @covers ezsql\Database\ez_sqlsrv::reset
