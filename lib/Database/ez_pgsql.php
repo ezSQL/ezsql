@@ -204,6 +204,7 @@ class ez_pgsql extends ezsqlModel implements DatabaseInterface
                 // Take note of column info
                 $i = 0;
                 while ($i < @\pg_num_fields($this->result)) {
+                    $this->col_info[$i] = new \stdClass();
                     $this->col_info[$i]->name = \pg_field_name($this->result, $i);
                     $this->col_info[$i]->type = \pg_field_type($this->result, $i);
                     $this->col_info[$i]->size = \pg_field_size($this->result, $i);
