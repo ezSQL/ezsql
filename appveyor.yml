@@ -6,25 +6,25 @@ clone_folder: c:\projects\php-project-workspace
 ## Build matrix for lowest and highest possible targets
 environment:
   matrix:
-  - php_ver_target: 7.1
+  - php_ver_target: 7.3
   MYSQL_DATABASE: ez_test
   MYSQL_HOST: localhost
   MYSQL_USER: root
   MYSQL_PASSWORD: Password12!
   MYSQL_PATH: C:\Program Files\MySQL\MySQL Server 5.7
-  
+
 services:
     - mssql2014
     - mysql
     - postgresql
-    
+
 ## Set up environment variables
 init:
     - SET PATH=C:\Program Files\OpenSSL;c:\tools\php;C:\Program Files\PostgreSQL\9.4\bin\;%PATH%
     - SET COMPOSER_NO_INTERACTION=1
     - SET PHP=1 # This var is connected to PHP install cache
     - SET ANSICON=121x90 (121x90)
-    
+
 ## Install PHP and composer, and run the appropriate composer command Get the MSSQL DLL's and XDEBUG
 install:
     - IF EXIST c:\tools\php (SET PHP=0)
@@ -84,7 +84,7 @@ install:
     - composer self-update
     - composer require php-coveralls/php-coveralls
     - composer require phpstan/phpstan
-    
+
 build_script:
   # postgres
   - SET PGUSER=postgres
@@ -93,25 +93,24 @@ build_script:
   - psql -c "CREATE USER ez_test WITH PASSWORD 'ezTest';"
   # sqlserver
   - sqlcmd -S localhost,1433 -U sa -P Password12! -Q "CREATE DATABASE ez_test"
-  - sqlcmd -S localhost,1433 -U sa -P Password12! -d ez_test -Q "CREATE LOGIN ez_test WITH PASSWORD=N'ezTest', DEFAULT_DATABASE=ez_test, CHECK_EXPIRATION=OFF, CHECK_POLICY=OFF; ALTER SERVER ROLE [sysadmin] ADD MEMBER ez_test" 
-  
+  - sqlcmd -S localhost,1433 -U sa -P Password12! -d ez_test -Q "CREATE LOGIN ez_test WITH PASSWORD=N'ezTest', DEFAULT_DATABASE=ez_test, CHECK_EXPIRATION=OFF, CHECK_POLICY=OFF; ALTER SERVER ROLE [sysadmin] ADD MEMBER ez_test"
+
 before_test:
   - SET PATH=%MYSQL_PATH%\bin;%PATH%
-  - mysqladmin --host=%MYSQL_HOST% --user=%MYSQL_USER% --password=%MYSQL_PASSWORD% create %MYSQL_DATABASE%    
+  - mysqladmin --host=%MYSQL_HOST% --user=%MYSQL_USER% --password=%MYSQL_PASSWORD% create %MYSQL_DATABASE%
   # mysql
   - mysql -u root -p"Password12!" -e "CREATE DATABASE IF NOT EXISTS ez_test;"
   - mysql -u root -p"Password12!" -e "GRANT ALL PRIVILEGES ON ez_test.* TO ez_test@localhost IDENTIFIED BY 'ezTest'";
   - mysql -u root -p"Password12!" -e "FLUSH PRIVILEGES;"
-    
+
 on_success:
   - ps: |
       $env:PATH = 'C:\msys64\usr\bin;' + $env:PATH
       Invoke-WebRequest -Uri 'https://codecov.io/bash' -OutFile codecov.sh
       bash codecov.sh -f "coverage.xml"
-      
+
 ## Run the actual test
 test_script:
     - cd c:\projects\php-project-workspace
     - vendor\bin\phpunit --coverage-clover=coverage.xml
     - vendor\bin\phpstan analyse lib tests --level=1
-    
