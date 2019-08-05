@@ -35,16 +35,16 @@ install:
     # Get the MSSQL DLL's
     - ps: >-
         If ($env:PHP -eq "1") {
-            $DLLVersion = "4.3.0"
+            $DLLVersion = "5.6.0"
             cd c:\tools\php\ext
-            $source = "http://windows.php.net/downloads/pecl/releases/sqlsrv/$($DLLVersion)/php_sqlsrv-$($DLLVersion)-$($env:php_ver_target)-nts-vc14-x64.zip"
-            $destination = "c:\tools\php\ext\php_sqlsrv-$($DLLVersion)-$($env:php_ver_target)-nts-vc14-x64.zip"
+            $source = "http://windows.php.net/downloads/pecl/releases/sqlsrv/$($DLLVersion)/php_sqlsrv-$($DLLVersion)-$($env:php_ver_target)-nts-vc15-x64.zip"
+            $destination = "c:\tools\php\ext\php_sqlsrv-$($DLLVersion)-$($env:php_ver_target)-nts-vc15-x64.zip"
             Invoke-WebRequest $source -OutFile $destination
-            7z x -y php_sqlsrv-$($DLLVersion)-$($env:php_ver_target)-nts-vc14-x64.zip > $null
-            $source = "http://windows.php.net/downloads/pecl/releases/pdo_sqlsrv/$($DLLVersion)/php_pdo_sqlsrv-$($DLLVersion)-$($env:php_ver_target)-nts-vc14-x64.zip"
-            $destination = "c:\tools\php\ext\php_pdo_sqlsrv-$($DLLVersion)-$($env:php_ver_target)-nts-vc14-x64.zip"
+            7z x -y php_sqlsrv-$($DLLVersion)-$($env:php_ver_target)-nts-vc15-x64.zip > $null
+            $source = "http://windows.php.net/downloads/pecl/releases/pdo_sqlsrv/$($DLLVersion)/php_pdo_sqlsrv-$($DLLVersion)-$($env:php_ver_target)-nts-vc15-x64.zip"
+            $destination = "c:\tools\php\ext\php_pdo_sqlsrv-$($DLLVersion)-$($env:php_ver_target)-nts-vc15-x64.zip"
             Invoke-WebRequest $source -OutFile $destination
-            7z x -y php_pdo_sqlsrv-$($DLLVersion)-$($env:php_ver_target)-nts-vc14-x64.zip > $null
+            7z x -y php_pdo_sqlsrv-$($DLLVersion)-$($env:php_ver_target)-nts-vc15-x64.zip > $null
             Remove-Item c:\tools\php\ext* -include .zip
             cd c:\tools\php
         }
@@ -70,9 +70,9 @@ install:
     - IF %PHP%==1 echo extension=php_pdo_sqlite.dll >> php.ini
     - IF %PHP%==1 echo extension=php_mysqli.dll >> php.ini
     - IF %PHP%==1 echo extension=php_pdo_mysql.dll >> php.ini
-    - IF %PHP%==1 appveyor-retry appveyor DownloadFile https://xdebug.org/files/php_xdebug-2.5.5-7.1-vc14-nts-x86_64.dll -FileName c:\tools\php\ext\php_xdebug-2.5.5-7.1-vc14-nts-x86_64.dll
+    - IF %PHP%==1 appveyor-retry appveyor DownloadFile https://xdebug.org/files/php_xdebug-2.7.2-7.3-vc15-nts-x86_64.dll -FileName c:\tools\php\ext\php_xdebug-2.7.2-7.3-vc15-nts-x86_64.dll
     - IF %PHP%==1 echo [xdebug] >> php.ini
-    - IF %PHP%==1 echo zend_extension=php_xdebug-2.5.5-7.1-vc14-nts-x86_64.dll >> php.ini
+    - IF %PHP%==1 echo zend_extension=php_xdebug-2.7.2-7.3-vc15-nts-x86_64.dll >> php.ini
     - IF %PHP%==1 echo zend.assertions=1 >> php.ini
     - IF %PHP%==1 echo assert.exception=On >> php.ini
     - IF %PHP%==1 echo xdebug.remote_enable=1 >> php.ini
