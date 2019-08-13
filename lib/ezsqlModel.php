@@ -237,6 +237,22 @@ class ezsqlModel extends ezQuery implements ezsqlModelInterface
 		$this->show_errors = false;
 	}
 	
+	/**
+	 * Turn on echoing of debug info, for `debug()`
+	 */
+	public function debugOn()
+	{
+		$this->debug_echo_is_on = true;
+	}
+	
+	/**
+	 * Turn off echoing of debug info, the default, for `debug()`
+	 */
+	public function debugOff()
+	{
+		$this->debug_echo_is_on = false;
+	}
+	
 	public function flush()
 	{
 		// Get rid of these
