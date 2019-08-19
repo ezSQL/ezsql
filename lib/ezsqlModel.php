@@ -475,7 +475,8 @@ class ezsqlModel extends ezQuery implements ezsqlModelInterface
 			echo "  " . $func_string ."<br>\n";
 		}
 		
-		echo "<b>Last Rows Returned:</b> ".((\count($this->last_result) > 0)  ? $this->last_result[0] : '')."\n";
+		echo "<b>Last Rows Returned:</b><br>";
+		echo ((\count($this->last_result) > 0)  ? print_r($this->last_result[0]) : '')."\n";
 		echo "</font></pre></font></blockquote></td></tr></table>";//.$this->donation();
 		echo "\n<hr size=1 noshade color=dddddd>";
 		
