@@ -476,7 +476,7 @@ class ezsqlModel extends ezQuery implements ezsqlModelInterface
 		}
 
 		echo "<b>Last Rows Returned:</b><br>";
-		echo ((!empty($this->last_result) && \count($this->last_result) > 0)  ? print_r($this->last_result[0]) : '')."\n";
+		echo ((!empty($this->last_result) && \count($this->last_result) > 0)  ? print_r($this->last_result[0]) : 'No rows returned')."\n";
 		echo "</font></pre></font></blockquote></td></tr></table>";//.$this->donation();
 		echo "\n<hr size=1 noshade color=dddddd>";
 
