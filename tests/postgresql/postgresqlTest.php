@@ -33,7 +33,7 @@ class postgresqlTest extends EZTestCase
 
         $this->object = Database::initialize('pgsql', [self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME, self::TEST_DB_HOST, self::TEST_DB_PORT]);
         $this->object->prepareOn();
-    } // setUp
+    }
 
     /**
      * Tears down the fixture, for example, closes a network connection.
@@ -42,28 +42,18 @@ class postgresqlTest extends EZTestCase
     protected function tearDown(): void
     {
         $this->object = null;
-    } // tearDown
+    }
 
-    /**
-     * @covers ezsql\Database\ez_pgsql::settings
-     */
     public function testSettings()
     {
         $this->assertTrue($this->object->settings() instanceof \ezsql\ConfigInterface);
     }
 
-    /**
-     * @covers ezsql\Database\ez_pgsql::quick_connect
-     */
     public function testQuick_connect()
     {
         $this->assertTrue($this->object->quick_connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME, self::TEST_DB_HOST, self::TEST_DB_PORT));
-    } // testQuick_connect
+    }
 
-    /**
-     * @covers ezsql\Database\ez_pgsql::connect
-     *
-     */
     public function testConnect()
     {
         $this->errors = array();
@@ -74,30 +64,20 @@ class postgresqlTest extends EZTestCase
         $this->assertTrue($this->object->connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME, self::TEST_DB_HOST, self::TEST_DB_PORT));
 
         $this->assertTrue($this->object->connect());
-    } // testConnect
+    }
 
-    /**
-     * @covers ezsql\Database\ez_pgsql::escape
-     */
     public function testEscape()
     {
         $result = $this->object->escape("This is'nt escaped.");
 
         $this->assertEquals("This is''nt escaped.", $result);
-    } // testEscape
+    }
 
-    /**
-     * @covers ezsql\Database\ez_pgsql::sysDate
-     */
     public function testSysdate()
     {
         $this->assertEquals('NOW()', $this->object->sysDate());
     }
 
-    /**
-     * @covers ezsql\Database\ez_pgsql::query
-     * @covers ezsql\Database\ez_pgsql::processQueryResult
-     */
     public function testQuery()
     {
         $this->assertTrue($this->object->connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME, self::TEST_DB_HOST, self::TEST_DB_PORT));
@@ -112,11 +92,8 @@ class postgresqlTest extends EZTestCase
         $this->assertFalse($this->object->query('INSERT INTO unit_test(test_key, test_value) VALUES(\'test 3\', \'testing string 3\')'));
 
         $this->assertEquals(0, $this->object->query('DROP TABLE unit_test'));
-    } // testQuery
+    }
 
-    /**
-     * @covers ezsql\ezQuery::create
-     */
     public function testCreate()
     {
         $this->object->connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME, self::TEST_DB_HOST, self::TEST_DB_PORT);
@@ -142,9 +119,6 @@ class postgresqlTest extends EZTestCase
         $this->object->prepareOn();
     }
 
-    /**
-     * @covers ezsql\ezQuery::drop
-     */
     public function testDrop()
     {
         $this->object->connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME, self::TEST_DB_HOST, self::TEST_DB_PORT);
@@ -152,9 +126,6 @@ class postgresqlTest extends EZTestCase
         $this->assertEquals($this->object->drop('new_create_test'), 0);
     }
 
-    /**
-     * @covers ezsql\ezQuery::insert
-     */
     public function testInsert()
     {
         $this->object->connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME, self::TEST_DB_HOST, self::TEST_DB_PORT);
@@ -165,9 +136,6 @@ class postgresqlTest extends EZTestCase
         $this->assertEquals(0, $this->object->query('DROP TABLE unit_test'));
     }
 
-    /**
-     * @covers ezsql\ezQuery::update
-     */
     public function testUpdate()
     {
         $this->object->connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME, self::TEST_DB_HOST, self::TEST_DB_PORT);
@@ -205,9 +173,6 @@ class postgresqlTest extends EZTestCase
         $this->assertEquals(0, $this->object->query('DROP TABLE unit_test'));
     }
 
-    /**
-     * @covers ezsql\ezQuery::delete
-     */
     public function testDelete()
     {
         $this->object->connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME, self::TEST_DB_HOST, self::TEST_DB_PORT);
@@ -240,11 +205,6 @@ class postgresqlTest extends EZTestCase
         $this->assertEquals(0, $this->object->query('DROP TABLE unit_test'));
     }
 
-    /**
-     * @covers ezsql\Database\ez_pgsql::disconnect
-     * @covers ezsql\Database\ez_pgsql::reset
-     * @covers ezsql\Database\ez_pgsql::handle
-     */
     public function testDisconnect()
     {
         $this->object->connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME, self::TEST_DB_HOST, self::TEST_DB_PORT);
@@ -254,33 +214,20 @@ class postgresqlTest extends EZTestCase
         $this->assertFalse($this->object->isConnected());
         $this->object->reset();
         $this->assertNull($this->object->handle());
-    } // testDisconnect
+    }
 
-    /**
-     * @covers ezsql\Database\ez_pgsql::getHost
-     */
     public function testGetHost()
     {
         $this->assertEquals(self::TEST_DB_HOST, $this->object->getHost());
-    } // testGetDBHost
+    }
 
-    /**
-     * @covers ezsql\Database\ez_pgsql::getPort
-     */
     public function testGetPort()
     {
         $this->object->connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME, self::TEST_DB_HOST, self::TEST_DB_PORT);
 
         $this->assertEquals(self::TEST_DB_PORT, $this->object->getPort());
-    } // testGetPort
+    }
 
-    /**
-     * @covers ezsql\ezQuery::selecting
-     * @covers ezsql\Database\ez_pgsql::query
-     * @covers ezsql\Database\ez_pgsql::processQueryResult
-     * @covers ezsql\Database\ez_pgsql::prepareValues
-     * @covers ezsql\Database\ez_pgsql::query_prepared
-     */
     public function testSelecting()
     {
         $this->object->connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME, self::TEST_DB_HOST, self::TEST_DB_PORT);
@@ -317,15 +264,6 @@ class postgresqlTest extends EZTestCase
         $this->assertEquals(0, $this->object->query('DROP TABLE unit_test'));
     }
 
-    /**
-     * @covers ezsql\ezQuery::selecting
-     * @covers ezsql\Database\ez_pgsql::commit
-     * @covers ezsql\Database\ez_pgsql::beginTransaction
-     * @covers ezsql\Database\ez_pgsql::query
-     * @covers ezsql\Database\ez_pgsql::processQueryResult
-     * @covers ezsql\Database\ez_pgsql::prepareValues
-     * @covers ezsql\Database\ez_pgsql::query_prepared
-     */
     public function testBeginTransactionCommit()
     {
         $this->object->connect();
@@ -359,14 +297,6 @@ class postgresqlTest extends EZTestCase
         }
     }
 
-    /**
-     * @covers ezsql\Database\ez_pgsql::rollback
-     * @covers ezsql\Database\ez_pgsql::beginTransaction
-     * @covers ezsql\Database\ez_pgsql::query
-     * @covers ezsql\Database\ez_pgsql::processQueryResult
-     * @covers ezsql\Database\ez_pgsql::prepareValues
-     * @covers ezsql\Database\ez_pgsql::query_prepared
-     */
     public function testBeginTransactionRollback()
     {
         $this->object->connect();
@@ -413,15 +343,6 @@ class postgresqlTest extends EZTestCase
         }
     }
 
-    /**
-     * @covers ezsql\ezQuery::drop
-     * @covers ezsql\ezQuery::create
-     * @covers ezsql\ezsqlModel::queryResult
-     * @covers ezsql\Database\ez_pgsql::query
-     * @covers ezsql\Database\ez_pgsql::processQueryResult
-     * @covers ezsql\Database\ez_pgsql::prepareValues
-     * @covers ezsql\Database\ez_pgsql::query_prepared
-     */
     public function testQuery_prepared()
     {
         $this->object->prepareOff();
@@ -449,24 +370,18 @@ class postgresqlTest extends EZTestCase
         }
 
         $this->object->drop('prepare_test');
-    } // testQuery_prepared
+    }
 
-    /**
-     * @covers ezsql\Database\ez_pgsql::__construct
-     */
     public function test__Construct_Error()
     {
         $this->expectExceptionMessageRegExp('/[Missing configuration details]/');
         $this->assertNull(new ez_pgsql());
     }
 
-    /**
-     * @covers ezsql\Database\ez_pgsql::__construct
-     */
     public function test__construct()
     {
         unset($GLOBALS['ez' . \PGSQL]);
         $settings = new Config('pgsql', [self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME, self::TEST_DB_HOST, self::TEST_DB_PORT]);
         $this->assertNotNull(new ez_pgsql($settings));
     }
-} // ezsql\Database\ez_pgsqlTest
+}

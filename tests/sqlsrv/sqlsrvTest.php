@@ -29,7 +29,7 @@ class sqlsrvTest extends EZTestCase
 
         $this->object = Database::initialize('sqlsrv', [self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME]);
         $this->object->prepareOn();
-    } // setUp
+    }
 
     /**
      * Tears down the fixture, for example, closes a network connection.
@@ -39,28 +39,19 @@ class sqlsrvTest extends EZTestCase
     {
         $this->object->query('DROP TABLE unit_test');
         $this->object = null;
-    } // tearDown
+    }
 
-    /**
-     * @covers ezsql\Database\ez_sqlsrv::settings
-     */
     public function testSettings()
     {
         $this->assertTrue($this->object->settings() instanceof \ezsql\ConfigInterface);
     }
 
-    /**
-     * @covers ezsql\Database\ez_sqlsrv::quick_connect
-     */
     public function testQuick_connect()
     {
         $result = $this->object->quick_connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME);
         $this->assertTrue($result);
-    } // testQuick_connect
+    }
 
-    /**
-     * @covers ezsql\Database\ez_sqlsrv::connect
-     */
     public function testConnect()
     {
         $result = $this->object->connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME);
@@ -68,39 +59,27 @@ class sqlsrvTest extends EZTestCase
 
         $result = $this->object->connect('self::TEST_DB_USER', 'self::TEST_DB_PASSWORD', 'self::TEST_DB_NAME');
         $this->assertFalse($result);
-    } // testConnect
+    }
 
-    /**
-     * @covers ezsql\Database\ez_sqlsrv::escape
-     */
     public function testEscape()
     {
         $result = $this->object->escape("This is'nt escaped.");
 
         $this->assertEquals("This is\\'nt escaped.", $result);
-    } // testEscape
+    }
 
-    /**
-     * @covers ezsql\Database\ez_sqlsrv::sysDate
-     */
     public function testSysDate()
     {
         $this->assertEquals('GETDATE()', $this->object->sysDate());
-    } // testSysdate
+    }
 
-    /**
-     * @covers ezsql\ezsqlModel::get_var
-     */
     public function testGet_var()
     {
         $this->object->quick_connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME);
         $current_time = $this->object->get_var("SELECT " . $this->object->sysDate() . " AS 'GetDate()'");
         $this->assertNotNull($current_time);
-    } // testGet_var
+    }
 
-    /**
-     * @covers ezsql\ezsqlModel::get_results
-     */
     public function testGet_results()
     {
         $this->object->quick_connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME);
@@ -114,12 +93,8 @@ class sqlsrvTest extends EZTestCase
             // Get results of DESC table..
             $this->assertNotNull($this->object->query("EXEC SP_COLUMNS '" . $table[0] . "'"));
         }
-    } // testGet_results
+    }
 
-    /**
-     * @covers ezsql\Database\ez_sqlsrv::query
-     * @covers ezsql\Database\ez_sqlsrv::processQueryResult
-     */
     public function testQuery()
     {
         $this->object->quick_connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME);
@@ -130,21 +105,14 @@ class sqlsrvTest extends EZTestCase
         $this->assertEquals($this->object->query('INSERT INTO unit_test(id, test_key) VALUES(2, \'test 2\')'), 1);
         $this->object->disconnect();
         $this->assertFalse($this->object->query('INSERT INTO unit_test(id, test_key) VALUES(3, \'test 3\')'));
-    } // testQuery
+    }
 
-    /**
-     * @covers ezsql\Database\ez_sqlsrv::convert
-     * @covers ezsql\Database\ez_sqlsrv::get_datatype
-     */
     public function testConvert()
     {
         $result = $this->object->convert("SELECT `test` FROM `unit_test`;");
         $this->assertEquals("SELECT test FROM unit_test;", $result);
     }
 
-    /**
-     * @covers ezsql\ezQuery::create
-     */
     public function testCreate()
     {
         $this->object->quick_connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME);
@@ -170,18 +138,12 @@ class sqlsrvTest extends EZTestCase
         $this->object->prepareOn();
     }
 
-    /**
-     * @covers ezsql\ezQuery::drop
-     */
     public function testDrop()
     {
         $this->object->quick_connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME);
         $this->assertEquals($this->object->drop('new_create_test'), 0);
     }
 
-    /**
-     * @covers ezsql\ezQuery::insert
-     */
     public function testInsert()
     {
         $this->object->quick_connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME);
@@ -190,9 +152,6 @@ class sqlsrvTest extends EZTestCase
         $this->assertNotFalse($this->object->insert('unit_test', ['id' => 7, 'test_key' => 'testInsert() 1']));
     }
 
-    /**
-     * @covers ezsql\ezQuery::update
-     */
     public function testUpdate()
     {
         $this->object->quick_connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME);
@@ -231,9 +190,6 @@ class sqlsrvTest extends EZTestCase
         );
     }
 
-    /**
-     * @covers ezsql\ezQuery::delete
-     */
     public function testDelete()
     {
         $this->object->quick_connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME);
@@ -271,14 +227,6 @@ class sqlsrvTest extends EZTestCase
         );
     }
 
-    /**
-     * @covers ezsql\ezQuery::selecting
-     * @covers ezsql\Database\ez_sqlsrv::query
-     * @covers ezsql\Database\ez_sqlsrv::processQueryResult
-     * @covers ezsql\Database\ez_sqlsrv::prepareValues
-     * @covers ezsql\Database\ez_sqlsrv::query_prepared
-     * @covers ezsql\Database\ez_sqlsrv::get_datatype
-     */
     public function testSelecting()
     {
         $this->object->quick_connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME);
@@ -314,16 +262,6 @@ class sqlsrvTest extends EZTestCase
         }
     }
 
-    /**
-     * @covers ezsql\ezQuery::selecting
-     * @covers ezsql\Database\ez_sqlsrv::commit
-     * @covers ezsql\Database\ez_sqlsrv::beginTransaction
-     * @covers ezsql\Database\ez_sqlsrv::query
-     * @covers ezsql\Database\ez_sqlsrv::processQueryResult
-     * @covers ezsql\Database\ez_sqlsrv::prepareValues
-     * @covers ezsql\Database\ez_sqlsrv::query_prepared
-     * @covers ezsql\Database\ez_sqlsrv::get_datatype
-     */
     public function testBeginTransactionCommit()
     {
         $this->object->quick_connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME);
@@ -357,16 +295,6 @@ class sqlsrvTest extends EZTestCase
         }
     }
 
-    /**
-     * @covers ezsql\ezQuery::selecting
-     * @covers ezsql\Database\ez_sqlsrv::rollback
-     * @covers ezsql\Database\ez_sqlsrv::beginTransaction
-     * @covers ezsql\Database\ez_sqlsrv::query
-     * @covers ezsql\Database\ez_sqlsrv::processQueryResult
-     * @covers ezsql\Database\ez_sqlsrv::prepareValues
-     * @covers ezsql\Database\ez_sqlsrv::query_prepared
-     * @covers ezsql\Database\ez_sqlsrv::get_datatype
-     */
     public function testBeginTransactionRollback()
     {
         $this->object->quick_connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME);
@@ -413,11 +341,6 @@ class sqlsrvTest extends EZTestCase
         }
     }
 
-    /**
-     * @covers ezsql\Database\ez_sqlsrv::disconnect
-     * @covers ezsql\Database\ez_sqlsrv::reset
-     * @covers ezsql\Database\ez_sqlsrv::handle
-     */
     public function testDisconnect()
     {
         $this->object->quick_connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME);
@@ -429,18 +352,8 @@ class sqlsrvTest extends EZTestCase
         $this->assertNull($this->object->handle());
         $this->object->quick_connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME);
         $this->assertTrue($this->object->isConnected());
-    } // testDisconnect
+    }
 
-    /**
-     * @covers ezsql\ezQuery::drop
-     * @covers ezsql\ezQuery::create
-     * @covers ezsql\ezsqlModel::queryResult
-     * @covers ezsql\Database\ez_sqlsrv::query
-     * @covers ezsql\Database\ez_sqlsrv::processQueryResult
-     * @covers ezsql\Database\ez_sqlsrv::prepareValues
-     * @covers ezsql\Database\ez_sqlsrv::query_prepared
-     * @covers ezsql\Database\ez_sqlsrv::get_datatype
-     */
     public function testQuery_prepared()
     {
         $this->object->prepareOff();
@@ -476,24 +389,18 @@ class sqlsrvTest extends EZTestCase
         }
 
         $this->object->drop('prepare_test');
-    } // testQuery_prepared
+    }
 
-    /**
-     * @covers ezsql\Database\ez_sqlsrv::__construct
-     */
     public function test__Construct_Error()
     {
         $this->expectExceptionMessageRegExp('/[Missing configuration details]/');
         $this->assertNull(new ez_sqlsrv());
     }
 
-    /**
-     * @covers ezsql\Database\ez_sqlsrv::__construct
-     */
     public function test__construct()
     {
         unset($GLOBALS['ez' . \SQLSRV]);
         $settings = Config::initialize('sqlsrv', [self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME]);
         $this->assertNotNull(new ez_sqlsrv($settings));
     }
-} // ezsql\Database\ez_sqlsrvTest
+}
