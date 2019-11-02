@@ -2,8 +2,7 @@
 
 namespace ezsql\Tests;
 
-use ezsql\Tests\ezInterface;  
+use ezsql\Tests\ezInterface;
 
-class Foo implements ezInterface 
-{    
-}
+class Foo implements ezInterface
+{ }

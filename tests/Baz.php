@@ -2,7 +2,7 @@
 
 namespace ezsql\Tests;
 
-use ezsql\Tests\ezInterface;  
+use ezsql\Tests\ezInterface;
 
 class Baz
 {
@@ -12,4 +12,3 @@ class Baz
         $this->foo = $foo;
     }
 }
-    

@@ -2,9 +2,7 @@
 
 namespace ezsql\Tests;
 
-use ezsql\Tests\ezInterface;  
+use ezsql\Tests\ezInterface;
 
-class Bar implements ezInterface 
-{
-}
-    
+class Bar implements ezInterface
+{ }
