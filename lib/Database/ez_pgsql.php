@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace ezsql\Database;
@@ -16,9 +17,9 @@ class ez_pgsql extends ezsqlModel implements DatabaseInterface
     private $isTransactional = false;
 
     /**
-    * Database connection handle 
-    * @var resource
-    */
+     * Database connection handle
+     * @var resource
+     */
     private $dbh;
 
     /**
@@ -34,16 +35,16 @@ class ez_pgsql extends ezsqlModel implements DatabaseInterface
     private $database;
 
     public function __construct(ConfigInterface $settings = null)
-    {        
+    {
         if (empty($settings)) {
             throw new Exception(\MISSING_CONFIGURATION);
         }
-        
+
         parent::__construct();
         $this->database = $settings;
 
-        if (empty($GLOBALS['ez'.\PGSQL]))
-            $GLOBALS['ez'.\PGSQL] = $this;
+        if (empty($GLOBALS['ez' . \PGSQL]))
+            $GLOBALS['ez' . \PGSQL] = $this;
         \setInstance($this);
     } // __construct
 
@@ -85,12 +86,12 @@ class ez_pgsql extends ezsqlModel implements DatabaseInterface
      * @return boolean
      */
     public function connect(
-        string $user = '', 
-        string $password = '', 
-        string $name = '', 
-        string $host = 'localhost', 
-        string $port = '5432')
-    {
+        string $user = '',
+        string $password = '',
+        string $name = '',
+        string $host = 'localhost',
+        string $port = '5432'
+    ) {
         $this->_connected = false;
 
         $user = empty($user) ? $this->database->getUser() : $user;
@@ -99,7 +100,7 @@ class ez_pgsql extends ezsqlModel implements DatabaseInterface
         $host = ($host != 'localhost') ? $host : $this->database->getHost();
         $port = ($port != '5432') ? $port : $this->database->getPort();
 
-        $connect_string = "host=".$host." port=".$port." dbname=".$name." user=".$user." password=".$password;
+        $connect_string = "host=" . $host . " port=" . $port . " dbname=" . $name . " user=" . $user . " password=" . $password;
 
         // Try to establish the server database handle
         if (!$this->dbh = \pg_connect($connect_string, true)) {
@@ -142,9 +143,9 @@ class ez_pgsql extends ezsqlModel implements DatabaseInterface
      * @return bool|mixed
      */
     public function query_prepared(string $query, array $param = null)
-    { 
+    {
         $result = @\pg_query_params($this->dbh, $query, $param);
-        return ($this->shortcutUsed) ? $result : $this->processQueryResult($query, $result); 
+        return ($this->shortcutUsed) ? $result : $this->processQueryResult($query, $result);
     }
 
     /**
@@ -154,7 +155,7 @@ class ez_pgsql extends ezsqlModel implements DatabaseInterface
      * @param mixed $result
      * @return bool|void
      */
-    private function processQueryResult(string $query, $result = null)  
+    private function processQueryResult(string $query, $result = null)
     {
         $this->shortcutUsed = false;
 
@@ -283,11 +284,13 @@ class ez_pgsql extends ezsqlModel implements DatabaseInterface
 
         // If there is no existing database connection then try to connect
         if (!isset($this->dbh) || !$this->dbh) {
-            $this->connect($this->database->getUser(),
+            $this->connect(
+                $this->database->getUser(),
                 $this->database->getPassword(),
                 $this->database->getName(),
                 $this->database->getHost(),
-                $this->database->getPort());
+                $this->database->getPort()
+            );
         }
 
         // Perform the query via std postgresql_query function..
@@ -297,7 +300,7 @@ class ez_pgsql extends ezsqlModel implements DatabaseInterface
         } else {
             $this->result = @\pg_query($this->dbh, $query);
         }
-            
+
         if ($this->processQueryResult($query) === false) {
             if ($this->isTransactional)
                 throw new \Exception($this->getLast_Error());
@@ -332,7 +335,7 @@ class ez_pgsql extends ezsqlModel implements DatabaseInterface
     {
         $this->dbh = null;
     }
-    
+
     /**
      * Get connection handle
      */
@@ -360,7 +363,7 @@ class ez_pgsql extends ezsqlModel implements DatabaseInterface
     {
         return $this->database->getPort();
     } // getPort
-    
+
     /**
      * Begin Postgresql Transaction
      */

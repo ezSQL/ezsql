@@ -3,9 +3,9 @@
 if (!\defined('CONSTANTS')) {
 
     /**
-    * ezsqlModel Constants
-    */
-    \defined('EZSQL_VERSION') or \define('EZSQL_VERSION', '4.0.8');
+     * ezsqlModel Constants
+     */
+    \defined('EZSQL_VERSION') or \define('EZSQL_VERSION', '4.0.9');
     \defined('OBJECT') or \define('OBJECT', 'OBJECT');
     \defined('ARRAY_A') or \define('ARRAY_A', 'ARRAY_A');
     \defined('ARRAY_N') or \define('ARRAY_N', 'ARRAY_N');
@@ -21,8 +21,8 @@ if (!\defined('CONSTANTS')) {
     \define('_JSON', 'json');
 
     /**
-    * Operator boolean expressions.
-    */
+     * Operator boolean expressions.
+     */
     \define('EQ', '=');
     \define('NEQ', '<>');
     \define('NE', '!=');
@@ -41,12 +41,14 @@ if (!\defined('CONSTANTS')) {
 
     \define('_isNULL', 'IS NULL');
     \define('_notNULL', 'IS NOT NULL');
-    \define('_BOOLEAN_OPERATORS', ['<', '>', '=', '!=', '>=', '<=', '<>',
-        'IN', 'LIKE', 'NOT LIKE', 'BETWEEN', 'NOT BETWEEN', 'IS', 'IS NOT']);
+    \define('_BOOLEAN_OPERATORS', [
+        '<', '>', '=', '!=', '>=', '<=', '<>',
+        'IN', 'LIKE', 'NOT LIKE', 'BETWEEN', 'NOT BETWEEN', 'IS', 'IS NOT'
+    ]);
 
     /**
-    * Combine operators.
-    */
+     * Combine operators.
+     */
     \define('_AND', 'AND');
     \define('_OR', 'OR');
     \define('_NOT', 'NOT');
@@ -63,9 +65,9 @@ if (!\defined('CONSTANTS')) {
     \define('_JOINERS', ['INNER', 'LEFT', 'RIGHT', 'FULL']);
 
     /**
-    * Associative array of supported SQL Drivers, and library
-    * @define(array)
-    */
+     * Associative array of supported SQL Drivers, and library
+     * @define(array)
+     */
     \define('VENDOR', [
         'mysql' => 'ezsql\Database\ez_mysqli',
         'mysqli' => 'ezsql\Database\ez_mysqli',

@@ -1,4 +1,5 @@
-<?php 
+<?php
+
 /**
  * Author:  Lawrence Stubbs <technoexpressnet@gmail.com>
  *
@@ -17,104 +18,105 @@
  * This software consists of voluntary contributions made by many individuals
  * and is licensed under the MIT license.
  */
+
 declare(strict_types=1);
 
 namespace ezsql;
 
 /**
-* @method set/get{property} - a property that needs to be accessed 
-*/
-abstract class ConfigAbstract 
+ * @method set/get{property} - a property that needs to be accessed
+ */
+abstract class ConfigAbstract
 {
     /**
-    * Database Sql driver name
-    * @var string
-    */
+     * Database Sql driver name
+     * @var string
+     */
     private $driver;
 
     /**
-    * Database user name
-    * @var string
-    */
+     * Database user name
+     * @var string
+     */
     private $user = '';
 
     /**
-    * Database password for the given user
-    * @var string
-    */
+     * Database password for the given user
+     * @var string
+     */
     private $password = '';
 
     /**
-    * Database name
-    * @var string
-    */
+     * Database name
+     * @var string
+     */
     private $name = '';
 
     /**
-    * Host name or IP address
-    * @var string
-    */
+     * Host name or IP address
+     * @var string
+     */
     private $host = 'localhost';
 
     /**
-    * Database charset
-    * @var string Default is utf8
-    */
+     * Database charset
+     * @var string Default is utf8
+     */
     private $charset = 'utf8';
 
     /**
-    * The PDO connection parameter string, database server in the DSN parameters   
-    * @var string Default is empty string
-    */
+     * The PDO connection parameter string, database server in the DSN parameters
+     * @var string Default is empty string
+     */
     private $dsn = '';
 
     /**
-    * The PDO array for connection options, MySQL connection charset, for example
-    * @var array
-    */
+     * The PDO array for connection options, MySQL connection charset, for example
+     * @var array
+     */
     private $options = array();
-    
+
     /**
-    * Check PDO for whether it is a file based database connection, for example to a SQLite
-    * database file, or not
-    * @var boolean Default is false
-    */
+     * Check PDO for whether it is a file based database connection, for example to a SQLite
+     * database file, or not
+     * @var boolean Default is false
+     */
     private $isfile = false;
 
     /**
-    * TCP/IP port of PostgreSQL
-    * @var string Default is port 5432
-    */
+     * TCP/IP port of PostgreSQL
+     * @var string Default is port 5432
+     */
     private $port = '5432';
 
     /**
-    * If we want to convert Queries in MySql syntax to MS-SQL syntax. 
-    * Yes, there are some differences in query syntax.
-    */
+     * If we want to convert Queries in MySql syntax to MS-SQL syntax.
+     * Yes, there are some differences in query syntax.
+     */
     private $tomssql = true;
 
     /**
-    * The path to open an SQLite database
-    */
+     * The path to open an SQLite database
+     */
     private $path = '';
-        
-	/**
-	* Use for Calling Non-Existent Functions, handling Getters and Setters
-	* @property-read function
-	* @property-write args
-	*
-	* @return mixed
-	*/
-	public function __call($function, $args)
-	{
-		$prefix = \substr($function, 0, 3);
-		$property = \strtolower(substr($function, 3, \strlen($function)));
-		if (($prefix == 'set') && \property_exists($this, $property)) {
-			$this->$property = $args[0];
-		} elseif (($prefix == 'get') && \property_exists($this, $property)) {
-	 		return $this->$property;
-		} else {
-			throw new \Exception("$function does not exist");
-		}
-	}
+
+    /**
+     * Use for Calling Non-Existent Functions, handling Getters and Setters
+     * @property-read function
+     * @property-write args
+     *
+     * @return mixed
+     */
+    public function __call($function, $args)
+    {
+        $prefix = \substr($function, 0, 3);
+        $property = \strtolower(substr($function, 3, \strlen($function)));
+        if (($prefix == 'set') && \property_exists($this, $property)) {
+            $this->$property = $args[0];
+        } elseif (($prefix == 'get') && \property_exists($this, $property)) {
+            return $this->$property;
+        } else {
+            throw new \Exception("$function does not exist");
+        }
+    }
 }
