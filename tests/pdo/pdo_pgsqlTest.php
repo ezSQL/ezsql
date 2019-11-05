@@ -47,25 +47,16 @@ class pdo_pgsqlTest extends EZTestCase
         $this->object = null;
     } // tearDown
 
-    /**
-     * @covers ezsql\Database\ez_pdo::connect
-     */
     public function testPosgreSQLConnect()
     {
         $this->assertTrue($this->object->connect('pgsql:host=' . self::TEST_DB_HOST . ';dbname=' . self::TEST_DB_NAME . ';port=' . self::TEST_DB_PORT, self::TEST_DB_USER, self::TEST_DB_PASSWORD));
     } // testPosgreSQLConnect
 
-    /**
-     * @covers ezsql\Database\ez_pdo::quick_connect
-     */
     public function testPosgreSQLQuick_connect()
     {
         $this->assertTrue($this->object->quick_connect('pgsql:host=' . self::TEST_DB_HOST . ';dbname=' . self::TEST_DB_NAME . ';port=' . self::TEST_DB_PORT, self::TEST_DB_USER, self::TEST_DB_PASSWORD));
     } // testPosgreSQLQuick_connect
 
-    /**
-     * @covers ezsql\Database\ez_pdo::escape
-     */
     public function testPosgreSQLEscape()
     {
         $this->assertTrue($this->object->connect('pgsql:host=' . self::TEST_DB_HOST . ';dbname=' . self::TEST_DB_NAME . ';port=' . self::TEST_DB_PORT, self::TEST_DB_USER, self::TEST_DB_PASSWORD));
@@ -75,17 +66,11 @@ class pdo_pgsqlTest extends EZTestCase
         $this->assertEquals("This is''nt escaped.", $result);
     } // testPosgreSQLEscape
 
-    /**
-     * @covers ezsql\Database\ez_pdo::sysDate
-     */
     public function testPosgreSQLSysDate()
     {
         $this->assertEquals("datetime('now')", $this->object->sysDate());
     } // testPosgreSQLSysDate
 
-    /**
-     * @covers ezsql\Database\ez_pdo::catch_error
-     */
     public function testPosgreSQLCatch_error()
     {
         $this->assertTrue($this->object->connect('pgsql:host=' . self::TEST_DB_HOST . ';dbname=' . self::TEST_DB_NAME . ';port=' . self::TEST_DB_PORT, self::TEST_DB_USER, self::TEST_DB_PASSWORD));
@@ -94,11 +79,6 @@ class pdo_pgsqlTest extends EZTestCase
         $this->assertTrue($this->object->catch_error());
     } // testPosgreSQLCatch_error
 
-    /**
-     * @covers ezsql\Database\ez_pdo::query
-     * @covers ezsql\Database\ez_pdo::processQuery
-     * @covers ezsql\Database\ez_pdo::processResult
-     */
     public function testPosgreSQLQuery()
     {
         $this->assertTrue($this->object->connect('pgsql:host=' . self::TEST_DB_HOST . ';dbname=' . self::TEST_DB_NAME . ';port=' . self::TEST_DB_PORT, self::TEST_DB_USER, self::TEST_DB_PASSWORD));
@@ -108,9 +88,6 @@ class pdo_pgsqlTest extends EZTestCase
         $this->assertEquals(0, $this->object->query('DROP TABLE unit_test'));
     } // testPosgreSQLQuery
 
-    /**
-     * @covers ezsql\ezQuery::insert
-     */
     public function testInsert()
     {
         $this->assertTrue($this->object->connect('pgsql:host=' . self::TEST_DB_HOST . ';dbname=' . self::TEST_DB_NAME . ';port=' . self::TEST_DB_PORT, self::TEST_DB_USER, self::TEST_DB_PASSWORD));
@@ -122,9 +99,6 @@ class pdo_pgsqlTest extends EZTestCase
         $this->assertEquals(0, $this->object->query('DROP TABLE unit_test'));
     }
 
-    /**
-     * @covers ezsql\ezQuery::update
-     */
     public function testUpdate()
     {
         $this->assertTrue($this->object->connect('pgsql:host=' . self::TEST_DB_HOST . ';dbname=' . self::TEST_DB_NAME . ';port=' . self::TEST_DB_PORT, self::TEST_DB_USER, self::TEST_DB_PASSWORD));
@@ -157,9 +131,6 @@ class pdo_pgsqlTest extends EZTestCase
         $this->assertEquals(0, $this->object->query('DROP TABLE unit_test'));
     }
 
-    /**
-     * @covers ezsql\ezQuery::delete
-     */
     public function testDelete()
     {
         $this->assertTrue($this->object->connect('pgsql:host=' . self::TEST_DB_HOST . ';dbname=' . self::TEST_DB_NAME . ';port=' . self::TEST_DB_PORT, self::TEST_DB_USER, self::TEST_DB_PASSWORD));
@@ -183,14 +154,6 @@ class pdo_pgsqlTest extends EZTestCase
         $this->assertEquals(0, $this->object->query('DROP TABLE unit_test'));
     }
 
-    /**
-     * @covers ezsql\ezQuery::selecting
-     * @covers ezsql\Database\ez_pdo::query
-     * @covers ezsql\Database\ez_pdo::processQuery
-     * @covers ezsql\Database\ez_pdo::processResult
-     * @covers ezsql\Database\ez_pdo::prepareValues
-     * @covers ezsql\Database\ez_pdo::query_prepared
-     */
     public function testSelecting()
     {
         $this->assertTrue($this->object->connect('pgsql:host=' . self::TEST_DB_HOST . ';dbname=' . self::TEST_DB_NAME . ';port=' . self::TEST_DB_PORT, self::TEST_DB_USER, self::TEST_DB_PASSWORD));
@@ -226,9 +189,6 @@ class pdo_pgsqlTest extends EZTestCase
         }
     }
 
-    /**
-     * @covers ezsql\Database\ez_pdo::disconnect
-     */
     public function testPosgreSQLDisconnect()
     {
         $this->assertTrue($this->object->connect('pgsql:host=' . self::TEST_DB_HOST . ';dbname=' . self::TEST_DB_NAME . ';port=' . self::TEST_DB_PORT, self::TEST_DB_USER, self::TEST_DB_PASSWORD));

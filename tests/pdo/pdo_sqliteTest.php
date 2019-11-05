@@ -50,10 +50,6 @@ class pdo_sqliteTest extends EZTestCase
     /**
      * Here starts the SQLite PDO unit test
      */
-
-    /**
-     * @covers ezsql\Database\ez_pdo::connect
-     */
     public function testSQLiteConnect()
     {
         $this->assertTrue($this->object->connect());
@@ -61,17 +57,11 @@ class pdo_sqliteTest extends EZTestCase
         $this->assertFalse($this->object->connect('ccc', 'vccc'));
     } // testSQLiteConnect
 
-    /**
-     * @covers ezsql\Database\ez_pdo::quick_connect
-     */
     public function testSQLiteQuick_connect()
     {
         $this->assertTrue($this->object->quick_connect('sqlite:' . self::TEST_SQLITE_DB, '', '', array(), true));
     } // testSQLiteQuick_connect
 
-    /**
-     * @covers ezsql\Database\ez_pdo::escape
-     */
     public function testSQLiteEscape()
     {
         $this->assertTrue($this->object->connect('sqlite:' . self::TEST_SQLITE_DB, '', '', array(), true));
@@ -85,17 +75,11 @@ class pdo_sqliteTest extends EZTestCase
         $this->assertEquals("Is\'nt escaped.", $result);
     } // testSQLiteEscape
 
-    /**
-     * @covers ezsql\Database\ez_pdo::sysdate
-     */
     public function testSQLiteSysdate()
     {
         $this->assertEquals("datetime('now')", $this->object->sysdate());
     } // testSQLiteSysdate
 
-    /**
-     * @covers ezsql\Database\ez_pdo::catch_error
-     */
     public function testSQLiteCatch_error()
     {
         $this->assertTrue($this->object->connect('sqlite:' . self::TEST_SQLITE_DB, '', '', array(), true));
@@ -103,11 +87,6 @@ class pdo_sqliteTest extends EZTestCase
         $this->assertTrue($this->object->catch_error());
     } // testSQLiteCatch_error
 
-    /**
-     * @covers ezsql\Database\ez_pdo::query
-     * @covers ezsql\Database\ez_pdo::processQuery
-     * @covers ezsql\Database\ez_pdo::processResult
-     */
     public function testSQLiteQuery()
     {
         $this->assertTrue($this->object->connect());
@@ -136,9 +115,6 @@ class pdo_sqliteTest extends EZTestCase
         $this->assertEquals(0, $this->object->query('DROP TABLE unit_test'));
     } // testSQLiteQuery
 
-    /**
-     * @covers ezsql\ezQuery::insert
-     */
     public function testInsert()
     {
         $this->assertTrue($this->object->connect('sqlite:' . self::TEST_SQLITE_DB, '', '', array(), true));
@@ -149,9 +125,6 @@ class pdo_sqliteTest extends EZTestCase
         $this->assertEquals(1, $result);
     }
 
-    /**
-     * @covers ezsql\ezQuery::update
-     */
     public function testUpdate()
     {
         $this->assertTrue($this->object->connect('sqlite:' . self::TEST_SQLITE_DB, '', '', array(), true));
@@ -181,9 +154,6 @@ class pdo_sqliteTest extends EZTestCase
         $this->assertEquals(1, $this->object->query('DROP TABLE unit_test'));
     }
 
-    /**
-     * @covers ezsql\ezQuery::delete
-     */
     public function testDelete()
     {
         $this->assertTrue($this->object->connect('sqlite:' . self::TEST_SQLITE_DB, '', '', array(), true));
@@ -210,14 +180,6 @@ class pdo_sqliteTest extends EZTestCase
         $this->assertEquals(1, $this->object->query('DROP TABLE unit_test'));
     }
 
-    /**
-     * @covers ezsql\ezQuery::selecting
-     * @covers ezsql\Database\ez_pdo::query
-     * @covers ezsql\Database\ez_pdo::processQuery
-     * @covers ezsql\Database\ez_pdo::processResult
-     * @covers ezsql\Database\ez_pdo::prepareValues
-     * @covers ezsql\Database\ez_pdo::query_prepared
-     */
     public function testSelecting()
     {
         $this->assertTrue($this->object->connect('sqlite:' . self::TEST_SQLITE_DB, '', '', array(), true));
@@ -254,9 +216,6 @@ class pdo_sqliteTest extends EZTestCase
         $this->assertEquals(1, $this->object->query('DROP TABLE unit_test'));
     }
 
-    /**
-     * @covers ezsql\Database\ez_pdo::disconnect
-     */
     public function testSQLiteDisconnect()
     {
         $this->assertTrue($this->object->connect());

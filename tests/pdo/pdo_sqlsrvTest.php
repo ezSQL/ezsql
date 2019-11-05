@@ -37,25 +37,16 @@ class pdo_sqlsrvTest extends EZTestCase
         $this->object = null;
     } // tearDown
 
-    /**
-     * @covers ezsql\Database\ez_pdo::connect
-     */
     public function testSQLsrvConnect()
     {
         $this->assertTrue($this->object->connect('sqlsrv:Server=' . self::TEST_DB_HOST . ';Database=' . self::TEST_DB_NAME, self::TEST_DB_USER, self::TEST_DB_PASSWORD));
     } // testSQLsrvConnect
 
-    /**
-     * @covers ezsql\Database\ez_pdo::quick_connect
-     */
     public function testSQLsrvQuick_connect()
     {
         $this->assertTrue($this->object->quick_connect('sqlsrv:Server=' . self::TEST_DB_HOST . ';Database=' . self::TEST_DB_NAME, self::TEST_DB_USER, self::TEST_DB_PASSWORD));
     } // testSQLsrvQuick_connect
 
-    /**
-     * @covers ezsql\Database\ez_pdo::escape
-     */
     public function testSQLsrvEscape()
     {
         $this->assertTrue($this->object->connect('sqlsrv:Server=' . self::TEST_DB_HOST . ';Database=' . self::TEST_DB_NAME, self::TEST_DB_USER, self::TEST_DB_PASSWORD));
@@ -65,17 +56,11 @@ class pdo_sqlsrvTest extends EZTestCase
         $this->assertEquals("This is''nt escaped.", $result);
     } // testSQLsrvEscape
 
-    /**
-     * @covers ezsql\Database\ez_pdo::sysdate
-     */
     public function testSQLsrvSysdate()
     {
         $this->assertEquals("datetime('now')", $this->object->sysdate());
     } // testSQLsrvSysdate
 
-    /**
-     * @covers ezsql\Database\ez_pdo::catch_error
-     */
     public function testSQLsrvCatch_error()
     {
         $this->assertTrue($this->object->connect('sqlsrv:Server=' . self::TEST_DB_HOST . ';Database=' . self::TEST_DB_NAME, self::TEST_DB_USER, self::TEST_DB_PASSWORD));
@@ -84,11 +69,6 @@ class pdo_sqlsrvTest extends EZTestCase
         $this->assertTrue($this->object->catch_error());
     } // testSQLsrvCatch_error
 
-    /**
-     * @covers ezsql\Database\ez_pdo::query
-     * @covers ezsql\Database\ez_pdo::processQuery
-     * @covers ezsql\Database\ez_pdo::processResult
-     */
     public function testSQLsrvQuery()
     {
         $this->assertTrue($this->object->connect('sqlsrv:Server=' . self::TEST_DB_HOST . ';Database=' . self::TEST_DB_NAME, self::TEST_DB_USER, self::TEST_DB_PASSWORD));
@@ -98,9 +78,6 @@ class pdo_sqlsrvTest extends EZTestCase
         $this->assertEquals(0, $this->object->query('DROP TABLE unit_test'));
     } // testSQLsrvQuery
 
-    /**
-     * @covers ezsql\ezQuery::insert
-     */
     public function testInsert()
     {
         $this->assertTrue($this->object->connect('sqlsrv:Server=' . self::TEST_DB_HOST . ';Database=' . self::TEST_DB_NAME, self::TEST_DB_USER, self::TEST_DB_PASSWORD));
@@ -109,9 +86,6 @@ class pdo_sqlsrvTest extends EZTestCase
         $this->assertEquals(0, $this->object->query('DROP TABLE unit_test'));
     }
 
-    /**
-     * @covers ezsql\ezQuery::update
-     */
     public function testUpdate()
     {
         $this->assertTrue($this->object->connect('sqlsrv:Server=' . self::TEST_DB_HOST . ';Database=' . self::TEST_DB_NAME, self::TEST_DB_USER, self::TEST_DB_PASSWORD));
@@ -144,9 +118,6 @@ class pdo_sqlsrvTest extends EZTestCase
         );
     }
 
-    /**
-     * @covers ezsql\ezQuery::delete
-     */
     public function testDelete()
     {
         $this->assertTrue($this->object->connect('sqlsrv:Server=' . self::TEST_DB_HOST . ';Database=' . self::TEST_DB_NAME, self::TEST_DB_USER, self::TEST_DB_PASSWORD));
@@ -189,14 +160,6 @@ class pdo_sqlsrvTest extends EZTestCase
         );
     }
 
-    /**
-     * @covers ezsql\ezQuery::selecting
-     * @covers ezsql\Database\ez_pdo::query
-     * @covers ezsql\Database\ez_pdo::processQuery
-     * @covers ezsql\Database\ez_pdo::processResult
-     * @covers ezsql\Database\ez_pdo::prepareValues
-     * @covers ezsql\Database\ez_pdo::query_prepared
-     */
     public function testSelecting()
     {
         $this->assertTrue($this->object->connect('sqlsrv:Server=' . self::TEST_DB_HOST . ';Database=' . self::TEST_DB_NAME, self::TEST_DB_USER, self::TEST_DB_PASSWORD));
@@ -230,9 +193,6 @@ class pdo_sqlsrvTest extends EZTestCase
         }
     }
 
-    /**
-     * @covers ezsql\Database\ez_pdo::disconnect
-     */
     public function testSQLsrvDisconnect()
     {
         $this->assertTrue($this->object->connect('sqlsrv:Server=' . self::TEST_DB_HOST . ';Database=' . self::TEST_DB_NAME, self::TEST_DB_USER, self::TEST_DB_PASSWORD));

@@ -45,9 +45,6 @@ class pdo_mysqlTest extends EZTestCase
         $this->object = null;
     } // tearDown
 
-    /**
-     * @covers ezsql\Database\ez_pdo::settings
-     */
     public function testSettings()
     {
         $this->assertTrue($this->object->settings() instanceof \ezsql\ConfigInterface);
@@ -56,10 +53,6 @@ class pdo_mysqlTest extends EZTestCase
     /**
      * Here starts the MySQL PDO unit test
      */
-
-    /**
-     * @covers ezsql\Database\ez_pdo::connect
-     */
     public function testMySQLConnect()
     {
         $this->assertTrue($this->object->connect('mysql:host=' . self::TEST_DB_HOST . ';dbname=' . self::TEST_DB_NAME . ';port=' . self::TEST_DB_PORT, self::TEST_DB_USER, self::TEST_DB_PASSWORD));
@@ -67,17 +60,11 @@ class pdo_mysqlTest extends EZTestCase
         $this->assertTrue($this->object->connect(null));
     } // testMySQLConnect
 
-    /**
-     * @covers ezsql\Database\ez_pdo::quick_connect
-     */
     public function testMySQLQuick_connect()
     {
         $this->assertTrue($this->object->quick_connect('mysql:host=' . self::TEST_DB_HOST . ';dbname=' . self::TEST_DB_NAME . ';port=' . self::TEST_DB_PORT, self::TEST_DB_USER, self::TEST_DB_PASSWORD));
     }
 
-    /**
-     * @covers ezsql\Database\ez_pdo::escape
-     */
     public function testMySQLEscape()
     {
         $this->object->quick_connect('mysql:host=' . self::TEST_DB_HOST . ';dbname=' . self::TEST_DB_NAME . ';port=' . self::TEST_DB_PORT, self::TEST_DB_USER, self::TEST_DB_PASSWORD);
@@ -86,17 +73,11 @@ class pdo_mysqlTest extends EZTestCase
         $this->assertEquals("This is\'nt escaped.", $result);
     } // testMySQLEscape
 
-    /**
-     * @covers ezsql\Database\ez_pdo::sysDate
-     */
     public function testMySQLSysDate()
     {
         $this->assertEquals("datetime('now')", $this->object->sysDate());
     }
 
-    /**
-     * @covers ezsql\Database\ez_pdo::catch_error
-     */
     public function testMySQLCatch_error()
     {
         $this->assertTrue($this->object->connect());
@@ -104,11 +85,6 @@ class pdo_mysqlTest extends EZTestCase
         $this->assertNull($this->object->catch_error());
     }
 
-    /**
-     * @covers ezsql\Database\ez_pdo::query
-     * @covers ezsql\Database\ez_pdo::processQuery
-     * @covers ezsql\Database\ez_pdo::processResult
-     */
     public function testMySQLQuery()
     {
         $this->assertTrue($this->object->connect('mysql:host=' . self::TEST_DB_HOST . ';dbname=' . self::TEST_DB_NAME . ';port=' . self::TEST_DB_PORT, self::TEST_DB_USER, self::TEST_DB_PASSWORD));
@@ -118,17 +94,6 @@ class pdo_mysqlTest extends EZTestCase
         $this->assertEquals(0, $this->object->query('DROP TABLE unit_test'));
     }
 
-    /**
-     * @covers ezsql\ezsqlModel::secureSetup
-     * @covers ezsql\ezsqlModel::secureReset
-     * @covers ezsql\Database\ez_pdo::connect
-     * @covers ezsql\Database\ez_pdo::handle
-     * @covers ezsql\ezQuery::createCertificate
-     * @covers ezsql\ezQuery::drop
-     * @covers ezsql\ezQuery::create
-     * @covers \primary
-     * @covers \insert
-     */
     public function testSecureSetup()
     {
         $this->object->secureSetup();
@@ -160,10 +125,6 @@ class pdo_mysqlTest extends EZTestCase
         $this->object->secureReset();
     }
 
-    /**
-     * @covers ezsql\ezQuery::create
-     * @covers ezsql\Database\ez_pdo::connect
-     */
     public function testCreate()
     {
         $this->assertTrue($this->object->connect());
@@ -189,9 +150,6 @@ class pdo_mysqlTest extends EZTestCase
         $this->object->prepareOn();
     }
 
-    /**
-     * @covers ezsql\ezQuery::drop
-     */
     public function testDrop()
     {
         $this->assertTrue($this->object->connect('mysql:host=' . self::TEST_DB_HOST . ';dbname=' . self::TEST_DB_NAME . ';port=' . self::TEST_DB_PORT, self::TEST_DB_USER, self::TEST_DB_PASSWORD));
@@ -199,9 +157,6 @@ class pdo_mysqlTest extends EZTestCase
         $this->assertEquals($this->object->drop('new_create_test'), 0);
     }
 
-    /**
-     * @covers ezsql\ezQuery::insert
-     */
     public function testInsert()
     {
         $this->assertTrue($this->object->connect('mysql:host=' . self::TEST_DB_HOST . ';dbname=' . self::TEST_DB_NAME . ';port=' . self::TEST_DB_PORT, self::TEST_DB_USER, self::TEST_DB_PASSWORD));
@@ -213,10 +168,6 @@ class pdo_mysqlTest extends EZTestCase
         $this->assertEquals(0, $this->object->query('DROP TABLE unit_test'));
     }
 
-    /**
-     * @covers ezsql\ezQuery::update
-     * @covers \update
-     */
     public function testUpdate()
     {
         $this->assertTrue($this->object->connect('mysql:host=' . self::TEST_DB_HOST . ';dbname=' . self::TEST_DB_NAME . ';port=' . self::TEST_DB_PORT, self::TEST_DB_USER, self::TEST_DB_PASSWORD));
@@ -247,9 +198,6 @@ class pdo_mysqlTest extends EZTestCase
         $this->assertEquals(0, $this->object->query('DROP TABLE unit_test'));
     }
 
-    /**
-     * @covers ezsql\ezQuery::delete
-     */
     public function testDelete()
     {
         $this->assertTrue($this->object->connect('mysql:host=' . self::TEST_DB_HOST . ';dbname=' . self::TEST_DB_NAME . ';port=' . self::TEST_DB_PORT, self::TEST_DB_USER, self::TEST_DB_PASSWORD));
@@ -283,15 +231,6 @@ class pdo_mysqlTest extends EZTestCase
         $this->assertEquals(0, $this->object->query('DROP TABLE unit_test'));
     }
 
-    /**
-     * @covers ezsql\ezQuery::selecting
-     * @covers ezsql\Database\ez_pdo::query
-     * @covers ezsql\Database\ez_pdo::processQuery
-     * @covers ezsql\Database\ez_pdo::processResult
-     * @covers ezsql\Database\ez_pdo::prepareValues
-     * @covers ezsql\Database\ez_pdo::query_prepared
-     * @covers \select
-     */
     public function testSelecting()
     {
         $this->assertTrue($this->object->connect('mysql:host=' . self::TEST_DB_HOST . ';dbname=' . self::TEST_DB_NAME . ';port=' . self::TEST_DB_PORT, self::TEST_DB_USER, self::TEST_DB_PASSWORD));
@@ -326,16 +265,6 @@ class pdo_mysqlTest extends EZTestCase
         $this->assertEquals(0, $this->object->query('DROP TABLE unit_test'));
     }
 
-    /**
-     * @covers ezsql\Database\ez_pdo::commit
-     * @covers ezsql\Database\ez_pdo::beginTransaction
-     * @covers ezsql\Database\ez_pdo::query
-     * @covers ezsql\Database\ez_pdo::processQuery
-     * @covers ezsql\Database\ez_pdo::processResult
-     * @covers ezsql\Database\ez_pdo::prepareValues
-     * @covers ezsql\Database\ez_pdo::query_prepared
-     * @covers \select
-     */
     public function testBeginTransactionCommit()
     {
         $this->object->connect();
@@ -368,16 +297,6 @@ class pdo_mysqlTest extends EZTestCase
         }
     }
 
-    /**
-     * @covers ezsql\Database\ez_pdo::rollback
-     * @covers ezsql\Database\ez_pdo::beginTransaction
-     * @covers ezsql\Database\ez_pdo::query
-     * @covers ezsql\Database\ez_pdo::processQuery
-     * @covers ezsql\Database\ez_pdo::processResult
-     * @covers ezsql\Database\ez_pdo::prepareValues
-     * @covers ezsql\Database\ez_pdo::query_prepared
-     * @covers \select
-     */
     public function testBeginTransactionRollback()
     {
         $this->object->connect();
@@ -419,11 +338,6 @@ class pdo_mysqlTest extends EZTestCase
         }
     }
 
-    /**
-     * @covers ezsql\Database\ez_pdo::disconnect
-     * @covers ezsql\Database\ez_pdo::reset
-     * @covers ezsql\Database\ez_pdo::handle
-     */
     public function testMySQLDisconnect()
     {
         $this->assertTrue($this->object->connect('mysql:host=' . self::TEST_DB_HOST . ';dbname=' . self::TEST_DB_NAME . ';port=' . self::TEST_DB_PORT, self::TEST_DB_USER, self::TEST_DB_PASSWORD));
@@ -435,9 +349,6 @@ class pdo_mysqlTest extends EZTestCase
         $this->assertNull($this->object->handle());
     } // testDisconnect
 
-    /**
-     * @covers ezsql\Database\ez_pdo::connect
-     */
     public function testMySQLConnectWithOptions()
     {
         $options = array(
@@ -447,16 +358,6 @@ class pdo_mysqlTest extends EZTestCase
         $this->assertTrue($this->object->connect('mysql:host=' . self::TEST_DB_HOST . ';dbname=' . self::TEST_DB_NAME . ';port=' . self::TEST_DB_PORT, self::TEST_DB_USER, self::TEST_DB_PASSWORD, $options));
     }
 
-    /**
-     * @covers ezsql\ezQuery::drop
-     * @covers ezsql\ezQuery::create
-     * @covers ezsql\ezsqlModel::queryResult
-     * @covers ezsql\Database\ez_pdo::query
-     * @covers ezsql\Database\ez_pdo::query_prepared
-     * @covers ezsql\Database\ez_pdo::processQuery
-     * @covers ezsql\Database\ez_pdo::processResult
-     * @covers ezsql\Database\ez_pdo::prepareValues
-     */
     public function testQuery_prepared()
     {
         $this->object->prepareOff();
@@ -485,18 +386,12 @@ class pdo_mysqlTest extends EZTestCase
         $this->object->drop('prepare_test');
     } // testQuery_prepared
 
-    /**
-     * @covers ezsql\Database\ez_pdo::__construct
-     */
     public function test__Construct_Error()
     {
         $this->expectExceptionMessageRegExp('/[Missing configuration details]/');
         $this->assertNull(new ez_pdo());
     }
 
-    /**
-     * @covers ezsql\Database\ez_pdo::__construct
-     */
     public function test__construct()
     {
         unset($GLOBALS['ez' . \Pdo]);
