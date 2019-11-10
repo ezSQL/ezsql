@@ -267,11 +267,11 @@ class ezQuery implements ezQueryInterface
             $tableAs = $rightTable;
 
         if (\is_string($leftColumn) && empty($rightColumn))
-            $onCondition = ' ON '.$leftTable.'.'.$leftColumn.' = '.$rightTable.'.'.$leftColumn;
+            $onCondition = ' ON '.$leftTable.'.'.$leftColumn.' = '.$tableAs.'.'.$leftColumn;
         elseif ($condition !== \EQ)
-            $onCondition = ' ON '.$leftTable.'.'.$leftColumn." $condition ".$rightTable.'.'.$rightColumn;
+            $onCondition = ' ON '.$leftTable.'.'.$leftColumn." $condition ".$tableAs.'.'.$rightColumn;
         else
-            $onCondition = ' ON '.$leftTable.'.'.$leftColumn.' = '.$rightTable.'.'.$rightColumn;
+            $onCondition = ' ON '.$leftTable.'.'.$leftColumn.' = '.$tableAs.'.'.$rightColumn;
 
         return ' '.$type.' JOIN '.$rightTable.' AS '.$tableAs.' '.$onCondition;
     }
