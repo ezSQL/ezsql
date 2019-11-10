@@ -186,37 +186,41 @@ class ezQuery implements ezQueryInterface
     public function innerJoin(
         string $leftTable = null,
         string $rightTable = null,
-        string $leftColumn = null, string $rightColumn = null, $condition = \EQ)
+        string $leftColumn = null, string $rightColumn = null,
+        string $tableAs = null, $condition = \EQ)
     {
         return $this->joining(
-            'INNER', $leftTable, $rightTable, $leftColumn, $rightColumn, $condition);
+            'INNER', $leftTable, $rightTable, $leftColumn, $rightColumn, $tableAs, $condition);
     }
 
     public function leftJoin(
         string $leftTable = null,
         string $rightTable = null,
-        string $leftColumn = null, string $rightColumn = null, $condition = \EQ)
+        string $leftColumn = null, string $rightColumn = null,
+        string $tableAs = null, $condition = \EQ)
     {
         return $this->joining(
-            'LEFT', $leftTable, $rightTable, $leftColumn, $rightColumn, $condition);
+            'LEFT', $leftTable, $rightTable, $leftColumn, $rightColumn, $tableAs, $condition);
     }
 
     public function rightJoin(
         string $leftTable = null,
         string $rightTable = null,
-        string $leftColumn = null, string $rightColumn = null, $condition = \EQ)
+        string $leftColumn = null, string $rightColumn = null,
+        string $tableAs = null, $condition = \EQ)
     {
         return $this->joining(
-            'RIGHT', $leftTable, $rightTable, $leftColumn, $rightColumn, $condition);
+            'RIGHT', $leftTable, $rightTable, $leftColumn, $rightColumn, $tableAs, $condition);
     }
 
     public function fullJoin(
         string $leftTable = null,
         string $rightTable = null,
-        string $leftColumn = null, string $rightColumn = null, $condition = \EQ)
+        string $leftColumn = null, string $rightColumn = null,
+        string $tableAs = null, $condition = \EQ)
     {
         return $this->joining(
-            'FULL', $leftTable, $rightTable, $$leftColumn, $rightColumn, $condition);
+            'FULL', $leftTable, $rightTable, $$leftColumn, $rightColumn, $tableAs, $condition);
     }
 
     /**
@@ -248,7 +252,8 @@ class ezQuery implements ezQueryInterface
         String $type = \_INNER,
         string $leftTable = null,
         string $rightTable = null,
-        string $leftColumn = null, string $rightColumn = null, $condition = \EQ)
+        string $leftColumn = null, string $rightColumn = null,
+        string $tableAs = null, $condition = \EQ)
     {
         if (!\in_array($type, \_JOINERS)
             || !\in_array($condition, \_BOOLEAN)
@@ -258,6 +263,9 @@ class ezQuery implements ezQueryInterface
             return false;
         }
 
+        if (empty($tableAs))
+            $tableAs = $rightTable;
+
         if (\is_string($leftColumn) && empty($rightColumn))
             $onCondition = ' ON '.$leftTable.'.'.$leftColumn.' = '.$rightTable.'.'.$leftColumn;
         elseif ($condition !== \EQ)
@@ -265,7 +273,7 @@ class ezQuery implements ezQueryInterface
         else
             $onCondition = ' ON '.$leftTable.'.'.$leftColumn.' = '.$rightTable.'.'.$rightColumn;
 
-        return ' '.$type.' JOIN '.$rightTable.$onCondition;
+        return ' '.$type.' JOIN '.$rightTable.' AS '.$tableAs.' '.$onCondition;
     }
 
     public function orderBy($orderBy, $order)
