@@ -11,19 +11,13 @@ use ezsql\Database\ez_sqlite3;
 use ezsql\Database\ez_sqlsrv;
 use ezsql\Tests\EZTestCase;
 
-class DatabaseTest extends EZTestCase 
-{		
-    /**
-    * @covers ezsql\Database::Initialize
-    * @covers ezsql\Database::benchmark
-    * @covers \setInstance
-    * @covers \tagInstance
-    */
+class DatabaseTest extends EZTestCase
+{
     public function testInitialize()
     {
         if (!extension_loaded('mysqli')) {
             $this->markTestSkipped(
-              'The MySQLi extension is not available.'
+                'The MySQLi extension is not available.'
             );
         }
 
@@ -37,16 +31,11 @@ class DatabaseTest extends EZTestCase
         $this->assertSame($mysqli, \tagInstance(MYSQLI));
     }
 
-    /**
-    * @covers ezsql\Database::Initialize
-    * @covers ezsql\Database::benchmark
-    * @covers \setInstance
-    */
     public function testInitialize_Pgsql()
     {
         if (!extension_loaded('pgsql')) {
             $this->markTestSkipped(
-              'The PostgreSQL Lib is not available.'
+                'The PostgreSQL Lib is not available.'
             );
         }
 
@@ -59,19 +48,14 @@ class DatabaseTest extends EZTestCase
         $this->assertNotNull($benchmark['start']);
     }
 
-    /**
-    * @covers ezsql\Database::Initialize
-    * @covers ezsql\Database::benchmark
-    * @covers \setInstance
-    */
     public function testInitialize_Sqlite3()
     {
         if (!extension_loaded('sqlite3')) {
             $this->markTestSkipped(
-              'The sqlite3 Lib is not available.'
+                'The sqlite3 Lib is not available.'
             );
         }
-        
+
         $sqlite3 = Database::initialize(SQLITE3, [self::TEST_SQLITE_DB_DIR, self::TEST_SQLITE_DB]);
         $this->assertFalse($sqlite3 instanceof ConfigInterface);
         $this->assertTrue($sqlite3->settings() instanceof ConfigInterface);
@@ -81,16 +65,11 @@ class DatabaseTest extends EZTestCase
         $this->assertNotNull($benchmark['start']);
     }
 
-    /**
-    * @covers ezsql\Database::Initialize
-    * @covers ezsql\Database::benchmark
-    * @covers \setInstance
-    */
     public function testInitialize_Sqlsrv()
     {
         if (!extension_loaded('sqlsrv')) {
             $this->markTestSkipped(
-              'The sqlsrv Lib is not available.'
+                'The sqlsrv Lib is not available.'
             );
         }
 
@@ -103,21 +82,18 @@ class DatabaseTest extends EZTestCase
         $this->assertNotNull($benchmark['start']);
     }
 
-    /**
-    * @covers ezsql\Database::Initialize
-    * @covers ezsql\Database::benchmark
-    * @covers \setInstance
-    */
     public function testInitialize_Pdo()
     {
-        if ( ! \class_exists ('PDO') ) {
+        if (!\class_exists('PDO')) {
             $this->markTestSkipped(
-              'The PDO Lib is not available.'
+                'The PDO Lib is not available.'
             );
         }
 
-        $pdo = Database::initialize(Pdo, 
-            ['mysql:host='.self::TEST_DB_HOST.';dbname='.self::TEST_DB_NAME.';port=3306', self::TEST_DB_USER,self::TEST_DB_PASSWORD]);
+        $pdo = Database::initialize(
+            Pdo,
+            ['mysql:host=' . self::TEST_DB_HOST . ';dbname=' . self::TEST_DB_NAME . ';port=3306', self::TEST_DB_USER, self::TEST_DB_PASSWORD]
+        );
         $this->assertFalse($pdo instanceof ConfigInterface);
         $this->assertTrue($pdo->settings() instanceof ConfigInterface);
         $this->assertTrue($pdo instanceof ez_pdo);
@@ -126,13 +102,10 @@ class DatabaseTest extends EZTestCase
         $this->assertNotNull($benchmark['start']);
     }
 
-    /**
-    * @covers ezsql\Database::Initialize
-    */
     public function testInitialize_Error()
     {
         $this->expectException(\Exception::class);
         $this->expectExceptionMessageRegExp('/[Missing configuration details]/');
         $mysqli = Database::initialize('', [self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME]);
     }
-} 
+}

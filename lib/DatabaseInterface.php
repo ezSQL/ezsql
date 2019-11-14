@@ -1,4 +1,5 @@
 <?php
+
 namespace ezsql;
 
 interface DatabaseInterface
@@ -25,7 +26,7 @@ interface DatabaseInterface
      * - setPassword($args);
      * - setName($args);
      * - setHost($args);
-     * - setPort($args); 
+     * - setPort($args);
      * - setCharset($args);
      * - setOptions($args);
      * - setIsFile($args);
@@ -52,33 +53,33 @@ interface DatabaseInterface
      * @return string
      */
     public function sysDate();
-    
-	/**
+
+    /**
      * Creates a prepared query, binds the given parameters and returns the result of the executed.
-     * 
-     * Supplying the the whole query string, and placing '?' within, 
+     *
+     * Supplying the the whole query string, and placing '?' within,
      * then the same number of arguments in an array.
-     * 
+     *
      * Example:
      *  `query_prepared('INSERT INTO unit_test(id, test_key) VALUES(1, ?)', ['test 1']);`
-     * 
+     *
      * - It will determine arguments type, execute, and return results.
-     * 
+     *
      * @param string $query
      * @param array $param
      * @return bool|mixed
      */
     public function query_prepared(string $query, array $param = null);
-    
+
     /**
      * Perform SQL query and try to determine result value.
-     *  
+     *
      * It should be noted that you can send any type of query to the
-     * database using this command. 
-     * 
+     * database using this command.
+     *
      * If there are any results generated they will be stored and can be
-     * accessed by any ezsql function as long as you use a null query. 
-     * 
+     * accessed by any ezsql function as long as you use a null query.
+     *
      * If there are results returned the function will return `true`.
      * if no results the return will be `false`.
      *
@@ -87,7 +88,7 @@ interface DatabaseInterface
      * @return bool|mixed
      */
     public function query(string $query, bool $use_prepare = false);
-	
+
     /**
      * Close the database connection
      */
@@ -102,7 +103,7 @@ interface DatabaseInterface
      * Reset connection handle
      */
     public function reset();
-    
+
     /**
      * Begin Transaction
      */

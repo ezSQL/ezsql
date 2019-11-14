@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace ezsql\Database;
@@ -17,7 +18,7 @@ class ez_pdo extends ezsqlModel implements DatabaseInterface
     private $isTransactional = false;
 
     /**
-     * Database connection handle 
+     * Database connection handle
      * @var resource
      */
     private $dbh;
@@ -29,25 +30,25 @@ class ez_pdo extends ezsqlModel implements DatabaseInterface
     private $result;
 
     /**
-     * Database configuration setting 
+     * Database configuration setting
      * @var ConfigInterface
      */
     private $database;
 
-    public function __construct(ConfigInterface $settings = null) 
-    {        
+    public function __construct(ConfigInterface $settings = null)
+    {
         if (empty($settings)) {
             throw new Exception(\MISSING_CONFIGURATION);
         }
-        
+
         parent::__construct();
         $this->database = $settings;
 
         // Turn on track errors
         ini_set('track_errors', '1');
-        
-        if (empty($GLOBALS['ez'.\Pdo]))
-            $GLOBALS['ez'.\Pdo] = $this;
+
+        if (empty($GLOBALS['ez' . \Pdo]))
+            $GLOBALS['ez' . \Pdo] = $this;
         \setInstance($this);
     } // __construct
 
@@ -67,32 +68,32 @@ class ez_pdo extends ezsqlModel implements DatabaseInterface
      *                  Default is empty string
      * @param array $options Array for setting connection options
      *                  Default is an empty array
-     * @param boolean $isFileBased File based databases like SQLite don't need user and password, 
+     * @param boolean $isFileBased File based databases like SQLite don't need user and password,
      *                  Default is false
      * @return boolean
      */
     public function connect(
-        $dsn = '', 
-        $user = '', 
-        $password = '', 
-        $options = array(), 
-        $isFile = false) 
-    {
-        $this->_connected = false;	
+        $dsn = '',
+        $user = '',
+        $password = '',
+        $options = array(),
+        $isFile = false
+    ) {
+        $this->_connected = false;
         $key = $this->sslKey;
         $cert = $this->sslCert;
-		$ca = $this->sslCa;
+        $ca = $this->sslCa;
         $path = $this->sslPath;
-        
+
         $vendor = $this->database->getDsn();
         if ($this->isSecure) {
             if (\strpos($vendor, \PGSQL) !== false) {
-                $this->secureOptions = 'sslmode=require;sslcert='.$path.$cert.';sslkey='.$path.$key.';sslrootcert='.$path.$ca.';';
+                $this->secureOptions = 'sslmode=require;sslcert=' . $path . $cert . ';sslkey=' . $path . $key . ';sslrootcert=' . $path . $ca . ';';
             } elseif (\strpos($vendor, 'mysql') !== false) {
                 $this->secureOptions = array(
-                    \PDO::MYSQL_ATTR_SSL_KEY => $path.$key,
-                    \PDO::MYSQL_ATTR_SSL_CERT => $path.$cert,
-                    \PDO::MYSQL_ATTR_SSL_CA => $path.$ca,
+                    \PDO::MYSQL_ATTR_SSL_KEY => $path . $key,
+                    \PDO::MYSQL_ATTR_SSL_CERT => $path . $cert,
+                    \PDO::MYSQL_ATTR_SSL_CA => $path . $ca,
                     \PDO::MYSQL_ATTR_SSL_CAPATH => $path,
                     \PDO::MYSQL_ATTR_SSL_CIPHER => 'DHE-RSA-AES256-SHA',
                     \PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT => false
@@ -103,21 +104,21 @@ class ez_pdo extends ezsqlModel implements DatabaseInterface
         }
 
         if ($this->isSecure && \is_string($this->secureOptions))
-            $dsn = empty($dsn) ? $vendor.$this->secureOptions : $dsn.$this->secureOptions;
+            $dsn = empty($dsn) ? $vendor . $this->secureOptions : $dsn . $this->secureOptions;
         else
             $dsn = empty($dsn) ? $vendor : $dsn;
 
-        if ($this->isSecure && \is_array($this->secureOptions))       
+        if ($this->isSecure && \is_array($this->secureOptions))
             $options = $this->secureOptions;
-        else 
+        else
             $options = empty($options) ? $this->database->getOptions() : $options;
 
         $user = empty($user) ? $this->database->getUser() : $user;
-        $password = empty($password) ? $this->database->getPassword() : $password; 
+        $password = empty($password) ? $this->database->getPassword() : $password;
         $isFile = empty($isFile) ? $this->database->getIsFile() : $isFile;
 
         // Establish PDO connection
-        try  {
+        try {
             if ($isFile) {
                 $this->dbh = new \PDO($dsn, null, null, null);
                 $this->_connected = true;
@@ -126,7 +127,7 @@ class ez_pdo extends ezsqlModel implements DatabaseInterface
                 $this->_connected = true;
             }
         } catch (\PDOException $e) {
-            $this->register_error($e->getMessage(). '- $dsn: ' . $dsn);
+            $this->register_error($e->getMessage() . '- $dsn: ' . $dsn);
         }
 
         return $this->_connected;
@@ -143,18 +144,18 @@ class ez_pdo extends ezsqlModel implements DatabaseInterface
      *   - Default is empty string
      * @param array $options Array for setting connection options
      *   - Default is an empty array
-     * @param boolean $isFileBased File based databases 
+     * @param boolean $isFileBased File based databases
      * like SQLite don't need user and password, they work with path in the dsn parameter
      *   - Default is false
      * @return boolean
      */
     public function quick_connect(
         $dsn = '',
-        $user = '', 
-        $password = '', 
-        $options = array(), 
-        $isFileBased = false) 
-    {
+        $user = '',
+        $password = '',
+        $options = array(),
+        $isFileBased = false
+    ) {
         return $this->connect($dsn, $user, $password, $options, $isFileBased);
     } // quick_connect
 
@@ -169,15 +170,17 @@ class ez_pdo extends ezsqlModel implements DatabaseInterface
      * @param string $str
      * @return string
      */
-    public function escape(string $str) 
+    public function escape(string $str)
     {
         // If there is no existing database connection then try to connect
-        if ( ! isset($this->dbh) || ! $this->dbh ) {
-            $this->connect($this->database->getDsn(), 
-                $this->database->getUser(), 
-                $this->database->getPassword(), 
-                $this->database->getOptions(), 
-                $this->database->getIsFile());
+        if (!isset($this->dbh) || !$this->dbh) {
+            $this->connect(
+                $this->database->getDsn(),
+                $this->database->getUser(),
+                $this->database->getPassword(),
+                $this->database->getOptions(),
+                $this->database->getIsFile()
+            );
         }
 
         // pdo quote adds ' at the beginning and at the end, remove them for standard behavior
@@ -192,7 +195,7 @@ class ez_pdo extends ezsqlModel implements DatabaseInterface
      *
      * @return string
      */
-    public function sysDate() 
+    public function sysDate()
     {
         return "datetime('now')";
     }
@@ -209,38 +212,38 @@ class ez_pdo extends ezsqlModel implements DatabaseInterface
         $err_array = $this->dbh->errorInfo();
 
         // Note: Ignoring error - bind or column index out of range
-        if ( isset($err_array[1]) && $err_array[1] != 25) {
+        if (isset($err_array[1]) && $err_array[1] != 25) {
 
             $error_str = '';
-            foreach ( $err_array as $entry ) {
+            foreach ($err_array as $entry) {
                 $error_str .= $entry . ', ';
             }
 
             $error_str = \substr($error_str, 0, -2);
 
-            $this->register_error($error_str. ' ' . $this->last_query);
+            $this->register_error($error_str . ' ' . $this->last_query);
 
             return true;
         }
-    } // catch_error    
-    
+    } // catch_error
+
     /**
      * Creates a prepared query, binds the given parameters and returns the result of the executed
      *
      * @param string $query
      * @param array $param
      * @param boolean $isSelect - return \PDOStatement, if SELECT SQL statement, otherwise int
-     * @return bool|int|\PDOStatement 
+     * @return bool|int|\PDOStatement
      */
     public function query_prepared(string $query, array $param = null, $isSelect = false)
-    { 
+    {
         $stmt = $this->dbh->prepare($query);
         $result = false;
-        if( $stmt && $stmt->execute($param) ) {
+        if ($stmt && $stmt->execute($param)) {
             $result = $stmt->rowCount();
             // Store Query Results
-            $num_rows=0;
-            while( $row = @$stmt->fetch(\PDO::FETCH_ASSOC) ) {
+            $num_rows = 0;
+            while ($row = @$stmt->fetch(\PDO::FETCH_ASSOC)) {
                 // Store results as an objects within main array
                 $this->last_result[$num_rows] = (object) $row;
                 $num_rows++;
@@ -266,12 +269,12 @@ class ez_pdo extends ezsqlModel implements DatabaseInterface
      * @param bool $isSelect
      * @return bool|void
      */
-    private function processResult(string $query, $result = null, bool $isSelect = false)  
+    private function processResult(string $query, $result = null, bool $isSelect = false)
     {
         $this->shortcutUsed = false;
 
         // If there is an error then take note of it..
-        if ( $this->catch_error() ) {
+        if ($this->catch_error()) {
             return false;
         }
 
@@ -280,11 +283,11 @@ class ez_pdo extends ezsqlModel implements DatabaseInterface
 
             if (!empty($result)) {
                 $col_count = $result->columnCount();
-                for ( $i=0 ; $i < $col_count ; $i++ ) {              
+                for ($i = 0; $i < $col_count; $i++) {
                     // Start DEBUG by psc!
                     $this->col_info[$i] = new \stdClass();
                     // End DEBUG by psc
-                    if ( $meta = $result->getColumnMeta($i) ) {
+                    if ($meta = $result->getColumnMeta($i)) {
                         $this->col_info[$i]->name =  $meta['name'];
                         $this->col_info[$i]->type =  $meta['native_type'];
                         $this->col_info[$i]->max_length =  '';
@@ -296,8 +299,8 @@ class ez_pdo extends ezsqlModel implements DatabaseInterface
                 }
 
                 // Store Query Results
-                $num_rows=0;
-                while ( $row = @$result->fetch(\PDO::FETCH_ASSOC) ) {
+                $num_rows = 0;
+                while ($row = @$result->fetch(\PDO::FETCH_ASSOC)) {
                     // Store results as an objects within main array
                     $this->last_result[$num_rows] = (object) $row;
                     $num_rows++;
@@ -316,14 +319,14 @@ class ez_pdo extends ezsqlModel implements DatabaseInterface
                 $this->_affectedRows = $result;
 
             // Take note of the insert_id
-            if ( \preg_match("/^(insert|replace)\s+/i", $query) ) {
+            if (\preg_match("/^(insert|replace)\s+/i", $query)) {
                 $this->insert_id = @$this->dbh->lastInsertId();
             }
 
             // Return number of rows affected
             $this->return_val = $this->_affectedRows;
         }
-            
+
         return $this->return_val;
     }
 
@@ -334,10 +337,10 @@ class ez_pdo extends ezsqlModel implements DatabaseInterface
      * @param array $param
      * @return bool|void
      */
-    private function processQuery(string $query, array $param = null)  
-    {        
+    private function processQuery(string $query, array $param = null)
+    {
         // Query was an insert, delete, update, replace
-        if ( \preg_match("/^(insert|delete|update|replace|drop|create)\s+/i", $query) ) {
+        if (\preg_match("/^(insert|delete|update|replace|drop|create)\s+/i", $query)) {
             // Perform the query and log number of affected rows
             // Perform the query via std PDO query or PDO prepare function..
             if (!empty($param) && \is_array($param) && $this->isPrepareOn()) {
@@ -346,9 +349,8 @@ class ez_pdo extends ezsqlModel implements DatabaseInterface
             } else
                 $this->_affectedRows = $this->dbh->exec($query);
 
-            if ($this->processResult($query) === false) 
+            if ($this->processResult($query) === false)
                 return false;
-
         } else {
             // Query was an select
 
@@ -373,14 +375,14 @@ class ez_pdo extends ezsqlModel implements DatabaseInterface
      * @return object
      */
     public function query(string $query, bool $use_prepare = false)
-     {
+    {
         $param = [];
         if ($use_prepare)
             $param = $this->prepareValues();
-        
-		// check for ezQuery placeholder tag and replace tags with proper prepare tag
-		$query = \str_replace(_TAG, '?', $query);
-            
+
+        // check for ezQuery placeholder tag and replace tags with proper prepare tag
+        $query = \str_replace(_TAG, '?', $query);
+
         // For reg expressions
         $query = \str_replace("/[\n\r]/", '', \trim($query));
 
@@ -402,12 +404,12 @@ class ez_pdo extends ezsqlModel implements DatabaseInterface
         $this->timer_start($this->num_queries);
 
         // Use core file cache function
-        if ( $cache = $this->get_cache($query) ) {
+        if ($cache = $this->get_cache($query)) {
             // Keep tack of how long all queries have taken
             $this->timer_update_global($this->num_queries);
 
             // Trace all queries
-            if ( $this->use_trace_log ) {
+            if ($this->use_trace_log) {
                 $this->trace_log[] = $this->debug(false);
             }
 
@@ -415,12 +417,14 @@ class ez_pdo extends ezsqlModel implements DatabaseInterface
         }
 
         // If there is no existing database connection then try to connect
-        if ( ! isset($this->dbh) || ! $this->dbh ) {
-            $this->connect($this->database->getDsn(), 
-                $this->database->getUser(), 
-                $this->database->getPassword(), 
-                $this->database->getOptions(), 
-                $this->database->getIsFile());
+        if (!isset($this->dbh) || !$this->dbh) {
+            $this->connect(
+                $this->database->getDsn(),
+                $this->database->getUser(),
+                $this->database->getPassword(),
+                $this->database->getOptions(),
+                $this->database->getIsFile()
+            );
         }
 
         if ($this->processQuery($query, $param) === false) {
@@ -434,18 +438,17 @@ class ez_pdo extends ezsqlModel implements DatabaseInterface
         $this->store_cache($query, $this->is_insert);
 
         // If debug ALL queries
-        $this->trace || $this->debug_all ? $this->debug() : null ;
+        $this->trace || $this->debug_all ? $this->debug() : null;
 
         // Keep tack of how long all queries have taken
         $this->timer_update_global($this->num_queries);
 
         // Trace all queries
-        if ( $this->use_trace_log ) {
+        if ($this->use_trace_log) {
             $this->trace_log[] = $this->debug(false);
         }
 
         return $this->return_val;
-
     } // query
 
     /**
@@ -457,7 +460,7 @@ class ez_pdo extends ezsqlModel implements DatabaseInterface
             $this->dbh = null;
             $this->_connected = false;
         }
-     }
+    }
 
     /**
      * Reset database handle
@@ -474,7 +477,7 @@ class ez_pdo extends ezsqlModel implements DatabaseInterface
     {
         return $this->dbh;
     }
-        
+
     /**
      * Begin PDO Transaction
      */
@@ -489,7 +492,7 @@ class ez_pdo extends ezsqlModel implements DatabaseInterface
         $this->dbh->commit();
         $this->isTransactional = false;
     }
-    
+
     public function rollback()
     {
         $this->dbh->rollback();

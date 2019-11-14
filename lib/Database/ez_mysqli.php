@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace ezsql\Database;
@@ -9,16 +10,16 @@ use ezsql\ConfigInterface;
 use ezsql\DatabaseInterface;
 
 class ez_mysqli extends ezsqlModel implements DatabaseInterface
-{    
+{
     private $return_val = 0;
     private $is_insert = false;
     private $shortcutUsed = false;
     private $isTransactional = false;
 
     /**
-    * Database connection handle 
-    * @var resource
-    */
+     * Database connection handle
+     * @var resource
+     */
     private $dbh;
 
     /**
@@ -28,22 +29,22 @@ class ez_mysqli extends ezsqlModel implements DatabaseInterface
     private $result;
 
     /**
-     * Database configuration setting 
+     * Database configuration setting
      * @var ConfigInterface
      */
     private $database;
 
-    public function __construct(ConfigInterface $settings = null) 
+    public function __construct(ConfigInterface $settings = null)
     {
         if (empty($settings)) {
             throw new Exception(\MISSING_CONFIGURATION);
         }
-        
+
         parent::__construct();
         $this->database = $settings;
 
-        if (empty($GLOBALS['ez'.\MYSQLI]))
-            $GLOBALS['ez'.\MYSQLI] = $this;
+        if (empty($GLOBALS['ez' . \MYSQLI]))
+            $GLOBALS['ez' . \MYSQLI] = $this;
         \setInstance($this);
     } // __construct
 
@@ -65,13 +66,13 @@ class ez_mysqli extends ezsqlModel implements DatabaseInterface
      * @return boolean
      */
     public function quick_connect(
-        string $user = '', 
-        string $password = '', 
-        string $name = '', 
-        string $host = '', 
+        string $user = '',
+        string $password = '',
+        string $name = '',
+        string $host = '',
         $port = '',
-        string $charset = '') 
-    {
+        string $charset = ''
+    ) {
         $user = empty($user) ? $this->database->getUser() : $user;
         $password = empty($password) ? $this->database->getPassword() : $password;
         $name = empty($name) ? $this->database->getName() : $name;
@@ -79,8 +80,8 @@ class ez_mysqli extends ezsqlModel implements DatabaseInterface
         $port = empty($port) ? $this->database->getPort() : $port;
         $charset = empty($charset) ? $this->database->getCharset() : $charset;
 
-        if ( ! $this->connect($user, $password, $host, (int) $port, $charset) ) ;
-        else if ( ! $this->select($name, $charset) ) ;
+        if (!$this->connect($user, $password, $host, (int) $port, $charset));
+        else if (!$this->select($name, $charset));
 
         return $this->_connected;
     } // quick_connect
@@ -101,8 +102,8 @@ class ez_mysqli extends ezsqlModel implements DatabaseInterface
         string $password = '',
         string $host = '',
         $port = '',
-        string $charset = '') 
-    {
+        string $charset = ''
+    ) {
         $this->_connected = false;
 
         $user = empty($user) ? $this->database->getUser() : $user;
@@ -112,7 +113,7 @@ class ez_mysqli extends ezsqlModel implements DatabaseInterface
         $charset = empty($charset) ? $this->database->getCharset() : $charset;
 
         // Try to establish the server database handle
-        if ( ! $this->dbh = \mysqli_connect($host, $user, $password, $this->database->getName(),  (int) $port) ) {
+        if (!$this->dbh = \mysqli_connect($host, $user, $password, $this->database->getName(),  (int) $port)) {
             $this->register_error(\FAILED_CONNECTION . ' in ' . __FILE__ . ' on line ' . __LINE__);
         } else {
             \mysqli_set_charset($this->dbh, $charset);
@@ -129,35 +130,35 @@ class ez_mysqli extends ezsqlModel implements DatabaseInterface
      * @param string $charset Encoding of the database
      * @return boolean
      */
-    public function select($name = '', $charset = '') 
+    public function select($name = '', $charset = '')
     {
         $this->_connected = false;
         $name = empty($name) ? $this->database->getName() : $name;
-        if ( ! $this->dbh ) {
+        if (!$this->dbh) {
             // Must have an active database connection
             $this->register_error(\FAILED_CONNECTION . ' in ' . __FILE__ . ' on line ' . __LINE__);
-        } elseif ( !\mysqli_select_db($this->dbh, $name) ) {
+        } elseif (!\mysqli_select_db($this->dbh, $name)) {
             // Try to connect to the database
             // Try to get error supplied by mysql if not use our own
-            if ( !$str = \mysqli_error($this->dbh)) {
+            if (!$str = \mysqli_error($this->dbh)) {
                 $str = 'Unexpected error while trying to select database';
             }
-            $this->register_error($str . ' in ' .__FILE__ . ' on line ' . __LINE__);
+            $this->register_error($str . ' in ' . __FILE__ . ' on line ' . __LINE__);
         } else {
             $this->database->setName($name);
-            if ( $charset == '') {
+            if ($charset == '') {
                 $charset = $this->database->getCharset();
             }
 
-            if ( $charset != '' ) {
+            if ($charset != '') {
                 $encoding = \strtolower(\str_replace('-', '', $charset));
                 $charsetArray = array();
                 $recordSet = \mysqli_query($this->dbh, 'SHOW CHARACTER SET');
-                while ( $row = \mysqli_fetch_array($recordSet, \MYSQLI_ASSOC) ) {
-                        $charsetArray[] = $row['Charset'];
+                while ($row = \mysqli_fetch_array($recordSet, \MYSQLI_ASSOC)) {
+                    $charsetArray[] = $row['Charset'];
                 }
 
-                if ( \in_array($charset, $charsetArray) ) {
+                if (\in_array($charset, $charsetArray)) {
                     \mysqli_query($this->dbh, 'SET NAMES \'' . $encoding . '\'');
                 }
             }
@@ -174,7 +175,7 @@ class ez_mysqli extends ezsqlModel implements DatabaseInterface
      * @param string $str
      * @return string
      */
-    public function escape(string $str) 
+    public function escape(string $str)
     {
         return \mysqli_real_escape_string($this->dbh, \stripslashes($str));
     } // escape
@@ -185,85 +186,86 @@ class ez_mysqli extends ezsqlModel implements DatabaseInterface
      *
      * @return string
      */
-    public function sysDate() {
+    public function sysDate()
+    {
         return 'NOW()';
     }
-    
+
     /**
-     * Helper fetches rows from a prepared result set 
-     * @param \mysqli_stmt $stmt 
+     * Helper fetches rows from a prepared result set
+     * @param \mysqli_stmt $stmt
      * @param string $query
      * @return bool|\mysqli_result
      */
-    private function fetch_prepared_result(&$stmt, $query) 
-    {   
+    private function fetch_prepared_result(&$stmt, $query)
+    {
         if ($stmt instanceof \mysqli_stmt) {
-            $stmt->store_result();       
+            $stmt->store_result();
             $variables = array();
             $is_insert = false;
             $col_info = array();
-            if ( \preg_match("/^(insert|delete|update|replace)\s+/i", $query) ) {
+            if (\preg_match("/^(insert|delete|update|replace)\s+/i", $query)) {
                 $this->_affectedRows = \mysqli_stmt_affected_rows($stmt);
 
                 // Take note of the insert_id
-                if ( \preg_match("/^(insert|replace)\s+/i", $query) ){
+                if (\preg_match("/^(insert|replace)\s+/i", $query)) {
                     $this->insert_id = $stmt->insert_id;
                 }
             } else {
                 $this->_affectedRows = $stmt->num_rows;
                 $meta = $stmt->result_metadata();
-       
+
                 $x = 0;
                 // Take note of column info
-                while($field = $meta->fetch_field()) {
+                while ($field = $meta->fetch_field()) {
                     $col_info[$field->name] = "";
                     $variables[$field->name] = &$col_info[$field->name];
                     $this->col_info[$x] = $field;
                     $x++;
                 }
-                
+
                 // Binds variables to a prepared statement for result storage
                 \call_user_func_array([$stmt, 'bind_result'], $variables);
-       
+
                 $i = 0;
                 // Store Query Results
-                while($stmt->fetch()) {
-                    // Store results as an objects within main array                    
+                while ($stmt->fetch()) {
+                    // Store results as an objects within main array
                     $resultObject = new \stdClass();
-                    foreach($variables as $key => $value) {
+                    foreach ($variables as $key => $value) {
                         $resultObject->$key = $value;
-                    } 
+                    }
                     $this->last_result[$i] = $resultObject;
                     $i++;
                 }
             }
-            
+
             // If there is an error then take note of it..
-            if ( $str = $stmt->error ) {
+            if ($str = $stmt->error) {
                 $is_insert = true;
                 $this->register_error($str);
-                
+
                 // If debug ALL queries
-                $this->trace || $this->debug_all ? $this->debug() : null ;
+                $this->trace || $this->debug_all ? $this->debug() : null;
                 return false;
             }
-               
+
             // Return number of rows affected
             $return_val = $this->_affectedRows;
-            
+
             // disk caching of queries
             $this->store_cache($query, $is_insert);
 
             // If debug ALL queries
-            $this->trace || $this->debug_all ? $this->debug() : null ;
-            
+            $this->trace || $this->debug_all ? $this->debug() : null;
+
             return $return_val;
         }
 
         return false;
     }
 
-	/**
+    /**
      * Creates a prepared query, binds the given parameters and returns the result of the executed
      * {@link mysqli_stmt}.
      * @param string $query
@@ -281,7 +283,8 @@ class ez_mysqli extends ezsqlModel implements DatabaseInterface
         }
 
         $params = [];
-        $types = \array_reduce($param,
+        $types = \array_reduce(
+            $param,
             function ($string, &$arg) use (&$params) {
                 $params[] = &$arg;
                 if (\is_float($arg))
@@ -290,19 +293,20 @@ class ez_mysqli extends ezsqlModel implements DatabaseInterface
                     $string .= 'i';
                 elseif (\is_string($arg))
                     $string .= 's';
-                else    
+                else
                     $string .= 'b';
 
                 return  $string;
-            }, ''
+            },
+            ''
         );
-        
+
         \array_unshift($params, $types);
-            
+
         \call_user_func_array([$stmt, 'bind_param'], $params);
-                  
+
         $result = ($stmt->execute()) ? $this->fetch_prepared_result($stmt, $query) : false;
-        
+
         // free and closes a prepared statement
         $stmt->free_result();
         $stmt->close();
@@ -317,7 +321,7 @@ class ez_mysqli extends ezsqlModel implements DatabaseInterface
      * @param mixed $result
      * @return bool|void
      */
-    private function processQueryResult(string $query, $result = null)  
+    private function processQueryResult(string $query, $result = null)
     {
         $this->shortcutUsed = false;
 
@@ -325,30 +329,30 @@ class ez_mysqli extends ezsqlModel implements DatabaseInterface
             $this->result = $result;
 
         // If there is an error then take note of it..
-        if ( $str = \mysqli_error($this->dbh) ) {
+        if ($str = \mysqli_error($this->dbh)) {
             $this->register_error($str);
-            
+
             // If debug ALL queries
-            $this->trace || $this->debug_all ? $this->debug() : null ;
+            $this->trace || $this->debug_all ? $this->debug() : null;
             return false;
         }
 
         // Query was an insert, delete, update, replace
         $this->is_insert = false;
-        if ( \preg_match("/^(insert|delete|update|replace)\s+/i", $query) ) {
+        if (\preg_match("/^(insert|delete|update|replace)\s+/i", $query)) {
             $this->is_insert = true;
             $this->_affectedRows = \mysqli_affected_rows($this->dbh);
 
             // Take note of the insert_id
-            if ( \preg_match("/^(insert|replace)\s+/i", $query) ) {
+            if (\preg_match("/^(insert|replace)\s+/i", $query)) {
                 $this->insert_id = \mysqli_insert_id($this->dbh);
             }
 
             // Return number of rows affected
             $this->return_val = $this->_affectedRows;
         } else {
-            // Query was a select            
-            if ( !\is_numeric($this->result) && !\is_bool($this->result)) {
+            // Query was a select
+            if (!\is_numeric($this->result) && !\is_bool($this->result)) {
 
                 // Take note of column info
                 $i = 0;
@@ -359,7 +363,7 @@ class ez_mysqli extends ezsqlModel implements DatabaseInterface
 
                 // Store Query Results
                 $num_rows = 0;
-                while ( $row = \mysqli_fetch_object($this->result) ) {
+                while ($row = \mysqli_fetch_object($this->result)) {
                     // Store results as an objects within main array
                     $this->last_result[$num_rows] = $row;
                     $num_rows++;
@@ -388,10 +392,10 @@ class ez_mysqli extends ezsqlModel implements DatabaseInterface
         $param = [];
         if ($use_prepare)
             $param = $this->prepareValues();
-        
-		// check for ezQuery placeholder tag and replace tags with proper prepare tag
-		$query = \str_replace(\_TAG, '?', $query);
-		
+
+        // check for ezQuery placeholder tag and replace tags with proper prepare tag
+        $query = \str_replace(\_TAG, '?', $query);
+
         // Initialize return
         $this->return_val = 0;
 
@@ -411,22 +415,22 @@ class ez_mysqli extends ezsqlModel implements DatabaseInterface
         $this->num_queries++;
 
         // Use core file cache function
-        if ( $cache = $this->get_cache($query) ) {
+        if ($cache = $this->get_cache($query)) {
             return $cache;
         }
 
         // If there is no existing database connection then try to connect
-        if ( ! isset($this->dbh) || ! $this->dbh ) {
+        if (!isset($this->dbh) || !$this->dbh) {
             $this->connect($this->database->getUser(), $this->database->getPassword(), $this->database->getHost());
             $this->select($this->database->getName());
         }
 
         // Perform the query via std mysql_query function..
-		if (!empty($param) && \is_array($param) && ($this->isPrepareOn())) {
+        if (!empty($param) && \is_array($param) && ($this->isPrepareOn())) {
             $this->shortcutUsed = true;
             return $this->query_prepared($query, $param);
         }
-        
+
         $this->result = \mysqli_query($this->dbh, $query);
 
         if ($this->processQueryResult($query) === false) {
@@ -440,17 +444,17 @@ class ez_mysqli extends ezsqlModel implements DatabaseInterface
         $this->store_cache($query, $this->is_insert);
 
         // If debug ALL queries
-        $this->trace || $this->debug_all ? $this->debug() : null ;
+        $this->trace || $this->debug_all ? $this->debug() : null;
 
         return $this->return_val;
     } // query
-	
+
     /**
      * Close the database connection
      */
-    public function disconnect() 
+    public function disconnect()
     {
-        if ( $this->dbh ) {
+        if ($this->dbh) {
             \mysqli_close($this->dbh);
             $this->_connected = false;
         }
@@ -465,7 +469,7 @@ class ez_mysqli extends ezsqlModel implements DatabaseInterface
     {
         $this->dbh = null;
     }
-    
+
     /**
      * Get connection handle
      */
@@ -479,27 +483,27 @@ class ez_mysqli extends ezsqlModel implements DatabaseInterface
      *
      * @return string
      */
-    public function getHost() 
+    public function getHost()
     {
         return $this->database->getHost();
-    } 
+    }
 
     /**
      * Returns the current database server port
      *
      * @return string
      */
-    public function getPort() 
+    public function getPort()
     {
         return $this->database->getPort();
-    } 
+    }
 
     /**
      * Returns the current connection charset
      *
      * @return string
      */
-    public function getCharset() 
+    public function getCharset()
     {
         return $this->database->getCharset();
     }
@@ -509,11 +513,11 @@ class ez_mysqli extends ezsqlModel implements DatabaseInterface
      *
      * @return int
      */
-    public function getInsertId() 
+    public function getInsertId()
     {
         return \mysqli_insert_id($this->dbh);
     } // getInsertId
-        
+
     /**
      * Begin Mysql Transaction
      */
@@ -531,7 +535,7 @@ class ez_mysqli extends ezsqlModel implements DatabaseInterface
         $this->dbh->autocommit(true);
         $this->isTransactional = false;
     }
-    
+
     public function rollback()
     {
         $this->dbh->rollBack();

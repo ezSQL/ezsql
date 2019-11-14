@@ -1,4 +1,5 @@
 <?php
+
 namespace ezsql;
 
 /**
@@ -70,7 +71,7 @@ interface ezsqlModelInterface
 {
 	/**
 	 * Get host and port from an "host:port" notation.
-	 * 
+	 *
 	 * @param string $host
 	 * @param bool $default
 	 * @return array of host and port. If port is omitted, returns $default
@@ -79,9 +80,9 @@ interface ezsqlModelInterface
 
 	/**
 	 * Store Query/SQL/DB error - over-ridden by specific DB class
-	 * 
+	 *
 	 * @param string $err_str
-	 * @param bool $displayError 
+	 * @param bool $displayError
 	 * @return bool
 	 * @throws Exception
 	 */
@@ -89,16 +90,16 @@ interface ezsqlModelInterface
 
 	/**
 	 * Turn error output to browser on.
-	 * 
-	 * - If you have not used the function `$db->hide_errors()` this function (show_errors) 
+	 *
+	 * - If you have not used the function `$db->hide_errors()` this function (show_errors)
 	 * will have no effect.
 	 */
 	public function show_errors();
 
 	/**
 	 * Turn error output to browser off.
-	 * 
-	 * Stops error output from being printed to the web client. 
+	 *
+	 * Stops error output from being printed to the web client.
 	 * - If you would like to stop error output but still be able to trap errors for debugging
 	 * or for your own error output function you can make use of the global error array $captured_errors. access by calling `$db->getCaptured_Errors()`
 	 */
@@ -111,20 +112,20 @@ interface ezsqlModelInterface
 
 	/**
 	 * Log how the query function was called
-	 * 
+	 *
 	 * @param string $query
 	 */
 	public function log_query(string $query);
 
-	/** 
+	/**
 	 * Get one variable, from one row, from the database (or previously cached results).
-	 * 
-	 * This function is very useful for evaluating query results within logic statements such as if or switch. 
-	 * - If the query generates more than one row the first row will always be used by default. 
-	 * - If the query generates more than one column the leftmost column will always be used by default. 
-	 * - Even so, the full results set will be available within the 
+	 *
+	 * This function is very useful for evaluating query results within logic statements such as if or switch.
+	 * - If the query generates more than one row the first row will always be used by default.
+	 * - If the query generates more than one column the leftmost column will always be used by default.
+	 * - Even so, the full results set will be available within the
 	 * 	array `$db->last_results` should you wish to use them.
-	 * 
+	 *
 	 * @param string $query
 	 * @param int $x - column offset
 	 * @param int $y - row offset
@@ -134,13 +135,13 @@ interface ezsqlModelInterface
 
 	/**
 	 * Get one row from the database (or previously cached results)
-	 * 
+	 *
 	 * - If the query returns more than one row and no row offset is
 	 * supplied the first row within the results set will be returned by
-	 * default. 
+	 * default.
 	 * - Even so, the full results will be cached should you wish
 	 * to use them with another ezSQL query.
-	 * 
+	 *
 	 * @param string $query
 	 * @param OBJECT|ARRAY_A|ARRAY_N $output
 	 * @param int $y - row offset
@@ -150,12 +151,12 @@ interface ezsqlModelInterface
 
 	/**
 	 * Get one column from query (or previously cached results) based on column offset
-	 * 
-	 * Extracts one column as one dimensional array based on a column 
-	 * offset. 
-	 * - If no offset is supplied the offset will default to column 0. I.E the first column. 
+	 *
+	 * Extracts one column as one dimensional array based on a column
+	 * offset.
+	 * - If no offset is supplied the offset will default to column 0. I.E the first column.
 	 * - If a null query is supplied the previous query results are used.
-	 * 
+	 *
 	 * @param string $query
 	 * @param int $x - column offset
 	 * @param bool $use_prepare - has prepare statements been activated
@@ -164,31 +165,31 @@ interface ezsqlModelInterface
 	public function get_col(string $query = null, int $x = 0, bool $use_prepare = false);
 
 	/**
-	 * Get multiple row result set from the database 
-	 * (or previously cached results), based on query and returns them as 
+	 * Get multiple row result set from the database
+	 * (or previously cached results), based on query and returns them as
 	 * a multi dimensional array.
-	 * 
+	 *
 	 * Each element of the array contains one row of results and can be
-	 * specified to be either an object, associative array or numerical 
-	 * array. 
+	 * specified to be either an object, associative array or numerical
+	 * array.
 	 * - If no results are found then the function returns `false`,
 	 * enabling you to use the function within logic statements such as if.
-	 * 
+	 *
 	 * - if setup/active, `prepareActive()` has been called, use
 	 * prepare statements in SQL transactions.
-	 * 
-	 * `Returning results as an object` is the quickest way to get and 
-	 * display results. It is also useful that you are able to put 
+	 *
+	 * `Returning results as an object` is the quickest way to get and
+	 * display results. It is also useful that you are able to put
 	 * `$object->var` syntax directly inside print statements without
 	 * having to worry about causing php parsing errors.
-	 * 
+	 *
 	 * `Returning results as an associative array` is useful if you would
 	 * like dynamic access to column names.
-	 * 
+	 *
 	 * `Returning results as a numerical array` is useful if you are using
 	 * completely dynamic queries with varying column names but still need
-	 * a way to get a handle on the results. 
-	 * 
+	 * a way to get a handle on the results.
+	 *
 	 * @param string $query
 	 * @param OBJECT|ARRAY_A|ARRAY_N $output
 	 * @param bool $use_prepare - has prepare statements been activated
@@ -198,14 +199,14 @@ interface ezsqlModelInterface
 
 	/**
 	 * Get information about one or all columns such as column name or type.
-	 * 
-	 * Returns meta information about one or all columns such as column name or type. 
+	 *
+	 * Returns meta information about one or all columns such as column name or type.
 	 * - If no information type is supplied then the default information type of name is used.
 	 * - If no column offset is supplied then a one dimensional array is returned with the
-	 * information type for ‘all columns’. 
-	 * - For access to the full meta information for all columns you can use the cached 
+	 * information type for â€˜all columnsâ€™.
+	 * - For access to the full meta information for all columns you can use the cached
 	 * variable `$db->col_info`, access by calling `$db->getCol_Info()`
-	 * 
+	 *
 	 * Available Info-Types:
 	 * mySQL
 	 * - name - column name
@@ -220,15 +221,15 @@ interface ezsqlModelInterface
 	 * - type - the type of the column
 	 * - unsigned - 1 if the column is unsigned
 	 * - zerofill - 1 if the column is zero-filled
-	 * 
+	 *
 	 * MS-SQL / Oracle / PostgresSQL
-	 * - name - column name 
+	 * - name - column name
 	 * - type - the type of the column
 	 * - length - size of column
-	 * 
+	 *
 	 * SQLite
-	 * - name - column name  
-	 * 
+	 * - name - column name
+	 *
 	 * @param string $info_type
 	 * @param int $col_offset
 	 * @return mixed
@@ -237,22 +238,22 @@ interface ezsqlModelInterface
 
 	/**
 	 * create cache directory if doesn't exists
-	 * 
+	 *
 	 * @param string $path
 	 */
 	public function create_cache(string $path = null);
 
 	/**
 	 * Store cache
-	 * 
+	 *
 	 * @param string $query
 	 * @param bool $is_insert
 	 */
 	public function store_cache(string $query, bool $is_insert);
 
 	/**
-	 * Get stored cache 
-	 * 
+	 * Get stored cache
+	 *
 	 * @param string $query
 	 * @return mixed
 	 */
@@ -261,7 +262,7 @@ interface ezsqlModelInterface
 	/**
 	 * Dumps the contents of any input variable to screen in a nicely
 	 * formatted and easy to understand way.
-	 * 
+	 *
 	 * @param mixed $mixed- any type Object, public or Array
 	 * @return string|void
 	 */
@@ -306,15 +307,15 @@ interface ezsqlModelInterface
 
 	/**
 	 * Returns the affected rows of a query
-	 * 
+	 *
 	 * @return int
 	 */
 	public function affectedRows();
 
 	/**
-     * Returns the last query result
-     * 
-     * @return array
-     */
+	 * Returns the last query result
+	 *
+	 * @return array
+	 */
 	public function queryResult();
 }

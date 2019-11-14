@@ -10,7 +10,7 @@ use ezsql\Exception\NotFoundException;
 
 /**
  * Dependency Injection Container
- * 
+ *
  * @see https://gist.github.com/MustafaMagdi/2bb27aebf6ab078b1f3e5635c0282fac
  */
 class DInjector implements ContainerInterface
@@ -21,20 +21,20 @@ class DInjector implements ContainerInterface
 	protected $instances = [];
 
 	/**
-   * Register a service with the container.
-   *
-   * @param string $abstract - className
-   * @param string $concrete - friendlyName
+	 * Register a service with the container.
+	 *
+	 * @param string $abstract - className
+	 * @param string $concrete - friendlyName
 	 */
 	public function set($abstract, $concrete = NULL)
 	{
 		if ($concrete === NULL) {
 			$concrete = $abstract;
 		}
-		
+
 		$this->instances[$abstract] = $concrete;
 	}
-	
+
 	/**
 	 * @param $abstract
 	 *
@@ -52,7 +52,7 @@ class DInjector implements ContainerInterface
 
 	/**
 	 * Auto setup, execute, or resolve any dependencies.
-	 * 
+	 *
 	 * @param $abstract
 	 * @param array $values
 	 *
@@ -72,13 +72,13 @@ class DInjector implements ContainerInterface
 	/**
 	 * Do we have dependence
 	 * @param $abstract
-   * @return bool
-   */
-  public function has($abstract): bool
-  {
-    return isset($this->instances[$abstract]);
+	 * @return bool
+	 */
+	public function has($abstract): bool
+	{
+		return isset($this->instances[$abstract]);
 	}
-	
+
 	/**
 	 * resolve single dependence
 	 *
@@ -134,23 +134,23 @@ class DInjector implements ContainerInterface
 					// check if the constructor parameter name exists as a key in the values array
 					if (\array_key_exists($parameter->getName(), $values)) {
 						// get default value of parameter
-						$dependencies[] = $values[$parameter->getName()];			  
+						$dependencies[] = $values[$parameter->getName()];
 					} else {
 						// check if default value for a parameter is available
 						if ($parameter->isDefaultValueAvailable()) {
 							// get default value of parameter
-							$dependencies[] = $parameter->getDefaultValue();			  
+							$dependencies[] = $parameter->getDefaultValue();
 						} else {
 							throw new ContainerException("Can not resolve class dependency {$parameter->name}");
 						}
 					}
 				} else {
 					// get dependency resolved
-					$dependencies[] = $this->autoWire($dependency->name, $values);			  
+					$dependencies[] = $this->autoWire($dependency->name, $values);
 				}
 			}
-	}
+		}
 
-	return $dependencies;
+		return $dependencies;
 	}
 }
