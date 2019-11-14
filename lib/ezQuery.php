@@ -206,8 +206,8 @@ class ezQuery implements ezQueryInterface
         string $leftColumn = null,
         string $rightColumn = null,
         string $tableAs = null,
-        $condition = \EQ)
-    {
+        $condition = \EQ
+    ) {
         return $this->joining(
             'LEFT',
             $leftTable,
@@ -258,29 +258,30 @@ class ezQuery implements ezQueryInterface
     }
 
     /**
-    * For multiple select joins, combine rows from tables where `on` condition is met
-    *
-    * - Will perform an equal on tables by left column key,
-    *       left column key and left table, left column key and right table,
-    *           if `rightColumn` is null.
-    *
-    * - Will perform an equal on tables by,
-    *       left column key and left table, right column key and right table,
-    *           if `rightColumn` not null, and `$condition` not changed.
-    *
-    * - Will perform the `condition` on passed in arguments, for left column, and right column.
-    *           if `$condition`,  is in the array
-    *
-    * @param string $type - Either `INNER`, `LEFT`, `RIGHT`, `FULL`
-    * @param string $leftTable -
-    * @param string $rightTable -
-    *
-    * @param string $leftColumn -
-    * @param string $rightColumn -
-    *
-    * @param string $condition -
-    *
-    * @return bool|string JOIN sql statement, false for error
+     * For multiple select joins, combine rows from tables where `on` condition is met
+     *
+     * - Will perform an equal on tables by left column key,
+     *       left column key and left table, left column key and right table,
+     *           if `rightColumn` is null.
+     *
+     * - Will perform an equal on tables by,
+     *       left column key and left table, right column key and right table,
+     *           if `rightColumn` not null, and `$condition` not changed.
+     *
+     * - Will perform the `condition` on passed in arguments, for left column, and right column.
+     *           if `$condition`,  is in the array
+     *
+     * @param string $type - Either `INNER`, `LEFT`, `RIGHT`, `FULL`
+     * @param string $leftTable -
+     * @param string $rightTable -
+     *
+     * @param string $leftColumn -
+     * @param string $rightColumn -
+     * @param string $tableAs -
+     *
+     * @param string $condition -
+     *
+     * @return bool|string JOIN sql statement, false for error
     */
     private function joining(
         String $type = \_INNER,
@@ -291,10 +292,12 @@ class ezQuery implements ezQueryInterface
         string $tableAs = null,
         $condition = \EQ
     ) {
-        if (!\in_array($type, \_JOINERS)
+        if (
+            !\in_array($type, \_JOINERS)
             || !\in_array($condition, \_BOOLEAN)
             || empty($leftTable)
-            || empty($rightTable) || empty($leftColumn)
+            || empty($rightTable)
+            || empty($leftColumn)
         ) {
             return false;
         }
@@ -303,13 +306,13 @@ class ezQuery implements ezQueryInterface
             $tableAs = $rightTable;
 
         if (\is_string($leftColumn) && empty($rightColumn))
-            $onCondition = ' ON '.$leftTable.'.'.$leftColumn.' = '.$tableAs.'.'.$leftColumn;
+            $onCondition = ' ON ' . $leftTable . '.' . $leftColumn . ' ' . $condition . ' ' . $tableAs . '.' . $leftColumn;
         elseif ($condition !== \EQ)
-            $onCondition = ' ON '.$leftTable.'.'.$leftColumn." $condition ".$tableAs.'.'.$rightColumn;
+            $onCondition = ' ON ' . $leftTable . '.' . $leftColumn . ' ' . $condition . ' ' . $tableAs . '.' . $rightColumn;
         else
-            $onCondition = ' ON '.$leftTable.'.'.$leftColumn.' = '.$tableAs.'.'.$rightColumn;
+            $onCondition = ' ON ' . $leftTable . '.' . $leftColumn . ' ' . $condition . ' ' . $tableAs . '.' . $rightColumn;
 
-        return ' '.$type.' JOIN '.$rightTable.' AS '.$tableAs.' '.$onCondition;
+        return ' ' . $type . ' JOIN ' . $rightTable . ' AS ' . $tableAs . ' ' . $onCondition;
     }
 
     public function orderBy($orderBy, $order)
