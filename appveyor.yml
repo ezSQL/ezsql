@@ -82,7 +82,6 @@ install:
     - appveyor-retry appveyor DownloadFile https://getcomposer.org/composer.phar
     - cd c:\projects\php-project-workspace
     - composer self-update
-    - composer require phpstan/phpstan "0.11.3"
 
 build_script:
   # postgres
@@ -112,4 +111,3 @@ on_success:
 test_script:
     - cd c:\projects\php-project-workspace
     - vendor\bin\phpunit --coverage-clover=coverage.xml
-    - vendor\bin\phpstan analyse lib tests --level=1
