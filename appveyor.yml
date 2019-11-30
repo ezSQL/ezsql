@@ -27,10 +27,15 @@ init:
 
 ## Install PHP and composer, and run the appropriate composer command Get the MSSQL DLL's and XDEBUG
 install:
+    # Enable Windows Update service, needed to install vcredist2015 (dependency of php)
     - IF EXIST c:\tools\php (SET PHP=0)
-    - ps: >-
-          appveyor-retry cinst --params '""/InstallDir:C:\tools\php""' --ignore-checksums -y php --version ((choco search php --exact --all-versions -r | select-string -pattern $env:php_ver_target | sort { [version]($_ -split '\|' | select -last 1) } -Descending | Select-Object -first 1) -replace '[php|]','')
-    - appveyor-retry cinst -y sqlite
+    - ps: Set-Service wuauserv -StartupType Manual
+    - choco config set cacheLocation %LOCALAPPDATA%\Temp\Chocolatey
+    - choco install -y php --version %php_ver_target%
+    - choco install -y sqlite
+    - choco install -y composer
+    - refreshenv
+    - composer install --no-interaction --no-progress --prefer-dist
     - cd c:\tools\php
     # Get the MSSQL DLL's
     - ps: >-
