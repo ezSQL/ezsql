@@ -36,6 +36,8 @@ install:
     - choco install -y composer
     - refreshenv
     - composer install --no-interaction --no-progress --prefer-dist
+    - mkdir c:\tools\php\ext
+    - cd c:\tools\php
     # Get the MSSQL DLL's
     - ps: >-
         If ($env:PHP -eq "1") {
