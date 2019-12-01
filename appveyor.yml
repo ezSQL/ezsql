@@ -54,7 +54,6 @@ install:
             Remove-Item c:\tools\php\ext* -include .zip
             cd c:\tools\php
         }
-    - IF %PHP%==1 copy php.ini-production php.ini /Y
     - IF %PHP%==1 echo date.timezone="UTC" >> php.ini
     - IF %PHP%==1 echo extension_dir=ext >> php.ini
     - IF %PHP%==1 echo extension=php_openssl.dll >> php.ini
