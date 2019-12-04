@@ -34,7 +34,6 @@ install:
     - choco install -y php --version %php_ver_target%
     - choco install -y sqlite
     - choco install -y composer
-    - refreshenv
     - composer install --no-interaction --no-progress --prefer-dist
     - mkdir c:\tools\php\ext
     - cd c:\tools\php
@@ -75,6 +74,7 @@ install:
     - IF %PHP%==1 echo extension=php_pdo_sqlite.dll >> php.ini
     - IF %PHP%==1 echo extension=php_mysqli.dll >> php.ini
     - IF %PHP%==1 echo extension=php_pdo_mysql.dll >> php.ini
+    - dir
     - IF %PHP%==1 appveyor-retry appveyor DownloadFile https://xdebug.org/files/php_xdebug-2.7.2-7.3-vc15-nts-x86_64.dll -FileName c:\tools\php\ext\php_xdebug-2.7.2-7.3-vc15-nts-x86_64.dll
     - IF %PHP%==1 echo [xdebug] >> php.ini
     - IF %PHP%==1 echo zend_extension=php_xdebug-2.7.2-7.3-vc15-nts-x86_64.dll >> php.ini
