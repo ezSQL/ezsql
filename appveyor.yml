@@ -20,7 +20,7 @@ services:
 
 ## Set up environment variables
 init:
-    - SET PATH=C:\Program Files\OpenSSL;c:\tools\php;C:\Program Files\PostgreSQL\9.4\bin\;%PATH%
+    - SET PATH=C:\Program Files\OpenSSL;c:\tools\php73;C:\Program Files\PostgreSQL\9.4\bin\;%PATH%
     - SET COMPOSER_NO_INTERACTION=1
     - SET PHP=1 # This var is connected to PHP install cache
     - SET ANSICON=121x90 (121x90)
@@ -34,24 +34,25 @@ install:
     - choco install -y php --version %php_ver_target%
     - choco install -y sqlite
     - choco install -y composer
+    - refreshenv
     - composer install --no-interaction --no-progress --prefer-dist
-    - mkdir c:\tools\php\ext
-    - cd c:\tools\php
+    - mkdir C:\tools\php73\ext
+    - cd C:\tools\php73
     # Get the MSSQL DLL's
     - ps: >-
         If ($env:PHP -eq "1") {
             $DLLVersion = "5.6.1"
-            cd c:\tools\php\ext
+            cd C:\tools\php73\ext
             $source = "http://windows.php.net/downloads/pecl/releases/sqlsrv/$($DLLVersion)/php_sqlsrv-$($DLLVersion)-$($env:php_ver_target)-nts-vc15-x64.zip"
-            $destination = "c:\tools\php\ext\php_sqlsrv-$($DLLVersion)-$($env:php_ver_target)-nts-vc15-x64.zip"
+            $destination = "C:\tools\php73\ext\php_sqlsrv-$($DLLVersion)-$($env:php_ver_target)-nts-vc15-x64.zip"
             Invoke-WebRequest $source -OutFile $destination
             7z x -y php_sqlsrv-$($DLLVersion)-$($env:php_ver_target)-nts-vc15-x64.zip > $null
             $source = "http://windows.php.net/downloads/pecl/releases/pdo_sqlsrv/$($DLLVersion)/php_pdo_sqlsrv-$($DLLVersion)-$($env:php_ver_target)-nts-vc15-x64.zip"
-            $destination = "c:\tools\php\ext\php_pdo_sqlsrv-$($DLLVersion)-$($env:php_ver_target)-nts-vc15-x64.zip"
+            $destination = "C:\tools\php73\ext\php_pdo_sqlsrv-$($DLLVersion)-$($env:php_ver_target)-nts-vc15-x64.zip"
             Invoke-WebRequest $source -OutFile $destination
             7z x -y php_pdo_sqlsrv-$($DLLVersion)-$($env:php_ver_target)-nts-vc15-x64.zip > $null
-            Remove-Item c:\tools\php\ext* -include .zip
-            cd c:\tools\php
+            Remove-Item C:\tools\php73\ext* -include .zip
+            cd C:\tools\php73
         }
     - IF %PHP%==1 echo date.timezone="UTC" >> php.ini
     - IF %PHP%==1 echo extension_dir=ext >> php.ini
@@ -74,8 +75,7 @@ install:
     - IF %PHP%==1 echo extension=php_pdo_sqlite.dll >> php.ini
     - IF %PHP%==1 echo extension=php_mysqli.dll >> php.ini
     - IF %PHP%==1 echo extension=php_pdo_mysql.dll >> php.ini
-    - dir
-    - IF %PHP%==1 appveyor-retry appveyor DownloadFile https://xdebug.org/files/php_xdebug-2.7.2-7.3-vc15-nts-x86_64.dll -FileName c:\tools\php\ext\php_xdebug-2.7.2-7.3-vc15-nts-x86_64.dll
+    - IF %PHP%==1 appveyor DownloadFile https://xdebug.org/files/php_xdebug-2.7.2-7.3-vc15-nts-x86_64.dll -FileName C:\tools\php73\ext\php_xdebug-2.7.2-7.3-vc15-nts-x86_64.dll
     - IF %PHP%==1 echo [xdebug] >> php.ini
     - IF %PHP%==1 echo zend_extension=php_xdebug-2.7.2-7.3-vc15-nts-x86_64.dll >> php.ini
     - IF %PHP%==1 echo zend.assertions=1 >> php.ini
@@ -83,8 +83,6 @@ install:
     - IF %PHP%==1 echo xdebug.remote_enable=1 >> php.ini
     - IF %PHP%==1 echo xdebug.remote_autostart=1 >> php.ini
     - IF %PHP%==1 echo xdebug.profiler_enable=off >> php.ini
-    - IF %PHP%==1 echo @php %%~dp0composer.phar %%* > composer.bat
-    - appveyor-retry appveyor DownloadFile https://getcomposer.org/composer.phar
     - cd c:\projects\php-project-workspace
     - composer self-update
 
