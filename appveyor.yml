@@ -55,8 +55,6 @@ install:
         }
     - IF %PHP%==1 echo date.timezone="UTC" >> php.ini
     - IF %PHP%==1 echo extension_dir=ext >> php.ini
-    - IF %PHP%==1 echo extension=php_openssl.dll >> php.ini
-    - IF %PHP%==1 echo extension=php_mbstring.dll >> php.ini
     - IF %PHP%==1 echo extension=php_fileinfo.dll >> php.ini
     - ps: >-
         If ($env:php_ver_target -eq "5.6") {
