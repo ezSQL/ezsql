@@ -32,7 +32,6 @@ install:
     - choco config set cacheLocation %LOCALAPPDATA%\Temp\Chocolatey
     - choco install -y php --version %php_ver_target%
     - choco install -y sqlite
-    - choco install -y postgresql --params '/Password:Password12!'
     - choco install -y composer
     - refreshenv
     - composer install --no-interaction --no-progress --prefer-dist
@@ -90,6 +89,7 @@ build_script:
   # postgres
   - SET PGUSER=postgres
   - SET PGPASSWORD=Password12!
+  - PATH=C:\Program Files\PostgreSQL\9.6\bin\;%PATH%
   - createdb ez_test
   - psql -c "CREATE USER ez_test WITH PASSWORD 'ezTest';"
   # sqlserver
