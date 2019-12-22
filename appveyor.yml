@@ -20,7 +20,6 @@ services:
 
 ## Set up environment variables
 init:
-    - SET PATH=C:\Program Files\OpenSSL;c:\tools\php73;C:\Program Files\PostgreSQL\9.4\bin\;%PATH%
     - SET COMPOSER_NO_INTERACTION=1
     - SET PHP=1 # This var is connected to PHP install cache
     - SET ANSICON=121x90 (121x90)
@@ -28,11 +27,12 @@ init:
 ## Install PHP and composer, and run the appropriate composer command Get the MSSQL DLL's and XDEBUG
 install:
     # Enable Windows Update service, needed to install vcredist2015 (dependency of php)
-    - IF EXIST c:\tools\php (SET PHP=0)
+    - IF EXIST c:\tools\php73 (SET PHP=0)
     - ps: Set-Service wuauserv -StartupType Manual
     - choco config set cacheLocation %LOCALAPPDATA%\Temp\Chocolatey
     - choco install -y php --version %php_ver_target%
     - choco install -y sqlite
+    - choco install -y postgresql --params '/Password:Password12!'
     - choco install -y composer
     - refreshenv
     - composer install --no-interaction --no-progress --prefer-dist
@@ -83,7 +83,7 @@ install:
     - IF %PHP%==1 echo xdebug.remote_autostart=1 >> php.ini
     - IF %PHP%==1 echo xdebug.profiler_enable=off >> php.ini
     - path
-    - appveyor-retry appveyor DownloadFile https://getcomposer.org/composer.phar
+    - appveyor DownloadFile https://getcomposer.org/composer.phar
     - cd c:\projects\php-project-workspace
     - composer self-update
     - composer require phpstan/phpstan "0.11.3"
