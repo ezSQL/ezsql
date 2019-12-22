@@ -51,6 +51,7 @@ install:
             Invoke-WebRequest $source -OutFile $destination
             7z x -y php_pdo_sqlsrv-$($DLLVersion)-$($env:php_ver_target)-nts-vc15-x64.zip > $null
             Remove-Item C:\tools\php73\ext* -include .zip
+            Invoke-WebRequest "https://xdebug.org/files/php_xdebug-2.7.2-7.3-vc15-nts-x86_64.dll" -OutFile "C:\tools\php73\ext\php_xdebug-2.7.2-7.3-vc15-nts-x86_64.dll"
             cd C:\tools\php73
         }
     - IF %PHP%==1 echo date.timezone="UTC" >> php.ini
@@ -74,7 +75,6 @@ install:
     - IF %PHP%==1 echo extension=php_pdo_sqlite.dll >> php.ini
     - IF %PHP%==1 echo extension=php_mysqli.dll >> php.ini
     - IF %PHP%==1 echo extension=php_pdo_mysql.dll >> php.ini
-    - IF %PHP%==1 appveyor DownloadFile https://xdebug.org/files/php_xdebug-2.7.2-7.3-vc15-nts-x86_64.dll -FileName C:\tools\php73\ext\php_xdebug-2.7.2-7.3-vc15-nts-x86_64.dll
     - IF %PHP%==1 echo [xdebug] >> php.ini
     - IF %PHP%==1 echo zend_extension=php_xdebug-2.7.2-7.3-vc15-nts-x86_64.dll >> php.ini
     - IF %PHP%==1 echo zend.assertions=1 >> php.ini
