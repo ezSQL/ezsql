@@ -82,8 +82,18 @@ install:
     - IF %PHP%==1 echo xdebug.remote_enable=1 >> php.ini
     - IF %PHP%==1 echo xdebug.remote_autostart=1 >> php.ini
     - IF %PHP%==1 echo xdebug.profiler_enable=off >> php.ini
+    - where createdb
+    - where psql
+    - where sqlcmd
+    - where mysqladmin
+    - where mysql
+    - where appveyor
+    - where appveyor-retry
+    - path
+    - appveyor-retry appveyor DownloadFile https://getcomposer.org/composer.phar
     - cd c:\projects\php-project-workspace
     - composer self-update
+    - composer require phpstan/phpstan "0.11.3"
 
 build_script:
   # postgres
