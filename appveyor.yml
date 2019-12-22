@@ -6,7 +6,7 @@ clone_folder: c:\projects\php-project-workspace
 ## Build matrix for lowest and highest possible targets
 environment:
   matrix:
-  - php_ver_target: 7.3
+  - php_ver_target: 7.3.11
   MYSQL_DATABASE: ez_test
   MYSQL_HOST: localhost
   MYSQL_USER: root
@@ -82,13 +82,6 @@ install:
     - IF %PHP%==1 echo xdebug.remote_enable=1 >> php.ini
     - IF %PHP%==1 echo xdebug.remote_autostart=1 >> php.ini
     - IF %PHP%==1 echo xdebug.profiler_enable=off >> php.ini
-    - where createdb
-    - where psql
-    - where sqlcmd
-    - where mysqladmin
-    - where mysql
-    - where appveyor
-    - where appveyor-retry
     - path
     - appveyor-retry appveyor DownloadFile https://getcomposer.org/composer.phar
     - cd c:\projects\php-project-workspace
