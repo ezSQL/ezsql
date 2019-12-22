@@ -36,7 +36,6 @@ install:
     - choco install -y composer
     - refreshenv
     - composer install --no-interaction --no-progress --prefer-dist
-    - mkdir C:\tools\php73\ext
     - cd C:\tools\php73
     # Get the MSSQL DLL's
     - ps: >-
