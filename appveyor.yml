@@ -42,14 +42,14 @@ install:
         If ($env:PHP -eq "1") {
             $DLLVersion = "5.6.1"
             cd C:\tools\php73\ext
-            $source = "http://windows.php.net/downloads/pecl/releases/sqlsrv/$($DLLVersion)/php_sqlsrv-$($DLLVersion)-$($env:php_ver_target)-nts-vc15-x64.zip"
-            $destination = "C:\tools\php73\ext\php_sqlsrv-$($DLLVersion)-$($env:php_ver_target)-nts-vc15-x64.zip"
+            $source = "http://windows.php.net/downloads/pecl/releases/sqlsrv/$($DLLVersion)/php_sqlsrv-$($DLLVersion)-7.3-nts-vc15-x64.zip"
+            $destination = "C:\tools\php73\ext\php_sqlsrv-$($DLLVersion)-7.3-nts-vc15-x64.zip"
             Invoke-WebRequest $source -OutFile $destination
-            7z x -y php_sqlsrv-$($DLLVersion)-$($env:php_ver_target)-nts-vc15-x64.zip > $null
-            $source = "http://windows.php.net/downloads/pecl/releases/pdo_sqlsrv/$($DLLVersion)/php_pdo_sqlsrv-$($DLLVersion)-$($env:php_ver_target)-nts-vc15-x64.zip"
-            $destination = "C:\tools\php73\ext\php_pdo_sqlsrv-$($DLLVersion)-$($env:php_ver_target)-nts-vc15-x64.zip"
+            7z x -y php_sqlsrv-$($DLLVersion)-7.3-nts-vc15-x64.zip > $null
+            $source = "http://windows.php.net/downloads/pecl/releases/pdo_sqlsrv/$($DLLVersion)/php_pdo_sqlsrv-$($DLLVersion)-7.3-nts-vc15-x64.zip"
+            $destination = "C:\tools\php73\ext\php_pdo_sqlsrv-$($DLLVersion)-7.3-nts-vc15-x64.zip"
             Invoke-WebRequest $source -OutFile $destination
-            7z x -y php_pdo_sqlsrv-$($DLLVersion)-$($env:php_ver_target)-nts-vc15-x64.zip > $null
+            7z x -y php_pdo_sqlsrv-$($DLLVersion)-7.3-nts-vc15-x64.zip > $null
             Remove-Item C:\tools\php73\ext* -include .zip
             Invoke-WebRequest "https://xdebug.org/files/php_xdebug-2.7.2-7.3-vc15-nts-x86_64.dll" -OutFile "C:\tools\php73\ext\php_xdebug-2.7.2-7.3-vc15-nts-x86_64.dll"
             cd C:\tools\php73
@@ -82,8 +82,6 @@ install:
     - IF %PHP%==1 echo xdebug.remote_enable=1 >> php.ini
     - IF %PHP%==1 echo xdebug.remote_autostart=1 >> php.ini
     - IF %PHP%==1 echo xdebug.profiler_enable=off >> php.ini
-    - path
-    - appveyor DownloadFile https://getcomposer.org/composer.phar
     - cd c:\projects\php-project-workspace
     - composer self-update
     - composer require phpstan/phpstan "0.11.3"
