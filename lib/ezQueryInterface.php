@@ -107,6 +107,7 @@ interface ezQueryInterface
      * @param string $rightTable -
      * @param string $leftColumn -
      * @param string $rightColumn -
+     * @param string $tableAs -
      * @param string $condition -
      *
      * @return bool|string JOIN sql statement, false for error
@@ -116,6 +117,7 @@ interface ezQueryInterface
         string $rightTable = null,
         string $leftColumn = null,
         string $rightColumn = null,
+        string $tableAs = null,
         $condition = \EQ
     );
 
@@ -139,6 +141,7 @@ interface ezQueryInterface
      * @param string $rightTable -
      * @param string $leftColumn -
      * @param string $rightColumn -
+     * @param string $tableAs -
      * @param string $condition -
      *
      * @return bool|string JOIN sql statement, false for error
@@ -148,6 +151,7 @@ interface ezQueryInterface
         string $rightTable = null,
         string $leftColumn = null,
         string $rightColumn = null,
+        string $tableAs = null,
         $condition = \EQ
     );
 
@@ -171,6 +175,7 @@ interface ezQueryInterface
      * @param string $rightTable -
      * @param string $leftColumn -
      * @param string $rightColumn -
+     * @param string $tableAs -
      * @param string $condition -
      *
      * @return bool|string JOIN sql statement, false for error
@@ -180,6 +185,7 @@ interface ezQueryInterface
         string $rightTable = null,
         string $leftColumn = null,
         string $rightColumn = null,
+        string $tableAs = null,
         $condition = \EQ
     );
 
@@ -202,6 +208,7 @@ interface ezQueryInterface
      * @param string $rightTable -
      * @param string $leftColumn -
      * @param string $rightColumn -
+     * @param string $tableAs -
      * @param string $condition -
      *
      * @return bool|string JOIN sql statement, false for error
@@ -211,6 +218,7 @@ interface ezQueryInterface
         string $rightTable = null,
         string $leftColumn = null,
         string $rightColumn = null,
+        string $tableAs = null,
         $condition = \EQ
     );
 

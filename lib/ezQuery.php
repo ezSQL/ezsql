@@ -186,6 +186,7 @@ class ezQuery implements ezQueryInterface
         string $rightTable = null,
         string $leftColumn = null,
         string $rightColumn = null,
+        string $tableAs = null,
         $condition = \EQ
     ) {
         return $this->joining(
@@ -194,6 +195,7 @@ class ezQuery implements ezQueryInterface
             $rightTable,
             $leftColumn,
             $rightColumn,
+            $tableAs,
             $condition
         );
     }
@@ -203,6 +205,7 @@ class ezQuery implements ezQueryInterface
         string $rightTable = null,
         string $leftColumn = null,
         string $rightColumn = null,
+        string $tableAs = null,
         $condition = \EQ
     ) {
         return $this->joining(
@@ -211,6 +214,7 @@ class ezQuery implements ezQueryInterface
             $rightTable,
             $leftColumn,
             $rightColumn,
+            $tableAs,
             $condition
         );
     }
@@ -220,6 +224,7 @@ class ezQuery implements ezQueryInterface
         string $rightTable = null,
         string $leftColumn = null,
         string $rightColumn = null,
+        string $tableAs = null,
         $condition = \EQ
     ) {
         return $this->joining(
@@ -228,6 +233,7 @@ class ezQuery implements ezQueryInterface
             $rightTable,
             $leftColumn,
             $rightColumn,
+            $tableAs,
             $condition
         );
     }
@@ -237,14 +243,16 @@ class ezQuery implements ezQueryInterface
         string $rightTable = null,
         string $leftColumn = null,
         string $rightColumn = null,
+        string $tableAs = null,
         $condition = \EQ
     ) {
         return $this->joining(
             'FULL',
             $leftTable,
             $rightTable,
-            $$leftColumn,
+            $leftColumn,
             $rightColumn,
+            $tableAs,
             $condition
         );
     }
@@ -269,36 +277,42 @@ class ezQuery implements ezQueryInterface
      *
      * @param string $leftColumn -
      * @param string $rightColumn -
+     * @param string $tableAs -
      *
      * @param string $condition -
      *
      * @return bool|string JOIN sql statement, false for error
-     */
+    */
     private function joining(
         String $type = \_INNER,
         string $leftTable = null,
         string $rightTable = null,
         string $leftColumn = null,
         string $rightColumn = null,
+        string $tableAs = null,
         $condition = \EQ
     ) {
         if (
             !\in_array($type, \_JOINERS)
             || !\in_array($condition, \_BOOLEAN)
             || empty($leftTable)
-            || empty($rightTable) || empty($columnFields) || empty($leftColumn)
+            || empty($rightTable)
+            || empty($leftColumn)
         ) {
             return false;
         }
 
-        if (\is_string($leftColumn) && empty($rightColumn))
-            $onCondition = ' ON ' . $leftTable . $leftColumn . ' = ' . $rightTable . $leftColumn;
-        elseif ($condition !== \EQ)
-            $onCondition = ' ON ' . $leftTable . $leftColumn . " $condition " . $rightTable . $rightColumn;
-        else
-            $onCondition = ' ON ' . $leftTable . $leftColumn . ' = ' . $rightTable . $rightColumn;
+        if (empty($tableAs))
+            $tableAs = $rightTable;
 
-        return ' ' . $type . ' JOIN ' . $rightTable . $onCondition;
+        if (\is_string($leftColumn) && empty($rightColumn))
+            $onCondition = ' ON ' . $leftTable . '.' . $leftColumn . ' = ' . $tableAs . '.' . $leftColumn;
+        elseif ($condition !== \EQ)
+            $onCondition = ' ON ' . $leftTable . '.' . $leftColumn . ' ' . $condition . ' ' . $tableAs . '.' . $rightColumn;
+        else
+            $onCondition = ' ON ' . $leftTable . '.' . $leftColumn . ' = ' . $tableAs . '.' . $rightColumn;
+
+        return ' ' . $type . ' JOIN ' . $rightTable . ' AS ' . $tableAs . ' ' . $onCondition;
     }
 
     public function orderBy($orderBy, $order)

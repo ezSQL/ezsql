@@ -370,11 +370,12 @@ if (!function_exists('ezFunctions')) {
         $rightTable = '',
         $leftColumn = null,
         $rightColumn = null,
+        $tableAs = null,
         $condition = \EQ
     ) {
         $ezQuery = \getInstance();
-        return ($ezQuery instanceof DatabaseInterface)
-            ? $ezQuery->innerJoin($leftTable, $rightTable, $leftColumn, $rightColumn, $condition)
+        return ($ezQuery instanceOf DatabaseInterface)
+            ? $ezQuery->innerJoin($leftTable, $rightTable, $leftColumn, $rightColumn, $tableAs, $condition)
             : false;
     }
 
@@ -383,11 +384,12 @@ if (!function_exists('ezFunctions')) {
         $rightTable = '',
         $leftColumn = null,
         $rightColumn = null,
+        $tableAs = null,
         $condition = \EQ
     ) {
         $ezQuery = \getInstance();
-        return ($ezQuery instanceof DatabaseInterface)
-            ? $ezQuery->leftJoin($leftTable, $rightTable, $leftColumn, $rightColumn, $condition)
+        return ($ezQuery instanceOf DatabaseInterface)
+            ? $ezQuery->leftJoin($leftTable, $rightTable, $leftColumn, $rightColumn, $tableAs, $condition)
             : false;
     }
 
@@ -396,11 +398,12 @@ if (!function_exists('ezFunctions')) {
         $rightTable = '',
         $leftColumn = null,
         $rightColumn = null,
+        $tableAs = null,
         $condition = \EQ
     ) {
         $ezQuery = \getInstance();
-        return ($ezQuery instanceof DatabaseInterface)
-            ? $ezQuery->rightJoin($leftTable, $rightTable, $leftColumn, $rightColumn, $condition)
+        return ($ezQuery instanceOf DatabaseInterface)
+            ? $ezQuery->rightJoin($leftTable, $rightTable, $leftColumn, $rightColumn, $tableAs, $condition)
             : false;
     }
 
@@ -409,11 +412,12 @@ if (!function_exists('ezFunctions')) {
         $rightTable = '',
         $leftColumn = null,
         $rightColumn = null,
+        $tableAs = null,
         $condition = \EQ
     ) {
         $ezQuery = \getInstance();
-        return ($ezQuery instanceof DatabaseInterface)
-            ? $ezQuery->fullJoin($leftTable, $rightTable, $leftColumn, $rightColumn, $condition)
+        return ($ezQuery instanceOf DatabaseInterface)
+            ? $ezQuery->fullJoin($leftTable, $rightTable, $leftColumn, $rightColumn, $tableAs, $condition)
             : false;
     }
 

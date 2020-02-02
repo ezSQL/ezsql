@@ -545,7 +545,7 @@ class mysqliTest extends EZTestCase
             )
         );
 
-        $this->assertContains('WHERE where_test BETWEEN \'testing 1\' AND \'testing 2\' AND test_null IS NULL', $expect);
+        $this->assertStringContainsString('WHERE where_test BETWEEN \'testing 1\' AND \'testing 2\' AND test_null IS NULL', $expect);
 
         $this->assertFalse(where(
             array('where_test', 'bad', 'testing 1', 'or'),
@@ -558,7 +558,7 @@ class mysqliTest extends EZTestCase
             like('test_null', 'null')
         );
 
-        $this->assertContains('WHERE where_test BETWEEN ' . _TAG . ' AND ' . _TAG . ' AND test_null IS NULL', $expect);
+        $this->assertStringContainsString('WHERE where_test BETWEEN ' . _TAG . ' AND ' . _TAG . ' AND test_null IS NULL', $expect);
     }
 
     public function testQuery_prepared()
