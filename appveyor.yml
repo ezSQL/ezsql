@@ -6,7 +6,7 @@ clone_folder: c:\projects\php-project-workspace
 ## Build matrix for lowest and highest possible targets
 environment:
   matrix:
-  - php_ver_target: 7.3
+  - php_ver_target: 7.3.11
   MYSQL_DATABASE: ez_test
   MYSQL_HOST: localhost
   MYSQL_USER: root
@@ -20,39 +20,41 @@ services:
 
 ## Set up environment variables
 init:
-    - SET PATH=C:\Program Files\OpenSSL;c:\tools\php;C:\Program Files\PostgreSQL\9.4\bin\;%PATH%
     - SET COMPOSER_NO_INTERACTION=1
     - SET PHP=1 # This var is connected to PHP install cache
     - SET ANSICON=121x90 (121x90)
 
 ## Install PHP and composer, and run the appropriate composer command Get the MSSQL DLL's and XDEBUG
 install:
-    - IF EXIST c:\tools\php (SET PHP=0)
-    - ps: >-
-          appveyor-retry cinst --params '""/InstallDir:C:\tools\php""' --ignore-checksums -y php --version ((choco search php --exact --all-versions -r | select-string -pattern $env:php_ver_target | sort { [version]($_ -split '\|' | select -last 1) } -Descending | Select-Object -first 1) -replace '[php|]','')
-    - appveyor-retry cinst -y sqlite
-    - cd c:\tools\php
+    # Enable Windows Update service, needed to install vcredist2015 (dependency of php)
+    - IF EXIST c:\tools\php73 (SET PHP=0)
+    - ps: Set-Service wuauserv -StartupType Manual
+    - choco config set cacheLocation %LOCALAPPDATA%\Temp\Chocolatey
+    - choco install -y php --version %php_ver_target%
+    - choco install -y sqlite
+    - choco install -y composer
+    - refreshenv
+    - composer install --no-interaction --no-progress --prefer-dist
+    - cd C:\tools\php73
     # Get the MSSQL DLL's
     - ps: >-
         If ($env:PHP -eq "1") {
             $DLLVersion = "5.6.1"
-            cd c:\tools\php\ext
-            $source = "http://windows.php.net/downloads/pecl/releases/sqlsrv/$($DLLVersion)/php_sqlsrv-$($DLLVersion)-$($env:php_ver_target)-nts-vc15-x64.zip"
-            $destination = "c:\tools\php\ext\php_sqlsrv-$($DLLVersion)-$($env:php_ver_target)-nts-vc15-x64.zip"
+            cd C:\tools\php73\ext
+            $source = "http://windows.php.net/downloads/pecl/releases/sqlsrv/$($DLLVersion)/php_sqlsrv-$($DLLVersion)-7.3-nts-vc15-x64.zip"
+            $destination = "C:\tools\php73\ext\php_sqlsrv-$($DLLVersion)-7.3-nts-vc15-x64.zip"
             Invoke-WebRequest $source -OutFile $destination
-            7z x -y php_sqlsrv-$($DLLVersion)-$($env:php_ver_target)-nts-vc15-x64.zip > $null
-            $source = "http://windows.php.net/downloads/pecl/releases/pdo_sqlsrv/$($DLLVersion)/php_pdo_sqlsrv-$($DLLVersion)-$($env:php_ver_target)-nts-vc15-x64.zip"
-            $destination = "c:\tools\php\ext\php_pdo_sqlsrv-$($DLLVersion)-$($env:php_ver_target)-nts-vc15-x64.zip"
+            7z x -y php_sqlsrv-$($DLLVersion)-7.3-nts-vc15-x64.zip > $null
+            $source = "http://windows.php.net/downloads/pecl/releases/pdo_sqlsrv/$($DLLVersion)/php_pdo_sqlsrv-$($DLLVersion)-7.3-nts-vc15-x64.zip"
+            $destination = "C:\tools\php73\ext\php_pdo_sqlsrv-$($DLLVersion)-7.3-nts-vc15-x64.zip"
             Invoke-WebRequest $source -OutFile $destination
-            7z x -y php_pdo_sqlsrv-$($DLLVersion)-$($env:php_ver_target)-nts-vc15-x64.zip > $null
-            Remove-Item c:\tools\php\ext* -include .zip
-            cd c:\tools\php
+            7z x -y php_pdo_sqlsrv-$($DLLVersion)-7.3-nts-vc15-x64.zip > $null
+            Remove-Item C:\tools\php73\ext* -include .zip
+            Invoke-WebRequest "https://xdebug.org/files/php_xdebug-2.7.2-7.3-vc15-nts-x86_64.dll" -OutFile "C:\tools\php73\ext\php_xdebug-2.7.2-7.3-vc15-nts-x86_64.dll"
+            cd C:\tools\php73
         }
-    - IF %PHP%==1 copy php.ini-production php.ini /Y
     - IF %PHP%==1 echo date.timezone="UTC" >> php.ini
     - IF %PHP%==1 echo extension_dir=ext >> php.ini
-    - IF %PHP%==1 echo extension=php_openssl.dll >> php.ini
-    - IF %PHP%==1 echo extension=php_mbstring.dll >> php.ini
     - IF %PHP%==1 echo extension=php_fileinfo.dll >> php.ini
     - ps: >-
         If ($env:php_ver_target -eq "5.6") {
@@ -70,7 +72,6 @@ install:
     - IF %PHP%==1 echo extension=php_pdo_sqlite.dll >> php.ini
     - IF %PHP%==1 echo extension=php_mysqli.dll >> php.ini
     - IF %PHP%==1 echo extension=php_pdo_mysql.dll >> php.ini
-    - IF %PHP%==1 appveyor-retry appveyor DownloadFile https://xdebug.org/files/php_xdebug-2.7.2-7.3-vc15-nts-x86_64.dll -FileName c:\tools\php\ext\php_xdebug-2.7.2-7.3-vc15-nts-x86_64.dll
     - IF %PHP%==1 echo [xdebug] >> php.ini
     - IF %PHP%==1 echo zend_extension=php_xdebug-2.7.2-7.3-vc15-nts-x86_64.dll >> php.ini
     - IF %PHP%==1 echo zend.assertions=1 >> php.ini
@@ -78,17 +79,15 @@ install:
     - IF %PHP%==1 echo xdebug.remote_enable=1 >> php.ini
     - IF %PHP%==1 echo xdebug.remote_autostart=1 >> php.ini
     - IF %PHP%==1 echo xdebug.profiler_enable=off >> php.ini
-    - IF %PHP%==1 echo @php %%~dp0composer.phar %%* > composer.bat
-    - appveyor-retry appveyor DownloadFile https://getcomposer.org/composer.phar
     - cd c:\projects\php-project-workspace
     - composer self-update
-    - composer require php-coveralls/php-coveralls
-    - composer require phpstan/phpstan
+    - composer require phpstan/phpstan "0.11.3"
 
 build_script:
   # postgres
   - SET PGUSER=postgres
   - SET PGPASSWORD=Password12!
+  - PATH=C:\Program Files\PostgreSQL\9.6\bin\;%PATH%
   - createdb ez_test
   - psql -c "CREATE USER ez_test WITH PASSWORD 'ezTest';"
   # sqlserver
@@ -113,4 +112,3 @@ on_success:
 test_script:
     - cd c:\projects\php-project-workspace
     - vendor\bin\phpunit --coverage-clover=coverage.xml
-    - vendor\bin\phpstan analyse lib tests --level=1
