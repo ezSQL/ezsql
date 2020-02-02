@@ -31,7 +31,7 @@ class ezQueryTest extends EZTestCase
 
         $expect = $this->object->having(in('other_test', 'testing 1', 'testing 2', 'testing 3', 'testing 4', 'testing 5'));
 
-        $this->assertContains('HAVING', $expect);
+        $this->assertStringContainsString('HAVING', $expect);
     }
 
     public function testWhere()
@@ -41,14 +41,14 @@ class ezQueryTest extends EZTestCase
 
         $expect = $this->object->where(in('where_test', 'testing 1', 'testing 2', 'testing 3', 'testing 4', 'testing 5'));
 
-        $this->assertContains('WHERE', $expect);
-        $this->assertContains('IN', $expect);
-        $this->assertContains('(', $expect);
-        $this->assertContains('testing 2\'', $expect);
-        $this->assertContains('testing 5', $expect);
-        $this->assertContains(')', $expect);
+        $this->assertStringContainsString('WHERE', $expect);
+        $this->assertStringContainsString('IN', $expect);
+        $this->assertStringContainsString('(', $expect);
+        $this->assertStringContainsString('testing 2\'', $expect);
+        $this->assertStringContainsString('testing 5', $expect);
+        $this->assertStringContainsString(')', $expect);
 
-        $this->assertContains(
+        $this->assertStringContainsString(
             'AND',
             $this->object->where(
                 array('where_test', '=', 'testing 1'),
@@ -57,7 +57,7 @@ class ezQueryTest extends EZTestCase
         );
 
         $this->object->prepareOn();
-        $this->assertContains('__ez__', $this->object->where(eq('where_test', 'testing 1')));
+        $this->assertStringContainsString('__ez__', $this->object->where(eq('where_test', 'testing 1')));
         $this->assertFalse($this->object->where(like('where_test', 'fail')));
     }
 
