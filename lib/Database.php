@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 declare(strict_types=1);
 
@@ -17,32 +17,35 @@ class Database
     private static $factory = null;
     private static $instances = [];
 
-    private function __construct() {}
-    private function __clone() {}
-    private function __wakeup() {}
+    private function __construct()
+    { }
+    private function __clone()
+    { }
+    private function __wakeup()
+    { }
 
     /**
      * Initialize and connect a vendor database.
-     * 
+     *
      * @param mixed $vendor - SQL driver
      * @param mixed $setting - SQL connection parameters
      * @param mixed $tag - Store the instance for later use
      */
-    public static function initialize(string $vendor = null, array $setting = null, string $tag = null)
+    public static function initialize(?string $vendor = null, ?array $setting = null, ?string $tag = null)
     {
-        if (isset(self::$instances[$vendor]))
+        if (isset(self::$instances[$vendor]) && empty($setting) && empty($tag))
             return \setInstance(self::$instances[$vendor]) ? self::$instances[$vendor] : false;
-        
-        if  (empty($vendor) || empty($setting)) {
+
+        if (empty($vendor) || empty($setting)) {
             throw new \Exception(\MISSING_CONFIGURATION);
         } else {
             self::$_ts = \microtime(true);
             $key = $vendor;
             $value = \VENDOR[$key];
 
-            if (empty($GLOBALS['ez'.$key]) || !empty($tag)) {
+            if (empty($GLOBALS['ez' . $key]) || !empty($tag)) {
                 $di = new DInjector();
-                $di->set($key, $value);                
+                $di->set($key, $value);
                 $di->set('ezsql\ConfigInterface', 'ezsql\Config');
                 $instance = $di->get($key, ['driver' => $key, 'arguments' => $setting]);
                 if (!empty($tag)) {
@@ -51,8 +54,8 @@ class Database
                 }
             }
 
-            \setInstance($GLOBALS['ez'.$key]);
-            return $GLOBALS['ez'.$key];
+            \setInstance($GLOBALS['ez' . $key]);
+            return $GLOBALS['ez' . $key];
         }
     }
 

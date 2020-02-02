@@ -5,6 +5,7 @@
 [![codecov](https://codecov.io/gh/ezSQL/ezSQL/branch/master/graph/badge.svg)](https://codecov.io/gh/ezSQL/ezSQL)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/aad1f6aaaaa14f60933e75615da900b8)](https://www.codacy.com/app/techno-express/ezsql?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=ezSQL/ezsql&amp;utm_campaign=Badge_Grade)
 [![Maintainability](https://api.codeclimate.com/v1/badges/6f6107f25e9de7bf4272/maintainability)](https://codeclimate.com/github/ezSQL/ezsql/maintainability)
+[![Total Downloads](https://poser.pugx.org/jv2222/ezsql/downloads)](https://packagist.org/packages/jv2222/ezsql)
 
 ***A class to make it very easy to deal with database connections.***
 
@@ -87,16 +88,16 @@ create('profile',
 ---
 
     innerJoin(string $leftTable = null, string $rightTable = null,
-        string $leftColumn = null, string $rightColumn = null, $condition = EQ);
+        string $leftColumn = null, string $rightColumn = null, string $tableAs = null, $condition = EQ);
 
     leftJoin(string $leftTable = null, string $rightTable = null,
-        string $leftColumn = null, string $rightColumn = null, $condition = EQ);
+        string $leftColumn = null, string $rightColumn = null, string $tableAs = null, $condition = EQ);
 
     rightJoin(string $leftTable = null, string $rightTable = null,
-        string $leftColumn = null, string $rightColumn = null, $condition = EQ);
+        string $leftColumn = null, string $rightColumn = null, string $tableAs = null, $condition = EQ);
 
     fullJoin(string $leftTable = null, string $rightTable = null,
-        string $leftColumn = null, string $rightColumn = null, $condition = EQ);
+        string $leftColumn = null, string $rightColumn = null, string $tableAs = null, $condition = EQ);
 ---
 
 ```php
@@ -178,7 +179,7 @@ foreach ($result as $row) {
 $result = $db->selecting('profile', 'name, email',
     // Conditionals can also be called, stacked with other functions like:
     //  innerJoin(), leftJoin(), rightJoin(), fullJoin()
-    //      as (leftTable, rightTable, leftColumn, rightColumn, equal condition),
+    //      as (leftTable, rightTable, leftColumn, rightColumn, tableAs, equal condition),
     //  where( eq( columns, values, _AND ), like( columns, _d ) ),
     //  groupBy( columns ),
     //  having( between( columns, values1, values2 ) ),

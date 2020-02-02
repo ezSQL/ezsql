@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace ezsql\Database;
@@ -16,9 +17,9 @@ class ez_sqlite3 extends ezsqlModel implements DatabaseInterface
     private $isTransactional = false;
 
     /**
-    * Database connection handle 
-    * @var resource
-    */
+     * Database connection handle
+     * @var resource
+     */
     private $dbh;
 
     /**
@@ -38,19 +39,19 @@ class ez_sqlite3 extends ezsqlModel implements DatabaseInterface
      *  same time as initializing the ez_sqlite3 class
      */
     public function __construct(ConfigInterface $settings = null)
-    {        
+    {
         if (empty($settings)) {
             throw new Exception(\MISSING_CONFIGURATION);
         }
-        
+
         parent::__construct();
         $this->database = $settings;
 
         // Turn on track errors
         ini_set('track_errors', '1');
 
-        if (!isset($GLOBALS['ez'.\SQLITE3]))
-            $GLOBALS['ez'.\SQLITE3] = $this;
+        if (!isset($GLOBALS['ez' . \SQLITE3]))
+            $GLOBALS['ez' . \SQLITE3] = $this;
         \setInstance($this);
     }
 
@@ -67,7 +68,7 @@ class ez_sqlite3 extends ezsqlModel implements DatabaseInterface
         $this->_connected = false;
 
         $path = empty($path) ? $this->database->getPath() : $path;
-        $name = empty($name) ? $this->database->getName() : $name;   
+        $name = empty($name) ? $this->database->getName() : $name;
 
         // Try to establish the server database handle
         if (!$this->dbh = @new \SQLite3($path . $name)) {
@@ -115,12 +116,18 @@ class ez_sqlite3 extends ezsqlModel implements DatabaseInterface
     public function getArgType($arg)
     {
         switch (\gettype($arg)) {
-            case 'double':return \SQLITE3_FLOAT;
-            case 'integer':return \SQLITE3_INTEGER;
-            case 'boolean':return \SQLITE3_INTEGER;
-            case 'NULL':return \SQLITE3_NULL;
-            case 'string':return \SQLITE3_TEXT;
-            case 'string':return \SQLITE3_TEXT;
+            case 'double':
+                return \SQLITE3_FLOAT;
+            case 'integer':
+                return \SQLITE3_INTEGER;
+            case 'boolean':
+                return \SQLITE3_INTEGER;
+            case 'NULL':
+                return \SQLITE3_NULL;
+            case 'string':
+                return \SQLITE3_TEXT;
+            case 'string':
+                return \SQLITE3_TEXT;
             default:
                 $type_error = 'Argument is of invalid type ' . \gettype($arg);
                 return $this->register_error($type_error);
@@ -129,7 +136,7 @@ class ez_sqlite3 extends ezsqlModel implements DatabaseInterface
 
     /**
      * Creates a prepared query, binds the given parameters and returns the result of the executed
-     * 
+     *
      * @param string $query
      * @param array $param
      * @return bool \SQLite3Result
@@ -158,11 +165,11 @@ class ez_sqlite3 extends ezsqlModel implements DatabaseInterface
             }
         }
 
-        $result = $stmt->execute();        
+        $result = $stmt->execute();
         if ($this->shortcutUsed)
             return $result;
-            
-        $this->processQueryResult($query, $result);        
+
+        $this->processQueryResult($query, $result);
         if ((\strpos($query, 'SELECT ') !== false) || (\strpos($query, 'select ') !== false))
             $this->result->finalize();
 
@@ -177,7 +184,7 @@ class ez_sqlite3 extends ezsqlModel implements DatabaseInterface
      * @param array $param
      * @return bool|void
      */
-    private function processQueryResult(string $query, $result = null)  
+    private function processQueryResult(string $query, $result = null)
     {
         $this->shortcutUsed = false;
 
@@ -267,7 +274,7 @@ class ez_sqlite3 extends ezsqlModel implements DatabaseInterface
         $this->last_query = $query;
 
         // If there is no existing database connection then try to connect
-        if ( ! isset($this->dbh) || ! $this->dbh ) {
+        if (!isset($this->dbh) || !$this->dbh) {
             $this->connect($this->database->getPath(), $this->database->getName());
         }
 
@@ -286,7 +293,7 @@ class ez_sqlite3 extends ezsqlModel implements DatabaseInterface
             return false;
         }
 
-        if (!empty($param) && \is_array($param) && $this->isPrepareOn()) 
+        if (!empty($param) && \is_array($param) && $this->isPrepareOn())
             $this->result->finalize();
 
         // If debug ALL queries
@@ -304,7 +311,7 @@ class ez_sqlite3 extends ezsqlModel implements DatabaseInterface
             $this->dbh = null;
             $this->_connected = false;
         }
-     }
+    }
 
     /**
      * Reset database handle
@@ -321,7 +328,7 @@ class ez_sqlite3 extends ezsqlModel implements DatabaseInterface
     {
         return $this->dbh;
     }
-       
+
     /**
      * Begin sqlite3 Transaction
      */

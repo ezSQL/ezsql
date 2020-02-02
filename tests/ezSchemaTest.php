@@ -5,11 +5,8 @@ namespace ezsql\Tests;
 use ezsql\ezSchema;
 use ezsql\Tests\EZTestCase;
 
-class ezSchemaTest extends EZTestCase 
-{		
-    /**
-    * @covers ezsql\ezSchema::vendor
-    */
+class ezSchemaTest extends EZTestCase
+{
     public function testVendor()
     {
         clearInstance();
@@ -18,14 +15,11 @@ class ezSchemaTest extends EZTestCase
         $this->assertFalse(column('id', INTR, 32, AUTO, PRIMARY));
     }
 
-    /**
-    * @covers ezsql\ezSchema::vendor
-    */
     public function testVendor_mysqli()
     {
         if (!extension_loaded('mysqli')) {
             $this->markTestSkipped(
-              'The MySQLi extension is not available.'
+                'The MySQLi extension is not available.'
             );
         }
 
@@ -36,40 +30,36 @@ class ezSchemaTest extends EZTestCase
         $this->assertEquals('id INT(32) AUTO_INCREMENT PRIMARY KEY, ', column('id', INTR, 32, AUTO, PRIMARY));
     }
 
-    /**
-    * @covers ezsql\ezSchema::datatype
-    */
     public function testDatatype_mysqli()
     {
         if (!extension_loaded('mysqli')) {
             $this->markTestSkipped(
-              'The MySQLi extension is not available.'
+                'The MySQLi extension is not available.'
             );
         }
 
         $db = mysqlInstance([self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME]);
-        $result = $db->create('profile',
-            'id '. ezSchema::datatype(INTR, 11, PRIMARY). ', ',
-            'name '.ezSchema::datatype(VARCHAR, 256, notNULL). ', '
+        $result = $db->create(
+            'profile',
+            'id ' . ezSchema::datatype(INTR, 11, PRIMARY) . ', ',
+            'name ' . ezSchema::datatype(VARCHAR, 256, notNULL) . ', '
         );
 
         $this->assertEquals(0, $result);
         $db->drop('profile');
     }
 
-    /**
-    * @covers ezsql\ezSchema::column
-    */
     public function testColumn()
     {
         if (!extension_loaded('mysqli')) {
             $this->markTestSkipped(
-              'The MySQLi extension is not available.'
+                'The MySQLi extension is not available.'
             );
         }
 
         $db = mysqlInstance([self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME]);
-        $result = $db->create('profile',
+        $result = $db->create(
+            'profile',
             column('id', INTR, 32, AUTO),
             column('name', CHAR, 32, notNULL),
             primary('id_pk', 'id'),
@@ -80,23 +70,21 @@ class ezSchemaTest extends EZTestCase
         $db->drop('profile');
     }
 
-    /**
-    * @covers ezsql\ezSchema::__call
-    */
     public function test__call()
     {
         if (!extension_loaded('mysqli')) {
             $this->markTestSkipped(
-              'The MySQLi extension is not available.'
+                'The MySQLi extension is not available.'
             );
         }
 
         $db = mysqlInstance([self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME]);
-        $result = $db->create('profile',
+        $result = $db->create(
+            'profile',
             column('id', INTR, 32, AUTO, PRIMARY),
-            column('name', VARCHAR, 256, notNULL), 
-            column('price', NUMERIC, 6,2), 
-            column('date', TIMESTAMP, notNULL), 
+            column('name', VARCHAR, 256, notNULL),
+            column('price', NUMERIC, 6, 2),
+            column('date', TIMESTAMP, notNULL),
             column('pics', BLOB, NULLS)
         );
 
@@ -104,14 +92,11 @@ class ezSchemaTest extends EZTestCase
         $db->drop('profile');
     }
 
-    /**
-    * @covers ezsql\ezSchema::__call
-    */
     public function test__call_Error()
     {
         if (!extension_loaded('mysqli')) {
             $this->markTestSkipped(
-              'The MySQLi extension is not available.'
+                'The MySQLi extension is not available.'
             );
         }
 
@@ -123,14 +108,11 @@ class ezSchemaTest extends EZTestCase
         $this->assertNull(column('id', 'DOS', 32));
     }
 
-    /**
-    * @covers ezsql\ezSchema::vendor
-    */
     public function testVendor_Pgsql()
     {
         if (!extension_loaded('pgsql')) {
             $this->markTestSkipped(
-              'The PostgreSQL Lib is not available.'
+                'The PostgreSQL Lib is not available.'
             );
         }
 
@@ -141,29 +123,23 @@ class ezSchemaTest extends EZTestCase
         $this->assertEquals('id SERIAL PRIMARY KEY, ', column('id', AUTO, PRIMARY));
     }
 
-    /**
-    * @covers ezsql\ezSchema::vendor
-    */
     public function testVendor_Sqlite3()
     {
         if (!extension_loaded('sqlite3')) {
             $this->markTestSkipped(
-              'The sqlite3 Lib is not available.'
+                'The sqlite3 Lib is not available.'
             );
         }
-        
+
         sqliteInstance([self::TEST_SQLITE_DB_DIR, self::TEST_SQLITE_DB]);
         $this->assertEquals(SQLITE3, getVendor());
     }
 
-    /**
-    * @covers ezsql\ezSchema::vendor
-    */
     public function testVendor_Sqlsrv()
     {
         if (!extension_loaded('sqlsrv')) {
             $this->markTestSkipped(
-              'The sqlsrv Lib is not available.'
+                'The sqlsrv Lib is not available.'
             );
         }
 
@@ -171,25 +147,19 @@ class ezSchemaTest extends EZTestCase
         $this->assertEquals(MSSQL, getVendor());
     }
 
-    /**
-    * @covers ezsql\ezSchema::vendor
-    */
     public function testVendor_Pdo()
     {
-        if ( ! \class_exists ('PDO') ) {
+        if (!\class_exists('PDO')) {
             $this->markTestSkipped(
-              'The PDO Lib is not available.'
+                'The PDO Lib is not available.'
             );
         }
 
-        $pdo_mysql = pdoInstance(['mysql:host='.self::TEST_DB_HOST.';dbname='.self::TEST_DB_NAME.';port=3306', self::TEST_DB_USER,self::TEST_DB_PASSWORD]);
+        $pdo_mysql = pdoInstance(['mysql:host=' . self::TEST_DB_HOST . ';dbname=' . self::TEST_DB_NAME . ';port=3306', self::TEST_DB_USER, self::TEST_DB_PASSWORD]);
         $pdo_mysql->connect();
         $this->assertEquals(MYSQLI, getVendor());
     }
 
-    /**
-    * @covers ezsql\ezSchema::__construct
-    */
     public function test__construct()
     {
         $this->assertNotNull(new ezSchema('test'));

@@ -33,7 +33,7 @@ abstract class EZTestCase extends \PHPUnit\Framework\TestCase
      * constant string database port
      */
     const TEST_DB_PORT = '5432';
-    
+
     /**
      * constant string path and file name of the SQLite test database
      */
@@ -41,13 +41,13 @@ abstract class EZTestCase extends \PHPUnit\Framework\TestCase
     const TEST_SQLITE_DB_DIR = './tests/sqlite/';
 
     protected $errors;
- 
-    public function errorHandler($errno, $errstr, $errfile, $errline, $errcontext) 
+
+    public function errorHandler($errno, $errstr, $errfile, $errline, $errcontext)
     {
         $this->errors[] = compact("errno", "errstr", "errfile", "errline", "errcontext");
     }
 
-    public function assertError($errstr, $errno) 
+    public function assertError($errstr, $errno)
     {
         foreach ($this->errors as $error) {
             if ($error["errstr"] === $errstr && $error["errno"] === $errno) {
@@ -75,4 +75,4 @@ abstract class EZTestCase extends \PHPUnit\Framework\TestCase
 
         return $method->invokeArgs($object, $parameters);
     }
- }
+}

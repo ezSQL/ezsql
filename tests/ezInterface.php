@@ -2,6 +2,5 @@
 
 namespace ezsql\Tests;
 
-interface ezInterface 
-{    
-}
+interface ezInterface
+{ }
