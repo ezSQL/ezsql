@@ -258,7 +258,8 @@ class ezsqlModel extends ezQuery implements ezsqlModelInterface
 		// Get rid of these
 		$this->last_result = null;
 		$this->col_info = array();
-		$this->last_query = null;
+                $this->last_query = null;
+                $this->all_func_calls = array();
 		$this->from_disk_cache = false;
 		$this->clearPrepare();
 	}
