@@ -113,11 +113,12 @@ if (!function_exists('ezFunctions')) {
      *
      * @param strings $y, - The right expression.
      * @param strings $and, - combine additional expressions with,  'AND','OR', 'NOT', 'AND NOT'.
+     * @param strings $group, - notes beginning or end of where group,  '(',')'.
      * @param strings $args - for any extras
      *
-     * function comparison($x, $operator, $y, $and=null, ...$args)
+     * function comparison($x, $operator, $y, $and=null, $group=null, ...$args)
      *  {
-     *          return array($x, $operator, $y, $and, ...$args);
+     *          return array($x, $operator, $y, $and, $group, ...$args);
      * }
      *
      * @return array
@@ -126,110 +127,110 @@ if (!function_exists('ezFunctions')) {
     /**
      * Creates an equality comparison expression with the given arguments.
      */
-    function eq($x, $y, $and = null, ...$args)
+    function eq($x, $y, $and = null, $group = null, ...$args)
     {
         $expression = array();
-        \array_push($expression, $x, \EQ, $y, $and, ...$args);
+        \array_push($expression, $x, \EQ, $y, $and, $group, ...$args);
         return $expression;
     }
 
     /**
      * Creates a non equality comparison expression with the given arguments.
      */
-    function neq($x, $y, $and = null, ...$args)
+    function neq($x, $y, $and = null, $group = null, ...$args)
     {
         $expression = array();
-        \array_push($expression, $x, \NEQ, $y, $and, ...$args);
+        \array_push($expression, $x, \NEQ, $y, $and, $group, ...$args);
         return $expression;
     }
 
     /**
      * Creates the other non equality comparison expression with the given arguments.
      */
-    function ne($x, $y, $and = null, ...$args)
+    function ne($x, $y, $and = null, $group = null, ...$args)
     {
         $expression = array();
-        \array_push($expression, $x, \NE, $y, $and, ...$args);
+        \array_push($expression, $x, \NE, $y, $and, $group, ...$args);
         return $expression;
     }
 
     /**
      * Creates a lower-than comparison expression with the given arguments.
      */
-    function lt($x, $y, $and = null, ...$args)
+    function lt($x, $y, $and = null, $group = null, ...$args)
     {
         $expression = array();
-        \array_push($expression, $x, \LT, $y, $and, ...$args);
+        \array_push($expression, $x, \LT, $y, $and, $group, ...$args);
         return $expression;
     }
 
     /**
      * Creates a lower-than-equal comparison expression with the given arguments.
      */
-    function lte($x, $y, $and = null, ...$args)
+    function lte($x, $y, $and = null, $group = null, ...$args)
     {
         $expression = array();
-        \array_push($expression, $x, \LTE, $y, $and, ...$args);
+        \array_push($expression, $x, \LTE, $y, $and, $group, ...$args);
         return $expression;
     }
 
     /**
      * Creates a greater-than comparison expression with the given arguments.
      */
-    function gt($x, $y, $and = null, ...$args)
+    function gt($x, $y, $and = null, $group = null, ...$args)
     {
         $expression = array();
-        \array_push($expression, $x, \GT, $y, $and, ...$args);
+        \array_push($expression, $x, \GT, $y, $and, $group, ...$args);
         return $expression;
     }
 
     /**
      * Creates a greater-than-equal comparison expression with the given arguments.
      */
-    function gte($x, $y, $and = null, ...$args)
+    function gte($x, $y, $and = null, $group = null, ...$args)
     {
         $expression = array();
-        \array_push($expression, $x, \GTE, $y, $and, ...$args);
+        \array_push($expression, $x, \GTE, $y, $and, $group, ...$args);
         return $expression;
     }
 
     /**
      * Creates an IS NULL expression with the given arguments.
      */
-    function isNull($x, $y = 'null', $and = null, ...$args)
+    function isNull($x, $y = 'null', $and = null, $group = null, ...$args)
     {
         $expression = array();
-        \array_push($expression, $x, \_isNULL, $y, $and, ...$args);
+        \array_push($expression, $x, \_isNULL, $y, $and, $group, ...$args);
         return $expression;
     }
 
     /**
      * Creates an IS NOT NULL expression with the given arguments.
      */
-    function isNotNull($x, $y = 'null', $and = null, ...$args)
+    function isNotNull($x, $y = 'null', $and = null, $group = null, ...$args)
     {
         $expression = array();
-        \array_push($expression, $x, \_notNULL, $y, $and, ...$args);
+        \array_push($expression, $x, \_notNULL, $y, $and, $group, ...$args);
         return $expression;
     }
 
     /**
      * Creates a LIKE() comparison expression with the given arguments.
      */
-    function like($x, $y, $and = null, ...$args)
+    function like($x, $y, $and = null, $group = null, ...$args)
     {
         $expression = array();
-        \array_push($expression, $x, \_LIKE, $y, $and, ...$args);
+        \array_push($expression, $x, \_LIKE, $y, $and, $group, ...$args);
         return $expression;
     }
 
     /**
      * Creates a NOT LIKE() comparison expression with the given arguments.
      */
-    function notLike($x, $y, $and = null, ...$args)
+    function notLike($x, $y, $and = null, $group = null, ...$args)
     {
         $expression = array();
-        \array_push($expression, $x, \_notLIKE, $y, $and, ...$args);
+        \array_push($expression, $x, \_notLIKE, $y, $and, $group, ...$args);
         return $expression;
     }
 
@@ -349,6 +350,14 @@ if (!function_exists('ezFunctions')) {
             : false;
     }
 
+    function whereGroup(...$args)
+    {
+        $ezQuery = \getInstance();
+        return ($ezQuery instanceof DatabaseInterface)
+            ? $ezQuery->whereGroup(...$args)
+            : false;
+    }
+
     function groupBy($groupBy)
     {
         $ezQuery = \getInstance();
@@ -374,7 +383,7 @@ if (!function_exists('ezFunctions')) {
         $condition = \EQ
     ) {
         $ezQuery = \getInstance();
-        return ($ezQuery instanceOf DatabaseInterface)
+        return ($ezQuery instanceof DatabaseInterface)
             ? $ezQuery->innerJoin($leftTable, $rightTable, $leftColumn, $rightColumn, $tableAs, $condition)
             : false;
     }
@@ -388,7 +397,7 @@ if (!function_exists('ezFunctions')) {
         $condition = \EQ
     ) {
         $ezQuery = \getInstance();
-        return ($ezQuery instanceOf DatabaseInterface)
+        return ($ezQuery instanceof DatabaseInterface)
             ? $ezQuery->leftJoin($leftTable, $rightTable, $leftColumn, $rightColumn, $tableAs, $condition)
             : false;
     }
@@ -402,7 +411,7 @@ if (!function_exists('ezFunctions')) {
         $condition = \EQ
     ) {
         $ezQuery = \getInstance();
-        return ($ezQuery instanceOf DatabaseInterface)
+        return ($ezQuery instanceof DatabaseInterface)
             ? $ezQuery->rightJoin($leftTable, $rightTable, $leftColumn, $rightColumn, $tableAs, $condition)
             : false;
     }
@@ -416,7 +425,7 @@ if (!function_exists('ezFunctions')) {
         $condition = \EQ
     ) {
         $ezQuery = \getInstance();
-        return ($ezQuery instanceOf DatabaseInterface)
+        return ($ezQuery instanceof DatabaseInterface)
             ? $ezQuery->fullJoin($leftTable, $rightTable, $leftColumn, $rightColumn, $tableAs, $condition)
             : false;
     }
