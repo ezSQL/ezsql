@@ -494,6 +494,19 @@ if (!function_exists('ezFunctions')) {
             : false;
     }
 
+    function flattenWhereConditions($whereConditions)
+    {
+        $whereConditionsReturn = [];
+        foreach ($whereConditions as $whereCondition) {
+            if (!empty($whereCondition[0]) && is_array($whereCondition[0])) {
+                $whereConditionsReturn = array_merge($whereConditionsReturn, flattenWhereConditions($whereCondition));
+            } else {
+                $whereConditionsReturn[] = $whereCondition;
+            }
+        }
+        return $whereConditionsReturn;
+    }
+
     function ezFunctions()
     {
         return true;
