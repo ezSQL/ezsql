@@ -216,6 +216,26 @@ class pdo_sqliteTest extends EZTestCase
         $this->assertEquals(1, $this->object->query('DROP TABLE unit_test'));
     }
 
+    public function testWhereGroup()
+    {
+        $this->assertTrue($this->object->connect('sqlite:' . self::TEST_SQLITE_DB, '', '', array(), true));
+        $this->object->query('CREATE TABLE unit_test(id integer, test_key varchar(50), active tinyint(1), PRIMARY KEY (ID))');
+        $this->object->insert('unit_test', array('id' => '1', 'test_key' => 'testing 1', 'active' => 1));
+        $this->object->insert('unit_test', array('id' => '2', 'test_key' => 'testing 2', 'active' => 0));
+        $this->object->insert('unit_test', array('id' => '3', 'test_key' => 'testing 3', 'active' => 1));
+        $this->object->insert('unit_test', array('id' => '4', 'test_key' => 'testing 4', 'active' => 1));
+
+        $result = $this->object->selecting('unit_test', '*', where(eq('active', '1'), whereGroup(like('test_key', '%1%', _OR), like('test_key', '%3%', _OR))));
+        $i = 1;
+        foreach ($result as $row) {
+            $this->assertEquals($i, $row->id);
+            $this->assertEquals('testing ' . $i, $row->test_key);
+            $i = $i + 2;
+        }
+
+        $this->assertEquals(0, $this->object->query('DROP TABLE unit_test'));
+    }
+
     public function testJoins()
     {
         $this->assertTrue($this->object->connect('sqlite:' . self::TEST_SQLITE_DB, '', '', array(), true));

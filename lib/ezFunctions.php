@@ -260,7 +260,7 @@ if (!function_exists('ezFunctions')) {
     function between($x, $y, $y2, ...$args)
     {
         $expression = array();
-        \array_push($expression, $x, \_BETWEEN, $y, $y2, \_AND, ...$args);
+        \array_push($expression, $x, \_BETWEEN, $y, $y2, null, \_AND, ...$args);
         return $expression;
     }
 
@@ -270,7 +270,7 @@ if (!function_exists('ezFunctions')) {
     function notBetween($x, $y, $y2, ...$args)
     {
         $expression = array();
-        \array_push($expression, $x, \_notBETWEEN, $y, $y2, \_AND, ...$args);
+        \array_push($expression, $x, \_notBETWEEN, $y, $y2, null, \_AND, ...$args);
         return $expression;
     }
 
