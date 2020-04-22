@@ -317,7 +317,7 @@ interface ezQueryInterface
      *   like('key/Field/Column', '_%')
      *   notLike('key/Field/Column', '_%')
      *
-     * @return mixed bool/string - WHERE SQL statement, or false on error
+     * @return array modified conditions
      */
     public function whereGroup(...$whereConditions);
 
@@ -348,7 +348,7 @@ interface ezQueryInterface
      *   between('key/Field/Column', $value, $value2)
      *   notBetween('key/Field/Column', $value, $value2)
      *
-     * @return array modified conditions
+     * @return mixed bool/string - WHERE SQL statement, or false on error
      */
     public function where(...$whereConditions);
 
