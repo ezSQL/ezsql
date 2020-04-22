@@ -412,7 +412,7 @@ class ezQuery implements ezQueryInterface
                 $combiner[] = \_AND;
                 $extra[] = null;
             } else {
-                if (isset($checkFields[0])) {
+                if (!empty($checkFields[0])) {
                     $whereKey[] = $checkFields[0];
                     $whereValue[] = (isset($checkFields[2])) ? $checkFields[2] : '';
                     $combiner[] = (isset($checkFields[3])) ? $checkFields[3] : \_AND;
