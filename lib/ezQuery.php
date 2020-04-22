@@ -393,7 +393,6 @@ class ezQuery implements ezQueryInterface
 
     private function retrieveConditions($whereConditions)
     {
-        $whereConditions = flattenWhereConditions($whereConditions);
         $whereKey = [];
         $whereValue = [];
         $operator = [];
@@ -412,7 +411,7 @@ class ezQuery implements ezQueryInterface
                 $combiner[] = \_AND;
                 $extra[] = null;
             } else {
-                if (!empty($checkFields[0])) {
+                if (isset($checkFields[0])) {
                     $whereKey[] = $checkFields[0];
                     $whereValue[] = (isset($checkFields[2])) ? $checkFields[2] : '';
                     $combiner[] = (isset($checkFields[3])) ? $checkFields[3] : \_AND;
