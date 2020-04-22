@@ -393,6 +393,7 @@ class ezQuery implements ezQueryInterface
 
     private function retrieveConditions($whereConditions)
     {
+        $whereConditions = flattenWhereConditions($whereConditions);
         $whereKey = [];
         $whereValue = [];
         $operator = [];
