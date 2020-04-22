@@ -233,7 +233,7 @@ class pdo_sqliteTest extends EZTestCase
             $i = $i + 2;
         }
 
-        $this->assertEquals(0, $this->object->query('DROP TABLE unit_test'));
+        $this->assertEquals(1, $this->object->query('DROP TABLE unit_test'));
     }
 
     public function testJoins()

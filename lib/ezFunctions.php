@@ -113,12 +113,11 @@ if (!function_exists('ezFunctions')) {
      *
      * @param strings $y, - The right expression.
      * @param strings $and, - combine additional expressions with,  'AND','OR', 'NOT', 'AND NOT'.
-     * @param strings $group, - notes beginning or end of where group,  '(',')'.
      * @param strings $args - for any extras
      *
-     * function comparison($x, $operator, $y, $and=null, $group=null, ...$args)
+     * function comparison($x, $operator, $y, $and=null, ...$args)
      *  {
-     *          return array($x, $operator, $y, $and, $group, ...$args);
+     *          return array($x, $operator, $y, $and, ...$args);
      * }
      *
      * @return array
@@ -127,110 +126,110 @@ if (!function_exists('ezFunctions')) {
     /**
      * Creates an equality comparison expression with the given arguments.
      */
-    function eq($x, $y, $and = null, $group = null, ...$args)
+    function eq($x, $y, $and = null, ...$args)
     {
         $expression = array();
-        \array_push($expression, $x, \EQ, $y, $and, $group, ...$args);
+        \array_push($expression, $x, \EQ, $y, $and, ...$args);
         return $expression;
     }
 
     /**
      * Creates a non equality comparison expression with the given arguments.
      */
-    function neq($x, $y, $and = null, $group = null, ...$args)
+    function neq($x, $y, $and = null, ...$args)
     {
         $expression = array();
-        \array_push($expression, $x, \NEQ, $y, $and, $group, ...$args);
+        \array_push($expression, $x, \NEQ, $y, $and, ...$args);
         return $expression;
     }
 
     /**
      * Creates the other non equality comparison expression with the given arguments.
      */
-    function ne($x, $y, $and = null, $group = null, ...$args)
+    function ne($x, $y, $and = null, ...$args)
     {
         $expression = array();
-        \array_push($expression, $x, \NE, $y, $and, $group, ...$args);
+        \array_push($expression, $x, \NE, $y, $and, ...$args);
         return $expression;
     }
 
     /**
      * Creates a lower-than comparison expression with the given arguments.
      */
-    function lt($x, $y, $and = null, $group = null, ...$args)
+    function lt($x, $y, $and = null, ...$args)
     {
         $expression = array();
-        \array_push($expression, $x, \LT, $y, $and, $group, ...$args);
+        \array_push($expression, $x, \LT, $y, $and, ...$args);
         return $expression;
     }
 
     /**
      * Creates a lower-than-equal comparison expression with the given arguments.
      */
-    function lte($x, $y, $and = null, $group = null, ...$args)
+    function lte($x, $y, $and = null, ...$args)
     {
         $expression = array();
-        \array_push($expression, $x, \LTE, $y, $and, $group, ...$args);
+        \array_push($expression, $x, \LTE, $y, $and, ...$args);
         return $expression;
     }
 
     /**
      * Creates a greater-than comparison expression with the given arguments.
      */
-    function gt($x, $y, $and = null, $group = null, ...$args)
+    function gt($x, $y, $and = null, ...$args)
     {
         $expression = array();
-        \array_push($expression, $x, \GT, $y, $and, $group, ...$args);
+        \array_push($expression, $x, \GT, $y, $and, ...$args);
         return $expression;
     }
 
     /**
      * Creates a greater-than-equal comparison expression with the given arguments.
      */
-    function gte($x, $y, $and = null, $group = null, ...$args)
+    function gte($x, $y, $and = null, ...$args)
     {
         $expression = array();
-        \array_push($expression, $x, \GTE, $y, $and, $group, ...$args);
+        \array_push($expression, $x, \GTE, $y, $and, ...$args);
         return $expression;
     }
 
     /**
      * Creates an IS NULL expression with the given arguments.
      */
-    function isNull($x, $y = 'null', $and = null, $group = null, ...$args)
+    function isNull($x, $y = 'null', $and = null, ...$args)
     {
         $expression = array();
-        \array_push($expression, $x, \_isNULL, $y, $and, $group, ...$args);
+        \array_push($expression, $x, \_isNULL, $y, $and, ...$args);
         return $expression;
     }
 
     /**
      * Creates an IS NOT NULL expression with the given arguments.
      */
-    function isNotNull($x, $y = 'null', $and = null, $group = null, ...$args)
+    function isNotNull($x, $y = 'null', $and = null, ...$args)
     {
         $expression = array();
-        \array_push($expression, $x, \_notNULL, $y, $and, $group, ...$args);
+        \array_push($expression, $x, \_notNULL, $y, $and, ...$args);
         return $expression;
     }
 
     /**
      * Creates a LIKE() comparison expression with the given arguments.
      */
-    function like($x, $y, $and = null, $group = null, ...$args)
+    function like($x, $y, $and = null, ...$args)
     {
         $expression = array();
-        \array_push($expression, $x, \_LIKE, $y, $and, $group, ...$args);
+        \array_push($expression, $x, \_LIKE, $y, $and, ...$args);
         return $expression;
     }
 
     /**
      * Creates a NOT LIKE() comparison expression with the given arguments.
      */
-    function notLike($x, $y, $and = null, $group = null, ...$args)
+    function notLike($x, $y, $and = null, ...$args)
     {
         $expression = array();
-        \array_push($expression, $x, \_notLIKE, $y, $and, $group, ...$args);
+        \array_push($expression, $x, \_notLIKE, $y, $and, ...$args);
         return $expression;
     }
 
@@ -260,7 +259,7 @@ if (!function_exists('ezFunctions')) {
     function between($x, $y, $y2, ...$args)
     {
         $expression = array();
-        \array_push($expression, $x, \_BETWEEN, $y, $y2, null, \_AND, ...$args);
+        \array_push($expression, $x, \_BETWEEN, $y, $y2, \_AND, ...$args);
         return $expression;
     }
 
@@ -270,7 +269,7 @@ if (!function_exists('ezFunctions')) {
     function notBetween($x, $y, $y2, ...$args)
     {
         $expression = array();
-        \array_push($expression, $x, \_notBETWEEN, $y, $y2, null, \_AND, ...$args);
+        \array_push($expression, $x, \_notBETWEEN, $y, $y2, \_AND, ...$args);
         return $expression;
     }
 
