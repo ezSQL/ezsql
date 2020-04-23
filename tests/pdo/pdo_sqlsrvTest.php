@@ -193,7 +193,7 @@ class pdo_sqlsrvTest extends EZTestCase
         }
     }
 
-    public function testWhereGroup()
+    public function testWhereGrouping()
     {
         $this->assertTrue($this->object->connect('sqlsrv:Server=' . self::TEST_DB_HOST . ';Database=' . self::TEST_DB_NAME, self::TEST_DB_USER, self::TEST_DB_PASSWORD));
         $this->object->query('CREATE TABLE unit_test(id integer, test_key varchar(50), active tinyint(1), PRIMARY KEY (ID))');
@@ -202,7 +202,7 @@ class pdo_sqlsrvTest extends EZTestCase
         $this->object->insert('unit_test', array('id' => '3', 'test_key' => 'testing 3', 'active' => 1));
         $this->object->insert('unit_test', array('id' => '4', 'test_key' => 'testing 4', 'active' => 1));
 
-        $result = $this->object->selecting('unit_test', '*', where(eq('active', '1'), whereGroup(like('test_key', '%1%', _OR), like('test_key', '%3%'))));
+        $result = $this->object->selecting('unit_test', '*', where(eq('active', '1'), grouping(like('test_key', '%1%', _OR), like('test_key', '%3%'))));
         $i = 1;
         foreach ($result as $row) {
             $this->assertEquals($i, $row->id);

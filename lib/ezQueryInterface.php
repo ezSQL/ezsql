@@ -298,10 +298,10 @@ interface ezQueryInterface
      * Helper adds WHERE grouping to the conditions
      *
      * format:
-     *   `whereGroup( comparison(x, y, and) )`
+     *   `grouping( comparison(x, y, and) )`
      *
      * example:
-     *   `whereGroup( eq(key, value, combiner ), eq(key, value, combiner ) );`
+     *   `grouping( eq(key, value, combiner ), eq(key, value, combiner ) );`
      *
      * @param array $whereConditions - In the following format:
      *
@@ -319,7 +319,7 @@ interface ezQueryInterface
      *
      * @return array modified conditions
      */
-    public function whereGroup(...$whereConditions);
+    public function grouping(...$whereConditions);
 
     /**
      * Helper returns an WHERE sql clause string.

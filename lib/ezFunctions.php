@@ -349,11 +349,11 @@ if (!function_exists('ezFunctions')) {
             : false;
     }
 
-    function whereGroup(...$args)
+    function grouping(...$args)
     {
         $ezQuery = \getInstance();
         return ($ezQuery instanceof DatabaseInterface)
-            ? $ezQuery->whereGroup(...$args)
+            ? $ezQuery->grouping(...$args)
             : false;
     }
 
@@ -491,19 +491,6 @@ if (!function_exists('ezFunctions')) {
         return ($ezQuery instanceof DatabaseInterface)
             ? $ezQuery->replace($table, $keyValue)
             : false;
-    }
-
-    function flattenWhereConditions($whereConditions)
-    {
-        $whereConditionsReturn = [];
-        foreach ($whereConditions as $whereCondition) {
-            if (!empty($whereCondition[0]) && is_array($whereCondition[0])) {
-                $whereConditionsReturn = array_merge($whereConditionsReturn, flattenWhereConditions($whereCondition));
-            } else {
-                $whereConditionsReturn[] = $whereCondition;
-            }
-        }
-        return $whereConditionsReturn;
     }
 
     function ezFunctions()

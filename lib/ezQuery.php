@@ -391,9 +391,22 @@ class ezQuery implements ezQueryInterface
         $this->whereSQL .= "$key $isCondition NULL $combine ";
     }
 
+    private function flattenWhereConditions($whereConditions)
+    {
+        $whereConditionsReturn = [];
+        foreach ($whereConditions as $whereCondition) {
+            if (!empty($whereCondition[0]) && is_array($whereCondition[0])) {
+                $whereConditionsReturn = array_merge($whereConditionsReturn, $this->flattenWhereConditions($whereCondition));
+            } else {
+                $whereConditionsReturn[] = $whereCondition;
+            }
+        }
+        return $whereConditionsReturn;
+    }
+
     private function retrieveConditions($whereConditions)
     {
-        $whereConditions = flattenWhereConditions($whereConditions);
+        $whereConditions = $this->flattenWhereConditions($whereConditions);
         $whereKey = [];
         $whereValue = [];
         $operator = [];
@@ -442,7 +455,7 @@ class ezQuery implements ezQueryInterface
         }
     }
 
-    public function whereGroup(...$whereConditions)
+    public function grouping(...$whereConditions)
     {
         if (empty($whereConditions))
             return false;
