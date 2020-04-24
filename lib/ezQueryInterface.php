@@ -295,6 +295,33 @@ interface ezQueryInterface
     public function limit($numberOf, $offset = null);
 
     /**
+     * Helper adds WHERE grouping to the conditions
+     *
+     * format:
+     *   `grouping( comparison(x, y, and) )`
+     *
+     * example:
+     *   `grouping( eq(key, value, combiner ), eq(key, value, combiner ) );`
+     *
+     * @param array $whereConditions - In the following format:
+     *
+     *   eq('key/Field/Column', $value, _AND), // combine next expression
+     *   neq('key/Field/Column', $value, _OR), // will combine next expression again
+     *   ne('key/Field/Column', $value), // the default is _AND so will combine next expression
+     *   lt('key/Field/Column', $value)
+     *   lte('key/Field/Column', $value)
+     *   gt('key/Field/Column', $value)
+     *   gte('key/Field/Column', $value)
+     *   isNull('key/Field/Column')
+     *   isNotNull('key/Field/Column')
+     *   like('key/Field/Column', '_%')
+     *   notLike('key/Field/Column', '_%')
+     *
+     * @return array modified conditions
+     */
+    public function grouping(...$whereConditions);
+
+    /**
      * Helper returns an WHERE sql clause string.
      *
      * format:
