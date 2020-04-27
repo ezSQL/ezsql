@@ -148,6 +148,15 @@ notBetween('column', $value, $value2)
 ```
 
 ```php
+// To allow simple grouping of basic $whereConditions,
+// wrap the following around a group of the above comparison
+// expressions within the where( ...$whereConditions) clause
+grouping( eq(key, value, combiner ), eq(key, value, combiner ) )
+// The above will wrap beginning and end grouping in a where statement
+// where required to break down your where clause.
+```
+
+```php
 // Supply the the whole query string, and placing '?' within
 // With the same number of arguments in an array.
 // It will determine arguments type, execute, and return results.

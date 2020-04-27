@@ -21,7 +21,7 @@
         "issues": "https://github.com/ezSQL/ezSQL/issues"
     },
     "require": {
-        "php": "^7.0",
+        "php": "^7.1",
         "psr/container": "^1.0"
     },
     "provide": {
@@ -37,7 +37,7 @@
         }
     },
     "require-dev": {
-        "phpunit/phpunit": ">5.7.0"
+        "phpunit/phpunit": "^6 || ^7 || ^8"
     },
     "autoload-dev": {
         "psr-4": {

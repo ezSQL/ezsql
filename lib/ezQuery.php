@@ -19,7 +19,8 @@ class ezQuery implements ezQueryInterface
     private $combineWith = null;
 
     public function __construct()
-    { }
+    {
+    }
 
     public static function clean($string)
     {
@@ -282,7 +283,7 @@ class ezQuery implements ezQueryInterface
      * @param string $condition -
      *
      * @return bool|string JOIN sql statement, false for error
-    */
+     */
     private function joining(
         String $type = \_INNER,
         string $leftTable = null,
@@ -341,13 +342,16 @@ class ezQuery implements ezQueryInterface
         return 'LIMIT ' . $rows . $value;
     }
 
-    private function conditions($key, $condition, $value, $combine)
+    private function conditions($key, $condition, $value, $combine, $extra)
     {
+        $groupStart = (!empty($extra) && $extra === '(') ? $extra : '';
+        $groupEnd = (!empty($extra) && $extra === ')') ? $extra : '';
+
         if ($this->isPrepareOn()) {
-            $this->whereSQL .= "$key $condition " . \_TAG . " $combine ";
+            $this->whereSQL .= "$groupStart $key $condition " . \_TAG . " $groupEnd $combine ";
             $this->addPrepare($value);
         } else
-            $this->whereSQL .= "$key $condition '" . $this->escape($value) . "' $combine ";
+            $this->whereSQL .= "$groupStart $key $condition '" . $this->escape($value) . "' $groupEnd $combine ";
     }
 
     private function conditionBetween($key, $condition, $valueOne, $valueTwo, $combine)
@@ -387,9 +391,24 @@ class ezQuery implements ezQueryInterface
         $this->whereSQL .= "$key $isCondition NULL $combine ";
     }
 
+    private function flattenWhereConditions($whereConditions)
+    {
+        $whereConditionsReturn = [];
+        foreach ($whereConditions as $whereCondition) {
+            if (!empty($whereCondition[0]) && is_array($whereCondition[0])) {
+                $whereConditionsReturn = array_merge($whereConditionsReturn, $this->flattenWhereConditions($whereCondition));
+            } else {
+                $whereConditionsReturn[] = $whereCondition;
+            }
+        }
+        return $whereConditionsReturn;
+    }
+
     private function retrieveConditions($whereConditions)
     {
-        $whereClause = [];
+        $whereConditions = $this->flattenWhereConditions($whereConditions);
+        $whereKey = [];
+        $whereValue = [];
         $operator = [];
         $extra = [];
         $combiner = [];
@@ -397,21 +416,25 @@ class ezQuery implements ezQueryInterface
             $operator[] = (isset($checkFields[1])) ? $checkFields[1] : '';
             if (empty($checkFields[1])) {
                 $this->clearPrepare();
-                return [[], [], [], []];
+                return [[], [], [], [], []];
             }
 
             if (\strtoupper($checkFields[1]) == 'IN') {
-                $whereClause[$checkFields[0]] = \array_slice((array) $checkFields, 2);
+                $whereKey[] = $checkFields[0];
+                $whereValue[] = \array_slice((array) $checkFields, 2);
                 $combiner[] = \_AND;
                 $extra[] = null;
             } else {
-                $whereClause[(isset($checkFields[0])) ? $checkFields[0] : '1'] = (isset($checkFields[2])) ? $checkFields[2] : '';
-                $combiner[] = (isset($checkFields[3])) ? $checkFields[3] : \_AND;
-                $extra[] = (isset($checkFields[4])) ? $checkFields[4] : null;
+                if (!empty($checkFields[0])) {
+                    $whereKey[] = $checkFields[0];
+                    $whereValue[] = (isset($checkFields[2])) ? $checkFields[2] : '';
+                    $combiner[] = (isset($checkFields[3])) ? $checkFields[3] : \_AND;
+                    $extra[] = (isset($checkFields[4])) ? $checkFields[4] : null;
+                }
             }
         }
 
-        return [$operator, $whereClause, $combiner, $extra];
+        return [$operator, $whereKey, $whereValue, $combiner, $extra];
     }
 
     private function processConditions($column, $condition, $value, $valueOrCombine, $extraCombine)
@@ -428,12 +451,37 @@ class ezQuery implements ezQueryInterface
         } elseif ((($condition == \_LIKE) || ($condition == \_notLIKE)) && !\preg_match('/[_%?]/', $value)) {
             return $this->clearPrepare();
         } else {
-            $this->conditions($column, $condition, $value, $valueOrCombine);
+            $this->conditions($column, $condition, $value, $valueOrCombine, $extraCombine);
         }
+    }
+
+    public function grouping(...$whereConditions)
+    {
+        if (empty($whereConditions))
+            return false;
+
+        $whereOrHaving = ($this->isWhere) ? 'WHERE' : 'HAVING';
+
+        if (\is_string($whereConditions[0]) && \strpos($whereConditions[0],  $whereOrHaving) !== false)
+            return $whereConditions[0];
+
+        $totalConditions = count($whereConditions) - 1;
+
+        if ($totalConditions > 0) {
+
+            if (!in_array('(', $whereConditions[0]))
+                $whereConditions[0][count($whereConditions[0])] = '(';
+
+            if (!in_array(')', $whereConditions[$totalConditions]))
+                $whereConditions[$totalConditions][count($whereConditions[$totalConditions])] = ')';
+        }
+
+        return $whereConditions;
     }
 
     public function where(...$whereConditions)
     {
+
         if (empty($whereConditions))
             return false;
 
@@ -445,22 +493,22 @@ class ezQuery implements ezQueryInterface
         if (\is_string($whereConditions[0]) && \strpos($whereConditions[0],  $whereOrHaving) !== false)
             return $whereConditions[0];
 
-        list($operator, $whereClause, $combiner, $extra) = $this->retrieveConditions($whereConditions);
+        list($operator, $whereKeys, $whereValues, $combiner, $extra) = $this->retrieveConditions($whereConditions);
         if (empty($operator))
             return false;
 
         $where = '1';
-        if (!isset($whereClause['1'])) {
+        if (!empty($whereKeys)) {
             $this->whereSQL = '';
             $i = 0;
-            foreach ($whereClause as $key => $val) {
+            foreach ($whereKeys as $key) {
                 $isCondition = \strtoupper($operator[$i]);
                 $combine = $combiner[$i];
                 $this->combineWith = \_AND;
                 if (\in_array(\strtoupper($combine), \_COMBINERS) || isset($extra[$i]))
                     $this->combineWith = isset($extra[$i]) ? $combine : \strtoupper($combine);
 
-                if ($this->processConditions($key, $isCondition, $val,  $this->combineWith, $extra[$i]) === false)
+                if ($this->processConditions($key, $isCondition, $whereValues[$i],  $this->combineWith, $extra[$i]) === false)
                     return false;
 
                 $i++;

@@ -349,6 +349,14 @@ if (!function_exists('ezFunctions')) {
             : false;
     }
 
+    function grouping(...$args)
+    {
+        $ezQuery = \getInstance();
+        return ($ezQuery instanceof DatabaseInterface)
+            ? $ezQuery->grouping(...$args)
+            : false;
+    }
+
     function groupBy($groupBy)
     {
         $ezQuery = \getInstance();
@@ -374,7 +382,7 @@ if (!function_exists('ezFunctions')) {
         $condition = \EQ
     ) {
         $ezQuery = \getInstance();
-        return ($ezQuery instanceOf DatabaseInterface)
+        return ($ezQuery instanceof DatabaseInterface)
             ? $ezQuery->innerJoin($leftTable, $rightTable, $leftColumn, $rightColumn, $tableAs, $condition)
             : false;
     }
@@ -388,7 +396,7 @@ if (!function_exists('ezFunctions')) {
         $condition = \EQ
     ) {
         $ezQuery = \getInstance();
-        return ($ezQuery instanceOf DatabaseInterface)
+        return ($ezQuery instanceof DatabaseInterface)
             ? $ezQuery->leftJoin($leftTable, $rightTable, $leftColumn, $rightColumn, $tableAs, $condition)
             : false;
     }
@@ -402,7 +410,7 @@ if (!function_exists('ezFunctions')) {
         $condition = \EQ
     ) {
         $ezQuery = \getInstance();
-        return ($ezQuery instanceOf DatabaseInterface)
+        return ($ezQuery instanceof DatabaseInterface)
             ? $ezQuery->rightJoin($leftTable, $rightTable, $leftColumn, $rightColumn, $tableAs, $condition)
             : false;
     }
@@ -416,7 +424,7 @@ if (!function_exists('ezFunctions')) {
         $condition = \EQ
     ) {
         $ezQuery = \getInstance();
-        return ($ezQuery instanceOf DatabaseInterface)
+        return ($ezQuery instanceof DatabaseInterface)
             ? $ezQuery->fullJoin($leftTable, $rightTable, $leftColumn, $rightColumn, $tableAs, $condition)
             : false;
     }
