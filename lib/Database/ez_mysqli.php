@@ -283,7 +283,7 @@ class ez_mysqli extends ezsqlModel implements DatabaseInterface
         }
 
         $params = [];
-        if ( !empty( $param ) && \is_array( $param )) {
+        if ( !empty( $param ) && \is_array( $param ) ) {
             $types = \array_reduce(
                 $param ,
                 function( $string , &$arg ) use ( &$params ) {
@@ -303,6 +303,7 @@ class ez_mysqli extends ezsqlModel implements DatabaseInterface
             );
 
             \array_unshift( $params , $types );
+
             \call_user_func_array( [$stmt , 'bind_param'] , $params );
         }
 
