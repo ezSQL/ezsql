@@ -611,6 +611,15 @@ class mysqliTest extends EZTestCase
             $this->assertEquals(1200.50, $row->prepare_price);
         }
 
+
+        $this->object->query_prepared('SELECT id, prepare_key, prepare_price FROM prepare_test WHERE id = 99', []);
+        $query = $this->object->queryResult();
+        foreach ($query as $row) {
+            $this->assertEquals(99, $row->id);
+            $this->assertEquals('all good', $row->prepare_key);
+            $this->assertEquals(1200.50, $row->prepare_price);
+        }
+
         $this->object->drop('prepare_test');
     }
 
