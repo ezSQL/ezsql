@@ -31,4 +31,4 @@ after_success:
 # Commands you want to run that will verify your build.
 script:
   - vendor/bin/phpunit --coverage-clover=coverage.xml
-  - vendor/bin/phpstan analyse lib tests --level=1
+#  - vendor/bin/phpstan analyse lib tests --level=1

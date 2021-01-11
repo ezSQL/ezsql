@@ -81,7 +81,7 @@ install:
     - IF %PHP%==1 echo xdebug.profiler_enable=off >> php.ini
     - cd c:\projects\php-project-workspace
     - composer self-update
-    - composer require phpstan/phpstan "0.11.3"
+    ## - composer require phpstan/phpstan "0.11.3"
 
 build_script:
   # postgres
