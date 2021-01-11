@@ -5,6 +5,7 @@ php:
   - 7.1
   - 7.2
   - 7.4
+  - 8.0
 
 env:
   - MYSQL_HOST=127.0.0.1 MYSQL_USER=root
