@@ -103,7 +103,7 @@ class ez_pgsql extends ezsqlModel implements DatabaseInterface
         $connect_string = "host=" . $host . " port=" . $port . " dbname=" . $name . " user=" . $user . " password=" . $password;
 
         // Try to establish the server database handle
-        if (!$this->dbh = \pg_connect($connect_string, true)) {
+        if (!$this->dbh = \pg_connect($connect_string, PGSQL_CONNECT_FORCE_NEW)) {
             $this->register_error(\FAILED_CONNECTION . ' in ' . __FILE__ . ' on line ' . __LINE__);
         } else {
             $this->_connected = true;
