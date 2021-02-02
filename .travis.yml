@@ -17,7 +17,7 @@ services:
 # Commands to be run before your environment runs.
 before_script:
   - composer self-update
-  - composer require phpstan/phpstan "0.11.3"
+#  - composer require phpstan/phpstan "0.11.3"
   - mysql -e 'CREATE DATABASE IF NOT EXISTS ez_test;'
   - mysql -e "CREATE USER ez_test@localhost IDENTIFIED BY 'ezTest'; GRANT ALL ON ez_test.* TO ez_test@localhost; FLUSH PRIVILEGES;"
   - psql -c 'CREATE DATABASE ez_test;' -U postgres
@@ -32,4 +32,4 @@ after_success:
 # Commands you want to run that will verify your build.
 script:
   - vendor/bin/phpunit --coverage-clover=coverage.xml
-  - vendor/bin/phpstan analyse lib tests --level=1
+#  - vendor/bin/phpstan analyse lib tests --level=1
