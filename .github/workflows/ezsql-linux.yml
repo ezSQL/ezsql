@@ -50,8 +50,8 @@ jobs:
         run: sudo systemctl start postgresql.service
       - name: Setup PostgreSql Database
         run: |
-          psql -h postgres -U postgres -c 'CREATE DATABASE ez_test;'
-          psql -h postgres -U postgres -c "CREATE USER ez_test WITH PASSWORD 'ezTest';"
+          psql -h localhost -U postgres -c 'CREATE DATABASE ez_test;'
+          psql -h localhost -U postgres -c "CREATE USER ez_test WITH PASSWORD 'ezTest';"
         env:
           # The hostname used to communicate with the PostgreSQL service container
           POSTGRES_HOST: localhost
