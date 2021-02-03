@@ -32,14 +32,14 @@ jobs:
         run: sudo systemctl start postgresql.service
       - name: Setup PostgreSql Database
         run: |
-          psql -h localhost -U postgres -w -c 'CREATE DATABASE ez_test;'
-          psql -h localhost -U postgres -w -c "CREATE USER ez_test WITH PASSWORD 'ezTest';"
+          export PGPASSWORD='root'; psql -h localhost -U postgres -c 'CREATE DATABASE ez_test;'
+          export PGPASSWORD='root'; psql -h localhost -U postgres -c "CREATE USER ez_test WITH PASSWORD 'ezTest';"
         env:
           # The hostname used to communicate with the PostgreSQL service container
           POSTGRES_HOST: localhost
           # The default PostgreSQL port
           POSTGRES_PORT: 5432
-          POSTGRES_PASSWORD: postgres
+          POSTGRES_PASSWORD: root
           POSTGRES_USER: postgres
       - name: Setup SQLServer Database
         run: |
