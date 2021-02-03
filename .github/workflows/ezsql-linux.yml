@@ -20,6 +20,7 @@ jobs:
         # Provide the password for postgres
         env:
           POSTGRES_PASSWORD: postgres
+          POSTGRES_USER: postgres
         # Set health checks to wait until postgres has started
         options: >-
           --health-cmd pg_isready
@@ -45,10 +46,12 @@ jobs:
         run: |
           mysql -uroot -h127.0.0.1 -proot -e "CREATE DATABASE IF NOT EXISTS ez_test;"
           mysql -uroot -h127.0.0.1 -proot -e "CREATE USER ez_test@localhost IDENTIFIED BY 'ezTest'; GRANT ALL ON ez_test.* TO ez_test@localhost; FLUSH PRIVILEGES;"
+      - name: Start PostgreSql
+        run: sudo systemctl start postgresql.service
       - name: Setup PostgreSql Database
         run: |
-          psql -c 'CREATE DATABASE ez_test;' -U postgres
-          psql -c "CREATE USER ez_test WITH PASSWORD 'ezTest';" -U postgres
+          psql -h postgres -U postgres -c 'CREATE DATABASE ez_test;'
+          psql -h postgres -U postgres -c "CREATE USER ez_test WITH PASSWORD 'ezTest';"
         env:
           # The hostname used to communicate with the PostgreSQL service container
           POSTGRES_HOST: localhost
