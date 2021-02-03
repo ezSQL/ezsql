@@ -25,7 +25,7 @@ jobs:
       - name: Start MySQL
         run: sudo systemctl start mysql.service
       - name: Start PostgreSql
-        run: sudo systemctl start psql.service
+        run: sudo systemctl start postgresql.service
       - name: Setup MySQL Database
         run: |
           mysql -uroot -h127.0.0.1 -proot -e "CREATE DATABASE IF NOT EXISTS ez_test;"
