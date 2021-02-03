@@ -12,24 +12,6 @@ jobs:
       matrix:
         operating-system: [ubuntu-latest]
         php-versions: ['7.1', '7.2', '7.4', '8.0']
-    services:
-      # Label used to access the service container
-      postgres:
-        # Docker Hub image
-        image: postgres
-        # Provide the password for postgres
-        env:
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_USER: postgres
-        # Set health checks to wait until postgres has started
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-        ports:
-          # Maps tcp port 5432 on service container to the host
-          - 5432:5432
 
     steps:
       - name: Checkout
@@ -50,13 +32,15 @@ jobs:
         run: sudo systemctl start postgresql.service
       - name: Setup PostgreSql Database
         run: |
-          psql -h localhost -U postgres -c 'CREATE DATABASE ez_test;'
-          psql -h localhost -U postgres -c "CREATE USER ez_test WITH PASSWORD 'ezTest';"
+          psql -h localhost -U postgres -w -c 'CREATE DATABASE ez_test;'
+          psql -h localhost -U postgres -w -c "CREATE USER ez_test WITH PASSWORD 'ezTest';"
         env:
           # The hostname used to communicate with the PostgreSQL service container
           POSTGRES_HOST: localhost
           # The default PostgreSQL port
           POSTGRES_PORT: 5432
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_USER: postgres
       - name: Setup SQLServer Database
         run: |
           # MSSQLLocalDB is the default SQL LocalDB instance
