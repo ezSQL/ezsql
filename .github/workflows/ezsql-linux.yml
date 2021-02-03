@@ -30,8 +30,9 @@ jobs:
           mysql -uroot -h127.0.0.1 -proot -e "CREATE USER ez_test@localhost IDENTIFIED BY 'ezTest'; GRANT ALL ON ez_test.* TO ez_test@localhost; FLUSH PRIVILEGES;"
       - name: Start PostgreSql
         run: |
+          export PGPASSWORD=root
           sudo systemctl start postgresql.service
-          sudo -u postgres createuser -s runner
+          sudo -u postgres createuser -P -s -e runner
       - name: Setup PostgreSql Database
         env:
           # The hostname used to communicate with the PostgreSQL service container
@@ -39,7 +40,7 @@ jobs:
           # The default PostgreSQL port
           POSTGRES_PORT: 5432
         run: |
-          export PGPASSWORD=""
+          export PGPASSWORD=root
           psql -h localhost -U runner -c 'CREATE DATABASE ez_test;'
           psql -h localhost -U runner -c "CREATE USER ez_test WITH PASSWORD 'ezTest';"
       - name: Setup SQLServer Database
