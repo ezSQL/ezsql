@@ -32,8 +32,8 @@ jobs:
           mysql -uroot -h127.0.0.1 -proot -e "CREATE USER ez_test@localhost IDENTIFIED BY 'ezTest'; GRANT ALL ON ez_test.* TO ez_test@localhost; FLUSH PRIVILEGES;"
       - name: Setup PostgreSql Database
         run: |
-          psql -c 'CREATE DATABASE ez_test;' -U postgres
-          psql -c "CREATE USER ez_test WITH PASSWORD 'ezTest';" -U postgres
+          psql -c 'CREATE DATABASE ez_test;' -U postgres -P root
+          psql -c "CREATE USER ez_test WITH PASSWORD 'ezTest';" -U postgres -P root
       - name: Setup SQLServer Database
         run: |
           # MSSQLLocalDB is the default SQL LocalDB instance
