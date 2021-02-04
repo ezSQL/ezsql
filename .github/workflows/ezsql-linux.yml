@@ -45,8 +45,8 @@ jobs:
           chmod +x "${GITHUB_WORKSPACE}/.github/install_mssql.sh"
           "${GITHUB_WORKSPACE}/.github/install_mssql.sh"
       - name: Install dependencies
-        run: composer install --no-progress
+        run: composer update
       - name: Test with phpunit
-        run: vendor/bin/phpunit --coverage-clover
+        run: vendor/bin/phpunit --coverage-clover=coverage.xml
       - name: Submit code coverage
         run: bash <(curl -s https://codecov.io/bash)
