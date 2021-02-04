@@ -16,7 +16,7 @@ class pdo_mysqlTest extends EZTestCase
     const TEST_DB_PORT = '3306';
 
     /**
-     * @var resource
+     * @var object
      */
     protected $object;
 

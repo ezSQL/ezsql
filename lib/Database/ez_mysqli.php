@@ -225,7 +225,7 @@ class ez_mysqli extends ezsqlModel implements DatabaseInterface
                 }
 
                 // Binds variables to a prepared statement for result storage
-                \call_user_func_array([$stmt, 'bind_result'], $variables);
+                \call_user_func_array([$stmt, 'bind_result'], \array_values($variables));
 
                 $i = 0;
                 // Store Query Results

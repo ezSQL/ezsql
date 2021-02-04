@@ -19,7 +19,7 @@ class ez_pdo extends ezsqlModel implements DatabaseInterface
 
     /**
      * Database connection handle
-     * @var resource
+     * @var object
      */
     private $dbh;
 
