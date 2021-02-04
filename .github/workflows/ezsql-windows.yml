@@ -24,8 +24,8 @@ jobs:
           coverage: xdebug
       - name: Setup MySQL Database
         run: |
-          mysql -uroot -h127.0.0.1 -proot -e "CREATE DATABASE IF NOT EXISTS ez_test;"
-          mysql -uroot -h127.0.0.1 -proot -e "CREATE USER ez_test@localhost IDENTIFIED BY 'ezTest'; GRANT ALL ON ez_test.* TO ez_test@localhost; FLUSH PRIVILEGES;"
+          mysql -u root -p"root" -e "CREATE DATABASE IF NOT EXISTS ez_test;"
+          mysql -u root -p"root" -e "CREATE USER ez_test@localhost IDENTIFIED BY 'ezTest'; GRANT ALL ON ez_test.* TO ez_test@localhost; FLUSH PRIVILEGES;"
       - name: Setup PostgreSql Database
         run: |
           psql -c "CREATE USER ez_test WITH PASSWORD 'ezTest';" --command="\du"
