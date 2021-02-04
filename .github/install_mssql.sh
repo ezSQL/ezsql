@@ -29,11 +29,12 @@ fi
 
 echo Adding Microsoft repositories...
 sudo curl https://packages.microsoft.com/keys/microsoft.asc | sudo apt-key add -
+sudo curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
 repoargs="$(curl https://packages.microsoft.com/config/ubuntu/18.04/mssql-server-2019.list)"
 sudo add-apt-repository "${repoargs}"
 
 echo Running apt-get update -y...
-sudo apt-get update
+sudo apt-get update -y
 
 echo Installing SQL Server...
 sudo apt-get install -y mssql-server
