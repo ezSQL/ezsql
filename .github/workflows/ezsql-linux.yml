@@ -31,17 +31,15 @@ jobs:
       - name: Start PostgreSql
         run: |
           sudo systemctl start postgresql.service
-          sudo -u postgres createuser -P -s -e runner
-      - name: Setup PostgreSql Database
-        env:
-          # The hostname used to communicate with the PostgreSQL service container
-          POSTGRES_HOST: localhost
-          # The default PostgreSQL port
-          POSTGRES_PORT: 5432
+          pg_isready
+      - name: Create additional user
         run: |
-          export PGPASSWORD=
-          psql -h localhost -U runner -c 'CREATE DATABASE ez_test;'
-          psql -h localhost -U runner -c "CREATE USER ez_test WITH PASSWORD 'ezTest';"
+          sudo -u postgres psql --command="CREATE USER ez_test PASSWORD 'ezTest'" --command="\du"
+      - name: Setup PostgreSql Database
+        run: |
+          sudo -u postgres createdb --owner=ez_test ez_test
+          export PGPASSWORD=ezTest
+          psql --username=ez_test --host=localhost --list timetable
       - name: Setup SQLServer Database
         run: |
           # MSSQLLocalDB is the default SQL LocalDB instance
