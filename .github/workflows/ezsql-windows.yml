@@ -24,10 +24,20 @@ jobs:
           coverage: xdebug
       - name: Setup MySQL Database
         run: |
+          mysqld --install
+          net start mysql
           mysql -u root -p"root" -e "CREATE DATABASE IF NOT EXISTS ez_test;"
           mysql -u root -p"root" -e "CREATE USER ez_test@localhost IDENTIFIED BY 'ezTest'; GRANT ALL ON ez_test.* TO ez_test@localhost; FLUSH PRIVILEGES;"
       - name: Setup PostgreSql Database
         run: |
+          $postgreSqlSvc = Get-Service "postgresql*"
+          Set-Service $postgreSqlSvc.Name -StartupType manual
+          $postgreSqlSvc.Start()
+          try {
+            (Get-Service "postgresql*").Start()
+          } catch  {
+            $_ | select *
+          }
           psql -c "CREATE USER ez_test WITH PASSWORD 'ezTest';" --command="\du"
           createdb --owner=ez_test ez_test
           SET PGPASSWORD=ezTest
@@ -42,7 +52,7 @@ jobs:
       - name: Install dependencies
         run: composer update
       - name: Test with phpunit
-        run: vendor/bin/phpunit --coverage-clover=coverage.xml
+        run: vendor\bin\phpunit --coverage-clover=coverage.xml
       - name: Submit code coverage
         uses: codecov/codecov-action@v1
         with:
