@@ -1,8 +1,25 @@
 {
     "name": "ezsql/ezsql",
     "description": "Advance database access library. Make interacting with a database ridiculously easy.",
-    "keywords": ["mysql", "mysqli", "postgresql", "mssql", "sqlsrv", "sqlserver", "pdo", "sqlite", "sqlite3", "database", "abstraction", "sql", "dba"],
-    "license": ["LGPL-3.0-or-later", "MIT"],
+    "keywords": [
+        "mysql",
+        "mysqli",
+        "postgresql",
+        "mssql",
+        "sqlsrv",
+        "sqlserver",
+        "pdo",
+        "sqlite",
+        "sqlite3",
+        "database",
+        "abstraction",
+        "sql",
+        "dba"
+    ],
+    "license": [
+        "LGPL-3.0-or-later",
+        "MIT"
+    ],
     "authors": [
         {
             "name": "Justin Vincent",
@@ -21,7 +38,7 @@
         "issues": "https://github.com/ezSQL/ezSQL/issues"
     },
     "require": {
-        "php": "^7.1",
+        "php": "^7.1 || ^8",
         "psr/container": "^1.0"
     },
     "provide": {
