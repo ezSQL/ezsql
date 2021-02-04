@@ -18,7 +18,7 @@ class ez_mysqli extends ezsqlModel implements DatabaseInterface
 
     /**
      * Database connection handle
-     * @var resource
+     * @var object
      */
     private $dbh;
 
@@ -137,7 +137,7 @@ class ez_mysqli extends ezsqlModel implements DatabaseInterface
         if (!$this->dbh) {
             // Must have an active database connection
             $this->register_error(\FAILED_CONNECTION . ' in ' . __FILE__ . ' on line ' . __LINE__);
-        } elseif (!\mysqli_select_db($this->dbh, $name)) {
+        } elseif (!@\mysqli_select_db($this->dbh, $name)) {
             // Try to connect to the database
             // Try to get error supplied by mysql if not use our own
             if (!$str = \mysqli_error($this->dbh)) {

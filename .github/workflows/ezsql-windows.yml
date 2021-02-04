@@ -1,16 +1,16 @@
 # GitHub Action for PHP with extensions
-name: Linux
+name: Windows
 
 on: [push, pull_request]
 
 jobs:
-  linux:
-    name: Linux (PHP ${{ matrix.php-versions }} CI)
-    runs-on: ubuntu-latest
+  windows:
+    name: Windows (PHP ${{ matrix.php-versions }} CI)
+    runs-on: windows-latest
     strategy:
       fail-fast: false
       matrix:
-        operating-system: [ubuntu-latest]
+        operating-system: [windows-latest]
         php-versions: ['7.1', '7.2', '7.4', '8.0']
 
     steps:
@@ -28,25 +28,24 @@ jobs:
         run: |
           mysql -uroot -h127.0.0.1 -proot -e "CREATE DATABASE IF NOT EXISTS ez_test;"
           mysql -uroot -h127.0.0.1 -proot -e "CREATE USER ez_test@localhost IDENTIFIED BY 'ezTest'; GRANT ALL ON ez_test.* TO ez_test@localhost; FLUSH PRIVILEGES;"
-      - name: Start PostgreSql
-        run: |
-          sudo systemctl start postgresql.service
-          pg_isready
-      - name: Create additional user
-        run: |
-          sudo -u postgres psql --command="CREATE USER ez_test PASSWORD 'ezTest'" --command="\du"
       - name: Setup PostgreSql Database
         run: |
-          sudo -u postgres createdb --owner=ez_test ez_test
-          export PGPASSWORD=ezTest
+          psql -c "CREATE USER ez_test WITH PASSWORD 'ezTest';" --command="\du"
+          createdb --owner=ez_test ez_test
+          SET PGPASSWORD=ezTest
           psql --username=ez_test --host=localhost --list ez_test
       - name: Setup SQLServer Database
         run: |
-          chmod +x "${GITHUB_WORKSPACE}/.github/install_mssql.sh"
-          "${GITHUB_WORKSPACE}/.github/install_mssql.sh"
+          # MSSQLLocalDB is the default SQL LocalDB instance
+          SqlLocalDB start MSSQLLocalDB
+          SqlLocalDB info MSSQLLocalDB
+          sqlcmd -S "(localdb)\MSSQLLocalDB" -Q "CREATE DATABASE ez_test"
+          sqlcmd -S "(localdb)\MSSQLLocalDB" -Q "CREATE LOGIN ez_test WITH PASSWORD=N'ezTest', DEFAULT_DATABASE=ez_test, CHECK_EXPIRATION=OFF, CHECK_POLICY=OFF; ALTER SERVER ROLE [sysadmin] ADD MEMBER ez_test"
       - name: Install dependencies
         run: composer update
       - name: Test with phpunit
         run: vendor/bin/phpunit --coverage-clover=coverage.xml
       - name: Submit code coverage
-        run: bash <(curl -s https://codecov.io/bash)
+        uses: codecov/codecov-action@v1
+        with:
+          file: ./coverage.xml # optional

@@ -18,11 +18,14 @@ class Database
     private static $instances = [];
 
     private function __construct()
-    { }
+    {
+    }
     private function __clone()
-    { }
-    private function __wakeup()
-    { }
+    {
+    }
+    public function __wakeup()
+    {
+    }
 
     /**
      * Initialize and connect a vendor database.
