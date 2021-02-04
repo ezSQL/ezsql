@@ -39,7 +39,7 @@ jobs:
         run: |
           sudo -u postgres createdb --owner=ez_test ez_test
           export PGPASSWORD=ezTest
-          psql --username=ez_test --host=localhost --list timetable
+          psql --username=ez_test --host=localhost --list ez_test
       - name: Setup SQLServer Database
         run: |
           # MSSQLLocalDB is the default SQL LocalDB instance
