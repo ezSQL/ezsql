@@ -42,11 +42,8 @@ jobs:
           psql --username=ez_test --host=localhost --list ez_test
       - name: Setup SQLServer Database
         run: |
-          # MSSQLLocalDB is the default SQL LocalDB instance
-          SqlLocalDB start MSSQLLocalDB
-          SqlLocalDB info MSSQLLocalDB
-          sqlcmd -S "(localdb)\MSSQLLocalDB" -Q "CREATE DATABASE ez_test"
-          sqlcmd -S "(localdb)\MSSQLLocalDB" -Q "CREATE LOGIN ez_test WITH PASSWORD=N'ezTest', DEFAULT_DATABASE=ez_test, CHECK_EXPIRATION=OFF, CHECK_POLICY=OFF; ALTER SERVER ROLE [sysadmin] ADD MEMBER ez_test"
+          chmod +x "${GITHUB_WORKSPACE}/.github/install_mssql.sh"
+          "${GITHUB_WORKSPACE}/.github/install_mssql.sh"
       - name: Install dependencies
         run: composer install --no-progress
       - name: Test with phpunit
