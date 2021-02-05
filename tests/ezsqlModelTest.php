@@ -43,7 +43,7 @@ class ezsqlModelTest extends EZTestCase
     public function testGetNotProperty()
     {
         $this->expectException(\Exception::class);
-        $this->expectExceptionMessageRegExp('/does not exist/');
+        $this->expectExceptionMessageMatches('/does not exist/');
         $res = $this->object->getNotProperty();
     }
 
