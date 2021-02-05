@@ -29,7 +29,7 @@ jobs:
           extensions: mbstring, fileinfo, mysqli, pdo_mysql, pgsql, pdo_pgsql, sqlite3, pdo_sqlite, sqlsrv, pdo_sqlsrv, xdebug
           coverage: xdebug
       - name: Chocolatey Install MySQL
-        run: choco install mysql -y
+        run: choco install mysql --version=5.7.18 -y -f
       - name: Setup MySQL Database
         run: |
           mysql -u root -e "CREATE DATABASE IF NOT EXISTS ez_test;"
