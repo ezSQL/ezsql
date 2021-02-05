@@ -323,6 +323,7 @@ class pdo_mysqlTest extends EZTestCase
     public function testBeginTransactionCommit()
     {
         $this->object->connect();
+        $this->object->query('DROP TABLE unit_test');
         $this->object->query('CREATE TABLE unit_test(id integer, test_key varchar(50), PRIMARY KEY (ID))');
 
         $commit = null;
@@ -355,6 +356,7 @@ class pdo_mysqlTest extends EZTestCase
     public function testBeginTransactionRollback()
     {
         $this->object->connect();
+        $this->object->query('DROP TABLE unit_test');
         $this->object->query('CREATE TABLE unit_test(id integer, test_key varchar(50), PRIMARY KEY (ID))');
 
         $commit = null;

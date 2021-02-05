@@ -239,7 +239,7 @@ class ez_pdo extends ezsqlModel implements DatabaseInterface
     {
         $stmt = $this->dbh->prepare($query);
         $result = false;
-        if ($stmt && $stmt->execute($param)) {
+        if ($stmt && $stmt->execute(\array_values($param))) {
             $result = $stmt->rowCount();
             // Store Query Results
             $num_rows = 0;
@@ -346,8 +346,13 @@ class ez_pdo extends ezsqlModel implements DatabaseInterface
             if (!empty($param) && \is_array($param) && $this->isPrepareOn()) {
                 $this->shortcutUsed = true;
                 $this->_affectedRows = $this->query_prepared($query, $param, false);
-            } else
-                $this->_affectedRows = $this->dbh->exec($query);
+            } else {
+                try {
+                    $this->_affectedRows = $this->dbh->exec($query);
+                } catch (\Exception $ex) {
+                    //
+                }
+            }
 
             if ($this->processResult($query) === false)
                 return false;

@@ -36,7 +36,7 @@ jobs:
           mysql -u root -e "CREATE USER ez_test@localhost IDENTIFIED BY 'ezTest'; GRANT ALL ON ez_test.* TO ez_test@localhost; FLUSH PRIVILEGES;"
       - name: Setup PostgreSql Database
         run: |
-          SET PATH="C:\Program Files\PostgreSQL\13\bin\";%PATH%
+          $env:Path += ";C:\Program Files\PostgreSQL\13\bin"
           SET PGBIN="C:\Program Files\PostgreSQL\13\bin"
           SET PGDATA="C:\Program Files\PostgreSQL\13\data"
           SET PGROOT="C:\Program Files\PostgreSQL\13"
@@ -46,6 +46,7 @@ jobs:
           createdb --owner=ez_test ez_test
           SET PGPASSWORD=ezTest
           psql --username=ez_test --host=localhost --list ez_test
+          [Environment]::SetEnvironmentVariable("Path", $env:Path, [EnvironmentVariableTarget]::Machine)
       - name: Setup SQLServer Database
         run: |
           # MSSQLLocalDB is the default SQL LocalDB instance

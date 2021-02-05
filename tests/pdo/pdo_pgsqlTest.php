@@ -18,7 +18,7 @@ class pdo_pgsqlTest extends EZTestCase
     const TEST_SQLITE_DB = 'ez_test.sqlite';
 
     /**
-     * @var resource
+     * @var object
      */
     protected $object;
 
