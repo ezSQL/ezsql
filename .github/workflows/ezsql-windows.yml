@@ -39,12 +39,9 @@ jobs:
           $env:Path += ";C:\Program Files\PostgreSQL\13\bin"
           SET PGUSER=postgres
           SET PGPASSWORD=root
-          initdb -D "C:\Program Files\PostgreSQL\13\data"
           pg_ctl -D "C:\Program Files\PostgreSQL\13\data" -l logfile start
           psql -c "CREATE USER ez_test WITH PASSWORD 'ezTest';" --command="\du"
           createdb --owner=ez_test ez_test
-          SET PGPASSWORD=ezTest
-          psql --username=ez_test --host=localhost --list ez_test
           [Environment]::SetEnvironmentVariable("Path", $env:Path, [EnvironmentVariableTarget]::Machine)
       - name: Setup SQLServer Database
         run: |

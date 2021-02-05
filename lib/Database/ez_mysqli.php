@@ -134,35 +134,41 @@ class ez_mysqli extends ezsqlModel implements DatabaseInterface
     {
         $this->_connected = false;
         $name = empty($name) ? $this->database->getName() : $name;
-        if (!$this->dbh || !\mysqli_ping($this->dbh)) {
-            // Must have an active database connection
-            $this->register_error(\FAILED_CONNECTION . ' in ' . __FILE__ . ' on line ' . __LINE__);
-        } elseif (!\mysqli_select_db($this->dbh, $name)) {
+        try {
             // Try to connect to the database
-            // Try to get error supplied by mysql if not use our own
-            if (!$str = \mysqli_error($this->dbh)) {
-                $str = 'Unexpected error while trying to select database';
+            if (\mysqli_select_db($this->dbh, $name)) {
+                $this->database->setName($name);
+                if (
+                    $charset == ''
+                ) {
+                    $charset = $this->database->getCharset();
+                }
+
+                if ($charset != '') {
+                    $encoding = \strtolower(\str_replace('-', '', $charset));
+                    $charsetArray = array();
+                    $recordSet = \mysqli_query($this->dbh, 'SHOW CHARACTER SET');
+                    while ($row = \mysqli_fetch_array($recordSet, \MYSQLI_ASSOC)) {
+                        $charsetArray[] = $row['Charset'];
+                    }
+
+                    if (\in_array($charset, $charsetArray)) {
+                        \mysqli_query($this->dbh, 'SET NAMES \'' . $encoding . '\'');
+                    }
+                }
+
+                $this->_connected = true;
+            }
+        } catch (\Exception $e) {
+            $str = \FAILED_CONNECTION;
+            // Must have an active database connection
+            if ($this->dbh) {
+                // Try to get error supplied by mysql if not use our own
+                if (!$str = \mysqli_error($this->dbh)) {
+                    $str = 'Unexpected error while trying to select database';
+                }
             }
             $this->register_error($str . ' in ' . __FILE__ . ' on line ' . __LINE__);
-        } else {
-            $this->database->setName($name);
-            if ($charset == '') {
-                $charset = $this->database->getCharset();
-            }
-
-            if ($charset != '') {
-                $encoding = \strtolower(\str_replace('-', '', $charset));
-                $charsetArray = array();
-                $recordSet = \mysqli_query($this->dbh, 'SHOW CHARACTER SET');
-                while ($row = \mysqli_fetch_array($recordSet, \MYSQLI_ASSOC)) {
-                    $charsetArray[] = $row['Charset'];
-                }
-
-                if (\in_array($charset, $charsetArray)) {
-                    \mysqli_query($this->dbh, 'SET NAMES \'' . $encoding . '\'');
-                }
-            }
-            $this->_connected = true;
         }
 
         return $this->_connected;
