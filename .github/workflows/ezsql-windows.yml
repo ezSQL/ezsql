@@ -36,7 +36,7 @@ jobs:
           mysql -u root -e "CREATE USER ez_test@localhost IDENTIFIED BY 'ezTest'; GRANT ALL ON ez_test.* TO ez_test@localhost; FLUSH PRIVILEGES;"
       - name: Setup PostgreSql Database
         run: |
-          PATH="C:\Program Files\PostgreSQL\13\bin\";%PATH%
+          SET PATH="C:\Program Files\PostgreSQL\13\bin\";%PATH%
           SET PGBIN="C:\Program Files\PostgreSQL\13\bin"
           SET PGDATA="C:\Program Files\PostgreSQL\13\data"
           SET PGROOT="C:\Program Files\PostgreSQL\13"
