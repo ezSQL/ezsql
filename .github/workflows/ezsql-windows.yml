@@ -1,7 +1,13 @@
 # GitHub Action for PHP with extensions
 name: Windows
 
-on: [push, pull_request]
+on:
+  push:
+    branches:
+    - v5
+  pull_request:
+    branches:
+    - v5
 
 jobs:
   windows:
@@ -22,12 +28,15 @@ jobs:
           php-version: ${{ matrix.php-versions }}
           extensions: mbstring, fileinfo, mysqli, pdo_mysql, pgsql, pdo_pgsql, sqlite3, pdo_sqlite, sqlsrv, pdo_sqlsrv, xdebug
           coverage: xdebug
+      - name: Chocolatey Install MySQL
+        run: choco install mysql -y -f
       - name: Setup MySQL Database
         run: |
+          mysqladmin --host=localhost --user=root --password=Password12! create ez_test
           mysqld --install
           net start mysql
-          mysql -u root -p"root" -e "CREATE DATABASE IF NOT EXISTS ez_test;"
-          mysql -u root -p"root" -e "CREATE USER ez_test@localhost IDENTIFIED BY 'ezTest'; GRANT ALL ON ez_test.* TO ez_test@localhost; FLUSH PRIVILEGES;"
+          mysql -u root -p"Password12!" -e "CREATE DATABASE IF NOT EXISTS ez_test;"
+          mysql -u root -p"Password12!" -e "CREATE USER ez_test@localhost IDENTIFIED BY 'ezTest'; GRANT ALL ON ez_test.* TO ez_test@localhost; FLUSH PRIVILEGES;"
       - name: Setup PostgreSql Database
         run: |
           $postgreSqlSvc = Get-Service "postgresql*"
@@ -38,6 +47,8 @@ jobs:
           } catch  {
             $_ | select *
           }
+          SET PGUSER=postgres
+          SET PGPASSWORD=root
           psql -c "CREATE USER ez_test WITH PASSWORD 'ezTest';" --command="\du"
           createdb --owner=ez_test ez_test
           SET PGPASSWORD=ezTest
