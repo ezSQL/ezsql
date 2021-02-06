@@ -132,12 +132,10 @@ class ez_mysqli extends ezsqlModel implements DatabaseInterface
      */
     public function select($name = '', $charset = '')
     {
-        $status = $this->_connected;
-        $this->_connected = false;
         $name = empty($name) ? $this->database->getName() : $name;
         try {
             // Try to connect to the database
-            if (($this->dbh === null) || ($status === false) || !\mysqli_select_db($this->dbh, $name)) {
+            if (($this->dbh === null) || ($this->_connected === false) || !\mysqli_select_db($this->dbh, $name)) {
                 throw new Exception("Error Processing Request", 1);
             }
 
@@ -159,7 +157,7 @@ class ez_mysqli extends ezsqlModel implements DatabaseInterface
                 }
             }
 
-            $this->_connected = true;
+            return true;
         } catch (\Throwable $e) {
             $str = \FAILED_CONNECTION;
             // Must have an active database connection
@@ -169,10 +167,10 @@ class ez_mysqli extends ezsqlModel implements DatabaseInterface
                     $str = 'Unexpected error while trying to select database';
                 }
             }
-            $this->register_error($str . ' in ' . __FILE__ . ' on line ' . __LINE__);
-        }
 
-        return $this->_connected;
+            $this->register_error($str . ' in ' . __FILE__ . ' on line ' . __LINE__);
+            return false;
+        }
     } // select
 
     /**
