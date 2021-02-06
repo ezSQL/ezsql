@@ -7,6 +7,11 @@ php:
   - 7.4
   - 8.0
 
+matrix:
+  allow_failures:
+    - php: 8.0
+  fast_finish: true
+
 env:
   - MYSQL_HOST=127.0.0.1 MYSQL_USER=root
 
