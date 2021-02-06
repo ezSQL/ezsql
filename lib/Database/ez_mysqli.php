@@ -132,11 +132,12 @@ class ez_mysqli extends ezsqlModel implements DatabaseInterface
      */
     public function select($name = '', $charset = '')
     {
+        $status = $this->_connected;
         $this->_connected = false;
         $name = empty($name) ? $this->database->getName() : $name;
         try {
             // Try to connect to the database
-            if (($this->dbh == null) || !\mysqli_select_db($this->dbh, $name)) {
+            if (($this->dbh === null) || ($status === false) || !\mysqli_select_db($this->dbh, $name)) {
                 throw new Exception("Error Processing Request", 1);
             }
 
