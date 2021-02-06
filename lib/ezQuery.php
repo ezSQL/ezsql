@@ -723,7 +723,7 @@ class ezQuery implements ezQueryInterface
      * Helper does the actual insert or replace query with an array
      * @return mixed bool/results - false for error
      */
-    private function _query_insert_replace($table = '', $keyAndValue, $type = '', $execute = true)
+    private function _query_insert_replace($table = '', $keyAndValue = null, $type = '', $execute = true)
     {
         if ((!\is_array($keyAndValue) && ($execute)) || empty($table)) {
             return $this->clearPrepare();

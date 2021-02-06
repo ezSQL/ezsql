@@ -129,7 +129,9 @@ class DInjector implements ContainerInterface
 		if (\is_array($parameters)) {
 			foreach ($parameters as $parameter) {
 				// get the type hinted class
-				$dependency = $parameter->getClass();
+				$dependency = $parameter->getType() && !$parameter->getType()->isBuiltin()
+					? new \ReflectionClass($parameter->getType()->getName())
+					: NULL;
 				if ($dependency === NULL) {
 					// check if the constructor parameter name exists as a key in the values array
 					if (\array_key_exists($parameter->getName(), $values)) {
