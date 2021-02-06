@@ -37,9 +37,8 @@ jobs:
       - name: Setup PostgreSql Database
         run: |
           $env:Path += ";C:\Program Files\PostgreSQL\13\bin"
-          $env:PGUSER=postgres
-          $env:PGPASSWORD=root
-          pg_ctl -D "C:\Program Files\PostgreSQL\13\data" -l logfile start
+          $env:PGUSER = "postgres"
+          $env:PGPASSWORD = "root"
           psql -c "CREATE USER ez_test WITH PASSWORD 'ezTest';" --command="\du"
           createdb --owner=ez_test ez_test
           [Environment]::SetEnvironmentVariable("Path", $env:Path, [EnvironmentVariableTarget]::Machine)
