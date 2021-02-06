@@ -159,7 +159,7 @@ class ez_mysqli extends ezsqlModel implements DatabaseInterface
             }
 
             $this->_connected = true;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $str = \FAILED_CONNECTION;
             // Must have an active database connection
             if ($this->dbh) {
