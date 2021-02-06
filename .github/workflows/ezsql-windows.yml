@@ -44,14 +44,12 @@ jobs:
           psql -U postgres -c "CREATE USER ez_test WITH PASSWORD 'ezTest';" --command="\du"
           createdb --owner=ez_test ez_test
           [Environment]::SetEnvironmentVariable("Path", $env:Path, [EnvironmentVariableTarget]::Machine)
+      - name: Chocolatey Install SQLServer
+        run: choco install mssqlserver2014express -y -f
       - name: Setup SQLServer Database
         run: |
-          # MSSQLLocalDB is the default SQL LocalDB instance
-          SqlLocalDB start MSSQLLocalDB
-          SqlLocalDB info MSSQLLocalDB
-          sqlcmd -S "(localdb)\MSSQLLocalDB" -Q "CREATE DATABASE ez_test"
-          sqlcmd -S "(localdb)\MSSQLLocalDB" -Q "EXEC sp_addlogin 'ez_test', 'ezTest', 'ez_test'"
-          sqlcmd -S "(localdb)\MSSQLLocalDB" -d ez_test -Q "ALTER SERVER ROLE [sysadmin] ADD MEMBER ez_test"
+          sqlcmd -S localhost,1433 -U sa -P Password12! -Q "CREATE DATABASE ez_test"
+          sqlcmd -S localhost,1433 -U sa -P Password12! -d ez_test -Q "CREATE LOGIN ez_test WITH PASSWORD=N'ezTest', DEFAULT_DATABASE=ez_test, CHECK_EXPIRATION=OFF, CHECK_POLICY=OFF; ALTER SERVER ROLE [sysadmin] ADD MEMBER ez_test"
       - name: Install dependencies
         run: composer update
       - name: Test with phpunit

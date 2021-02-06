@@ -161,7 +161,7 @@ class ez_mysqli extends ezsqlModel implements DatabaseInterface
         } catch (\Throwable $e) {
             $str = \FAILED_CONNECTION;
             // Must have an active database connection
-            if ($this->dbh) {
+            if ($this->dbh && $this->_connected) {
                 // Try to get error supplied by mysql if not use our own
                 if (!$str = \mysqli_error($this->dbh)) {
                     $str = 'Unexpected error while trying to select database';
