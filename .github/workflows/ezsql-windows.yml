@@ -50,7 +50,7 @@ jobs:
           SqlLocalDB start MSSQLLocalDB
           SqlLocalDB info MSSQLLocalDB
           sqlcmd -S "(localdb)\MSSQLLocalDB" -Q "CREATE DATABASE ez_test"
-          EXEC sp_addlogin 'ez_test', 'ezTest', 'ez_test'
+          sqlcmd -S "(localdb)\MSSQLLocalDB" -Q "EXEC sp_addlogin 'ez_test', 'ezTest', 'ez_test'"
           sqlcmd -S "(localdb)\MSSQLLocalDB" -d ez_test -Q "ALTER SERVER ROLE [sysadmin] ADD MEMBER ez_test"
       - name: Install dependencies
         run: composer update
