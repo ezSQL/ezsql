@@ -44,8 +44,6 @@ jobs:
       - name: Setup PostgreSql Database
         run: |
           sudo -u postgres createdb --owner=ez_test ez_test
-          export PGPASSWORD=ezTest
-          psql --username=ez_test --host=localhost --list ez_test
       - name: Setup SQLServer Database
         run: |
           chmod +x "${GITHUB_WORKSPACE}/.github/install_mssql.sh"

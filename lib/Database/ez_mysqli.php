@@ -136,30 +136,30 @@ class ez_mysqli extends ezsqlModel implements DatabaseInterface
         $name = empty($name) ? $this->database->getName() : $name;
         try {
             // Try to connect to the database
-            if (\mysqli_select_db($this->dbh, $name)) {
-                $this->database->setName($name);
-                if (
-                    $charset == ''
-                ) {
-                    $charset = $this->database->getCharset();
-                }
-
-                if ($charset != '') {
-                    $encoding = \strtolower(\str_replace('-', '', $charset));
-                    $charsetArray = array();
-                    $recordSet = \mysqli_query($this->dbh, 'SHOW CHARACTER SET');
-                    while ($row = \mysqli_fetch_array($recordSet, \MYSQLI_ASSOC)) {
-                        $charsetArray[] = $row['Charset'];
-                    }
-
-                    if (\in_array($charset, $charsetArray)) {
-                        \mysqli_query($this->dbh, 'SET NAMES \'' . $encoding . '\'');
-                    }
-                }
-
-                $this->_connected = true;
+            if (($this->dbh == null) || !\mysqli_select_db($this->dbh, $name)) {
+                throw new Exception("Error Processing Request", 1);
             }
-        } catch (\Exception $e) {
+
+            $this->database->setName($name);
+            if ($charset == '') {
+                $charset = $this->database->getCharset();
+            }
+
+            if ($charset != '') {
+                $encoding = \strtolower(\str_replace('-', '', $charset));
+                $charsetArray = array();
+                $recordSet = \mysqli_query($this->dbh, 'SHOW CHARACTER SET');
+                while ($row = \mysqli_fetch_array($recordSet, \MYSQLI_ASSOC)) {
+                    $charsetArray[] = $row['Charset'];
+                }
+
+                if (\in_array($charset, $charsetArray)) {
+                    \mysqli_query($this->dbh, 'SET NAMES \'' . $encoding . '\'');
+                }
+            }
+
+            $this->_connected = true;
+        } catch (Exception $e) {
             $str = \FAILED_CONNECTION;
             // Must have an active database connection
             if ($this->dbh) {

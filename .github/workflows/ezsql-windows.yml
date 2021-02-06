@@ -40,7 +40,7 @@ jobs:
           SET PGUSER=postgres
           SET PGPASSWORD=root
           pg_ctl -D "C:\Program Files\PostgreSQL\13\data" -l logfile start
-          psql -c "CREATE USER ez_test WITH PASSWORD 'ezTest';" --command="\du"
+          psql -u postgres -c "CREATE USER ez_test WITH PASSWORD 'ezTest';" --command="\du"
           createdb --owner=ez_test ez_test
           [Environment]::SetEnvironmentVariable("Path", $env:Path, [EnvironmentVariableTarget]::Machine)
       - name: Setup SQLServer Database
@@ -48,8 +48,9 @@ jobs:
           # MSSQLLocalDB is the default SQL LocalDB instance
           SqlLocalDB start MSSQLLocalDB
           SqlLocalDB info MSSQLLocalDB
-          sqlcmd -S "(localdb)\MSSQLLocalDB" -Q "CREATE DATABASE ez_test"
-          sqlcmd -S "(localdb)\MSSQLLocalDB" -Q "CREATE LOGIN ez_test WITH PASSWORD=N'ezTest', DEFAULT_DATABASE=ez_test, CHECK_EXPIRATION=OFF, CHECK_POLICY=OFF; ALTER SERVER ROLE [sysadmin] ADD MEMBER ez_test"
+          sqlcmd -S "(localdb)\MSSQLLocalDB" -Q "EXEC sp_password NULL, 'Password12!', 'sa';"
+          sqlcmd -S "(localdb)\MSSQLLocalDB" -U sa -P Password12! -Q "CREATE DATABASE ez_test"
+          sqlcmd -S "(localdb)\MSSQLLocalDB" -U sa -P Password12! -d ez_test -Q "CREATE LOGIN ez_test WITH PASSWORD=N'ezTest', DEFAULT_DATABASE=ez_test, CHECK_EXPIRATION=OFF, CHECK_POLICY=OFF; ALTER SERVER ROLE [sysadmin] ADD MEMBER ez_test"
       - name: Install dependencies
         run: composer update
       - name: Test with phpunit
