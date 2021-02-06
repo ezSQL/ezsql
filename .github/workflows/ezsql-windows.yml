@@ -45,9 +45,9 @@ jobs:
           createdb --owner=ez_test ez_test
           [Environment]::SetEnvironmentVariable("Path", $env:Path, [EnvironmentVariableTarget]::Machine)
       - name: Chocolatey Install SQLServer
-        run: |
-          choco install mssqlserver2014express -y -f
-          refreshenv
+        run: choco install mssqlserver2014express -y -f
+      - name: Chocolatey refresh
+        run: refreshenv
       - name: Setup SQLServer Database
         run: |
           sqlcmd -S localhost -Q "EXEC sp_password NULL, 'Password12!', 'sa';"
