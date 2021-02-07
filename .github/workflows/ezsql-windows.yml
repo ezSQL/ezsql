@@ -34,13 +34,11 @@ jobs:
         run: |
           mysql -u root -e "CREATE DATABASE IF NOT EXISTS ez_test;"
           mysql -u root -e "CREATE USER ez_test@localhost IDENTIFIED BY 'ezTest'; GRANT ALL ON ez_test.* TO ez_test@localhost; FLUSH PRIVILEGES;"
+      - name: Chocolatey Install PostgreSql By Force
+        run: choco install postgresql13 --params '/Password:root' --ia '--serverport 5433' -y -f
       - name: Setup PostgreSql Database
         run: |
-          $env:Path += ";C:\Program Files\PostgreSQL\13\bin"
-          $env:PGUSER = "postgres"
-          $env:PGPASSWORD = "root"
-          initdb -D "C:\Program Files\PostgreSQL\13\data"
-          pg_ctl -D "C:\Program Files\PostgreSQL\13\data" -l logfile start
+          $env:PGPASSWORD = "root"; '\conninfo' | psql -Upostgres
           psql -U postgres -c "CREATE USER ez_test WITH PASSWORD 'ezTest';" --command="\du"
           createdb --owner=ez_test ez_test
           [Environment]::SetEnvironmentVariable("Path", $env:Path, [EnvironmentVariableTarget]::Machine)
