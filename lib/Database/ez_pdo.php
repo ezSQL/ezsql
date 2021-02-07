@@ -19,7 +19,7 @@ class ez_pdo extends ezsqlModel implements DatabaseInterface
 
     /**
      * Database connection handle
-     * @var object
+     * @var \PDO
      */
     private $dbh;
 
@@ -318,9 +318,13 @@ class ez_pdo extends ezsqlModel implements DatabaseInterface
             if (!empty($result))
                 $this->_affectedRows = $result;
 
-            // Take note of the insert_id
-            if (\preg_match("/^(insert|replace)\s+/i", $query)) {
-                $this->insert_id = @$this->dbh->lastInsertId();
+            try {
+                // Take note of the insert_id
+                if (\preg_match("/^(insert|replace)\s+/i", $query)) {
+                    $this->insert_id = @$this->dbh->lastInsertId();
+                }
+            } catch (\Throwable $ex) {
+                //
             }
 
             // Return number of rows affected

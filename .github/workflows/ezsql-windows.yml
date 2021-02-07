@@ -42,8 +42,6 @@ jobs:
         run: |
           $env:Path += ";C:\Program Files\PostgreSQL\9.6\bin"
           $env:PGPASSWORD = "root"
-          initdb -D "C:\Program Files\PostgreSQL\9.6\data"
-          pg_ctl -D "C:\Program Files\PostgreSQL\9.6\data" start
           psql -U postgres --command="\conninfo"
           psql -U postgres -c "CREATE USER ez_test WITH PASSWORD 'ezTest';" --command="\du"
           createdb --owner=ez_test ez_test
