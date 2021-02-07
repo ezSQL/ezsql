@@ -38,7 +38,9 @@ jobs:
         run: choco install postgresql9 --params '/Password:root' --ia '--serverport 5433' -y -f
       - name: Setup PostgreSql Database
         run: |
-          $env:PGPASSWORD = "root"; '\conninfo' | psql -Upostgres
+          $env:Path += ";C:\Program Files\PostgreSQL\9.6\bin"
+          $env:PGPASSWORD = "root"
+          psql -U postgres --command="\conninfo"
           psql -U postgres -c "CREATE USER ez_test WITH PASSWORD 'ezTest';" --command="\du"
           createdb --owner=ez_test ez_test
           [Environment]::SetEnvironmentVariable("Path", $env:Path, [EnvironmentVariableTarget]::Machine)
