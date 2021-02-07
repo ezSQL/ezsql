@@ -349,7 +349,7 @@ class ez_pdo extends ezsqlModel implements DatabaseInterface
             } else {
                 try {
                     $this->_affectedRows = $this->dbh->exec($query);
-                } catch (\Exception $ex) {
+                } catch (\Throwable $ex) {
                     //
                 }
             }
@@ -365,7 +365,11 @@ class ez_pdo extends ezsqlModel implements DatabaseInterface
                 $this->shortcutUsed = true;
                 $sth = $this->query_prepared($query, $param, true);
             } else
-                $sth = $this->dbh->query($query);
+                try {
+                    $sth = $this->dbh->query($query);
+                } catch (\Throwable $ex) {
+                    //
+                }
 
             if ($this->processResult($query, $sth, true) === false)
                 return false;
