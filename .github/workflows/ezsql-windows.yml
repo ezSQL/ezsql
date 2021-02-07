@@ -34,8 +34,8 @@ jobs:
         run: |
           mysql -u root -e "CREATE DATABASE IF NOT EXISTS ez_test;"
           mysql -u root -e "CREATE USER ez_test@localhost IDENTIFIED BY 'ezTest'; GRANT ALL ON ez_test.* TO ez_test@localhost; FLUSH PRIVILEGES;"
-      - name: Chocolatey Install PostgreSql By Force
-        run: choco install postgresql13 --params '/Password:root' --ia '--serverport 5433' -y -f
+      - name: Chocolatey Install PostgreSql 9 By Force
+        run: choco install postgresql9 --params '/Password:root' --ia '--serverport 5433' -y -f
       - name: Setup PostgreSql Database
         run: |
           $env:PGPASSWORD = "root"; '\conninfo' | psql -Upostgres
