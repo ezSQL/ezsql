@@ -17,7 +17,7 @@ class pdo_sqliteTest extends EZTestCase
     const TEST_SQLITE_DB = './tests/pdo/ez_test.sqlite';
 
     /**
-     * @var resource
+     * @var object
      */
     protected $object;
 
@@ -239,14 +239,15 @@ class pdo_sqliteTest extends EZTestCase
     public function testJoins()
     {
         $this->assertTrue($this->object->connect('sqlite:' . self::TEST_SQLITE_DB, '', '', array(), true));
+        $this->object->query('DROP TABLE unit_test');
         $this->object->query('CREATE TABLE unit_test(id integer, test_key varchar(50), PRIMARY KEY (ID))');
         $this->object->insert('unit_test', array('id' => '1', 'test_key' => 'testing 1'));
         $this->object->insert('unit_test', array('id' => '2', 'test_key' => 'testing 2'));
         $this->object->insert('unit_test', array('id' => '3', 'test_key' => 'testing 3'));
         $this->object->query('CREATE TABLE unit_test_child(child_id integer, child_test_key varchar(50), parent_id integer, PRIMARY KEY (child_id))');
-        $this->object->insert('unit_test', array('child_id' => '1', 'child_test_key' => 'testing child 1', 'parent_id' => '3'));
-        $this->object->insert('unit_test', array('child_id' => '2', 'child_test_key' => 'testing child 2', 'parent_id' => '2'));
-        $this->object->insert('unit_test', array('child_id' => '3', 'child_test_key' => 'testing child 3', 'parent_id' => '1'));
+        $this->object->insert('unit_test_child', array('child_id' => '1', 'child_test_key' => 'testing child 1', 'parent_id' => '3'));
+        $this->object->insert('unit_test_child', array('child_id' => '2', 'child_test_key' => 'testing child 2', 'parent_id' => '2'));
+        $this->object->insert('unit_test_child', array('child_id' => '3', 'child_test_key' => 'testing child 3', 'parent_id' => '1'));
 
         $result = $this->object->selecting('unit_test_child', '*', leftJoin('unit_test_child', 'unit_test', 'parent_id', 'id'));
         $i = 1;
