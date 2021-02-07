@@ -18,7 +18,7 @@ class ez_sqlite3 extends ezsqlModel implements DatabaseInterface
 
     /**
      * Database connection handle
-     * @var resource
+     * @var \SQLite3
      */
     private $dbh;
 

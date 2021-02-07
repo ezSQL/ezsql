@@ -298,7 +298,11 @@ class ez_pgsql extends ezsqlModel implements DatabaseInterface
             $this->shortcutUsed = true;
             $this->result = $this->query_prepared($query, $param);
         } else {
-            $this->result = @\pg_query($this->dbh, $query);
+            try {
+                $this->result = @\pg_query($this->dbh, $query);
+            } catch (\Throwable $ex) {
+                //
+            }
         }
 
         if ($this->processQueryResult($query) === false) {

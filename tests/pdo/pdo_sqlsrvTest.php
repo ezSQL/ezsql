@@ -8,7 +8,7 @@ use ezsql\Tests\EZTestCase;
 class pdo_sqlsrvTest extends EZTestCase
 {
     /**
-     * @var object
+     * @var \ezsql\Database\ez_pdo
      */
     protected $object;
 
@@ -89,8 +89,8 @@ class pdo_sqlsrvTest extends EZTestCase
     public function testUpdate()
     {
         $this->assertTrue($this->object->connect('sqlsrv:Server=' . self::TEST_DB_HOST . ';Database=' . self::TEST_DB_NAME, self::TEST_DB_USER, self::TEST_DB_PASSWORD));
+        $this->object->drop('unit_test');
         $this->object->query('CREATE TABLE unit_test(id integer, test_key varchar(50), PRIMARY KEY (ID))');
-
         $this->assertNotFalse($this->object->insert('unit_test', array('id' => 1, 'test_key' => 'testUpdate() 1')));
         $this->object->insert('unit_test', array('id' => 2, 'test_key' => 'testUpdate() 2'));
         $this->object->insert('unit_test', array('id' => 3, 'test_key' => 'testUpdate() 3'));
@@ -163,6 +163,7 @@ class pdo_sqlsrvTest extends EZTestCase
     public function testSelecting()
     {
         $this->assertTrue($this->object->connect('sqlsrv:Server=' . self::TEST_DB_HOST . ';Database=' . self::TEST_DB_NAME, self::TEST_DB_USER, self::TEST_DB_PASSWORD));
+        $this->object->drop('unit_test');
         $this->object->query('CREATE TABLE unit_test(id integer, test_key varchar(50), PRIMARY KEY (ID))');
         $this->object->insert('unit_test', array('id' => 8, 'test_key' => 'testing 8'));
         $this->object->insert('unit_test', array('id' => 9, 'test_key' => 'testing 9'));
@@ -192,17 +193,18 @@ class pdo_sqlsrvTest extends EZTestCase
             $this->assertEquals('testing 8', $row->test_key);
         }
 
-        $this->object->query('DROP TABLE unit_test');
+        $this->object->drop('unit_test');
     }
 
     public function testWhereGrouping()
     {
         $this->assertTrue($this->object->connect('sqlsrv:Server=' . self::TEST_DB_HOST . ';Database=' . self::TEST_DB_NAME, self::TEST_DB_USER, self::TEST_DB_PASSWORD));
-        $this->object->query('CREATE TABLE unit_test(id integer, test_key varchar(50), active tinyint(1), PRIMARY KEY (ID))');
-        $this->object->insert('unit_test', array('id' => '1', 'test_key' => 'testing 1', 'active' => 1));
-        $this->object->insert('unit_test', array('id' => '2', 'test_key' => 'testing 2', 'active' => 0));
-        $this->object->insert('unit_test', array('id' => '3', 'test_key' => 'testing 3', 'active' => 1));
-        $this->object->insert('unit_test', array('id' => '4', 'test_key' => 'testing 4', 'active' => 1));
+        $this->object->drop('unit_test');
+        $this->object->query('CREATE TABLE unit_test(id integer, test_key varchar(50), active_data tinyint(1), PRIMARY KEY (ID))');
+        $this->object->insert('unit_test', array('id' => '1', 'test_key' => 'testing 1', 'active_data' => 1));
+        $this->object->insert('unit_test', array('id' => '2', 'test_key' => 'testing 2', 'active_data' => 0));
+        $this->object->insert('unit_test', array('id' => '3', 'test_key' => 'testing 3', 'active_data' => 1));
+        $this->object->insert('unit_test', array('id' => '4', 'test_key' => 'testing 4', 'active_data' => 1));
 
         $result = $this->object->selecting('unit_test', '*', where(eq('active', '1'), grouping(like('test_key', '%1%', _OR), like('test_key', '%3%'))));
         $i = 1;
@@ -212,13 +214,13 @@ class pdo_sqlsrvTest extends EZTestCase
             $i = $i + 2;
         }
 
-        $this->object->query('DROP TABLE unit_test');
+        $this->object->drop('unit_test');
     }
 
     public function testJoins()
     {
         $this->assertTrue($this->object->connect('sqlsrv:Server=' . self::TEST_DB_HOST . ';Database=' . self::TEST_DB_NAME, self::TEST_DB_USER, self::TEST_DB_PASSWORD));
-        $this->object->query('DROP TABLE unit_test');
+        $this->object->drop('unit_test');
         $this->object->query('CREATE TABLE unit_test(id integer, test_key varchar(50), PRIMARY KEY (ID))');
         $this->object->insert('unit_test', array('id' => '1', 'test_key' => 'testing 1'));
         $this->object->insert('unit_test', array('id' => '2', 'test_key' => 'testing 2'));
@@ -247,8 +249,8 @@ class pdo_sqlsrvTest extends EZTestCase
             --$o;
         }
 
-        $this->object->query('DROP TABLE unit_test');
-        $this->object->query('DROP TABLE unit_test_child');
+        $this->object->drop('unit_test');
+        $this->object->drop('unit_test_child');
     }
 
     public function testSQLsrvDisconnect()

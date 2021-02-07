@@ -18,7 +18,7 @@ class ez_mysqli extends ezsqlModel implements DatabaseInterface
 
     /**
      * Database connection handle
-     * @var object
+     * @var \mysqli
      */
     private $dbh;
 

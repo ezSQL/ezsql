@@ -728,16 +728,31 @@ class ezsqlModel extends ezQuery implements ezsqlModelInterface
 		$this->secureOptions = null;
 	}
 
+	/**
+	 * Returns `true` if the database connection is established.
+	 *
+	 * @return bool
+	 */
 	public function isConnected()
 	{
 		return $this->_connected;
 	} // isConnected
 
+	/**
+	 * Returns the `number` of affected rows of a query.
+	 *
+	 * @return int
+	 */
 	public function affectedRows()
 	{
 		return $this->_affectedRows;
 	} // affectedRows
 
+	/**
+	 * Returns the last query `result`.
+	 *
+	 * @return object
+	 */
 	public function queryResult()
 	{
 		return $this->last_result;

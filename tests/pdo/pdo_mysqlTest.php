@@ -16,7 +16,7 @@ class pdo_mysqlTest extends EZTestCase
     const TEST_DB_PORT = '3306';
 
     /**
-     * @var object
+     * @var \ezsql\Database\ez_pdo
      */
     protected $object;
 
@@ -302,10 +302,10 @@ class pdo_mysqlTest extends EZTestCase
         $i = 1;
         $o = 3;
         foreach ($result as $row) {
-            $this->assertEquals($i, $row->child_id);
-            $this->assertEquals('testing child ' . $i, $row->child_test_key);
-            $this->assertEquals($o, $row->id);
-            $this->assertEquals('testing ' . $o, $row->test_key);
+            $this->assertEquals($o, $row->child_id);
+            $this->assertEquals('testing child ' . $o, $row->child_test_key);
+            $this->assertEquals($i, $row->id);
+            $this->assertEquals('testing ' . $i, $row->test_key);
             ++$i;
             --$o;
         }

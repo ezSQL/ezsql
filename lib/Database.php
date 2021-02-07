@@ -33,6 +33,7 @@ class Database
      * @param mixed $vendor - SQL driver
      * @param mixed $setting - SQL connection parameters
      * @param mixed $tag - Store the instance for later use
+     * @return Database\ez_pdo|Database\ez_pgsql|Database\ez_sqlsrv|Database\ez_sqlite3|Database\ez_mysqli
      */
     public static function initialize(?string $vendor = null, ?array $setting = null, ?string $tag = null)
     {

@@ -18,7 +18,7 @@ class pdo_pgsqlTest extends EZTestCase
     const TEST_SQLITE_DB = 'ez_test.sqlite';
 
     /**
-     * @var object
+     * @var \ezsql\Database\ez_pdo
      */
     protected $object;
 
@@ -157,6 +157,7 @@ class pdo_pgsqlTest extends EZTestCase
     public function testSelecting()
     {
         $this->assertTrue($this->object->connect('pgsql:host=' . self::TEST_DB_HOST . ';dbname=' . self::TEST_DB_NAME . ';port=' . self::TEST_DB_PORT, self::TEST_DB_USER, self::TEST_DB_PASSWORD));
+        $this->object->drop('unit_test');
         $this->object->query('CREATE TABLE unit_test(id serial, test_key varchar(50), test_value varchar(50), PRIMARY KEY (ID))');
         $this->object->insert('unit_test', array('test_key' => 'test 1', 'test_value' => 'testing string 1'));
         $this->object->insert('unit_test', array('test_key' => 'test 2', 'test_value' => 'testing string 2'));
@@ -187,12 +188,14 @@ class pdo_pgsqlTest extends EZTestCase
         foreach ($result as $row) {
             $this->assertEquals('testing string 1', $row->test_value);
         }
+
+        $this->object->drop('unit_test');
     }
 
     public function testWhereGrouping()
     {
         $this->assertTrue($this->object->connect('pgsql:host=' . self::TEST_DB_HOST . ';dbname=' . self::TEST_DB_NAME . ';port=' . self::TEST_DB_PORT, self::TEST_DB_USER, self::TEST_DB_PASSWORD));
-        $this->object->query('DROP TABLE unit_test');
+        $this->object->drop('unit_test');
         $this->object->query('CREATE TABLE unit_test(id integer, test_key varchar(50), active tinyint(1), PRIMARY KEY (ID))');
         $this->object->insert('unit_test', array('id' => '1', 'test_key' => 'testing 1', 'active' => 1));
         $this->object->insert('unit_test', array('id' => '2', 'test_key' => 'testing 2', 'active' => 0));
@@ -206,13 +209,14 @@ class pdo_pgsqlTest extends EZTestCase
             $this->assertEquals('testing ' . $i, $row->test_key);
             $i = $i + 2;
         }
-        $this->object->query('DROP TABLE unit_test');
+
+        $this->object->drop('unit_test');
     }
 
     public function testJoins()
     {
         $this->assertTrue($this->object->connect('pgsql:host=' . self::TEST_DB_HOST . ';dbname=' . self::TEST_DB_NAME . ';port=' . self::TEST_DB_PORT, self::TEST_DB_USER, self::TEST_DB_PASSWORD));
-        $this->object->query('DROP TABLE unit_test');
+        $this->object->drop('unit_test');
         $this->object->query('CREATE TABLE unit_test(id integer, test_key varchar(50), PRIMARY KEY (ID))');
         $this->object->insert('unit_test', array('id' => '1', 'test_key' => 'testing 1'));
         $this->object->insert('unit_test', array('id' => '2', 'test_key' => 'testing 2'));
@@ -241,8 +245,8 @@ class pdo_pgsqlTest extends EZTestCase
             --$o;
         }
 
-        $this->object->query('DROP TABLE unit_test');
-        $this->object->query('DROP TABLE unit_test_child');
+        $this->object->drop('unit_test');
+        $this->object->drop('unit_test_child');
     }
 
     public function testPosgreSQLDisconnect()
