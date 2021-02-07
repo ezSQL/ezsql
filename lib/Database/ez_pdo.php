@@ -304,10 +304,14 @@ class ez_pdo extends ezsqlModel implements DatabaseInterface
 
                 // Store Query Results
                 $num_rows = 0;
-                while ($row = @$result->fetch(\PDO::FETCH_ASSOC)) {
-                    // Store results as an objects within main array
-                    $this->last_result[$num_rows] = (object) $row;
-                    $num_rows++;
+                try {
+                    while ($row = @$result->fetch(\PDO::FETCH_ASSOC)) {
+                        // Store results as an objects within main array
+                        $this->last_result[$num_rows] = (object) $row;
+                        $num_rows++;
+                    }
+                } catch (\Throwable $ex) {
+                    //
                 }
 
                 // Log number of rows the query returned

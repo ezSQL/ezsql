@@ -37,7 +37,7 @@ class sqlsrvTest extends EZTestCase
      */
     protected function tearDown(): void
     {
-        $this->object->query('DROP TABLE unit_test');
+        $this->object->drop('unit_test');
         $this->object = null;
     }
 
