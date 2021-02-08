@@ -196,11 +196,11 @@ class pdo_pgsqlTest extends EZTestCase
     {
         $this->assertTrue($this->object->connect('pgsql:host=' . self::TEST_DB_HOST . ';dbname=' . self::TEST_DB_NAME . ';port=' . self::TEST_DB_PORT, self::TEST_DB_USER, self::TEST_DB_PASSWORD));
         $this->object->drop('unit_test_more');
-        $this->object->query('CREATE TABLE unit_test_more(id integer, test_key varchar(50), active_data tinyint(1), PRIMARY KEY (ID))');
-        $this->object->insert('unit_test_more', array('id' => '1', 'test_key' => 'testing 1', 'active_data' => 1));
-        $this->object->insert('unit_test_more', array('id' => '2', 'test_key' => 'testing 2', 'active_data' => 0));
-        $this->object->insert('unit_test_more', array('id' => '3', 'test_key' => 'testing 3', 'active_data' => 1));
-        $this->object->insert('unit_test_more', array('id' => '4', 'test_key' => 'testing 4', 'active_data' => 1));
+        $this->object->query('CREATE TABLE unit_test_more(id serial, test_key varchar(50), active_data integer, PRIMARY KEY (ID))');
+        $this->object->insert('unit_test_more', array('test_key' => 'testing 1', 'active_data' => 1));
+        $this->object->insert('unit_test_more', array('test_key' => 'testing 2', 'active_data' => 0));
+        $this->object->insert('unit_test_more', array('test_key' => 'testing 3', 'active_data' => 1));
+        $this->object->insert('unit_test_more', array('test_key' => 'testing 4', 'active_data' => 1));
 
         $result = $this->object->selecting('unit_test_more', '*', where(eq('active_data', 1), grouping(like('test_key', '%1%', _OR), like('test_key', '%3%'))));
         $i = 1;
