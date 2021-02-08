@@ -52,7 +52,7 @@ class DInjectorTest extends EZTestCase
     {
         $container = new DInjector();
         $this->expectException(ContainerException::class);
-        $this->expectExceptionMessageRegExp('/[is not instantiable]/');
+        $this->expectExceptionMessageMatches('/[is not instantiable]/');
         $baz = $container->autoWire('ezsql\Tests\Baz');
     }
 
@@ -70,7 +70,7 @@ class DInjectorTest extends EZTestCase
     {
         $container = new DInjector();
         $this->expectException(NotFoundException::class);
-        $this->expectExceptionMessageRegExp('/[does not exists]/');
+        $this->expectExceptionMessageMatches('/[does not exists]/');
         $baz = $container->get('Baz');
     }
 }

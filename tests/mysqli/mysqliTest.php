@@ -616,7 +616,7 @@ class mysqliTest extends EZTestCase
 
     public function test__construct_Error()
     {
-        $this->expectExceptionMessageRegExp('/[Missing configuration details]/');
+        $this->expectExceptionMessageMatches('/[Missing configuration details]/');
         $this->assertNull(new ez_mysqli());
     }
 
