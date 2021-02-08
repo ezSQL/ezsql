@@ -363,9 +363,9 @@ class sqlsrvTest extends EZTestCase
             column('prepare_key', VARCHAR, 50)
         );
 
-        $this->object->insert('prepare_test', ['id' => 1, 'prepare_key' => 'test 2']);
-        $this->object->query_prepared('INSERT INTO prepare_test( id, prepare_key ) VALUES( ?, ? )', [4, 'test 10']);
-        $this->object->query_prepared('INSERT INTO prepare_test( id, prepare_key ) VALUES( ?, ? )', [9, 'test 3']);
+        $this->object->query_prepared('INSERT INTO prepare_test(id, prepare_key ) VALUES( ?, ? )', [1, 'test 2']);
+        $this->object->query_prepared('INSERT INTO prepare_test(id, prepare_key ) VALUES( ?, ? )', [4, 'test 10']);
+        $this->object->query_prepared('INSERT INTO prepare_test(id, prepare_key ) VALUES( ?, ? )', [9, 'test 3']);
 
         $this->object->query_prepared('SELECT id, prepare_key FROM prepare_test WHERE id = ?', [9]);
         $query = $this->object->queryResult();
