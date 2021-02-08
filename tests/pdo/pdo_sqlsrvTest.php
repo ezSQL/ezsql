@@ -199,7 +199,7 @@ class pdo_sqlsrvTest extends EZTestCase
     public function testWhereGrouping()
     {
         $this->assertTrue($this->object->connect('sqlsrv:Server=' . self::TEST_DB_HOST . ';Database=' . self::TEST_DB_NAME, self::TEST_DB_USER, self::TEST_DB_PASSWORD));
-        $this->object->query('CREATE TABLE unit_test_other(id integer, test_key varchar(50), active_data tinyint(1), PRIMARY KEY (ID))');
+        $this->object->query('CREATE TABLE unit_test_other(id integer, test_key varchar(50), active_data integer, PRIMARY KEY (ID))');
         $this->object->insert('unit_test_other', array('id' => 1, 'test_key' => 'testing 1', 'active_data' => 1));
         $this->object->insert('unit_test_other', array('id' => 2, 'test_key' => 'testing 2', 'active_data' => 0));
         $this->object->insert('unit_test_other', array('id' => 3, 'test_key' => 'testing 3', 'active_data' => 1));
