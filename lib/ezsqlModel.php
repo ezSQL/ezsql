@@ -174,8 +174,72 @@ class ezsqlModel extends ezQuery implements ezsqlModelInterface
 	}
 
 	/**
-	 * Use for Calling Non-Existent Functions, handling Getters and Setters
+	 * Magic methods for Calling Non-Existent Functions, handling Getters and Setters.
 	 * @method set/get{property} - a property that needs to be accessed
+	 *
+	 * @method void setDebug_All($args);
+	 * @method void setTrace($args);
+	 * @method void setDebug_Called($args);
+	 * @method void setVarDump_Called($args);
+	 * @method void setShow_Errors($args);
+	 * @method void setNum_Queries($args);
+	 * @method void setConn_Queries($args);
+	 * @method void setCaptured_Errors($args);
+	 * @method void setCache_Dir($args);
+	 * @method void setUse_Disk_Cache($args);
+	 * @method void setCache_Timeout($args);
+	 * @method void setCache_Queries($args);
+	 * @method void setCache_Inserts($args);
+	 * @method void setNum_Rows($args);
+	 * @method void setDb_Connect_Time($args);
+	 * @method void setSql_Log_File($args);
+	 * @method void setProfile_Times($args);
+	 * @method void setInsert_Id($args);
+	 * @method void setLast_Query($args);
+	 * @method void setLast_Error($args);
+	 * @method void setCol_Info($args);
+	 * @method void setTimers($args);
+	 * @method void setTotal_Query_Time($args);
+	 * @method void setTrace_Log($args);
+	 * @method void setUse_Trace_Log($args);
+	 * @method void setDo_Profile($args);
+	 * @method void setLast_Result($args);
+	 * @method void setFrom_Disk_Cache($args);
+	 * @method void setDebug_Echo_Is_On($args);
+	 * @method void setFunc_Call($args);
+	 * @method void setAll_Func_Calls($args);
+	 *
+	 * @method string getDebug_All();
+	 * @method string getTrace();
+	 * @method string getDebug_Called();
+	 * @method string getVarDump_Called();
+	 * @method string getShow_Errors();
+	 * @method string getNum_Queries();
+	 * @method string getConn_Queries();
+	 * @method string getCaptured_Errors();
+	 * @method string getCache_Dir();
+	 * @method string getUse_Disk_Cache();
+	 * @method string getCache_Timeout();
+	 * @method string getCache_Queries();
+	 * @method string getCache_Inserts();
+	 * @method string getNum_Rows();
+	 * @method string getDb_Connect_Time();
+	 * @method string getSql_Log_File();
+	 * @method string getProfile_Times();
+	 * @method string getInsert_Id();
+	 * @method string getLast_Query();
+	 * @method string getLast_Error();
+	 * @method string getCol_Info();
+	 * @method string getTimers();
+	 * @method string getTotal_Query_Time();
+	 * @method string getTrace_Log();
+	 * @method string getUse_Trace_Log();
+	 * @method string getDo_Profile();
+	 * @method string getLast_Result();
+	 * @method string getFrom_Disk_Cache();
+	 * @method string getDebug_Echo_Is_On();
+	 * @method string getFunc_Call();
+	 * @method string getAll_Func_Calls();
 	 *
 	 * @property-read function
 	 * @property-write args
@@ -258,8 +322,8 @@ class ezsqlModel extends ezQuery implements ezsqlModelInterface
 		// Get rid of these
 		$this->last_result = null;
 		$this->col_info = array();
-                $this->last_query = null;
-                $this->all_func_calls = array();
+		$this->last_query = null;
+		$this->all_func_calls = array();
 		$this->from_disk_cache = false;
 		$this->clearPrepare();
 	}
@@ -337,7 +401,7 @@ class ezsqlModel extends ezQuery implements ezsqlModelInterface
 		return $new_array;
 	}
 
-	public function get_results(string $query = null, $output = \OBJECT, 	bool $use_prepare = false)
+	public function get_results(string $query = null, $output = \OBJECT, bool $use_prepare = false)
 	{
 		// Log how the function was called
 		$this->log_query("\$db->get_results(\"$query\", $output, $use_prepare)");
@@ -664,16 +728,31 @@ class ezsqlModel extends ezQuery implements ezsqlModelInterface
 		$this->secureOptions = null;
 	}
 
+	/**
+	 * Returns `true` if the database connection is established.
+	 *
+	 * @return bool
+	 */
 	public function isConnected()
 	{
 		return $this->_connected;
 	} // isConnected
 
+	/**
+	 * Returns the `number` of affected rows of a query.
+	 *
+	 * @return int
+	 */
 	public function affectedRows()
 	{
 		return $this->_affectedRows;
 	} // affectedRows
 
+	/**
+	 * Returns the last query `result`.
+	 *
+	 * @return object
+	 */
 	public function queryResult()
 	{
 		return $this->last_result;

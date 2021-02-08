@@ -90,7 +90,7 @@ class mysqliTest extends EZTestCase
         $this->assertTrue($result);
 
         $this->errors = array();
-        set_error_handler(array($this, 'errorHandler'));
+        //set_error_handler(array($this, 'errorHandler'));
         $this->assertTrue($this->object->select(''));
         $this->object->disconnect();
         $this->assertFalse($this->object->select('notest'));
@@ -616,7 +616,7 @@ class mysqliTest extends EZTestCase
 
     public function test__construct_Error()
     {
-        $this->expectExceptionMessageMatches('/[Missing configuration details]/');
+        $this->expectExceptionMessageRegExp('/[Missing configuration details]/');
         $this->assertNull(new ez_mysqli());
     }
 

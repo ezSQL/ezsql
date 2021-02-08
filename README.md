@@ -1,11 +1,11 @@
 # **ezsql**
 
-[![Build Status](https://travis-ci.org/ezSQL/ezsql.svg?branch=master)](https://travis-ci.org/ezSQL/ezsql)
-[![Build status](https://ci.appveyor.com/api/projects/status/6s8oqnoxa2i5k04f?svg=true)](https://ci.appveyor.com/project/jv2222/ezsql)
+[![Windows](https://github.com/ezSQL/ezsql/workflows/Windows/badge.svg)](https://github.com/ezSQL/ezsql/actions?query=workflow%3AWindows)
+[![Linux](https://github.com/ezSQL/ezsql/workflows/Linux/badge.svg)](https://github.com/ezSQL/ezsql/actions?query=workflow%3ALinux)
 [![codecov](https://codecov.io/gh/ezSQL/ezSQL/branch/master/graph/badge.svg)](https://codecov.io/gh/ezSQL/ezSQL)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/aad1f6aaaaa14f60933e75615da900b8)](https://www.codacy.com/app/techno-express/ezsql?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=ezSQL/ezsql&amp;utm_campaign=Badge_Grade)
 [![Maintainability](https://api.codeclimate.com/v1/badges/6f6107f25e9de7bf4272/maintainability)](https://codeclimate.com/github/ezSQL/ezsql/maintainability)
-[![Total Downloads](https://poser.pugx.org/jv2222/ezsql/downloads)](https://packagist.org/packages/jv2222/ezsql)
+[![Total Downloads](https://poser.pugx.org/ezSQL/ezsql/downloads)](https://packagist.org/packages/ezSQL/ezsql)
 
 ***A class to make it very easy to deal with database connections.***
 

@@ -105,7 +105,7 @@ class DatabaseTest extends EZTestCase
     public function testInitialize_Error()
     {
         $this->expectException(\Exception::class);
-        $this->expectExceptionMessageMatches('/[Missing configuration details]/');
+        $this->expectExceptionMessageRegExp('/[Missing configuration details]/');
         $mysqli = Database::initialize('', [self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME]);
     }
 }

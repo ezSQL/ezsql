@@ -16,7 +16,7 @@ class pdo_mysqlTest extends EZTestCase
     const TEST_DB_PORT = '3306';
 
     /**
-     * @var resource
+     * @var \ezsql\Database\ez_pdo
      */
     protected $object;
 
@@ -288,6 +288,7 @@ class pdo_mysqlTest extends EZTestCase
     public function testJoins()
     {
         $this->assertTrue($this->object->connect('mysql:host=' . self::TEST_DB_HOST . ';dbname=' . self::TEST_DB_NAME . ';port=' . self::TEST_DB_PORT, self::TEST_DB_USER, self::TEST_DB_PASSWORD));
+        $this->object->query('DROP TABLE unit_test');
         $this->object->query('CREATE TABLE unit_test(id integer, test_key varchar(50), PRIMARY KEY (ID))');
         $this->object->insert('unit_test', array('id' => '1', 'test_key' => 'testing 1'));
         $this->object->insert('unit_test', array('id' => '2', 'test_key' => 'testing 2'));
@@ -301,10 +302,10 @@ class pdo_mysqlTest extends EZTestCase
         $i = 1;
         $o = 3;
         foreach ($result as $row) {
-            $this->assertEquals($i, $row->child_id);
-            $this->assertEquals('testing child ' . $i, $row->child_test_key);
-            $this->assertEquals($o, $row->id);
-            $this->assertEquals('testing ' . $o, $row->test_key);
+            $this->assertEquals($o, $row->child_id);
+            $this->assertEquals('testing child ' . $o, $row->child_test_key);
+            $this->assertEquals($i, $row->id);
+            $this->assertEquals('testing ' . $i, $row->test_key);
             ++$i;
             --$o;
         }
@@ -316,13 +317,14 @@ class pdo_mysqlTest extends EZTestCase
             --$o;
         }
 
-        $this->assertEquals(0, $this->object->drop('unit_test'));
-        $this->assertEquals(0, $this->object->drop('unit_test_child'));
+        $this->assertEquals(0, $this->object->query('DROP TABLE unit_test'));
+        $this->assertEquals(0, $this->object->query('DROP TABLE unit_test_child'));
     }
 
     public function testBeginTransactionCommit()
     {
         $this->object->connect();
+        $this->object->query('DROP TABLE unit_test');
         $this->object->query('CREATE TABLE unit_test(id integer, test_key varchar(50), PRIMARY KEY (ID))');
 
         $commit = null;
@@ -355,6 +357,7 @@ class pdo_mysqlTest extends EZTestCase
     public function testBeginTransactionRollback()
     {
         $this->object->connect();
+        $this->object->query('DROP TABLE unit_test');
         $this->object->query('CREATE TABLE unit_test(id integer, test_key varchar(50), PRIMARY KEY (ID))');
 
         $commit = null;
@@ -443,7 +446,7 @@ class pdo_mysqlTest extends EZTestCase
 
     public function test__Construct_Error()
     {
-        $this->expectExceptionMessageMatches('/[Missing configuration details]/');
+        $this->expectExceptionMessageRegExp('/[Missing configuration details]/');
         $this->assertNull(new ez_pdo());
     }
 

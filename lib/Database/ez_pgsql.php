@@ -162,9 +162,13 @@ class ez_pgsql extends ezsqlModel implements DatabaseInterface
         if (!empty($result))
             $this->result = $result;
 
-        // If there is an error then take note of it..
-        if ($str = @\pg_last_error($this->dbh)) {
-            return $this->register_error($str);
+        try {
+            // If there is an error then take note of it..
+            if ($str = @\pg_last_error($this->dbh)) {
+                return $this->register_error($str);
+            }
+        } catch (\Throwable $ex) {
+            return $this->register_error($ex->getMessage());
         }
 
         // Query was an insert, delete, update, replace
@@ -298,7 +302,11 @@ class ez_pgsql extends ezsqlModel implements DatabaseInterface
             $this->shortcutUsed = true;
             $this->result = $this->query_prepared($query, $param);
         } else {
-            $this->result = @\pg_query($this->dbh, $query);
+            try {
+                $this->result = @\pg_query($this->dbh, $query);
+            } catch (\Throwable $ex) {
+                //
+            }
         }
 
         if ($this->processQueryResult($query) === false) {

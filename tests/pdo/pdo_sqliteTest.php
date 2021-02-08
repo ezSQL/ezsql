@@ -17,7 +17,7 @@ class pdo_sqliteTest extends EZTestCase
     const TEST_SQLITE_DB = './tests/pdo/ez_test.sqlite';
 
     /**
-     * @var resource
+     * @var \ezsql\Database\ez_pdo
      */
     protected $object;
 
@@ -219,6 +219,7 @@ class pdo_sqliteTest extends EZTestCase
     public function testWhereGrouping()
     {
         $this->assertTrue($this->object->connect('sqlite:' . self::TEST_SQLITE_DB, '', '', array(), true));
+        $this->object->drop('unit_test');
         $this->object->query('CREATE TABLE unit_test(id integer, test_key varchar(50), active tinyint(1), PRIMARY KEY (ID))');
         $this->object->insert('unit_test', array('id' => '1', 'test_key' => 'testing 1', 'active' => 1));
         $this->object->insert('unit_test', array('id' => '2', 'test_key' => 'testing 2', 'active' => 0));
@@ -239,6 +240,7 @@ class pdo_sqliteTest extends EZTestCase
     public function testJoins()
     {
         $this->assertTrue($this->object->connect('sqlite:' . self::TEST_SQLITE_DB, '', '', array(), true));
+        $this->object->drop('unit_test');
         $this->object->query('CREATE TABLE unit_test(id integer, test_key varchar(50), PRIMARY KEY (ID))');
         $this->object->insert('unit_test', array('id' => '1', 'test_key' => 'testing 1'));
         $this->object->insert('unit_test', array('id' => '2', 'test_key' => 'testing 2'));

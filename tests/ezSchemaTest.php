@@ -104,7 +104,7 @@ class ezSchemaTest extends EZTestCase
         $this->assertFalse(column('id', INTR, 32, AUTO, PRIMARY));
         $db = mysqlInstance([self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME]);
         $this->expectException(\Exception::class);
-        $this->expectExceptionMessageMatches('/[does not exist]/');
+        $this->expectExceptionMessageRegExp('/[does not exist]/');
         $this->assertNull(column('id', 'DOS', 32));
     }
 

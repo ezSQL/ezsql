@@ -1,0 +1,65 @@
+# GitHub Action for PHP with extensions
+name: Windows
+
+on:
+  push:
+    branches:
+    - master
+  pull_request:
+    branches:
+    - master
+
+jobs:
+  windows:
+    name: Windows (PHP ${{ matrix.php-versions }} CI)
+    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        operating-system: [windows-latest]
+        php-versions: ['7.1', '7.2']
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Setup PHP, with composer and extensions
+        uses: shivammathur/setup-php@v2 #https://github.com/shivammathur/setup-php
+        with:
+          php-version: ${{ matrix.php-versions }}
+          extensions: mbstring, fileinfo, mysqli, pdo_mysql, pgsql, pdo_pgsql, sqlite3, pdo_sqlite, sqlsrv, pdo_sqlsrv, xdebug
+          coverage: xdebug
+      - name: Chocolatey Install MySQL
+        run: choco install mysql --version=5.7.18 -y -f
+      - name: Setup MySQL Database
+        run: |
+          mysql -u root -e "CREATE DATABASE IF NOT EXISTS ez_test;"
+          mysql -u root -e "CREATE USER ez_test@localhost IDENTIFIED BY 'ezTest'; GRANT ALL ON ez_test.* TO ez_test@localhost; FLUSH PRIVILEGES;"
+      - name: Chocolatey Uninstall PostgreSql 13
+        run: choco uninstall postgresql13 -y -f
+      - name: Chocolatey Install PostgreSql 9
+        run: choco install postgresql9 --params '/Password:root' -y -f
+      - name: Setup PostgreSql Database
+        run: |
+          $env:Path += ";C:\Program Files\PostgreSQL\9.6\bin"
+          $env:PGPASSWORD = "root"
+          psql -U postgres --command="\conninfo"
+          psql -U postgres -c "CREATE USER ez_test WITH PASSWORD 'ezTest';" --command="\du"
+          createdb --owner=ez_test ez_test
+          [Environment]::SetEnvironmentVariable("Path", $env:Path, [EnvironmentVariableTarget]::Machine)
+      - name: Chocolatey Install SQLServer
+        run: choco install sql-server-express -ia "/IACCEPTSQLSERVERLICENSETERMS /Q /ACTION=install /INSTANCEID=MSSQLSERVER /INSTANCENAME=MSSQLSERVER /UPDATEENABLED=FALSE /TCPENABLED=1 /SECURITYMODE=SQL /SAPWD=Password12!" -o -y -f
+      - name: Setup SQLServer Database
+        run: |
+          sqlcmd -L
+          New-NetFirewallRule -DisplayName "SQLServer default instance" -Direction Inbound -LocalPort 1433 -Protocol TCP -Action Allow
+          New-NetFirewallRule -DisplayName "SQLServer Browser service" -Direction Inbound -LocalPort 1434 -Protocol UDP -Action Allow
+          sqlcmd -S localhost,1433 -U sa -P Password12! -Q "CREATE DATABASE ez_test"
+          sqlcmd -S localhost,1433 -U sa -P Password12! -d ez_test -Q "CREATE LOGIN ez_test WITH PASSWORD=N'ezTest', DEFAULT_DATABASE=ez_test, CHECK_EXPIRATION=OFF, CHECK_POLICY=OFF; ALTER SERVER ROLE [sysadmin] ADD MEMBER ez_test"
+      - name: Install dependencies
+        run: composer update
+      - name: Test with phpunit
+        run: vendor\bin\phpunit --coverage-clover=coverage.xml
+      - name: Submit code coverage
+        uses: codecov/codecov-action@v1
+        with:
+          file: ./coverage.xml # optional

@@ -1,0 +1,56 @@
+# GitHub Action for PHP with extensions
+name: Linux
+
+on:
+  push:
+    branches:
+    - master
+  pull_request:
+    branches:
+    - master
+
+jobs:
+  linux:
+    name: Linux (PHP ${{ matrix.php-versions }} CI)
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        operating-system: [ubuntu-latest]
+        php-versions: ['7.4', '8.0']
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Setup PHP, with composer and extensions
+        uses: shivammathur/setup-php@v2 #https://github.com/shivammathur/setup-php
+        with:
+          php-version: ${{ matrix.php-versions }}
+          extensions: mbstring, fileinfo, mysqli, pdo_mysql, pgsql, pdo_pgsql, sqlite3, pdo_sqlite, sqlsrv, pdo_sqlsrv, xdebug
+          coverage: xdebug
+      - name: Start MySQL
+        run: sudo systemctl start mysql.service
+      - name: Setup MySQL Database
+        run: |
+          mysql -uroot -h127.0.0.1 -proot -e "CREATE DATABASE IF NOT EXISTS ez_test;"
+          mysql -uroot -h127.0.0.1 -proot -e "CREATE USER ez_test@localhost IDENTIFIED BY 'ezTest'; GRANT ALL ON ez_test.* TO ez_test@localhost; FLUSH PRIVILEGES;"
+      - name: Start PostgreSql
+        run: |
+          sudo systemctl start postgresql.service
+          pg_isready
+      - name: Create additional user
+        run: |
+          sudo -u postgres psql --command="CREATE USER ez_test PASSWORD 'ezTest'" --command="\du"
+      - name: Setup PostgreSql Database
+        run: |
+          sudo -u postgres createdb --owner=ez_test ez_test
+      - name: Setup SQLServer Database
+        run: |
+          chmod +x "${GITHUB_WORKSPACE}/.github/install_mssql.sh"
+          "${GITHUB_WORKSPACE}/.github/install_mssql.sh"
+      - name: Install dependencies
+        run: composer update
+      - name: Test with phpunit
+        run: vendor/bin/phpunit --coverage-clover=coverage.xml
+      - name: Submit code coverage
+        run: bash <(curl -s https://codecov.io/bash)

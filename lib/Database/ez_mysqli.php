@@ -18,7 +18,7 @@ class ez_mysqli extends ezsqlModel implements DatabaseInterface
 
     /**
      * Database connection handle
-     * @var resource
+     * @var \mysqli
      */
     private $dbh;
 
@@ -132,19 +132,13 @@ class ez_mysqli extends ezsqlModel implements DatabaseInterface
      */
     public function select($name = '', $charset = '')
     {
-        $this->_connected = false;
         $name = empty($name) ? $this->database->getName() : $name;
-        if (!$this->dbh) {
-            // Must have an active database connection
-            $this->register_error(\FAILED_CONNECTION . ' in ' . __FILE__ . ' on line ' . __LINE__);
-        } elseif (!\mysqli_select_db($this->dbh, $name)) {
+        try {
             // Try to connect to the database
-            // Try to get error supplied by mysql if not use our own
-            if (!$str = \mysqli_error($this->dbh)) {
-                $str = 'Unexpected error while trying to select database';
+            if (($this->dbh === null) || ($this->_connected === false) || !\mysqli_select_db($this->dbh, $name)) {
+                throw new Exception("Error Processing Request", 1);
             }
-            $this->register_error($str . ' in ' . __FILE__ . ' on line ' . __LINE__);
-        } else {
+
             $this->database->setName($name);
             if ($charset == '') {
                 $charset = $this->database->getCharset();
@@ -162,10 +156,21 @@ class ez_mysqli extends ezsqlModel implements DatabaseInterface
                     \mysqli_query($this->dbh, 'SET NAMES \'' . $encoding . '\'');
                 }
             }
-            $this->_connected = true;
-        }
 
-        return $this->_connected;
+            return true;
+        } catch (\Throwable $e) {
+            $str = \FAILED_CONNECTION;
+            // Must have an active database connection
+            if ($this->dbh && $this->_connected) {
+                // Try to get error supplied by mysql if not use our own
+                if (!$str = \mysqli_error($this->dbh)) {
+                    $str = 'Unexpected error while trying to select database';
+                }
+            }
+
+            $this->register_error($str . ' in ' . __FILE__ . ' on line ' . __LINE__);
+            return false;
+        }
     } // select
 
     /**
@@ -225,7 +230,7 @@ class ez_mysqli extends ezsqlModel implements DatabaseInterface
                 }
 
                 // Binds variables to a prepared statement for result storage
-                \call_user_func_array([$stmt, 'bind_result'], $variables);
+                \call_user_func_array([$stmt, 'bind_result'], \array_values($variables));
 
                 $i = 0;
                 // Store Query Results

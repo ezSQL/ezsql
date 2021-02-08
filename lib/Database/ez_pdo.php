@@ -19,7 +19,7 @@ class ez_pdo extends ezsqlModel implements DatabaseInterface
 
     /**
      * Database connection handle
-     * @var resource
+     * @var \PDO
      */
     private $dbh;
 
@@ -239,14 +239,18 @@ class ez_pdo extends ezsqlModel implements DatabaseInterface
     {
         $stmt = $this->dbh->prepare($query);
         $result = false;
-        if ($stmt && $stmt->execute($param)) {
+        if ($stmt && $stmt->execute(\array_values($param))) {
             $result = $stmt->rowCount();
             // Store Query Results
             $num_rows = 0;
-            while ($row = @$stmt->fetch(\PDO::FETCH_ASSOC)) {
-                // Store results as an objects within main array
-                $this->last_result[$num_rows] = (object) $row;
-                $num_rows++;
+            try {
+                while ($row = @$stmt->fetch(\PDO::FETCH_ASSOC)) {
+                    // Store results as an objects within main array
+                    $this->last_result[$num_rows] = (object) $row;
+                    $num_rows++;
+                }
+            } catch (\Throwable $ex) {
+                //
             }
 
             $this->num_rows = $num_rows;
@@ -300,10 +304,14 @@ class ez_pdo extends ezsqlModel implements DatabaseInterface
 
                 // Store Query Results
                 $num_rows = 0;
-                while ($row = @$result->fetch(\PDO::FETCH_ASSOC)) {
-                    // Store results as an objects within main array
-                    $this->last_result[$num_rows] = (object) $row;
-                    $num_rows++;
+                try {
+                    while ($row = @$result->fetch(\PDO::FETCH_ASSOC)) {
+                        // Store results as an objects within main array
+                        $this->last_result[$num_rows] = (object) $row;
+                        $num_rows++;
+                    }
+                } catch (\Throwable $ex) {
+                    //
                 }
 
                 // Log number of rows the query returned
@@ -318,9 +326,13 @@ class ez_pdo extends ezsqlModel implements DatabaseInterface
             if (!empty($result))
                 $this->_affectedRows = $result;
 
-            // Take note of the insert_id
-            if (\preg_match("/^(insert|replace)\s+/i", $query)) {
-                $this->insert_id = @$this->dbh->lastInsertId();
+            try {
+                // Take note of the insert_id
+                if (\preg_match("/^(insert|replace)\s+/i", $query)) {
+                    $this->insert_id = @$this->dbh->lastInsertId();
+                }
+            } catch (\Throwable $ex) {
+                //
             }
 
             // Return number of rows affected
@@ -346,8 +358,13 @@ class ez_pdo extends ezsqlModel implements DatabaseInterface
             if (!empty($param) && \is_array($param) && $this->isPrepareOn()) {
                 $this->shortcutUsed = true;
                 $this->_affectedRows = $this->query_prepared($query, $param, false);
-            } else
-                $this->_affectedRows = $this->dbh->exec($query);
+            } else {
+                try {
+                    $this->_affectedRows = $this->dbh->exec($query);
+                } catch (\Throwable $ex) {
+                    //
+                }
+            }
 
             if ($this->processResult($query) === false)
                 return false;
@@ -360,7 +377,11 @@ class ez_pdo extends ezsqlModel implements DatabaseInterface
                 $this->shortcutUsed = true;
                 $sth = $this->query_prepared($query, $param, true);
             } else
-                $sth = $this->dbh->query($query);
+                try {
+                    $sth = $this->dbh->query($query);
+                } catch (\Throwable $ex) {
+                    //
+                }
 
             if ($this->processResult($query, $sth, true) === false)
                 return false;

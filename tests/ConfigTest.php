@@ -45,7 +45,7 @@ class ConfigTest extends EZTestCase
         }
 
         $this->expectException(\Exception::class);
-        $this->expectExceptionMessageMatches('/[Missing configuration details to connect to database]/');
+        $this->expectExceptionMessageRegExp('/[Missing configuration details to connect to database]/');
         $settings = Config::initialize('mysqli', [self::TEST_DB_USER, self::TEST_DB_PASSWORD]);
     }
 
@@ -88,7 +88,7 @@ class ConfigTest extends EZTestCase
 
         $dsn = 'mysql:host=' . self::TEST_DB_HOST . ';dbname=' . self::TEST_DB_NAME . ';port=3306';
         $this->expectException(\Exception::class);
-        $this->expectExceptionMessageMatches('/[Missing configuration details to connect to database]/');
+        $this->expectExceptionMessageRegExp('/[Missing configuration details to connect to database]/');
         $settings = Config::initialize('pdo', [$dsn]);
     }
 
@@ -102,7 +102,7 @@ class ConfigTest extends EZTestCase
 
         $dsn = 'mysql:host=' . self::TEST_DB_HOST . ';dbname=' . self::TEST_DB_NAME . ';port=3306';
         $this->expectException(\Exception::class);
-        $this->expectExceptionMessageMatches('/[does not exist]/');
+        $this->expectExceptionMessageRegExp('/[does not exist]/');
         $settings = new Config('pdo', [$dsn, self::TEST_DB_USER, self::TEST_DB_PASSWORD]);
         $settings->getNotAnProperty();
     }
@@ -145,7 +145,7 @@ class ConfigTest extends EZTestCase
         }
 
         $this->expectException(\Exception::class);
-        $this->expectExceptionMessageMatches('/[Missing configuration details to connect to database]/');
+        $this->expectExceptionMessageRegExp('/[Missing configuration details to connect to database]/');
         $settings = Config::initialize('pgsql', [self::TEST_DB_USER, self::TEST_DB_PASSWORD]);
     }
 
@@ -185,7 +185,7 @@ class ConfigTest extends EZTestCase
         }
 
         $this->expectException(\Exception::class);
-        $this->expectExceptionMessageMatches('/[Missing configuration details to connect to database]/');
+        $this->expectExceptionMessageRegExp('/[Missing configuration details to connect to database]/');
         $settings = new Config('sqlsrv', [self::TEST_DB_USER, self::TEST_DB_PASSWORD]);
     }
 
@@ -224,21 +224,21 @@ class ConfigTest extends EZTestCase
         }
 
         $this->expectException(\Exception::class);
-        $this->expectExceptionMessageMatches('/[Missing configuration details to connect to database]/');
+        $this->expectExceptionMessageRegExp('/[Missing configuration details to connect to database]/');
         $settings = new Config('sqlite3', [self::TEST_SQLITE_DB_DIR]);
     }
 
     public function test_construct()
     {
         $this->expectException(\Exception::class);
-        $this->expectExceptionMessageMatches('/[Missing configuration details to connect to database]/');
+        $this->expectExceptionMessageRegExp('/[Missing configuration details to connect to database]/');
         $settings = new Config('', [self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME]);
     }
 
     public function test_constructArgs()
     {
         $this->expectException(\Exception::class);
-        $this->expectExceptionMessageMatches('/[Missing configuration details to connect to database]/');
+        $this->expectExceptionMessageRegExp('/[Missing configuration details to connect to database]/');
         $settings = new Config('mysqli');
     }
 }
