@@ -31,13 +31,11 @@ jobs:
       - name: Brew Install MySQL
         run: |
           brew install mysql@5.7
-          mkdir /usr/local/var/mysql
-          chmod 777 mkdir /usr/local/var/mysql
-          brew postinstall mysql@5.7
       - name: Brew Start MySQL
         run: |
           brew services start mysql@5.7
           brew link mysql@5.7 --force
+          mysqld --initialize-insecure
       - name: Setup MySQL Database
         run: |
           mysql -u root -e "CREATE DATABASE IF NOT EXISTS ez_test;"
