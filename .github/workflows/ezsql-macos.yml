@@ -1,0 +1,70 @@
+# GitHub Action for PHP with extensions
+name: macOS
+
+on:
+  push:
+    branches:
+    - v5
+  pull_request:
+    branches:
+    - v5
+
+jobs:
+  windows:
+    name: macOS (PHP ${{ matrix.php-versions }} CI)
+    runs-on: macos-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        operating-system: [macos-latest]
+        php-versions: ['7.3']
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Setup PHP, with composer and extensions
+        uses: shivammathur/setup-php@v2 #https://github.com/shivammathur/setup-php
+        with:
+          php-version: ${{ matrix.php-versions }}
+          extensions: mbstring, fileinfo, mysqli, pdo_mysql, pgsql, pdo_pgsql, sqlite3, pdo_sqlite, sqlsrv, pdo_sqlsrv, xdebug
+          coverage: xdebug
+      - name: Brew Install MySQL
+        run: brew install mysql@5.7
+      - name: Brew Start MySQL
+        run: |
+          brew services start mysql@5.7
+          brew link mysql@5.7 --force
+          mysqld --initialize
+          mysql -V
+      - name: Setup MySQL Database
+        run: |
+          mysql -u root -e "CREATE DATABASE IF NOT EXISTS ez_test;"
+          mysql -u root -e "CREATE USER ez_test@localhost IDENTIFIED BY 'ezTest'; GRANT ALL ON ez_test.* TO ez_test@localhost; FLUSH PRIVILEGES;"
+      - name: Brew Start PostgreSql
+        run: brew services restart postgresql
+      - name: Setup PostgreSql Database
+        run: |
+          psql --command="CREATE USER ez_test PASSWORD 'ezTest'" --command="\du"
+          createdb --owner=ez_test ez_test
+      - name: Docker Install SQLServer
+        run: |
+          docker pull mcr.microsoft.com/mssql/server:2019-latest
+          docker run --name ms_sql_server -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=Password12!' -p 1433:1433 -p 1434:1434 -d mcr.microsoft.com/mssql/server:2019-latest
+      - name: Brew Install ODBC 17 and MSSQL Tools
+        run: |
+          /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+          brew tap microsoft/mssql-release https://github.com/Microsoft/homebrew-mssql-release
+          brew update
+          HOMEBREW_NO_ENV_FILTERING=1 ACCEPT_EULA=y brew install mssql-tools
+      - name: Setup SQLServer Database
+        run: |
+          sqlcmd -S localhost,1433 -U sa -P Password12! -Q "CREATE DATABASE ez_test"
+          sqlcmd -S localhost,1433 -U sa -P Password12! -d ez_test -Q "CREATE LOGIN ez_test WITH PASSWORD=N'ezTest', DEFAULT_DATABASE=ez_test, CHECK_EXPIRATION=OFF, CHECK_POLICY=OFF; ALTER SERVER ROLE [sysadmin] ADD MEMBER ez_test"
+      - name: Install dependencies
+        run: composer update
+      - name: Test with phpunit
+        run: vendor/bin/phpunit --coverage-clover=coverage.xml
+      - name: Submit code coverage
+        uses: codecov/codecov-action@v1
+        with:
+          file: ./coverage.xml # optional
