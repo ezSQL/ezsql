@@ -36,13 +36,11 @@ jobs:
           brew services start mysql@5.7
           brew link mysql@5.7 --force
           mysqld --initialize-insecure
-          sudo ls /var/spool/
-          sudo ls /usr/local/var/mysql/
-          sudo ln -s /tmp/mysql.sock /usr/local/var/mysql/mysql.sock
+          sudo ls /usr/local/var/mysql/mysql/
       - name: Setup MySQL Database
         run: |
-          mysql -u root -e "CREATE DATABASE IF NOT EXISTS ez_test;"
-          mysql -u root -e "CREATE USER ez_test@localhost IDENTIFIED BY 'ezTest'; GRANT ALL ON ez_test.* TO ez_test@localhost; FLUSH PRIVILEGES;"
+          mysql -u root -h127.0.0.1 -e "CREATE DATABASE IF NOT EXISTS ez_test;"
+          mysql -u root -h127.0.0.1 -e "CREATE USER ez_test@localhost IDENTIFIED BY 'ezTest'; GRANT ALL ON ez_test.* TO ez_test@localhost; FLUSH PRIVILEGES;"
       - name: Brew Start PostgreSql
         run: brew services restart postgresql
       - name: Setup PostgreSql Database
