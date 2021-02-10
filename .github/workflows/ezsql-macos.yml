@@ -59,7 +59,6 @@ jobs:
           brew services start docker-machine
           docker-machine create --driver virtualbox default
           eval $(docker-machine env default)
-          sudo dockerd
       - name: Docker Install SQLServer
         run: |
           docker pull mcr.microsoft.com/mssql/server
