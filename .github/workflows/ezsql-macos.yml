@@ -33,9 +33,8 @@ jobs:
           brew install mysql@5.7
       - name: Brew Start MySQL
         run: |
-          mkdir -p /usr/local/var/mysql
-          sudo mkdir /var/mysql
           brew services start mysql@5.7
+          sudo ls /var/mysql/
           sudo ln -s /tmp/mysql.sock /var/mysql/mysql.sock
           brew link mysql@5.7 --force
           mysqld --initialize-insecure
