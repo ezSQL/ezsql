@@ -36,8 +36,9 @@ jobs:
           brew services start mysql@5.7
           brew link mysql@5.7 --force
           mysqld --initialize-insecure
-          sudo ls /var/
-          sudo ln -s /tmp/mysql.sock /var/mysql/mysql.sock
+          sudo ls /var/spool/
+          sudo ls /usr/local/var/mysql/
+          sudo ln -s /tmp/mysql.sock /usr/local/var/mysql/mysql.sock
       - name: Setup MySQL Database
         run: |
           mysql -u root -e "CREATE DATABASE IF NOT EXISTS ez_test;"
