@@ -52,10 +52,14 @@ jobs:
           createuser -s postgres
           psql -U postgres --command="CREATE USER ez_test PASSWORD 'ezTest'" --command="\du"
           createdb --owner=ez_test ez_test
+      - name: Install docker
+        run: |
+          brew install docker docker-machine docker-compose
+          sudo docker –version
       - name: Docker Install SQLServer
         run: |
-          docker pull mcr.microsoft.com/mssql/server:2019-latest
-          docker run --name ms_sql_server -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=Password12!' -p 1433:1433 -p 1434:1434 -d mcr.microsoft.com/mssql/server:2019-latest
+          docker pull mcr.microsoft.com/mssql/server
+          docker run --name ms_sql_server -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=Password12!' -p 1433:1433 -p 1434:1434 -d mcr.microsoft.com/mssql/server
       - name: Brew Install ODBC 17 and MSSQL Tools
         run: |
           /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
