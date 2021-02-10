@@ -37,11 +37,11 @@ jobs:
           brew link mysql@5.7 --force
           mysqld --initialize-insecure
           echo '-----'
-          sudo ls /usr/local/var/
+          sudo ls /usr/local/var/mysql/
           echo '-----'
-          sudo ls /usr/local/etc/
+          sudo ls /usr/local/var/run/
           echo '-----'
-          sudo cat /usr/local/etc/my.cnf
+          sudo ls /var/run/
           mysql --help
       - name: Setup MySQL Database
         run: |
