@@ -35,7 +35,6 @@ jobs:
         run: |
           mkdir -p /usr/local/var/mysql
           sudo mkdir /var/mysql
-          brew doctor
           brew services start mysql@5.7
           sudo ln -s /tmp/mysql.sock /var/mysql/mysql.sock
           brew link mysql@5.7 --force
