@@ -61,8 +61,9 @@ jobs:
           docker-machine restart
       - name: Docker Install SQLServer
         run: |
-          docker pull mcr.microsoft.com/mssql/server
-          ls -lah /var/run/docker.sock /var/tmp/docker.sock
+          ls -lah /var/run/docker.sock /var/tmp/docker.sock /var/run/
+          sudo mkdir -p /var/tmp/docker.sock
+          sudo ln -s /var/run/docker.sock /var/tmp/docker.sock
           docker run --name ms_sql_server -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=Password12!' -p 1433:1433 -p 1434:1434 -d mcr.microsoft.com/mssql/server
       - name: Brew Install ODBC 17 and MSSQL Tools
         run: |
