@@ -3,6 +3,7 @@
 use ezsql\ezQuery;
 use ezsql\ezSchema;
 use ezsql\Database;
+use ezsql\ezQueryInterface;
 use ezsql\DatabaseInterface;
 use ezsql\Database\ez_pdo;
 
@@ -283,7 +284,7 @@ if (!function_exists('ezFunctions')) {
         global $ezInstance;
         $status = false;
 
-        if ($ezSQL instanceof DatabaseInterface) {
+        if ($ezSQL instanceof ezQueryInterface) {
             $ezInstance = $ezSQL;
             $status = true;
         }
@@ -295,7 +296,7 @@ if (!function_exists('ezFunctions')) {
     {
         global $ezInstance;
 
-        return ($ezInstance instanceof DatabaseInterface) ? $ezInstance : null;
+        return ($ezInstance instanceof ezQueryInterface) ? $ezInstance : null;
     }
 
     function clearInstance()
@@ -325,7 +326,7 @@ if (!function_exists('ezFunctions')) {
             : false;
     }
 
-    function insert_select($totable = '', $columns = '*', $fromTable, $from = '*', ...$args)
+    function insert_select($totable = '', $columns = '*', $fromTable = null, $from = '*', ...$args)
     {
         $ezQuery = \getInstance();
         return ($ezQuery instanceof DatabaseInterface)
@@ -461,7 +462,7 @@ if (!function_exists('ezFunctions')) {
             : false;
     }
 
-    function insert($table = '', $keyValue)
+    function insert($table = '', $keyValue = null)
     {
         $ezQuery = \getInstance();
         return ($ezQuery instanceof DatabaseInterface)
@@ -469,7 +470,7 @@ if (!function_exists('ezFunctions')) {
             : false;
     }
 
-    function update($table = '', $keyValue, ...$args)
+    function update($table = '', $keyValue = null, ...$args)
     {
         $ezQuery = \getInstance();
         return ($ezQuery instanceof DatabaseInterface)
@@ -485,7 +486,7 @@ if (!function_exists('ezFunctions')) {
             : false;
     }
 
-    function replace($table = '', $keyValue)
+    function replace($table = '', $keyValue = null)
     {
         $ezQuery = \getInstance();
         return ($ezQuery instanceof DatabaseInterface)
