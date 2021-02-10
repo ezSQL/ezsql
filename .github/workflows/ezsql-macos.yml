@@ -34,10 +34,10 @@ jobs:
       - name: Brew Start MySQL
         run: |
           mkdir -p /usr/local/var/mysql
-          mkdir /var/mysql
+          sudo mkdir /var/mysql
           brew doctor
           brew services start mysql@5.7
-          ln -s /tmp/mysql.sock /var/mysql/mysql.sock
+          sudo ln -s /tmp/mysql.sock /var/mysql/mysql.sock
           brew link mysql@5.7 --force
           mysqld --initialize-insecure
       - name: Setup MySQL Database
