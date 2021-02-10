@@ -43,7 +43,11 @@ jobs:
           mysql -u root -e "CREATE USER ez_test@localhost IDENTIFIED BY 'ezTest'; GRANT ALL ON ez_test.* TO ez_test@localhost; FLUSH PRIVILEGES;"
       - name: Brew Start PostgreSql
         run: |
-          brew services start postgresql
+          rm /usr/local/var/postgres/postmaster.pid
+          sudo mkdir /var/pgsql_socket/
+          sudo ln -s /private/tmp/.s.PGSQL.5432 /var/pgsql_socket/
+          pg_ctl -D /usr/local/var/postgres -l /usr/local/var/postgres/server.log start
+          brew services restart postgresql
       - name: Setup PostgreSql Database
         run: |
           psql -U postgres --command="CREATE USER ez_test PASSWORD 'ezTest'" --command="\du"
