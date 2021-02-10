@@ -13,14 +13,6 @@ jobs:
   windows:
     name: macOS (PHP ${{ matrix.php-versions }} CI)
     runs-on: macos-latest
-    container:
-      image: mcr.microsoft.com/mssql/server
-      env:
-        ACCEPT_EULA: y
-        SA_PASSWORD: Password12!
-      ports:
-        - 1433:1433/tcp
-        - 1434:1434/tcp
     strategy:
       fail-fast: false
       matrix:
@@ -141,7 +133,7 @@ jobs:
       - name: Docker Install SQLServer
         run: |
           docker pull mcr.microsoft.com/mssql/server
-          docker run --name ms_sql_server -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=Password12!' -p 1433:1433 -p 1434:1434 -d mcr.microsoft.com/mssql/server
+          docker run --name ms_sql_server -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=Password12!' -p 1433:1433 -d mcr.microsoft.com/mssql/server
       - name: Brew Install ODBC 17 and MSSQL Tools
         run: |
           /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
