@@ -34,10 +34,10 @@ jobs:
       - name: Brew Start MySQL
         run: |
           brew services start mysql@5.7
-          sudo ls /var/mysql/
-          sudo ln -s /tmp/mysql.sock /var/mysql/mysql.sock
           brew link mysql@5.7 --force
           mysqld --initialize-insecure
+          sudo ls /var/
+          sudo ln -s /tmp/mysql.sock /var/mysql/mysql.sock
       - name: Setup MySQL Database
         run: |
           mysql -u root -e "CREATE DATABASE IF NOT EXISTS ez_test;"
