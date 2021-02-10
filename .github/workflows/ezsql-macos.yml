@@ -37,17 +37,17 @@ jobs:
           brew link mysql@5.7 --force
           mysqld --initialize-insecure
           mysql.server start
-          echo '-----'
-          sudo ls /var/run/
       - name: Setup MySQL Database
         run: |
           mysql -u root -e "CREATE DATABASE IF NOT EXISTS ez_test;"
           mysql -u root -e "CREATE USER ez_test@localhost IDENTIFIED BY 'ezTest'; GRANT ALL ON ez_test.* TO ez_test@localhost; FLUSH PRIVILEGES;"
       - name: Brew Start PostgreSql
-        run: brew services restart postgresql
+        run: |
+          brew services restart postgresql
+          pg_isready
       - name: Setup PostgreSql Database
         run: |
-          psql --command="CREATE USER ez_test PASSWORD 'ezTest'" --command="\du"
+          psql -U postgres --command="CREATE USER ez_test PASSWORD 'ezTest'" --command="\du"
           createdb --owner=ez_test ez_test
       - name: Docker Install SQLServer
         run: |
