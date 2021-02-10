@@ -36,8 +36,8 @@ jobs:
           brew services start mysql@5.7
           brew link mysql@5.7 --force
           mysqld --initialize-insecure
-          sudo ls /etc/
-          sudo cat /etc/my.cnf
+          sudo ls /usr/local/Cellar/mysql@5.7/5.7.32/
+          sudo cat /usr/local/Cellar/mysql@5.7/5.7.32/my.cnf
       - name: Setup MySQL Database
         run: |
           mysql -u root -e "CREATE DATABASE IF NOT EXISTS ez_test;"
