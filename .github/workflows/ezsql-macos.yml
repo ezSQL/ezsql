@@ -54,7 +54,9 @@ jobs:
           createdb --owner=ez_test ez_test
       - name: Install docker
         run: |
-          brew install docker
+          brew install docker docker-machine
+          docker version
+          sudo dockerd
       - name: Docker Install SQLServer
         run: |
           docker pull mcr.microsoft.com/mssql/server
