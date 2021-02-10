@@ -36,13 +36,12 @@ jobs:
           brew services start mysql@5.7
           brew link mysql@5.7 --force
           mysqld --initialize-insecure
-          sudo ls /usr/local/Cellar/mysql@5.7/
           echo '-----'
-          sudo ls /usr/local/Cellar/mysql@5.7/5.7.32/share/
+          sudo ls /usr/local/var/
           echo '-----'
-          sudo ls /usr/local/Cellar/mysql@5.7/5.7.32/bin/
+          sudo ls /usr/local/etc/
           echo '-----'
-          sudo ls /usr/local/Cellar/mysql@5.7/5.7.32/lib/
+          sudo cat /usr/local/etc/my.cnf
           mysql --help
       - name: Setup MySQL Database
         run: |
