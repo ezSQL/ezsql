@@ -52,11 +52,15 @@ jobs:
           createuser -s postgres
           psql -U postgres --command="CREATE USER ez_test PASSWORD 'ezTest'" --command="\du"
           createdb --owner=ez_test ez_test
-      - name: Install docker
+      - name: Install Docker, Docker Machine, and Virtualbox
         run: |
           brew install docker docker-machine
+          brew install virtualbox --cask
           brew services start docker-machine
-          sudo dockerd
+          docker-machine create --driver virtualbox default
+          docker-machine ls
+          docker-machine env default
+          eval $(docker-machine env default)
       - name: Docker Install SQLServer
         run: |
           docker pull mcr.microsoft.com/mssql/server
