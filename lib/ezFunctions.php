@@ -310,6 +310,39 @@ if (!function_exists('ezFunctions')) {
         return ezQuery::clean($string);
     }
 
+    /**
+     * Returns an SQL string or result set, given the
+     *   - table, column fields, conditions or conditional array.
+     *
+     * In the following format:
+     * ```js
+     * select(
+     *   table,
+     *   columns,
+     *    (innerJoin(), leftJoin(), rightJoin(), fullJoin()), // alias of joining(inner|left|right|full, leftTable, rightTable, leftColumn, rightColumn, equal condition),
+     *   where( eq( columns, values, _AND ), like( columns, _d ) ),
+     *   groupBy( columns ),
+     *   having( between( columns, values1, values2 ) ),
+     *   orderBy( columns, desc ),
+     *   limit( numberOfRecords, offset ),
+     *   union(table, columnFields, conditions), // Returns an select SQL string with `UNION`
+     *   unionAll(table, columnFields, conditions) // Returns an select SQL string with `UNION ALL`
+     *);
+     * ```
+     * @param $table, - database table to access
+     * @param $columnFields, - table columns, string or array
+     * @param mixed ...$conditions - of the following parameters:
+     *
+     *   @param $joins, - join clause (type, left table, right table, left column, right column, condition = EQ)
+     *   @param $whereKey, - where clause ( comparison(x, y, and) )
+     *   @param $groupBy, - grouping over clause the results
+     *   @param $having, - having clause ( comparison(x, y, and) )
+     *   @param $orderby, - ordering by clause for the query
+     *   @param $limit, - limit clause the number of records
+     *   @param $union/$unionAll - union clause combine the result sets and removes duplicate rows/does not remove
+     *
+     * @return mixed result set - see docs for more details, or false for error
+     */
     function select($table = '', $columns = '*', ...$args)
     {
         $ezQuery = \getInstance();
@@ -318,6 +351,15 @@ if (!function_exists('ezFunctions')) {
             : false;
     }
 
+    /**
+     * Does an select into statement by calling selecting method
+     * @param $newTable, - new database table to be created
+     * @param $fromColumns - the columns from old database table
+     * @param $oldTable - old database table
+     * @param $fromWhere, - where clause ( array(x, =, y, and, extra) ) or ( "x  =  y  and  extra" )
+     *
+     * @return mixed bool/result - false for error
+     */
     function select_into($table, $columns = '*', $old = null, ...$args)
     {
         $ezQuery = \getInstance();
@@ -342,14 +384,68 @@ if (!function_exists('ezFunctions')) {
             : false;
     }
 
-    function where(...$args)
+    /**
+     * Returns an `WHERE` **sql clause** string.
+     *
+     * format:
+     *   `where( comparison(x, y, and) )`
+     *
+     * example:
+     *   `where( eq(key, value ), like('key', '_%?');`
+     *
+     * @param array $whereConditions - In the following format:
+     *```js
+     *   eq('key/Field/Column', $value, _AND), // combine next expression
+     *   neq('key/Field/Column', $value, _OR), // will combine next expression if
+     *   ne('key/Field/Column', $value), // the default is _AND so will combine next expression
+     *   lt('key/Field/Column', $value)
+     *   lte('key/Field/Column', $value)
+     *   gt('key/Field/Column', $value)
+     *   gte('key/Field/Column', $value)
+     *   isNull('key/Field/Column')
+     *   isNotNull('key/Field/Column')
+     *   like('key/Field/Column', '_%')
+     *   notLike('key/Field/Column', '_%')
+     *   in('key/Field/Column', $values)
+     *   notIn('key/Field/Column', $values)
+     *   between('key/Field/Column', $value, $value2)
+     *   notBetween('key/Field/Column', $value, $value2)
+     *```
+     * @return mixed bool/string - WHERE sql statement, or false on error
+     */
+    function where(...$whereConditions)
     {
         $ezQuery = \getInstance();
         return ($ezQuery instanceof DatabaseInterface)
-            ? $ezQuery->where(...$args)
+            ? $ezQuery->where(...$whereConditions)
             : false;
     }
 
+    /**
+     * Adds WHERE grouping to the conditions
+     *
+     * format:
+     *   `grouping( comparison(x, y, and) )`
+     *
+     * example:
+     *   `grouping( eq(key, value, combiner ), eq(key, value, combiner ) );`
+     *
+     * @param array $whereConditions - In the following format:
+     *```js
+     *   eq('key/Field/Column', $value, _AND), // combine next expression
+     *   neq('key/Field/Column', $value, _OR), // will combine next expression again
+     *   ne('key/Field/Column', $value), // the default is _AND so will combine next expression
+     *   lt('key/Field/Column', $value)
+     *   lte('key/Field/Column', $value)
+     *   gt('key/Field/Column', $value)
+     *   gte('key/Field/Column', $value)
+     *   isNull('key/Field/Column')
+     *   isNotNull('key/Field/Column')
+     *   like('key/Field/Column', '_%')
+     *   notLike('key/Field/Column', '_%')
+     *```
+     * @return array modified conditions
+     */
     function grouping(...$args)
     {
         $ezQuery = \getInstance();
