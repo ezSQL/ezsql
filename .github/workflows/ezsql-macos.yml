@@ -17,7 +17,7 @@ jobs:
       fail-fast: false
       matrix:
         operating-system: [macos-latest]
-        php-versions: ['7.2', '7.3', '7.4']
+        php-versions: ['7.1', '8.0']
 
     steps:
       - name: Checkout
@@ -55,7 +55,7 @@ jobs:
       - name: Install dependencies
         run: composer update
       - name: Test with phpunit
-        run: ./vendor/bin/phpunit
+        run: ./vendor/bin/phpunit --coverage-clover=coverage.xml
       - name: Submit code coverage
         uses: codecov/codecov-action@v1
         with:
