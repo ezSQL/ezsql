@@ -26,7 +26,7 @@ jobs:
         uses: shivammathur/setup-php@v2 #https://github.com/shivammathur/setup-php
         with:
           php-version: ${{ matrix.php-versions }}
-          extensions: mbstring, fileinfo, mysqli, pdo_mysql, pgsql, pdo_pgsql, sqlite3, pdo_sqlite, sqlsrv, pdo_sqlsrv, xdebug
+          extensions: mbstring, fileinfo, mysqli, pdo_mysql, pgsql, pdo_pgsql, sqlite3, pdo_sqlite, xdebug
           coverage: xdebug
       - name: Brew Install MySQL
         run: |
@@ -52,30 +52,6 @@ jobs:
           createuser -s postgres
           psql -U postgres --command="CREATE USER ez_test PASSWORD 'ezTest'" --command="\du"
           createdb --owner=ez_test ez_test
-      - name: Install Docker, and Docker Machine
-        run: |
-          brew install --HEAD xhyve
-          brew install docker-machine-driver-xhyve docker
-          sudo chown root:wheel $(brew --prefix)/opt/docker-machine-driver-xhyve/bin/docker-machine-driver-xhyve
-          sudo chmod u+s $(brew --prefix)/opt/docker-machine-driver-xhyve/bin/docker-machine-driver-xhyve
-          brew services start docker-machine
-          docker-machine create --driver xhyve default
-          eval $(docker-machine env default)
-      - name: Docker Install SQLServer
-        run: |
-          echo "127.0.0.1 localhost" | sudo tee -a /etc/hosts
-          docker -H "${DOCKER_HOST}" pull mcr.microsoft.com/mssql/server
-          docker -H "${DOCKER_HOST}" run --name ms_sql_server -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=Password12!' -p 1433:1433 -d mcr.microsoft.com/mssql/server
-      - name: Brew Install MSSQL Tools
-        run: |
-          /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
-          brew tap microsoft/mssql-release https://github.com/Microsoft/homebrew-mssql-release
-          brew update
-          HOMEBREW_NO_ENV_FILTERING=1 ACCEPT_EULA=y brew install mssql-tools
-      - name: Setup SQLServer Database
-        run: |
-          sqlcmd -S localhost,1433 -U sa -P Password12! -Q "CREATE DATABASE ez_test"
-          sqlcmd -S localhost,1433 -U sa -P Password12! -d ez_test -Q "CREATE LOGIN ez_test WITH PASSWORD=N'ezTest', DEFAULT_DATABASE=ez_test, CHECK_EXPIRATION=OFF, CHECK_POLICY=OFF; ALTER SERVER ROLE [sysadmin] ADD MEMBER ez_test"
       - name: Install dependencies
         run: composer update
       - name: Test with phpunit
