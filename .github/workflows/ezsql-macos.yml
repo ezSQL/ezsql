@@ -54,7 +54,7 @@ jobs:
           createdb --owner=ez_test ez_test
       - name: Install Docker, and Docker Machine
         run: |
-          brew install docker docker-machine docker-compose
+          brew install --cask docker
           brew services start docker-machine
           docker-machine create --driver virtualbox default
           eval $(docker-machine env default)
