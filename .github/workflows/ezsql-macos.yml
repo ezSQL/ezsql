@@ -60,9 +60,8 @@ jobs:
           eval $(docker-machine env default)
       - name: Docker Install SQLServer
         run: |
-          docker -H "${DOCKER_HOST}" unix:///var/run/docker.sock
-          docker pull mcr.microsoft.com/mssql/server
-          docker run --name ms_sql_server -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=Password12!' -p 1433:1433 -d mcr.microsoft.com/mssql/server
+          docker -H "${DOCKER_HOST}" pull mcr.microsoft.com/mssql/server
+          docker -H "${DOCKER_HOST}" run --name ms_sql_server -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=Password12!' -p 1433:1433 -d mcr.microsoft.com/mssql/server
       - name: Brew Install MSSQL Tools
         run: |
           /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
