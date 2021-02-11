@@ -54,14 +54,12 @@ jobs:
           createdb --owner=ez_test ez_test
       - name: Install Docker, and Docker Machine
         run: |
-          brew install docker-machine-driver-xhyve docker
+          brew install --HEAD xhyve
+          brew install docker-machine-driver-xhyve
           sudo chown root:wheel $(brew --prefix)/opt/docker-machine-driver-xhyve/bin/docker-machine-driver-xhyve
           sudo chmod u+s $(brew --prefix)/opt/docker-machine-driver-xhyve/bin/docker-machine-driver-xhyve
-          while ! docker-machine create --driver xhyve default; do
-            docker-machine rm -f default
-            sleep 1;
-          done
-          docker-machine restart
+          brew services start docker-machine
+          docker-machine create --driver xhyve default
           eval $(docker-machine env default)
       - name: Docker Install SQLServer
         run: |
