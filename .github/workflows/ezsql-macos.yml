@@ -60,10 +60,8 @@ jobs:
           eval $(docker-machine env default)
       - name: Docker Install SQLServer
         run: |
-          sudo groupadd docker
-          sudo usermod -aG docker $(whoami)
           docker-machine restart
-          ps aux | grep docker
+          env | grep DOCKER_HOST
           sudo nohup docker -H tcp://0.0.0.0:2375 -H unix:///var/run/docker.sock &
           sudo docker pull mcr.microsoft.com/mssql/server
           sudo docker run --name ms_sql_server -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=Password12!' -p 1433:1433 -d mcr.microsoft.com/mssql/server
