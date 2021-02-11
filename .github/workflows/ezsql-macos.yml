@@ -54,12 +54,18 @@ jobs:
           createdb --owner=ez_test ez_test
       - name: Install Docker, and Docker Machine
         run: |
-          brew install docker-machine docker
-          brew services start docker-machine
-          docker-machine create --driver virtualbox default
+          brew install docker-machine-driver-xhyve docker
+          sudo chown root:wheel $(brew --prefix)/opt/docker-machine-driver-xhyve/bin/docker-machine-driver-xhyve
+          sudo chmod u+s $(brew --prefix)/opt/docker-machine-driver-xhyve/bin/docker-machine-driver-xhyve
+          while ! docker-machine create --driver xhyve default; do
+            docker-machine rm -f default
+            sleep 1;
+          done
+          docker-machine restart
           eval $(docker-machine env default)
       - name: Docker Install SQLServer
         run: |
+          echo "127.0.0.1 localhost" | sudo tee -a /etc/hosts
           docker -H "${DOCKER_HOST}" pull mcr.microsoft.com/mssql/server
           docker -H "${DOCKER_HOST}" run --name ms_sql_server -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=Password12!' -p 1433:1433 -d mcr.microsoft.com/mssql/server
       - name: Brew Install MSSQL Tools
