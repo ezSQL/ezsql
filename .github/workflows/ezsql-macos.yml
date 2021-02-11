@@ -60,8 +60,8 @@ jobs:
           eval $(docker-machine env default)
       - name: Docker Install SQLServer
         run: |
-          ls -lah /Users/runner/.docker/
-          sudo touch /var/run/docker.sock
+          ls -lah /Users/runner/.docker/machine/
+          sudo nohup docker daemon -H tcp://0.0.0.0:2375 -H unix:///var/run/docker.sock &
           docker pull mcr.microsoft.com/mssql/server
           docker run --name ms_sql_server -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=Password12!' -p 1433:1433 -d mcr.microsoft.com/mssql/server
       - name: Brew Install MSSQL Tools
