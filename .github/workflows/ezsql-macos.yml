@@ -55,7 +55,7 @@ jobs:
       - name: Install Docker, and Docker Machine
         run: |
           brew install --HEAD xhyve
-          brew install docker-machine-driver-xhyve
+          brew install docker-machine-driver-xhyve docker
           sudo chown root:wheel $(brew --prefix)/opt/docker-machine-driver-xhyve/bin/docker-machine-driver-xhyve
           sudo chmod u+s $(brew --prefix)/opt/docker-machine-driver-xhyve/bin/docker-machine-driver-xhyve
           brew services start docker-machine
