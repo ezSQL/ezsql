@@ -12,11 +12,11 @@ on:
 jobs:
   windows:
     name: macOS (PHP ${{ matrix.php-versions }} CI)
-    runs-on: macos-latest
+    runs-on: macos-11.0
     strategy:
       fail-fast: false
       matrix:
-        operating-system: [macos-latest]
+        operating-system: [macos-11.0]
         php-versions: ['7.1', '8.0']
 
     steps:
