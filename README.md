@@ -2,6 +2,7 @@
 
 [![Windows](https://github.com/ezSQL/ezsql/workflows/Windows/badge.svg)](https://github.com/ezSQL/ezsql/actions?query=workflow%3AWindows)
 [![Linux](https://github.com/ezSQL/ezsql/workflows/Linux/badge.svg)](https://github.com/ezSQL/ezsql/actions?query=workflow%3ALinux)
+[![macOS](https://github.com/ezSQL/ezsql/workflows/macOS/badge.svg)](https://github.com/ezSQL/ezsql/actions?query=workflow%3AmacOS)
 [![codecov](https://codecov.io/gh/ezSQL/ezSQL/branch/master/graph/badge.svg)](https://codecov.io/gh/ezSQL/ezSQL)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/aad1f6aaaaa14f60933e75615da900b8)](https://www.codacy.com/app/techno-express/ezsql?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=ezSQL/ezsql&amp;utm_campaign=Badge_Grade)
 [![Maintainability](https://api.codeclimate.com/v1/badges/6f6107f25e9de7bf4272/maintainability)](https://codeclimate.com/github/ezSQL/ezsql/maintainability)
