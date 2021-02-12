@@ -13,7 +13,7 @@ jobs:
   windows:
     name: macOS (PHP ${{ matrix.php-versions }} CI)
     runs-on: macos-latest
-    continue-on-error: macos-latest
+    continue-on-error: true
     strategy:
       fail-fast: false
       matrix:
