@@ -1,5 +1,9 @@
 <?php
 
+declare(strict_types=1);
+
+namespace ezsql\functions;
+
 use ezsql\ezQuery;
 use ezsql\ezSchema;
 use ezsql\Database;
@@ -28,7 +32,7 @@ if (!\function_exists('ezFunctions')) {
      */
     function tagInstance(string $getTag = null)
     {
-        return \database($getTag);
+        return database($getTag);
     }
 
     /**
@@ -41,7 +45,7 @@ if (!\function_exists('ezFunctions')) {
      */
     function mysqlInstance(array $databaseSetting = null, string $instanceTag = null)
     {
-        return \database(\MYSQLI, $databaseSetting, $instanceTag);
+        return database(\MYSQLI, $databaseSetting, $instanceTag);
     }
 
     /**
@@ -54,7 +58,7 @@ if (!\function_exists('ezFunctions')) {
      */
     function pgsqlInstance(array $databaseSetting = null, string $instanceTag = null)
     {
-        return \database(\PGSQL, $databaseSetting, $instanceTag);
+        return database(\PGSQL, $databaseSetting, $instanceTag);
     }
 
     /**
@@ -67,7 +71,7 @@ if (!\function_exists('ezFunctions')) {
      */
     function mssqlInstance(array $databaseSetting = null, string $instanceTag = null)
     {
-        return \database(\MSSQL, $databaseSetting, $instanceTag);
+        return database(\MSSQL, $databaseSetting, $instanceTag);
     }
 
     /**
@@ -80,7 +84,7 @@ if (!\function_exists('ezFunctions')) {
      */
     function pdoInstance(array $databaseSetting = null, string $instanceTag = null)
     {
-        return \database(\Pdo, $databaseSetting, $instanceTag);
+        return database(\Pdo, $databaseSetting, $instanceTag);
     }
 
     /**
@@ -93,7 +97,7 @@ if (!\function_exists('ezFunctions')) {
      */
     function sqliteInstance(array $databaseSetting = null, string $instanceTag = null)
     {
-        return \database(\SQLITE3, $databaseSetting, $instanceTag);
+        return database(\SQLITE3, $databaseSetting, $instanceTag);
     }
 
     function getVendor()
@@ -135,34 +139,34 @@ if (!\function_exists('ezFunctions')) {
     function primary(string $primaryName, ...$primaryKeys)
     {
         array_unshift($primaryKeys, \PRIMARY);
-        return \column(\CONSTRAINT, $primaryName, ...$primaryKeys);
+        return column(\CONSTRAINT, $primaryName, ...$primaryKeys);
     }
 
     function foreign(string $foreignName, ...$foreignKeys)
     {
         array_unshift($foreignKeys, \FOREIGN);
-        return \column(\CONSTRAINT, $foreignName, ...$foreignKeys);
+        return column(\CONSTRAINT, $foreignName, ...$foreignKeys);
     }
 
     function unique(string $uniqueName, ...$uniqueKeys)
     {
         array_unshift($uniqueKeys, \UNIQUE);
-        return \column(\CONSTRAINT, $uniqueName, ...$uniqueKeys);
+        return column(\CONSTRAINT, $uniqueName, ...$uniqueKeys);
     }
 
     function index(string $indexName, ...$indexKeys)
     {
-        return \column(\INDEX, $indexName, ...$indexKeys);
+        return column(\INDEX, $indexName, ...$indexKeys);
     }
 
     function addColumn(string $columnName, ...$datatype)
     {
-        return \column(\ADD, $columnName, ...$datatype);
+        return column(\ADD, $columnName, ...$datatype);
     }
 
     function dropColumn(string $columnName, ...$data)
     {
-        return \column(\DROP, $columnName, ...$data);
+        return column(\DROP, $columnName, ...$data);
     }
 
     /**
@@ -552,7 +556,7 @@ if (!\function_exists('ezFunctions')) {
      */
     function select($table = '', $columns = '*', ...$args)
     {
-        $ezQuery = \getInstance();
+        $ezQuery = getInstance();
         return ($ezQuery instanceof DatabaseInterface)
             ? $ezQuery->selecting($table, $columns, ...$args)
             : false;
@@ -569,7 +573,7 @@ if (!\function_exists('ezFunctions')) {
      */
     function select_into($table, $columns = '*', $old = null, ...$args)
     {
-        $ezQuery = \getInstance();
+        $ezQuery = getInstance();
         return ($ezQuery instanceof DatabaseInterface)
             ? $ezQuery->select_into($table, $columns, $old, ...$args)
             : false;
@@ -585,7 +589,7 @@ if (!\function_exists('ezFunctions')) {
      */
     function insert_select($totable = '', $columns = '*', $fromTable = null, $from = '*', ...$args)
     {
-        $ezQuery = \getInstance();
+        $ezQuery = getInstance();
         return ($ezQuery instanceof DatabaseInterface)
             ? $ezQuery->insert_select($totable, $columns, $fromTable, $from, ...$args)
             : false;
@@ -603,7 +607,7 @@ if (!\function_exists('ezFunctions')) {
      */
     function create_select($table, $from, $old = null, ...$args)
     {
-        $ezQuery = \getInstance();
+        $ezQuery = getInstance();
         return ($ezQuery instanceof DatabaseInterface)
             ? $ezQuery->create_select($table, $from, $old, ...$args)
             : false;
@@ -640,7 +644,7 @@ if (!\function_exists('ezFunctions')) {
      */
     function where(...$whereConditions)
     {
-        $ezQuery = \getInstance();
+        $ezQuery = getInstance();
         return ($ezQuery instanceof DatabaseInterface)
             ? $ezQuery->where(...$whereConditions)
             : false;
@@ -673,7 +677,7 @@ if (!\function_exists('ezFunctions')) {
      */
     function grouping(...$args)
     {
-        $ezQuery = \getInstance();
+        $ezQuery = getInstance();
         return ($ezQuery instanceof DatabaseInterface)
             ? $ezQuery->grouping(...$args)
             : false;
@@ -695,7 +699,7 @@ if (!\function_exists('ezFunctions')) {
      */
     function groupBy($groupBy)
     {
-        $ezQuery = \getInstance();
+        $ezQuery = getInstance();
         return ($ezQuery instanceof DatabaseInterface)
             ? $ezQuery->groupBy($groupBy)
             : false;
@@ -726,7 +730,7 @@ if (!\function_exists('ezFunctions')) {
      */
     function having(...$args)
     {
-        $ezQuery = \getInstance();
+        $ezQuery = getInstance();
         return ($ezQuery instanceof DatabaseInterface)
             ? $ezQuery->having(...$args)
             : false;
@@ -763,7 +767,7 @@ if (!\function_exists('ezFunctions')) {
         $tableAs = null,
         $condition = \EQ
     ) {
-        $ezQuery = \getInstance();
+        $ezQuery = getInstance();
         return ($ezQuery instanceof DatabaseInterface)
             ? $ezQuery->innerJoin($leftTable, $rightTable, $leftColumn, $rightColumn, $tableAs, $condition)
             : false;
@@ -802,7 +806,7 @@ if (!\function_exists('ezFunctions')) {
         $tableAs = null,
         $condition = \EQ
     ) {
-        $ezQuery = \getInstance();
+        $ezQuery = getInstance();
         return ($ezQuery instanceof DatabaseInterface)
             ? $ezQuery->leftJoin($leftTable, $rightTable, $leftColumn, $rightColumn, $tableAs, $condition)
             : false;
@@ -841,7 +845,7 @@ if (!\function_exists('ezFunctions')) {
         $tableAs = null,
         $condition = \EQ
     ) {
-        $ezQuery = \getInstance();
+        $ezQuery = getInstance();
         return ($ezQuery instanceof DatabaseInterface)
             ? $ezQuery->rightJoin($leftTable, $rightTable, $leftColumn, $rightColumn, $tableAs, $condition)
             : false;
@@ -879,7 +883,7 @@ if (!\function_exists('ezFunctions')) {
         $tableAs = null,
         $condition = \EQ
     ) {
-        $ezQuery = \getInstance();
+        $ezQuery = getInstance();
         return ($ezQuery instanceof DatabaseInterface)
             ? $ezQuery->fullJoin($leftTable, $rightTable, $leftColumn, $rightColumn, $tableAs, $condition)
             : false;
@@ -911,7 +915,7 @@ if (!\function_exists('ezFunctions')) {
      */
     function union($table = '', $columnFields = '*', ...$conditions)
     {
-        $ezQuery = \getInstance();
+        $ezQuery = getInstance();
         return ($ezQuery instanceof DatabaseInterface)
             ? $ezQuery->union($table, $columnFields, ...$conditions)
             : false;
@@ -943,7 +947,7 @@ if (!\function_exists('ezFunctions')) {
      */
     function unionAll($table = '', $columnFields = '*', ...$conditions)
     {
-        $ezQuery = \getInstance();
+        $ezQuery = getInstance();
         return ($ezQuery instanceof DatabaseInterface)
             ? $ezQuery->unionAll($table, $columnFields, ...$conditions)
             : false;
@@ -958,7 +962,7 @@ if (!\function_exists('ezFunctions')) {
      */
     function orderBy($orderBy, $order)
     {
-        $ezQuery = \getInstance();
+        $ezQuery = getInstance();
         return ($ezQuery instanceof DatabaseInterface)
             ? $ezQuery->orderBy($orderBy, $order)
             : false;
@@ -975,7 +979,7 @@ if (!\function_exists('ezFunctions')) {
      */
     function limit($numberOf, $offset = null)
     {
-        $ezQuery = \getInstance();
+        $ezQuery = getInstance();
         return ($ezQuery instanceof DatabaseInterface)
             ? $ezQuery->limit($numberOf, $offset)
             : false;
@@ -989,7 +993,7 @@ if (!\function_exists('ezFunctions')) {
      */
     function insert($table = '', $keyValue = null)
     {
-        $ezQuery = \getInstance();
+        $ezQuery = getInstance();
         return ($ezQuery instanceof DatabaseInterface)
             ? $ezQuery->insert($table, $keyValue)
             : false;
@@ -1005,7 +1009,7 @@ if (!\function_exists('ezFunctions')) {
      */
     function update($table = '', $keyValue = null, ...$args)
     {
-        $ezQuery = \getInstance();
+        $ezQuery = getInstance();
         return ($ezQuery instanceof DatabaseInterface)
             ? $ezQuery->update($table, $keyValue, ...$args)
             : false;
@@ -1017,7 +1021,7 @@ if (!\function_exists('ezFunctions')) {
      */
     function deleting($table = '', ...$args)
     {
-        $ezQuery = \getInstance();
+        $ezQuery = getInstance();
         return ($ezQuery instanceof DatabaseInterface)
             ? $ezQuery->delete($table, ...$args)
             : false;
@@ -1031,7 +1035,7 @@ if (!\function_exists('ezFunctions')) {
      */
     function replace($table = '', $keyValue = null)
     {
-        $ezQuery = \getInstance();
+        $ezQuery = getInstance();
         return ($ezQuery instanceof DatabaseInterface)
             ? $ezQuery->replace($table, $keyValue)
             : false;

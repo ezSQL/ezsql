@@ -11,6 +11,8 @@ use ezsql\Database\ez_sqlite3;
 use ezsql\Database\ez_sqlsrv;
 use ezsql\Tests\EZTestCase;
 
+use function ezsql\functions\tagInstance;
+
 class DatabaseTest extends EZTestCase
 {
     public function testInitialize()
@@ -28,7 +30,7 @@ class DatabaseTest extends EZTestCase
         $this->assertTrue($mysqli->getShow_Errors());
         $benchmark = Database::benchmark();
         $this->assertNotNull($benchmark['start']);
-        $this->assertSame($mysqli, \tagInstance(MYSQLI));
+        $this->assertSame($mysqli, tagInstance(MYSQLI));
     }
 
     public function testInitialize_Pgsql()

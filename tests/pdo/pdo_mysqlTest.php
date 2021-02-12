@@ -2,10 +2,23 @@
 
 namespace ezsql\Tests\pdo;
 
-use ezsql\Database;
 use ezsql\Config;
 use ezsql\Database\ez_pdo;
 use ezsql\Tests\EZTestCase;
+
+use function ezsql\functions\{
+    pdoInstance,
+    leftJoin,
+    column,
+    primary,
+    insert,
+    update,
+    select,
+    grouping,
+    like,
+    where,
+    eq,
+};
 
 class pdo_mysqlTest extends EZTestCase
 {
@@ -32,7 +45,7 @@ class pdo_mysqlTest extends EZTestCase
             );
         }
 
-        $this->object = Database::initialize('pdo', ['mysql:host=' . self::TEST_DB_HOST . ';dbname=' . self::TEST_DB_NAME . ';port=' . self::TEST_DB_PORT, self::TEST_DB_USER, self::TEST_DB_PASSWORD]);
+        $this->object = pdoInstance(['mysql:host=' . self::TEST_DB_HOST . ';dbname=' . self::TEST_DB_NAME . ';port=' . self::TEST_DB_PORT, self::TEST_DB_USER, self::TEST_DB_PASSWORD]);
         $this->object->prepareOn();
     } // setUp
 

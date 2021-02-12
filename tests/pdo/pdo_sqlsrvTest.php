@@ -2,8 +2,16 @@
 
 namespace ezsql\Tests\pdo;
 
-use ezsql\Database;
 use ezsql\Tests\EZTestCase;
+
+use function ezsql\functions\{
+    grouping,
+    where,
+    eq,
+    like,
+    leftJoin,
+    pdoInstance,
+};
 
 class pdo_sqlsrvTest extends EZTestCase
 {
@@ -24,7 +32,7 @@ class pdo_sqlsrvTest extends EZTestCase
             );
         }
 
-        $this->object = Database::initialize('pdo', ['sqlsrv:Server=' . self::TEST_DB_HOST . ';Database=' . self::TEST_DB_NAME, self::TEST_DB_USER, self::TEST_DB_PASSWORD]);
+        $this->object = pdoInstance(['sqlsrv:Server=' . self::TEST_DB_HOST . ';Database=' . self::TEST_DB_NAME, self::TEST_DB_USER, self::TEST_DB_PASSWORD]);
         $this->object->prepareOn();
     } // setUp
 

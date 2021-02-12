@@ -7,6 +7,38 @@ use ezsql\Config;
 use ezsql\Database\ez_mysqli;
 use ezsql\Tests\EZTestCase;
 
+use function ezsql\functions\{
+    mysqlInstance,
+    column,
+    primary,
+    eq,
+    neq,
+    ne,
+    lt,
+    lte,
+    gt,
+    gte,
+    isNotNull,
+    like,
+    in,
+    notLike,
+    notIn,
+    between,
+    notBetween,
+    select,
+    select_into,
+    insert_select,
+    create_select,
+    where,
+    groupBy,
+    having,
+    orderBy,
+    insert,
+    update,
+    deleting,
+    replace
+};
+
 class mysqliTest extends EZTestCase
 {
 
@@ -208,15 +240,15 @@ class mysqliTest extends EZTestCase
 
     public function testCreate()
     {
-        $object = \mysqlInstance([self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME]);
+        $object = mysqlInstance([self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME]);
         $this->assertEquals($this->object, $object);
         $object->prepareOff();
         $this->assertEquals(
             $object->create(
                 'create_test',
-                \column('id', INTR, 11, \AUTO),
-                \column('create_key', VARCHAR, 50),
-                \primary('id_pk', 'id')
+                column('id', INTR, 11, \AUTO),
+                column('create_key', VARCHAR, 50),
+                primary('id_pk', 'id')
             ),
             0
         );
@@ -239,9 +271,9 @@ class mysqliTest extends EZTestCase
         $object->connect();
         $object->create(
             'unit_test',
-            \column('id', INTR, 11, \AUTO),
-            \column('test_key', VARCHAR, 50),
-            \primary('id_pk', 'id')
+            column('id', INTR, 11, \AUTO),
+            column('test_key', VARCHAR, 50),
+            primary('id_pk', 'id')
         );
         $this->assertEquals(1, $this->object->insert('unit_test', array('test_key' => 'test 2')));
     }

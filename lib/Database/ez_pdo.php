@@ -9,6 +9,7 @@ use ezsql\ezQuery;
 use ezsql\ezsqlModel;
 use ezsql\ConfigInterface;
 use ezsql\DatabaseInterface;
+use function ezsql\functions\setInstance;
 
 class ez_pdo extends ezsqlModel implements DatabaseInterface
 {
@@ -49,7 +50,7 @@ class ez_pdo extends ezsqlModel implements DatabaseInterface
 
         if (empty($GLOBALS['ez' . \Pdo]))
             $GLOBALS['ez' . \Pdo] = $this;
-        \setInstance($this);
+        setInstance($this);
     } // __construct
 
     public function settings()

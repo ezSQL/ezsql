@@ -2,8 +2,16 @@
 
 namespace ezsql\Tests\pdo;
 
-use ezsql\Database;
 use ezsql\Tests\EZTestCase;
+
+use function ezsql\functions\{
+    pdoInstance,
+    leftJoin,
+    grouping,
+    like,
+    where,
+    eq,
+};
 
 class pdo_sqliteTest extends EZTestCase
 {
@@ -33,7 +41,7 @@ class pdo_sqliteTest extends EZTestCase
             );
         }
 
-        $this->object = Database::initialize('pdo', ['sqlite:' . self::TEST_SQLITE_DB, '', '', array(), true]);
+        $this->object = pdoInstance(['sqlite:' . self::TEST_SQLITE_DB, '', '', array(), true]);
         $this->object->prepareOn();
     } // setUp
 

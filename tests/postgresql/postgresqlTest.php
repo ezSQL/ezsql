@@ -2,10 +2,16 @@
 
 namespace ezsql\Tests\postgresql;
 
-use ezsql\Database;
 use ezsql\Config;
 use ezsql\Database\ez_pgsql;
 use ezsql\Tests\EZTestCase;
+
+use function ezsql\functions\{
+    column,
+    primary,
+    eq,
+    pgsqlInstance,
+};
 
 class postgresqlTest extends EZTestCase
 {
@@ -31,7 +37,7 @@ class postgresqlTest extends EZTestCase
             );
         }
 
-        $this->object = Database::initialize('pgsql', [self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME, self::TEST_DB_HOST, self::TEST_DB_PORT]);
+        $this->object = pgsqlInstance([self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME, self::TEST_DB_HOST, self::TEST_DB_PORT]);
         $this->object->prepareOn();
     }
 

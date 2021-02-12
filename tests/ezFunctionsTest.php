@@ -4,11 +4,51 @@ namespace ezsql\Tests;
 
 use ezsql\Tests\EZTestCase;
 
+use function ezsql\functions\{
+    setInstance,
+    getInstance,
+    clearInstance,
+    getVendor,
+    column,
+    primary,
+    foreign,
+    unique,
+    index,
+    addColumn,
+    dropColumn,
+    eq,
+    neq,
+    ne,
+    lt,
+    lte,
+    gt,
+    gte,
+    isNotNull,
+    like,
+    in,
+    notLike,
+    notIn,
+    between,
+    notBetween,
+    select,
+    select_into,
+    insert_select,
+    create_select,
+    where,
+    groupBy,
+    having,
+    orderBy,
+    insert,
+    update,
+    deleting,
+    replace
+};
+
 class ezFunctionsTest extends EZTestCase
 {
     protected function setUp(): void
     {
-        \clearInstance();
+        clearInstance();
     }
 
     public function testGetInstance()
@@ -148,7 +188,7 @@ class ezFunctionsTest extends EZTestCase
 
     public function testSetInstance()
     {
-        $this->assertFalse(\setInstance());
+        $this->assertFalse(setInstance());
     }
 
     public function testSelect()

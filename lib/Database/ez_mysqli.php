@@ -8,6 +8,7 @@ use Exception;
 use ezsql\ezsqlModel;
 use ezsql\ConfigInterface;
 use ezsql\DatabaseInterface;
+use function ezsql\functions\setInstance;
 
 class ez_mysqli extends ezsqlModel implements DatabaseInterface
 {
@@ -45,7 +46,7 @@ class ez_mysqli extends ezsqlModel implements DatabaseInterface
 
         if (empty($GLOBALS['ez' . \MYSQLI]))
             $GLOBALS['ez' . \MYSQLI] = $this;
-        \setInstance($this);
+        setInstance($this);
     } // __construct
 
     public function settings()

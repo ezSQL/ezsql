@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace ezsql;
 
 use ezsql\DInjector;
+use function ezsql\functions\setInstance;
 
 class Database
 {
@@ -38,7 +39,7 @@ class Database
     public static function initialize(?string $vendor = null, ?array $setting = null, ?string $tag = null)
     {
         if (isset(self::$instances[$vendor]) && empty($setting) && empty($tag))
-            return \setInstance(self::$instances[$vendor]) ? self::$instances[$vendor] : false;
+            return setInstance(self::$instances[$vendor]) ? self::$instances[$vendor] : false;
 
         if (empty($vendor) || empty($setting)) {
             throw new \Exception(\MISSING_CONFIGURATION);
@@ -58,7 +59,7 @@ class Database
                 }
             }
 
-            \setInstance($GLOBALS['ez' . $key]);
+            setInstance($GLOBALS['ez' . $key]);
             return $GLOBALS['ez' . $key];
         }
     }

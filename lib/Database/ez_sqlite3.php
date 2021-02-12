@@ -8,6 +8,7 @@ use Exception;
 use ezsql\ezsqlModel;
 use ezsql\ConfigInterface;
 use ezsql\DatabaseInterface;
+use function ezsql\functions\setInstance;
 
 class ez_sqlite3 extends ezsqlModel implements DatabaseInterface
 {
@@ -52,7 +53,7 @@ class ez_sqlite3 extends ezsqlModel implements DatabaseInterface
 
         if (!isset($GLOBALS['ez' . \SQLITE3]))
             $GLOBALS['ez' . \SQLITE3] = $this;
-        \setInstance($this);
+        setInstance($this);
     }
 
     public function settings()

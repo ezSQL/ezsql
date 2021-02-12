@@ -2,14 +2,29 @@
 
 [![Windows](https://github.com/ezSQL/ezsql/workflows/Windows/badge.svg?branch=v5)](https://github.com/ezSQL/ezsql/actions?query=workflow%3AWindows)
 [![Linux](https://github.com/ezSQL/ezsql/workflows/Linux/badge.svg?branch=v5)](https://github.com/ezSQL/ezsql/actions?query=workflow%3ALinux)
-[![codecov](https://codecov.io/gh/ezSQL/ezSQL/branch/master/graph/badge.svg)](https://codecov.io/gh/ezSQL/ezSQL)
+[![macOS](https://github.com/ezSQL/ezsql/workflows/macOS/badge.svg?branch=v5)](https://github.com/ezSQL/ezsql/actions?query=workflow%3AmacOS)
+[![codecov](https://codecov.io/gh/ezSQL/ezSQL/branch/v5/graph/badge.svg)](https://codecov.io/gh/ezSQL/ezSQL)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/aad1f6aaaaa14f60933e75615da900b8)](https://www.codacy.com/app/techno-express/ezsql?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=ezSQL/ezsql&amp;utm_campaign=Badge_Grade)
 [![Maintainability](https://api.codeclimate.com/v1/badges/6f6107f25e9de7bf4272/maintainability)](https://codeclimate.com/github/ezSQL/ezsql/maintainability)
-[![Total Downloads](https://poser.pugx.org/jv2222/ezsql/downloads)](https://packagist.org/packages/jv2222/ezsql)
+[![Total Downloads](https://poser.pugx.org/ezsql/ezsql/downloads)](https://packagist.org/packages/ezsql/ezsql)
 
 ***A class to make it very easy to deal with database connections.***
 
-This is [__version 4__](https://github.com/ezSQL/ezsql/tree/v4) that has many modern programming practices in which will break users of version 3.
+This is a [WIP] of [__version 5__](https://github.com/ezSQL/ezsql/tree/v5) which will break users of **version 4**, mainly by the use of `namespace` in the `global` functions **ezFunctions.php** file.
+
+Usage of the **global** functions will require the user to begin a `.php` file something like:
+
+```php
+use function ezsql\functions\where;
+// Or
+use function ezsql\functions\{
+    getInstance,
+    select,
+    insert,
+};
+```
+
+[__version 4__](https://github.com/ezSQL/ezsql/tree/v4) has many modern programming practices in which will break users of version 3.
 
 [__Version 3__](https://github.com/ezSQL/ezsql/tree/v3) broke version 2.1.7 in one major way, it required *PHP 5.6*. Which drop mysql extension support, other than that, nothing as far using the library was changed, only additional features.
 

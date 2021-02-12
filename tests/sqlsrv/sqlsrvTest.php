@@ -2,10 +2,16 @@
 
 namespace ezsql\Tests\sqlsrv;
 
-use ezsql\Database;
 use ezsql\Config;
 use ezsql\Database\ez_sqlsrv;
 use ezsql\Tests\EZTestCase;
+
+use function ezsql\functions\{
+    column,
+    primary,
+    eq,
+    mssqlInstance,
+};
 
 class sqlsrvTest extends EZTestCase
 {
@@ -27,7 +33,7 @@ class sqlsrvTest extends EZTestCase
             );
         }
 
-        $this->object = Database::initialize('sqlsrv', [self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME]);
+        $this->object = mssqlInstance([self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME]);
         $this->object->prepareOn();
     }
 

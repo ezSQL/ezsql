@@ -4,6 +4,7 @@ namespace ezsql;
 
 use ezsql\ezQuery;
 use ezsql\ezsqlModelInterface;
+use function ezsql\functions\getVendor;
 
 /**
  * Core class containing common functions to manipulate query result
@@ -703,7 +704,7 @@ class ezsqlModel extends ezQuery implements ezsqlModelInterface
 		string $path = '.' . \_DS
 	) {
 		if (!\file_exists($path . $cert) || !\file_exists($path . $key)) {
-			$vendor = \getVendor();
+			$vendor = getVendor();
 			if (($vendor != \SQLITE) || ($vendor != \MSSQL))
 				$path = ezQuery::createCertificate();
 		} elseif ($path == '.' . \_DS) {

@@ -8,6 +8,7 @@ use Exception;
 use ezsql\ezsqlModel;
 use ezsql\ConfigInterface;
 use ezsql\DatabaseInterface;
+use function ezsql\functions\setInstance;
 
 class ez_sqlsrv extends ezsqlModel implements DatabaseInterface
 {
@@ -54,7 +55,7 @@ class ez_sqlsrv extends ezsqlModel implements DatabaseInterface
 
         if (empty($GLOBALS['ez' . \SQLSRV]))
             $GLOBALS['ez' . \SQLSRV] = $this;
-        \setInstance($this);
+        setInstance($this);
     }
 
     public function settings()

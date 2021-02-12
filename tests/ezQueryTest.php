@@ -5,6 +5,13 @@ namespace ezsql\Tests;
 use ezsql\ezQuery;
 use ezsql\Tests\EZTestCase;
 
+use function ezsql\functions\{
+    eq,
+    neq,
+    like,
+    in,
+};
+
 class ezQueryTest extends EZTestCase
 {
     protected $object;

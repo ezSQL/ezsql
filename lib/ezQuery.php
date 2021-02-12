@@ -4,6 +4,7 @@ namespace ezsql;
 
 use ezsql\ezSchema;
 use ezsql\ezQueryInterface;
+use function ezsql\functions\column;
 
 class ezQuery implements ezQueryInterface
 {
@@ -868,7 +869,7 @@ class ezQuery implements ezQueryInterface
             $column = \array_shift($datatype);
             $type = \array_shift($datatype);
             if (!empty($column) && !empty($type))
-                $columnData .= \column($column, $type, ...$datatype);
+                $columnData .= column($column, $type, ...$datatype);
         }
 
         $schemaColumns = !empty($columnData) ? \rtrim($columnData, ', ') : null;

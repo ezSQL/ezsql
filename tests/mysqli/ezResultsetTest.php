@@ -5,6 +5,11 @@ namespace ezsql\Tests\mysqli;
 use ezsql\ezResultset;
 use ezsql\Tests\EZTestCase;
 
+use function ezsql\functions\{
+    mysqlInstance,
+    column,
+};
+
 class ezResultsetTest extends EZTestCase
 {
     /**
@@ -14,7 +19,7 @@ class ezResultsetTest extends EZTestCase
 
     /**
      * database connection
-     * @var resource
+     * @var object
      */
     protected $database = null;
 

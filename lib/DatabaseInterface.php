@@ -18,6 +18,7 @@ interface DatabaseInterface
      * - getOptions();
      * - getIsFile();
      * - getToMssql();
+     * - getToMysql();
      * - getPath();
      *---
      * - setDriver($args);
@@ -31,9 +32,10 @@ interface DatabaseInterface
      * - setOptions($args);
      * - setIsFile($args);
      * - setToMssql($args);
+     * - setToMysql($args);
      * - setPath($args);
      *
-     * @return string|array|bool|void
+     * @return string|array|bool|object
      */
     public function settings();
 

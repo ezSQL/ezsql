@@ -3,6 +3,10 @@
 namespace ezsql;
 
 use ezsql\DatabaseInterface;
+use function ezsql\functions\{
+    getInstance,
+    to_string
+};
 
 class ezSchema
 {
@@ -156,7 +160,7 @@ class ezSchema
     public static function vendor()
     {
         $type = null;
-        $instance = \getInstance();
+        $instance = getInstance();
         if ($instance instanceof DatabaseInterface) {
             $type = $instance->settings()->getDriver();
             if ($type == \Pdo) {
@@ -205,7 +209,7 @@ class ezSchema
             }
 
             $keyType = ($column != \INDEX) ? \array_shift($args) . ' ' : ' ';
-            $keys = $keyType . '(' . \to_string($args) . '), ';
+            $keys = $keyType . '(' . to_string($args) . '), ';
             $columnData .= $column . ' ' . $type . ' ' . $keys;
         } elseif (($column == \ADD) || ($column == \DROP) || ($column == \CHANGER)) {
             if ($column != \DROP) {

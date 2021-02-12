@@ -181,7 +181,7 @@ class ezResultset implements \Iterator
     /**
      * Returns n object with properties that correspond to the fetched row and moves
      * the internal data pointer ahead. Behaves like mysql_fetch_object.
-     * @return array
+     * @return object
      */
     public function fetch_object()
     {
