@@ -149,7 +149,6 @@ class ezFunctionsTest extends EZTestCase
     public function testSetInstance()
     {
         $this->assertFalse(\setInstance());
-        $this->assertFalse(\setInstance($this));
     }
 
     public function testSelect()
