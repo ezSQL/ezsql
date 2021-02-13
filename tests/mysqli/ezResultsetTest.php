@@ -48,7 +48,7 @@ class ezResultsetTest extends EZTestCase
         $this->database->insert('unit_test', ['id' => 4, 'test_key' => 'test 4']);
         $this->database->insert('unit_test', ['id' => 5, 'test_key' => 'test 5']);
 
-        $this->database->selecting('unit_test');
+        $this->database->select('unit_test');
 
         $this->object = new ezResultset($this->database->get_results());
     } // setUp

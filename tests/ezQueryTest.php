@@ -108,10 +108,10 @@ class ezQueryTest extends EZTestCase
         $this->assertFalse($this->object->delete('test_unit_delete', array('good', 'bad')));
     }
 
-    public function testSelecting()
+    public function testSelect()
     {
-        $this->assertFalse($this->object->selecting('', ''));
-        $this->assertNotNull($this->object->selecting('table', 'columns', 'WHERE', 'GROUP BY', 'HAVING', 'ORDER BY', 'LIMIT'));
+        $this->assertFalse($this->object->select('', ''));
+        $this->assertNotNull($this->object->select('table', 'columns', 'WHERE', 'GROUP BY', 'HAVING', 'ORDER BY', 'LIMIT'));
     }
 
     public function testCreate_select()

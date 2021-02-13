@@ -233,7 +233,7 @@ class sqlsrvTest extends EZTestCase
         );
     }
 
-    public function testSelecting()
+    public function testSelect()
     {
         $this->object->quick_connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME);
         $this->object->query('CREATE TABLE unit_test(id integer, test_key varchar(50), PRIMARY KEY (ID))');
@@ -242,7 +242,7 @@ class sqlsrvTest extends EZTestCase
         $this->object->insert('unit_test', array('id' => 9, 'test_key' => 'testing 9'));
         $this->object->insert('unit_test', array('id' => 10, 'test_key' => 'testing 10'));
 
-        $result = $this->object->selecting('unit_test');
+        $result = $this->object->select('unit_test');
         $i = 8;
 
         foreach ($result as $row) {
@@ -252,17 +252,17 @@ class sqlsrvTest extends EZTestCase
         }
 
         $where = eq('test_key', 'testing 10');
-        $result = $this->object->selecting('unit_test', 'id', $where);
+        $result = $this->object->select('unit_test', 'id', $where);
         foreach ($result as $row) {
             $this->assertEquals(10, $row->id);
         }
 
-        $result = $this->object->selecting('unit_test', 'test_key', eq('id', 9));
+        $result = $this->object->select('unit_test', 'test_key', eq('id', 9));
         foreach ($result as $row) {
             $this->assertEquals('testing 9', $row->test_key);
         }
 
-        $result = $this->object->selecting('unit_test', array('test_key'), eq('id', 8));
+        $result = $this->object->select('unit_test', array('test_key'), eq('id', 8));
         foreach ($result as $row) {
             $this->assertEquals('testing 8', $row->test_key);
         }
@@ -288,7 +288,7 @@ class sqlsrvTest extends EZTestCase
         }
 
         if ($commit) {
-            $result = $this->object->selecting('unit_test');
+            $result = $this->object->select('unit_test');
             $i = 8;
 
             foreach ($result as $row) {
@@ -321,7 +321,7 @@ class sqlsrvTest extends EZTestCase
 
         if ($commit) {
             echo ("Error! This message shouldn't have been displayed.");
-            $result = $this->object->selecting('unit_test');
+            $result = $this->object->select('unit_test');
             $i = 8;
 
             foreach ($result as $row) {
@@ -333,7 +333,7 @@ class sqlsrvTest extends EZTestCase
             $this->object->drop('unit_test');
         } else {
             //echo ("Error! rollback.");
-            $result = $this->object->selecting('unit_test');
+            $result = $this->object->select('unit_test');
             $i = 8;
 
             foreach ($result as $row) {

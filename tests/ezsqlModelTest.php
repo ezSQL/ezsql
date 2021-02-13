@@ -30,7 +30,7 @@ class ezsqlModelTest extends EZTestCase
 
     public function testGetCache_Timeout()
     {
-        $res = $this->object->getCache_Timeout();
+        $res = $this->object->getCacheTimeout();
         $this->assertEquals(24, $res);
     }
 
@@ -161,7 +161,7 @@ class ezsqlModelTest extends EZTestCase
     public function testVarDump()
     {
         $this->object->setDebug_Echo_Is_On(false);
-        $this->object->setLast_Result(['test 1']);
+        $this->object->setLastResult(['test 1']);
         $this->assertNotEmpty($this->object->varDump($this->object->getLast_Result()));
         $this->object->setDebug_Echo_Is_On(true);
         $this->expectOutputRegex('/[Last Function Call]/');
@@ -170,8 +170,8 @@ class ezsqlModelTest extends EZTestCase
 
     public function testDump_var()
     {
-        $this->object->setDebug_Echo_Is_On(true);
-        $this->object->setLast_Result(['Test 1', 'Test 2']);
+        $this->object->setDebugEchoIsOn(true);
+        $this->object->setLastResult(['Test 1', 'Test 2']);
         $this->expectOutputRegex('/[Last Function Call]/');
         $this->object->dump_var();
     }
@@ -182,15 +182,15 @@ class ezsqlModelTest extends EZTestCase
         $this->assertNotEmpty($this->object->debug(false));
 
         // In addition of getting a result, it fills the console
-        $this->object->setLast_Error("test last");
+        $this->object->setLastError("test last");
         $this->expectOutputRegex('/[test last]/');
         $this->object->debug();
-        $this->object->setFrom_Disk_Cache(true);
+        $this->object->setFromDiskCache(true);
         $this->expectOutputRegex('/[Results retrieved from disk cache]/');
         $this->object->debug();
-        $this->object->setCol_Info(["just another test"]);
+        $this->object->setColInfo(["just another test"]);
         $this->object->debug(false);
-        $this->object->setCol_Info(null);
+        $this->object->setColInfo(null);
         $this->object->setLast_Result(["just another test II"]);
         $this->object->debug(false);
     }
@@ -222,9 +222,9 @@ class ezsqlModelTest extends EZTestCase
     {
         $this->object->timer_start('test_timer');
         usleep(5);
-        $this->object->setDo_Profile(true);
+        $this->object->setDoProfile(true);
         $this->object->timer_update_global('test_timer');
-        $expected = $this->object->getTotal_Query_Time();
+        $expected = $this->object->getTotalQueryTime();
         $this->assertGreaterThanOrEqual($expected, $this->object->timer_elapsed('test_timer'));
     }
 

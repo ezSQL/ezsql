@@ -157,22 +157,27 @@ class ezSchema
         return $data;
     }
 
+    /**
+     * Returns the current global database vendor being used.
+     *
+     * @return string|null `mysqli`|`pgsql`|`sqlite3`|`sqlsrv`
+     */
     public static function vendor()
     {
         $type = null;
         $instance = getInstance();
         if ($instance instanceof DatabaseInterface) {
             $type = $instance->settings()->getDriver();
-            if ($type == \Pdo) {
+            if ($type === \Pdo) {
                 $type = null;
                 $dbh = $instance->handle();
-                if (strpos($dbh->getAttribute(\PDO::ATTR_CLIENT_VERSION), 'mysql') !== false)
+                if (\strpos($dbh->getAttribute(\PDO::ATTR_CLIENT_VERSION), 'mysql') !== false)
                     $type = \MYSQL;
-                elseif (strpos($dbh->getAttribute(\PDO::ATTR_CLIENT_VERSION), 'pgsql') !== false)
+                elseif (\strpos($dbh->getAttribute(\PDO::ATTR_CLIENT_VERSION), 'pgsql') !== false)
                     $type = \POSTGRESQL;
-                elseif (strpos($dbh->getAttribute(\PDO::ATTR_CLIENT_VERSION), 'sqlite') !== false)
+                elseif (\strpos($dbh->getAttribute(\PDO::ATTR_CLIENT_VERSION), 'sqlite') !== false)
                     $type = \SQLITE3;
-                elseif (strpos($dbh->getAttribute(\PDO::ATTR_CLIENT_VERSION), 'sqlsrv') !== false)
+                elseif (\strpos($dbh->getAttribute(\PDO::ATTR_CLIENT_VERSION), 'sqlsrv') !== false)
                     $type = \SQLSERVER;
             }
         }

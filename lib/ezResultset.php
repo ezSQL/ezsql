@@ -54,7 +54,7 @@ class ezResultset implements \Iterator
      */
     public function __construct($query_result)
     {
-        if (!is_array($query_result)) {
+        if (!\is_array($query_result)) {
             throw new \Exception("$query_result is not valid.");
         }
         $this->_resultset = $query_result;

@@ -12,8 +12,8 @@ use function ezsql\functions\setInstance;
 
 class ez_sqlite3 extends ezsqlModel implements DatabaseInterface
 {
+    protected $is_insert = false;
     private $return_val = 0;
-    private $is_insert = false;
     private $shortcutUsed = false;
     private $isTransactional = false;
 
@@ -76,7 +76,7 @@ class ez_sqlite3 extends ezsqlModel implements DatabaseInterface
             //$this->register_error(\FAILED_CONNECTION);
             //$this->show_errors ? \trigger_error(\FAILED_CONNECTION, \E_USER_WARNING) : null;
         } else {
-            $this->conn_queries = 0;
+            $this->connQueries = 0;
             $this->_connected = true;
         }
 
@@ -204,9 +204,9 @@ class ez_sqlite3 extends ezsqlModel implements DatabaseInterface
         if (\preg_match("/^(insert|delete|update|replace)\s+/i", $query)) {
             $this->_affectedRows = @$this->dbh->changes();
 
-            // Take note of the insert_id
+            // Take note of the insert id
             if (\preg_match("/^(insert|replace)\s+/i", $query)) {
-                $this->insert_id = @$this->dbh->lastInsertRowID();
+                $this->insertId = @$this->dbh->lastInsertRowID();
             }
 
             // Return number of rows affected
@@ -216,12 +216,12 @@ class ez_sqlite3 extends ezsqlModel implements DatabaseInterface
         } else {
             // Take note of column info
             $i = 0;
-            $this->col_info = array();
+            $this->colInfo = array();
             while ($i < @$this->result->numColumns()) {
-                $this->col_info[$i] = new \stdClass;
-                $this->col_info[$i]->name = $this->result->columnName($i);
-                $this->col_info[$i]->type = null;
-                $this->col_info[$i]->max_length = null;
+                $this->colInfo[$i] = new \stdClass;
+                $this->colInfo[$i]->name = $this->result->columnName($i);
+                $this->colInfo[$i]->type = null;
+                $this->colInfo[$i]->max_length = null;
                 $i++;
             }
 
@@ -230,15 +230,15 @@ class ez_sqlite3 extends ezsqlModel implements DatabaseInterface
             while ($row = @$this->result->fetchArray(\SQLITE3_ASSOC)) {
                 // Store result as an objects within main array
                 $obj = (object) $row; //convert to object
-                $this->last_result[$num_rows] = $obj;
+                $this->lastResult[$num_rows] = $obj;
                 $num_rows++;
             }
 
             // Log number of rows the query returned
-            $this->num_rows = $num_rows;
+            $this->numRows = $num_rows;
 
             // Return number of rows selected
-            $this->return_val = $this->num_rows;
+            $this->return_val = $this->numRows;
         }
     }
 
@@ -272,7 +272,7 @@ class ez_sqlite3 extends ezsqlModel implements DatabaseInterface
         $this->log_query("\$db->query(\"$query\")");
 
         // Keep track of the last query for debug..
-        $this->last_query = $query;
+        $this->lastQuery = $query;
 
         // If there is no existing database connection then try to connect
         if (!isset($this->dbh) || !$this->dbh) {
@@ -298,7 +298,7 @@ class ez_sqlite3 extends ezsqlModel implements DatabaseInterface
             $this->result->finalize();
 
         // If debug ALL queries
-        $this->trace || $this->debug_all ? $this->debug() : null;
+        $this->trace || $this->debugAll ? $this->debug() : null;
 
         return $this->return_val;
     }

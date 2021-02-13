@@ -386,7 +386,7 @@ interface ezQueryInterface
      *
      * @return mixed result set - see docs for more details, or false for error
      */
-    public function selecting(string $table = null, $columnFields = '*', ...$conditions);
+    public function select(string $table = null, $columnFields = '*', ...$conditions);
 
     /**
      * Does an create select statement by calling selecting method

@@ -219,7 +219,7 @@ class sqlite3Test extends EZTestCase
         $this->assertEquals(1, $this->object->delete('test_table', $where));
     }
 
-    public function testSelecting()
+    public function testSelect()
     {
         $this->object->query('CREATE TABLE test_table(id integer, test_key varchar(50), test_value varchar(50), PRIMARY KEY (ID))');
 
@@ -227,7 +227,7 @@ class sqlite3Test extends EZTestCase
         $this->object->insert('test_table', array('test_key' => 'test 2', 'test_value' => 'testing string 2'));
         $this->object->insert('test_table', array('test_key' => 'test 3', 'test_value' => 'testing string 3'));
 
-        $result = $this->object->selecting('test_table');
+        $result = $this->object->select('test_table');
 
         $i = 1;
         foreach ($result as $row) {
@@ -238,18 +238,18 @@ class sqlite3Test extends EZTestCase
         }
 
         $where = eq('id', 2);
-        $result = $this->object->selecting('test_table', 'id', $this->object->where($where));
+        $result = $this->object->select('test_table', 'id', $this->object->where($where));
         foreach ($result as $row) {
             $this->assertEquals(2, $row->id);
         }
 
         $where = [eq('test_value', 'testing string 3')];
-        $result = $this->object->selecting('test_table', 'test_key', $this->object->where($where));
+        $result = $this->object->select('test_table', 'test_key', $this->object->where($where));
         foreach ($result as $row) {
             $this->assertEquals('test 3', $row->test_key);
         }
 
-        $result = $this->object->selecting('test_table', 'test_value', $this->object->where(eq('test_key', 'test 1')));
+        $result = $this->object->select('test_table', 'test_value', $this->object->where(eq('test_key', 'test 1')));
         foreach ($result as $row) {
             $this->assertEquals('testing string 1', $row->test_value);
         }
@@ -275,7 +275,7 @@ class sqlite3Test extends EZTestCase
         }
 
         if ($commit) {
-            $result = $this->object->selecting('test_table');
+            $result = $this->object->select('test_table');
             $i = 1;
             foreach ($result as $row) {
                 $this->assertEquals($i, $row->id);
@@ -307,7 +307,7 @@ class sqlite3Test extends EZTestCase
 
         if ($commit) {
             echo ("Error! This message shouldn't have been displayed.");
-            $result = $this->object->selecting('test_table');
+            $result = $this->object->select('test_table');
 
             $i = 1;
             foreach ($result as $row) {
@@ -320,7 +320,7 @@ class sqlite3Test extends EZTestCase
             $this->object->drop('test_table');
         } else {
             //echo ("Error! rollback.");
-            $result = $this->object->selecting('test_table');
+            $result = $this->object->select('test_table');
 
             $i = 1;
             foreach ($result as $row) {

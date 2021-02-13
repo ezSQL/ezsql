@@ -11,7 +11,7 @@ class ezQuery implements ezQueryInterface
     protected $select_result = true;
     protected $prepareActive = false;
     protected $preparedValues = array();
-    protected $insert_id = null;
+    protected $insertId = null;
 
     private $fromTable = null;
     private $isWhere = true;
@@ -397,7 +397,7 @@ class ezQuery implements ezQueryInterface
         $whereConditionsReturn = [];
         foreach ($whereConditions as $whereCondition) {
             if (!empty($whereCondition[0]) && is_array($whereCondition[0])) {
-                $whereConditionsReturn = array_merge($whereConditionsReturn, $this->flattenWhereConditions($whereCondition));
+                $whereConditionsReturn = \array_merge($whereConditionsReturn, $this->flattenWhereConditions($whereCondition));
             } else {
                 $whereConditionsReturn[] = $whereCondition;
             }
@@ -462,19 +462,16 @@ class ezQuery implements ezQueryInterface
             return false;
 
         $whereOrHaving = ($this->isWhere) ? 'WHERE' : 'HAVING';
-
         if (\is_string($whereConditions[0]) && \strpos($whereConditions[0],  $whereOrHaving) !== false)
             return $whereConditions[0];
 
-        $totalConditions = count($whereConditions) - 1;
-
+        $totalConditions = \count($whereConditions) - 1;
         if ($totalConditions > 0) {
+            if (!\in_array('(', $whereConditions[0]))
+                $whereConditions[0][\count($whereConditions[0])] = '(';
 
-            if (!in_array('(', $whereConditions[0]))
-                $whereConditions[0][count($whereConditions[0])] = '(';
-
-            if (!in_array(')', $whereConditions[$totalConditions]))
-                $whereConditions[$totalConditions][count($whereConditions[$totalConditions])] = ')';
+            if (!\in_array(')', $whereConditions[$totalConditions]))
+                $whereConditions[$totalConditions][\count($whereConditions[$totalConditions])] = ')';
         }
 
         return $whereConditions;
@@ -525,7 +522,7 @@ class ezQuery implements ezQueryInterface
         return ($where != '1') ? " $whereOrHaving $where " : ' ';
     }
 
-    public function selecting(string $table = null, $columnFields = '*', ...$conditions)
+    public function select(string $table = null, $columnFields = '*', ...$conditions)
     {
         $getFromTable = $this->fromTable;
         $getSelect_result = $this->select_result;
@@ -615,13 +612,13 @@ class ezQuery implements ezQueryInterface
     }
 
     /**
-     * Get SQL statement string from selecting method instead of executing get_result
+     * Get SQL statement string from `select` method instead of executing get_result
      * @return string
      */
     private function select_sql($table = '', $columnFields = '*', ...$conditions)
     {
         $this->select_result = false;
-        return $this->selecting($table, $columnFields, ...$conditions);
+        return $this->select($table, $columnFields, ...$conditions);
     }
 
     public function union(string $table = null, $columnFields = '*', ...$conditions)
@@ -762,7 +759,7 @@ class ezQuery implements ezQueryInterface
                 $ok = $this->query($sql);
 
             if ($ok)
-                return $this->insert_id;
+                return $this->insertId;
 
             return $this->clearPrepare();
         } else {

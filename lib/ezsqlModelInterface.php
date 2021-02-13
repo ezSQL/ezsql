@@ -140,7 +140,7 @@ interface ezsqlModelInterface
 	 * - If no column offset is supplied then a one dimensional array is returned with the
 	 * information type for â€˜all columnsâ€™.
 	 * - For access to the full meta information for all columns you can use the cached
-	 * variable `$db->col_info`, access by calling `$db->getCol_Info()`
+	 * variable `$db->colInfo`, access by calling `$db->getCol_Info()`
 	 *
 	 * Available Info-Types:
 	 * mySQL

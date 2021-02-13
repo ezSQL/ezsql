@@ -23,7 +23,7 @@ class DatabaseTest extends EZTestCase
             );
         }
 
-        $mysqli = Database::initialize(MYSQLI, [self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME], MYSQLI);
+        $mysqli = Database::initialize(\MYSQLI, [self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME], MYSQLI);
         $this->assertFalse($mysqli instanceof ConfigInterface);
         $this->assertTrue($mysqli->settings() instanceof ConfigInterface);
         $this->assertTrue($mysqli instanceof ez_mysqli);
@@ -41,7 +41,7 @@ class DatabaseTest extends EZTestCase
             );
         }
 
-        $pgsql = Database::initialize(PGSQL, [self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME, self::TEST_DB_HOST, self::TEST_DB_PORT]);
+        $pgsql = Database::initialize(\PGSQL, [self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME, self::TEST_DB_HOST, self::TEST_DB_PORT]);
         $this->assertFalse($pgsql instanceof ConfigInterface);
         $this->assertTrue($pgsql->settings() instanceof ConfigInterface);
         $this->assertTrue($pgsql instanceof ez_pgsql);
@@ -58,7 +58,7 @@ class DatabaseTest extends EZTestCase
             );
         }
 
-        $sqlite3 = Database::initialize(SQLITE3, [self::TEST_SQLITE_DB_DIR, self::TEST_SQLITE_DB]);
+        $sqlite3 = Database::initialize(\SQLITE3, [self::TEST_SQLITE_DB_DIR, self::TEST_SQLITE_DB]);
         $this->assertFalse($sqlite3 instanceof ConfigInterface);
         $this->assertTrue($sqlite3->settings() instanceof ConfigInterface);
         $this->assertTrue($sqlite3 instanceof ez_sqlite3);
@@ -75,7 +75,7 @@ class DatabaseTest extends EZTestCase
             );
         }
 
-        $sqlsrv = Database::initialize(SQLSERVER, [self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME]);
+        $sqlsrv = Database::initialize(\SQLSERVER, [self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME]);
         $this->assertFalse($sqlsrv instanceof ConfigInterface);
         $this->assertTrue($sqlsrv->settings() instanceof ConfigInterface);
         $this->assertTrue($sqlsrv instanceof ez_sqlsrv);

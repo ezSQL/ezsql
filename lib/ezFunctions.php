@@ -12,12 +12,12 @@ use ezsql\DatabaseInterface;
 
 if (!\function_exists('ezFunctions')) {
     /**
-     * Initialize and connect a vendor database.
+     * Initialize and connect a vendor's database.
      *
-     * @param mixed $sqlDriver - SQL driver
-     * @param mixed $connectionSetting - SQL connection parameters
-     * @param mixed $instanceTag - Store the instance for later use
-     * @return ezsql\Database\ez_pdo|ezsql\Database\ez_pgsql|ezsql\Database\ez_sqlsrv|Database\ez_sqlite3|ezsql\Database\ez_mysqli
+     * @param string $sqlDriver - SQL driver
+     * @param array $connectionSetting - SQL connection parameters
+     * @param string $instanceTag - Store the instance for later use
+     * @return ezsql\Database\ez_pdo|ezsql\Database\ez_pgsql|ezsql\Database\ez_sqlsrv|ezsql\Database\ez_sqlite3|ezsql\Database\ez_mysqli
      */
     function database(string $sqlDriver = null, array $connectionSetting = null, string $instanceTag = null)
     {
@@ -25,10 +25,10 @@ if (!\function_exists('ezFunctions')) {
     }
 
     /**
-     * Returns an already initialized database instance that was created an tag.
+     * Returns an already initialized database instance that was created with an tag.
      *
      * @param string $getTag - An stored tag instance
-     * @return ezsql\Database\ez_pdo|ezsql\Database\ez_pgsql|ezsql\Database\ez_sqlsrv|Database\ez_sqlite3|ezsql\Database\ez_mysqli
+     * @return ezsql\Database\ez_pdo|ezsql\Database\ez_pgsql|ezsql\Database\ez_sqlsrv|ezsql\Database\ez_sqlite3|ezsql\Database\ez_mysqli
      */
     function tagInstance(string $getTag = null)
     {
@@ -39,7 +39,7 @@ if (!\function_exists('ezFunctions')) {
      * Initialize an mysqli database.
      *
      * @param array $databaseSetting - SQL connection parameters
-     * @param mixed $instanceTag - Store the instance for later use
+     * @param string $instanceTag - Store the instance for later use
      *
      * @return ezsql\Database\ez_mysqli
      */
@@ -51,8 +51,8 @@ if (!\function_exists('ezFunctions')) {
     /**
      * Initialize an pgsql database.
      *
-     * @param mixed $databaseSetting - SQL connection parameters
-     * @param mixed $instanceTag - Store the instance for later use
+     * @param array $databaseSetting - SQL connection parameters
+     * @param string $instanceTag - Store the instance for later use
      *
      * @return ezsql\Database\ez_pgsql
      */
@@ -64,8 +64,8 @@ if (!\function_exists('ezFunctions')) {
     /**
      * Initialize an mssql database.
      *
-     * @param mixed $databaseSetting - SQL connection parameters
-     * @param mixed $instanceTag - Store the instance for later use
+     * @param array $databaseSetting - SQL connection parameters
+     * @param string $instanceTag - Store the instance for later use
      *
      * @return ezsql\Database\ez_sqlsrv
      */
@@ -77,8 +77,8 @@ if (!\function_exists('ezFunctions')) {
     /**
      * Initialize an pdo database.
      *
-     * @param mixed $databaseSetting - SQL connection parameters
-     * @param mixed $instanceTag - Store the instance for later use
+     * @param array $databaseSetting - SQL connection parameters
+     * @param string $instanceTag - Store the instance for later use
      *
      * @return ezsql\Database\ez_pdo
      */
@@ -90,8 +90,8 @@ if (!\function_exists('ezFunctions')) {
     /**
      * Initialize an sqlite3 database.
      *
-     * @param mixed $databaseSetting - SQL connection parameters
-     * @param mixed $instanceTag - Store the instance for later use
+     * @param array $databaseSetting - SQL connection parameters
+     * @param string $instanceTag - Store the instance for later use
      *
      * @return ezsql\Database\ez_sqlite3
      */
@@ -100,13 +100,18 @@ if (!\function_exists('ezFunctions')) {
         return database(\SQLITE3, $databaseSetting, $instanceTag);
     }
 
+    /**
+     * Returns the current global database vendor being used.
+     *
+     * @return string|null `mysqli`|`pgsql`|`sqlite3`|`sqlsrv`
+     */
     function getVendor()
     {
         return ezSchema::vendor();
     }
 
     /**
-     * Convert array to string, and attach '`, `' for separation, if none is provided.
+     * Convert array to string, and attach '`,`' for separation, if none is provided.
      *
      * @return string
      */
@@ -138,19 +143,19 @@ if (!\function_exists('ezFunctions')) {
 
     function primary(string $primaryName, ...$primaryKeys)
     {
-        array_unshift($primaryKeys, \PRIMARY);
+        \array_unshift($primaryKeys, \PRIMARY);
         return column(\CONSTRAINT, $primaryName, ...$primaryKeys);
     }
 
     function foreign(string $foreignName, ...$foreignKeys)
     {
-        array_unshift($foreignKeys, \FOREIGN);
+        \array_unshift($foreignKeys, \FOREIGN);
         return column(\CONSTRAINT, $foreignName, ...$foreignKeys);
     }
 
     function unique(string $uniqueName, ...$uniqueKeys)
     {
-        array_unshift($uniqueKeys, \UNIQUE);
+        \array_unshift($uniqueKeys, \UNIQUE);
         return column(\CONSTRAINT, $uniqueName, ...$uniqueKeys);
     }
 
@@ -558,7 +563,7 @@ if (!\function_exists('ezFunctions')) {
     {
         $ezQuery = getInstance();
         return ($ezQuery instanceof DatabaseInterface)
-            ? $ezQuery->selecting($table, $columns, ...$args)
+            ? $ezQuery->select($table, $columns, ...$args)
             : false;
     }
 
