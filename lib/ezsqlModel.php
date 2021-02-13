@@ -694,7 +694,7 @@ class ezsqlModel extends ezQuery implements ezsqlModelInterface
 			$this->connQueries++;
 		}
 
-		return ($all) ? $this->num_queries : $this->conn_queries;
+		return ($all) ? $this->numQueries : $this->connQueries;
 	}
 
 	public function secureSetup(
