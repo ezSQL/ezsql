@@ -23,6 +23,7 @@ use function ezsql\functions\{
     lte,
     gt,
     gte,
+    isNull,
     isNotNull,
     like,
     in,

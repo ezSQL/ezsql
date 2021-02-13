@@ -60,6 +60,7 @@ jobs:
       - name: Test with phpunit
         run: ./vendor/bin/phpunit --coverage-clover=coverage.xml
       - name: Submit code coverage
+        if: ${{ success() }} || ${{ failure() }}
         uses: codecov/codecov-action@v1
         with:
           file: ./coverage.xml # optional
