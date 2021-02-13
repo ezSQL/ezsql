@@ -251,7 +251,7 @@ class ezsqlModel extends ezQuery implements ezsqlModelInterface
 	public function __call($function, $args)
 	{
 		$prefix = \substr($function, 0, 3);
-		$property = \strtolower(\substr($function, 3, \strlen($function)));
+		$property = \lcfirst(\substr($function, 3, \strlen($function)));
 		// Todo: make properties PSR-1, add following for backward compatibility
 		if (\strpos($property, '_') !== false)
 			$property = \str_replace('_', '', $property);
