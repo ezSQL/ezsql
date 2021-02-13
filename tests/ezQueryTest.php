@@ -9,7 +9,7 @@ use function ezsql\functions\{
     eq,
     neq,
     like,
-    in,
+    in
 };
 
 class ezQueryTest extends EZTestCase
