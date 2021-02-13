@@ -428,7 +428,7 @@ class ez_mysqli extends ezsqlModel implements DatabaseInterface
         // If there is no existing database connection then try to connect
         if (!isset($this->dbh) || !$this->dbh) {
             $this->connect($this->database->getUser(), $this->database->getPassword(), $this->database->getHost());
-            $this->select($this->database->getName());
+            $this->dbSelect($this->database->getName());
         }
 
         // Perform the query via std mysql_query function..
