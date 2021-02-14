@@ -18,11 +18,14 @@ class Database
     private static $instances = [];
 
     private function __construct()
-    { }
+    {
+    }
     private function __clone()
-    { }
-    private function __wakeup()
-    { }
+    {
+    }
+    public function __wakeup()
+    {
+    }
 
     /**
      * Initialize and connect a vendor database.
@@ -30,6 +33,7 @@ class Database
      * @param mixed $vendor - SQL driver
      * @param mixed $setting - SQL connection parameters
      * @param mixed $tag - Store the instance for later use
+     * @return Database\ez_pdo|Database\ez_pgsql|Database\ez_sqlsrv|Database\ez_sqlite3|Database\ez_mysqli
      */
     public static function initialize(?string $vendor = null, ?array $setting = null, ?string $tag = null)
     {

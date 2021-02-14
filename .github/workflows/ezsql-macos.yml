@@ -1,0 +1,66 @@
+# GitHub Action for PHP with extensions
+name: macOS
+
+on:
+  push:
+    branches:
+    - v4
+  pull_request:
+    branches:
+    - v4
+
+jobs:
+  windows:
+    name: macOS (PHP ${{ matrix.php-versions }} CI)
+    runs-on: macos-latest
+    continue-on-error: true
+    strategy:
+      fail-fast: false
+      matrix:
+        operating-system: [macos-latest]
+        php-versions: ['7.3']
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Setup PHP, with composer and extensions
+        uses: shivammathur/setup-php@v2 #https://github.com/shivammathur/setup-php
+        with:
+          php-version: ${{ matrix.php-versions }}
+          extensions: mbstring, fileinfo, mysqli, pdo_mysql, pgsql, pdo_pgsql, sqlite3, pdo_sqlite, xdebug
+          coverage: xdebug
+      - name: Brew Install MySQL
+        run: |
+          brew install mysql@5.7
+      - name: Brew Start MySQL
+        run: |
+          brew services start mysql@5.7
+          brew link mysql@5.7 --force
+          mysqld --initialize-insecure
+          mysql.server start
+      - name: Setup MySQL Database
+        run: |
+          mysql -u root -e "CREATE DATABASE IF NOT EXISTS ez_test;"
+          mysql -u root -e "CREATE USER ez_test@localhost IDENTIFIED BY 'ezTest'; GRANT ALL ON ez_test.* TO ez_test@localhost; FLUSH PRIVILEGES;"
+      - name: Brew Start PostgreSql
+        run: |
+          sudo mkdir /var/pgsql_socket/
+          sudo ln -s /private/tmp/.s.PGSQL.5432 /var/pgsql_socket/
+          pg_ctl -D /usr/local/var/postgres -l /usr/local/var/postgres/server.log start
+          brew services restart postgresql
+      - name: Setup PostgreSql Database
+        run: |
+          createuser -s postgres
+          psql -U postgres --command="CREATE USER ez_test PASSWORD 'ezTest'" --command="\du"
+          createdb --owner=ez_test ez_test
+      - name: Install dependencies
+        run: |
+          composer self-update
+          composer update
+      - name: Test with phpunit
+        run: ./vendor/bin/phpunit --coverage-clover=coverage.xml
+      - name: Submit code coverage
+        if: ${{ success() }} || ${{ failure() }}
+        uses: codecov/codecov-action@v1
+        with:
+          file: ./coverage.xml # optional

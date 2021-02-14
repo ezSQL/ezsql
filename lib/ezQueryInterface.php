@@ -304,7 +304,7 @@ interface ezQueryInterface
      *   `grouping( eq(key, value, combiner ), eq(key, value, combiner ) );`
      *
      * @param array $whereConditions - In the following format:
-     *
+     *```js
      *   eq('key/Field/Column', $value, _AND), // combine next expression
      *   neq('key/Field/Column', $value, _OR), // will combine next expression again
      *   ne('key/Field/Column', $value), // the default is _AND so will combine next expression
@@ -316,7 +316,7 @@ interface ezQueryInterface
      *   isNotNull('key/Field/Column')
      *   like('key/Field/Column', '_%')
      *   notLike('key/Field/Column', '_%')
-     *
+     *```
      * @return array modified conditions
      */
     public function grouping(...$whereConditions);
@@ -331,9 +331,9 @@ interface ezQueryInterface
      *   `where( eq(key, value ), like('key', '_%?');`
      *
      * @param array $whereConditions - In the following format:
-     *
+     *```js
      *   eq('key/Field/Column', $value, _AND), // combine next expression
-     *   neq('key/Field/Column', $value, _OR), // will combine next expression again
+     *   neq('key/Field/Column', $value, _OR), // will combine next expression if
      *   ne('key/Field/Column', $value), // the default is _AND so will combine next expression
      *   lt('key/Field/Column', $value)
      *   lte('key/Field/Column', $value)
@@ -347,22 +347,22 @@ interface ezQueryInterface
      *   notIn('key/Field/Column', $values)
      *   between('key/Field/Column', $value, $value2)
      *   notBetween('key/Field/Column', $value, $value2)
-     *
+     *```
      * @return mixed bool/string - WHERE SQL statement, or false on error
      */
     public function where(...$whereConditions);
+
 
     /**
      * Returns an SQL string or result set, given the
      *   - table, column fields, conditions or conditional array.
      *
      * In the following format:
-     * ```
-     * selecting(
+     * ```js
+     * select(
      *   table,
      *   columns,
-     *   // innerJoin(), leftJoin(), rightJoin(), fullJoin() alias of
-     *   joining(inner|left|right|full, leftTable, rightTable, leftColumn, rightColumn, equal condition),
+     *    (innerJoin(), leftJoin(), rightJoin(), fullJoin()), // alias of joining(inner|left|right|full, leftTable, rightTable, leftColumn, rightColumn, equal condition),
      *   where( eq( columns, values, _AND ), like( columns, _d ) ),
      *   groupBy( columns ),
      *   having( between( columns, values1, values2 ) ),
@@ -374,7 +374,7 @@ interface ezQueryInterface
      * ```
      * @param $table, - database table to access
      * @param $columnFields, - table columns, string or array
-     * @param mixed $conditions - of the following parameters:
+     * @param mixed ...$conditions - of the following parameters:
      *
      *   @param $joins, - join clause (type, left table, right table, left column, right column, condition = EQ)
      *   @param $whereKey, - where clause ( comparison(x, y, and) )

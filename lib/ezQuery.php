@@ -723,7 +723,7 @@ class ezQuery implements ezQueryInterface
      * Helper does the actual insert or replace query with an array
      * @return mixed bool/results - false for error
      */
-    private function _query_insert_replace($table = '', $keyAndValue, $type = '', $execute = true)
+    private function _query_insert_replace($table = '', $keyAndValue = null, $type = '', $execute = true)
     {
         if ((!\is_array($keyAndValue) && ($execute)) || empty($table)) {
             return $this->clearPrepare();
@@ -812,7 +812,15 @@ class ezQuery implements ezQueryInterface
         return array();
     }
 
-    // query call template
+    //
+
+    /**
+     * query call template
+     *
+     * @param string $query
+     * @param bool $use_prepare
+     * @return bool|mixed
+     */
     public function query(string $query, bool $use_prepare = false)
     {
         return false;
@@ -965,6 +973,12 @@ class ezQuery implements ezQueryInterface
         return false;
     }
 
+    /**
+     * Does an drop table query if table exists.
+     * @param $table - database table to erase
+     *
+     * @return bool
+     */
     public function drop(string $table = null)
     {
         if (empty($table))

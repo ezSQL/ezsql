@@ -5,7 +5,7 @@ if (!\defined('CONSTANTS')) {
     /**
      * ezsqlModel Constants
      */
-    \defined('EZSQL_VERSION') or \define('EZSQL_VERSION', '4.0.9');
+    \defined('EZSQL_VERSION') or \define('EZSQL_VERSION', '4.1.0');
     \defined('OBJECT') or \define('OBJECT', 'OBJECT');
     \defined('ARRAY_A') or \define('ARRAY_A', 'ARRAY_A');
     \defined('ARRAY_N') or \define('ARRAY_N', 'ARRAY_N');
