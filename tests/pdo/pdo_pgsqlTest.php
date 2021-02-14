@@ -102,6 +102,7 @@ class pdo_pgsqlTest extends EZTestCase
     public function testUpdate()
     {
         $this->assertTrue($this->object->connect('pgsql:host=' . self::TEST_DB_HOST . ';dbname=' . self::TEST_DB_NAME . ';port=' . self::TEST_DB_PORT, self::TEST_DB_USER, self::TEST_DB_PASSWORD));
+        $this->object->drop('unit_test');
         $this->object->query('CREATE TABLE unit_test(id serial, test_key varchar(50), test_value varchar(50), PRIMARY KEY (ID))');
         $this->object->insert('unit_test', array('test_key' => 'test 1', 'test_value' => 'testing string 1'));
 
@@ -134,6 +135,7 @@ class pdo_pgsqlTest extends EZTestCase
     public function testDelete()
     {
         $this->assertTrue($this->object->connect('pgsql:host=' . self::TEST_DB_HOST . ';dbname=' . self::TEST_DB_NAME . ';port=' . self::TEST_DB_PORT, self::TEST_DB_USER, self::TEST_DB_PASSWORD));
+        $this->object->drop('unit_test');
         $this->object->query('CREATE TABLE unit_test(id serial, test_key varchar(50), test_value varchar(50), PRIMARY KEY (ID))');
         $this->object->insert('unit_test', array('test_key' => 'test 1', 'test_value' => 'testing string 1'));
         $this->object->insert('unit_test', array('test_key' => 'test 2', 'test_value' => 'testing string 2'));

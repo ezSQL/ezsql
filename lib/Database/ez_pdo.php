@@ -24,16 +24,16 @@ class ez_pdo extends ezsqlModel implements DatabaseInterface
     private $dbh;
 
     /**
-     * Query result
-     * @var mixed
-     */
-    private $result;
-
-    /**
      * Database configuration setting
      * @var ConfigInterface
      */
     private $database;
+
+    /**
+     * Query result
+     * @var mixed
+     */
+    protected $result;
 
     public function __construct(ConfigInterface $settings = null)
     {
@@ -450,7 +450,7 @@ class ez_pdo extends ezsqlModel implements DatabaseInterface
 
         if ($this->processQuery($query, $param) === false) {
             if ($this->isTransactional)
-                throw new \PDOException($this->getLast_Error());
+                throw new \PDOException($this->lastError);
 
             return false;
         }
