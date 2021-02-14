@@ -96,6 +96,11 @@ if (!\function_exists('ezFunctions')) {
         return \database(\SQLITE3, $databaseSetting, $instanceTag);
     }
 
+    /**
+     * Returns the current global database vendor being used.
+     *
+     * @return string|null `mysqli`|`pgsql`|`sqlite3`|`sqlsrv`
+     */
     function getVendor()
     {
         return ezSchema::vendor();

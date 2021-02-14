@@ -153,6 +153,11 @@ class ezSchema
         return $data;
     }
 
+    /**
+     * Returns the current global database vendor being used.
+     *
+     * @return string|null `mysqli`|`pgsql`|`sqlite3`|`sqlsrv`
+     */
     public static function vendor()
     {
         $type = null;
