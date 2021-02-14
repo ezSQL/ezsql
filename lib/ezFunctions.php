@@ -96,6 +96,11 @@ if (!\function_exists('ezFunctions')) {
         return \database(\SQLITE3, $databaseSetting, $instanceTag);
     }
 
+    /**
+     * Returns the current global database vendor being used.
+     *
+     * @return string|null `mysqli`|`pgsql`|`sqlite3`|`sqlsrv`
+     */
     function getVendor()
     {
         return ezSchema::vendor();
@@ -559,7 +564,7 @@ if (!\function_exists('ezFunctions')) {
     }
 
     /**
-     * Does an select into statement by calling selecting method
+     * Does an `select into` statement by calling `selecting` method
      * @param $newTable, - new database table to be created
      * @param $fromColumns - the columns from old database table
      * @param $oldTable - old database table
@@ -576,7 +581,7 @@ if (!\function_exists('ezFunctions')) {
     }
 
     /**
-     * Does an insert into select statement by calling insert method helper then selecting method
+     * Does an `insert into select` statement by calling insert method helper then `selecting` method
      * @param $toTable, - database table to insert table into
      * @param $toColumns - the receiving columns from other table columns, leave blank for all or array of column fields
      * @param $WhereKey, - where clause ( array(x, =, y, and, extra) ) or ( "x = y and extra" )
@@ -592,7 +597,7 @@ if (!\function_exists('ezFunctions')) {
     }
 
     /**
-     * Does an create select statement by calling selecting method
+     * Does an `create select` statement by calling `selecting` method
      *
      * @param $newTable, - new database table to be created
      * @param $fromColumns - the columns from old database table
