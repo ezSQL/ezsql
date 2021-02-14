@@ -81,7 +81,7 @@ class ez_mysqli extends ezsqlModel implements DatabaseInterface
         $charset = empty($charset) ? $this->database->getCharset() : $charset;
 
         if (!$this->connect($user, $password, $host, (int) $port, $charset));
-        else if (!$this->dbSelect($name, $charset));
+        else if (!$this->select($name, $charset));
 
         return $this->_connected;
     } // quick_connect
