@@ -130,7 +130,7 @@ class ez_mysqli extends ezsqlModel implements DatabaseInterface
      * @param string $charset Encoding of the database
      * @return boolean
      */
-    public function dbSelect($name = '', $charset = '')
+    public function select($name = '', $charset = '')
     {
         $name = empty($name) ? $this->database->getName() : $name;
         try {
