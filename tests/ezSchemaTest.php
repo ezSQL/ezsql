@@ -14,7 +14,7 @@ use function ezsql\functions\{
     getVendor,
     column,
     primary,
-    index,
+    index
 };
 
 class ezSchemaTest extends EZTestCase

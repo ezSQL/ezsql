@@ -17,7 +17,7 @@ use function ezsql\functions\{
     grouping,
     like,
     where,
-    eq,
+    eq
 };
 
 class pdo_mysqlTest extends EZTestCase

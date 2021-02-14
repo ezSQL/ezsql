@@ -10,7 +10,7 @@ use function ezsql\functions\{
     column,
     primary,
     eq,
-    pgsqlInstance,
+    pgsqlInstance
 };
 
 class postgresqlTest extends EZTestCase

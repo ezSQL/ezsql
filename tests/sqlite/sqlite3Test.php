@@ -11,7 +11,7 @@ use function ezsql\functions\{
     column,
     primary,
     eq,
-    sqliteInstance,
+    sqliteInstance
 };
 
 /**

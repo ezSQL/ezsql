@@ -10,7 +10,7 @@ use function ezsql\functions\{
     grouping,
     like,
     where,
-    eq,
+    eq
 };
 
 class pdo_pgsqlTest extends EZTestCase

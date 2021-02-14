@@ -10,7 +10,7 @@ use function ezsql\functions\{
     eq,
     like,
     leftJoin,
-    pdoInstance,
+    pdoInstance
 };
 
 class pdo_sqlsrvTest extends EZTestCase

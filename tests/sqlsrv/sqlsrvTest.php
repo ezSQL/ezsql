@@ -10,7 +10,7 @@ use function ezsql\functions\{
     column,
     primary,
     eq,
-    mssqlInstance,
+    mssqlInstance
 };
 
 class sqlsrvTest extends EZTestCase

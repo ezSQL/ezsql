@@ -7,7 +7,7 @@ use ezsql\Tests\EZTestCase;
 
 use function ezsql\functions\{
     mysqlInstance,
-    column,
+    column
 };
 
 class ezResultsetTest extends EZTestCase
