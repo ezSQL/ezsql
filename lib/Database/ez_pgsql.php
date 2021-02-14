@@ -103,7 +103,7 @@ class ez_pgsql extends ezsqlModel implements DatabaseInterface
         $connect_string = "host=" . $host . " port=" . $port . " dbname=" . $name . " user=" . $user . " password=" . $password;
 
         // Try to establish the server database handle
-        if (!$this->dbh = \pg_connect($connect_string, \PGSQL_CONNECT_FORCE_NEW)) {
+        if (!$this->dbh = \pg_connect($connect_string, PGSQL_CONNECT_FORCE_NEW)) {
             $this->register_error(\FAILED_CONNECTION . ' in ' . __FILE__ . ' on line ' . __LINE__);
         } else {
             $this->_connected = true;
@@ -189,7 +189,7 @@ class ez_pgsql extends ezsqlModel implements DatabaseInterface
                 // Thx. Rafael Bernal
                 $insert_query = \pg_query("SELECT lastval();");
                 $insert_row = \pg_fetch_row($insert_query);
-                $this->insertId = $insert_row[0];
+                $this->insert_id = $insert_row[0];
             }
 
             // Return number for rows affected
@@ -209,10 +209,10 @@ class ez_pgsql extends ezsqlModel implements DatabaseInterface
                 // Take note of column info
                 $i = 0;
                 while ($i < @\pg_num_fields($this->result)) {
-                    $this->colInfo[$i] = new \stdClass();
-                    $this->colInfo[$i]->name = \pg_field_name($this->result, $i);
-                    $this->colInfo[$i]->type = \pg_field_type($this->result, $i);
-                    $this->colInfo[$i]->size = \pg_field_size($this->result, $i);
+                    $this->col_info[$i] = new \stdClass();
+                    $this->col_info[$i]->name = \pg_field_name($this->result, $i);
+                    $this->col_info[$i]->type = \pg_field_type($this->result, $i);
+                    $this->col_info[$i]->size = \pg_field_size($this->result, $i);
                     $i++;
                 }
 
@@ -223,17 +223,17 @@ class ez_pgsql extends ezsqlModel implements DatabaseInterface
                  */
                 while ($row = @\pg_fetch_object($this->result)) {
                     // Store results as an objects within main array
-                    $this->lastResult[$num_rows] = $row;
+                    $this->last_result[$num_rows] = $row;
                     $num_rows++;
                 }
 
                 @\pg_free_result($this->result);
             }
             // Log number of rows the query returned
-            $this->numRows = $num_rows;
+            $this->num_rows = $num_rows;
 
             // Return number of rows selected
-            $this->return_val = $this->numRows;
+            $this->return_val = $this->num_rows;
         }
     }
 
@@ -276,7 +276,7 @@ class ez_pgsql extends ezsqlModel implements DatabaseInterface
         $this->log_query("\$db->query(\"$query\")");
 
         // Keep track of the last query for debug..
-        $this->lastQuery = $query;
+        $this->last_query = $query;
 
         // Count how many queries there have been
         $this->count(true, true);
@@ -320,7 +320,7 @@ class ez_pgsql extends ezsqlModel implements DatabaseInterface
         $this->store_cache($query, $this->is_insert);
 
         // If debug ALL queries
-        $this->trace || $this->debugAll ? $this->debug() : null;
+        $this->trace || $this->debug_all ? $this->debug() : null;
 
         return $this->return_val;
     } // query

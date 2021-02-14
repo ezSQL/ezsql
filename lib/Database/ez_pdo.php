@@ -221,7 +221,7 @@ class ez_pdo extends ezsqlModel implements DatabaseInterface
 
             $error_str = \substr($error_str, 0, -2);
 
-            $this->register_error($error_str . ' ' . $this->lastQuery);
+            $this->register_error($error_str . ' ' . $this->last_query);
 
             return true;
         }
@@ -246,14 +246,14 @@ class ez_pdo extends ezsqlModel implements DatabaseInterface
             try {
                 while ($row = @$stmt->fetch(\PDO::FETCH_ASSOC)) {
                     // Store results as an objects within main array
-                    $this->lastResult[$num_rows] = (object) $row;
+                    $this->last_result[$num_rows] = (object) $row;
                     $num_rows++;
                 }
             } catch (\Throwable $ex) {
                 //
             }
 
-            $this->numRows = $num_rows;
+            $this->num_rows = $num_rows;
         }
 
         $return = ($isSelect) ? $stmt : $result;
@@ -289,16 +289,16 @@ class ez_pdo extends ezsqlModel implements DatabaseInterface
                 $col_count = $result->columnCount();
                 for ($i = 0; $i < $col_count; $i++) {
                     // Start DEBUG by psc!
-                    $this->colInfo[$i] = new \stdClass();
+                    $this->col_info[$i] = new \stdClass();
                     // End DEBUG by psc
                     if ($meta = $result->getColumnMeta($i)) {
-                        $this->colInfo[$i]->name =  $meta['name'];
-                        $this->colInfo[$i]->type =  $meta['native_type'];
-                        $this->colInfo[$i]->max_length =  '';
+                        $this->col_info[$i]->name =  $meta['name'];
+                        $this->col_info[$i]->type =  $meta['native_type'];
+                        $this->col_info[$i]->max_length =  '';
                     } else {
-                        $this->colInfo[$i]->name =  'undefined';
-                        $this->colInfo[$i]->type =  'undefined';
-                        $this->colInfo[$i]->max_length = '';
+                        $this->col_info[$i]->name =  'undefined';
+                        $this->col_info[$i]->type =  'undefined';
+                        $this->col_info[$i]->max_length = '';
                     }
                 }
 
@@ -307,7 +307,7 @@ class ez_pdo extends ezsqlModel implements DatabaseInterface
                 try {
                     while ($row = @$result->fetch(\PDO::FETCH_ASSOC)) {
                         // Store results as an objects within main array
-                        $this->lastResult[$num_rows] = (object) $row;
+                        $this->last_result[$num_rows] = (object) $row;
                         $num_rows++;
                     }
                 } catch (\Throwable $ex) {
@@ -315,10 +315,10 @@ class ez_pdo extends ezsqlModel implements DatabaseInterface
                 }
 
                 // Log number of rows the query returned
-                $this->numRows = empty($num_rows) ? $this->numRows : $num_rows;
+                $this->num_rows = empty($num_rows) ? $this->num_rows : $num_rows;
 
                 // Return number of rows selected
-                $this->return_val = $this->numRows;
+                $this->return_val = $this->num_rows;
             }
         } else {
             $this->is_insert = true;
@@ -329,7 +329,7 @@ class ez_pdo extends ezsqlModel implements DatabaseInterface
             try {
                 // Take note of the insert_id
                 if (\preg_match("/^(insert|replace)\s+/i", $query)) {
-                    $this->insertId = @$this->dbh->lastInsertId();
+                    $this->insert_id = @$this->dbh->lastInsertId();
                 }
             } catch (\Throwable $ex) {
                 //
@@ -417,21 +417,21 @@ class ez_pdo extends ezsqlModel implements DatabaseInterface
         $this->log_query("\$db->query(\"$query\")");
 
         // Keep track of the last query for debug..
-        $this->lastQuery = $query;
+        $this->last_query = $query;
 
-        $this->numQueries++;
+        $this->num_queries++;
 
         // Start timer
-        $this->timer_start($this->numQueries);
+        $this->timer_start($this->num_queries);
 
         // Use core file cache function
         if ($cache = $this->get_cache($query)) {
             // Keep tack of how long all queries have taken
-            $this->timer_update_global($this->numQueries);
+            $this->timer_update_global($this->num_queries);
 
             // Trace all queries
-            if ($this->useTraceLog) {
-                $this->traceLog[] = $this->debug(false);
+            if ($this->use_trace_log) {
+                $this->trace_log[] = $this->debug(false);
             }
 
             return $cache;
@@ -459,14 +459,14 @@ class ez_pdo extends ezsqlModel implements DatabaseInterface
         $this->store_cache($query, $this->is_insert);
 
         // If debug ALL queries
-        $this->trace || $this->debugAll ? $this->debug() : null;
+        $this->trace || $this->debug_all ? $this->debug() : null;
 
         // Keep tack of how long all queries have taken
-        $this->timer_update_global($this->numQueries);
+        $this->timer_update_global($this->num_queries);
 
         // Trace all queries
-        if ($this->useTraceLog) {
-            $this->traceLog[] = $this->debug(false);
+        if ($this->use_trace_log) {
+            $this->trace_log[] = $this->debug(false);
         }
 
         return $this->return_val;

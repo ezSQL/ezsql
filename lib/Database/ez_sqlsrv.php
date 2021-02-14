@@ -114,7 +114,7 @@ class ez_sqlsrv extends ezsqlModel implements DatabaseInterface
             $this->register_error(\FAILED_CONNECTION . ' in ' . __FILE__ . ' on line ' . __LINE__);
         } else {
             $this->_connected = true;
-            $this->connQueries = 0;
+            $this->conn_queries = 0;
         }
 
         return $this->_connected;
@@ -190,7 +190,7 @@ class ez_sqlsrv extends ezsqlModel implements DatabaseInterface
 
                     if ($identityResultset != false) {
                         $identityRow = @\sqlsrv_fetch($identityResultset);
-                        $this->insertId = $identityRow[0];
+                        $this->insert_id = $identityRow[0];
                     }
                 }
                 // Return number of rows affected
@@ -214,7 +214,7 @@ class ez_sqlsrv extends ezsqlModel implements DatabaseInterface
                     }
 
                     $col->type = $this->get_datatype($col);
-                    $this->colInfo[$i++] = $col;
+                    $this->col_info[$i++] = $col;
                     unset($col);
                 }
 
@@ -224,17 +224,17 @@ class ez_sqlsrv extends ezsqlModel implements DatabaseInterface
                 while ($row = @\sqlsrv_fetch_object($this->result)) {
 
                     // Store results as an objects within main array
-                    $this->lastResult[$num_rows] = $row;
+                    $this->last_result[$num_rows] = $row;
                     $num_rows++;
                 }
 
                 @\sqlsrv_free_stmt($this->result);
 
                 // Log number of rows the query returned
-                $this->numRows = $num_rows;
+                $this->num_rows = $num_rows;
 
                 // Return number of rows selected
-                $this->return_val = $this->numRows;
+                $this->return_val = $this->num_rows;
             }
         } catch (\Throwable $ex) {
             return false;
@@ -279,7 +279,7 @@ class ez_sqlsrv extends ezsqlModel implements DatabaseInterface
         $this->log_query("\$db->query(\"$query\")");
 
         // Keep track of the last query for debug..
-        $this->lastQuery = $query;
+        $this->last_query = $query;
 
         // Count how many queries there have been
         $this->count(true, true);
@@ -322,7 +322,7 @@ class ez_sqlsrv extends ezsqlModel implements DatabaseInterface
         $this->store_cache($query, $this->is_insert);
 
         // If debug ALL queries
-        $this->trace || $this->debugAll ? $this->debug() : null;
+        $this->trace || $this->debug_all ? $this->debug() : null;
 
         return $this->return_val;
     }
@@ -423,7 +423,7 @@ class ez_sqlsrv extends ezsqlModel implements DatabaseInterface
      */
     public function disconnect()
     {
-        $this->connQueries = 0;
+        $this->conn_queries = 0;
         @\sqlsrv_close($this->dbh);
         $this->_connected = false;
     }
