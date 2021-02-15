@@ -314,7 +314,7 @@ class ez_sqlsrv extends ezsqlModel implements DatabaseInterface
 
         if ($this->processQueryResult($query) === false) {
             if ($this->isTransactional)
-                throw new \Exception($this->getLast_Error());
+                throw new \Exception($this->getLastError());
 
             return false;
         }

@@ -41,8 +41,13 @@ use function ezsql\functions\{
     orderBy,
     insert,
     update,
-    deleting,
-    replace
+    delete,
+    replace,
+    selecting,
+    inserting,
+    table_setup,
+    set_table,
+    set_prefix
 };
 
 class ezFunctionsTest extends EZTestCase
@@ -244,9 +249,34 @@ class ezFunctionsTest extends EZTestCase
         $this->assertFalse(update('field', 'data', 'data2'));
     }
 
-    public function testDeleting()
+    public function testDelete()
     {
-        $this->assertFalse(deleting('field', 'data', 'data2'));
+        $this->assertFalse(delete('field', 'data', 'data2'));
+    }
+
+    public function testInserting()
+    {
+        $this->assertFalse(inserting([]));
+    }
+
+    public function testTable_Setup()
+    {
+        $this->assertFalse(table_setup());
+    }
+
+    public function testSelecting()
+    {
+        $this->assertFalse(selecting());
+    }
+
+    public function testSet_Table()
+    {
+        $this->assertFalse(set_table());
+    }
+
+    public function testSet_Prefix()
+    {
+        $this->assertFalse(set_prefix());
     }
 
     public function testReplace()

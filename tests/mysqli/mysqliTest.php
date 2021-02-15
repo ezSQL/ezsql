@@ -12,31 +12,13 @@ use function ezsql\functions\{
     column,
     primary,
     eq,
-    neq,
-    ne,
-    lt,
-    lte,
-    gt,
-    gte,
-    isNotNull,
     like,
-    in,
-    notLike,
-    notIn,
     between,
-    notBetween,
     select,
-    select_into,
-    insert_select,
-    create_select,
-    where,
-    groupBy,
-    having,
-    orderBy,
-    insert,
-    update,
-    deleting,
-    replace
+    selecting,
+    inserting,
+    table_setup,
+    where
 };
 
 class mysqliTest extends EZTestCase
@@ -379,6 +361,46 @@ class mysqliTest extends EZTestCase
         }
 
         $result = $this->object->select('unit_test', array('test_key'), "id  =  1");
+        foreach ($result as $row) {
+            $this->assertEquals('testing 1', $row->test_key);
+        }
+    }
+
+    public function testSelectingInserting()
+    {
+        $this->object->connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD);
+        $this->object->dbSelect(self::TEST_DB_NAME);
+        $this->object->create(
+            'unit_test',
+            column('id', INTR, 11, PRIMARY),
+            column('test_key', VARCHAR, 50)
+        );
+
+        table_setup('unit_test');
+        $this->assertEquals(1, inserting(array('id' => 1, 'test_key' => 'testing 1')));
+        inserting(array('id' => 2, 'test_key' => 'testing 2'));
+        inserting(array('id' => 3, 'test_key' => 'testing 3'));
+
+        $result = selecting();
+
+        $i = 1;
+        foreach ($result as $row) {
+            $this->assertEquals($i, $row->id);
+            $this->assertEquals('testing ' . $i, $row->test_key);
+            ++$i;
+        }
+
+        $result = $this->object->selecting('id', eq('test_key', 'testing 2'));
+        foreach ($result as $row) {
+            $this->assertEquals(2, $row->id);
+        }
+
+        $result = selecting('test_key', ['id', '=', 3]);
+        foreach ($result as $row) {
+            $this->assertEquals('testing 3', $row->test_key);
+        }
+
+        $result = selecting(array('test_key'), "id  =  1");
         foreach ($result as $row) {
             $this->assertEquals('testing 1', $row->test_key);
         }

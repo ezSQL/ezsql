@@ -10,19 +10,27 @@
 
 ***A class to make it very easy to deal with database connections.***
 
-This is a [WIP] of [__version 5__](https://github.com/ezSQL/ezsql/tree/v5) which will break users of **version 4**, mainly by the use of `namespace` in the `global` functions **ezFunctions.php** file.
+This is a [WIP] of [__version 5__](https://github.com/ezSQL/ezsql/tree/v5) which will break users of **version 4**.
 
-Usage of the **global** functions will require the user to begin a `.php` file something like:
+Mainly by:
+    - The use of `namespace` in the `global` functions **ezFunctions.php** file.
+    Usage of the **global** functions will require the user to begin a `.php` file something like:
 
-```php
-use function ezsql\functions\where;
-// Or
-use function ezsql\functions\{
-    getInstance,
-    select,
-    insert,
-};
-```
+    ```php
+    use function ezsql\functions\where;
+    // Or
+    use function ezsql\functions\{
+        getInstance,
+        selecting,
+        inserting,
+    };
+    ```
+    - Class properties that was accessible by magic methods `get/set`, now PSR 1 camelCase.
+    - Renamed `select` of `ez_mysqli` to `dbSelect`.
+    - Renamed class method and behavior of `selecting` to `select`.
+    - `selecting`, and new `inserting` methods, can be called without table name, only the other necessary parameters:
+        - The Table *name* with *prefix*, can be preset/stored with methods `tableSetup(name, prefix), or setTable(name), setPrefix(append)`, if called without presetting, `false` is returned.
+        - This **feature** will be added to **all** database access methods, each method name will have an `ing` ending added.
 
 [__version 4__](https://github.com/ezSQL/ezsql/tree/v4) has many modern programming practices in which will break users of version 3.
 

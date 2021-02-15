@@ -450,7 +450,7 @@ class ez_pdo extends ezsqlModel implements DatabaseInterface
 
         if ($this->processQuery($query, $param) === false) {
             if ($this->isTransactional)
-                throw new \PDOException($this->getLast_Error());
+                throw new \PDOException($this->getLastError());
 
             return false;
         }

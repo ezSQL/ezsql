@@ -9,6 +9,7 @@ use ezsql\ezSchema;
 use ezsql\Database;
 use ezsql\ezQueryInterface;
 use ezsql\DatabaseInterface;
+use ezsql\ezsqlModelInterface;
 
 if (!\function_exists('ezFunctions')) {
     /**
@@ -527,15 +528,104 @@ if (!\function_exists('ezFunctions')) {
     }
 
     /**
-     * Returns an SQL string or result set, given the
-     *   - table, column fields, conditions or conditional array.
+     * Preforms a `select` method call on a already preset `table name`, and optional `prefix`
+     *
+     * This method **expects** either `table_setup(name, prefix)`, `set_table(name)`, or `set_prefix(append)`
+     * to have been called **before usage**, otherwise will return `false`, if no `table name` previous stored.
+     *
+     * @param mixed $columns fields, string or array
+     * @param mixed ...$conditions - of the following parameters:
+     *
+     * @param $joins, - `joining` clause (type, left table, right table, left column, right column, condition = EQ)
+     * - Either: `innerJoin()`, `leftJoin()`, `rightJoin()`, `fullJoin()`
+     * - Alias of: `joining(inner|left|right|full, leftTable, rightTable, leftColumn, rightColumn, equal condition)`
+     * @param $whereCondition, - `where` clause ( comparison(x, y, and) )
+     * @param $groupBy, - `groupBy` clause
+     * @param $having, - `having` clause ( comparison(x, y, and) )
+     * @param $orderby, - `orderby` clause for the query
+     * @param $limit, - `limit` clause the number of records
+     * @param $union/$unionAll - `union` clause combine the result sets and removes duplicate rows/does not remove
+     *
+     * @return mixed|object result set - see docs for more details, or false for error
+     */
+    function selecting($columns = '*', ...$conditions)
+    {
+        $ezQuery = getInstance();
+        return ($ezQuery instanceof DatabaseInterface)
+            ? $ezQuery->selecting($columns, ...$conditions)
+            : false;
+    }
+
+    /**
+     * Preforms a `insert` method call on a already preset `table name`, and optional `prefix`
+     *
+     * This method **expects** either `table_setup(name, prefix)`, `set_table(name)`, or `set_prefix(append)`
+     * to have been called **before usage**, otherwise will return `false`, if no `table name` previous stored.
+     *
+     * @param array $keyValue - table fields, assoc array with key = value (doesn't need escaped)
+     * @return int|bool bool/id of inserted record, or false for error
+     */
+    function inserting(array $keyValue)
+    {
+        $ezQuery = getInstance();
+        return ($ezQuery instanceof DatabaseInterface)
+            ? $ezQuery->inserting($keyValue)
+            : false;
+    }
+
+    /**
+     * Set table `name` and `prefix` for global usage on calls to database **method/function** *names* ending with `ing`.
+     *
+     * @param string $name
+     * @param string $prefix
+     */
+    function table_setup(string $name = '', string $prefix = '')
+    {
+        $ezQuery = getInstance();
+        if (!$ezQuery instanceof ezsqlModelInterface)
+            return false;
+
+        $ezQuery->tableSetup($name, $prefix);
+    }
+
+    /**
+     * Set table `name` to use on calls to database **method/function** *names* ending with `ing`.
+     *
+     * @param string $append
+     */
+    function set_table(string $name = '')
+    {
+        $ezQuery = getInstance();
+        if (!$ezQuery instanceof ezsqlModelInterface)
+            return false;
+
+        $ezQuery->setTable($name);
+    }
+
+    /**
+     * Add a `prefix` to **append** to `table` name on calls to database **method/function** *names* ending with `ing`.
+     *
+     * @param string $append
+     */
+    function set_prefix(string $append = '')
+    {
+        $ezQuery = getInstance();
+        if (!$ezQuery instanceof ezsqlModelInterface)
+            return false;
+
+        $ezQuery->setPrefix($append);
+    }
+
+    /**
+     * Returns an `SQL string` or `result` set, given the
+     *   - database table, column fields, conditions or conditional array.
      *
      * In the following format:
-     * ```js
+     * ```php
      * select(
      *   table,
      *   columns,
-     *    (innerJoin(), leftJoin(), rightJoin(), fullJoin()), // alias of joining(inner|left|right|full, leftTable, rightTable, leftColumn, rightColumn, equal condition),
+     *   innerJoin() | leftJoin() | rightJoin() | fullJoin(), // alias of joining(inner|left|right|full, leftTable, rightTable, leftColumn, rightColumn, equal condition),
      *   where( eq( columns, values, _AND ), like( columns, _d ) ),
      *   groupBy( columns ),
      *   having( between( columns, values1, values2 ) ),
@@ -546,24 +636,26 @@ if (!\function_exists('ezFunctions')) {
      *);
      * ```
      * @param $table, - database table to access
-     * @param $columnFields, - table columns, string or array
+     * @param $columns, - table columns, string or array
      * @param mixed ...$conditions - of the following parameters:
      *
-     * @param $joins, - join clause (type, left table, right table, left column, right column, condition = EQ)
-     * @param $whereKey, - where clause ( comparison(x, y, and) )
-     * @param $groupBy, - grouping over clause the results
-     * @param $having, - having clause ( comparison(x, y, and) )
-     * @param $orderby, - ordering by clause for the query
-     * @param $limit, - limit clause the number of records
-     * @param $union/$unionAll - union clause combine the result sets and removes duplicate rows/does not remove
+     * @param $joins, - `joining` clause (type, left table, right table, left column, right column, condition = EQ)
+     * - Either: `innerJoin()`, `leftJoin()`, `rightJoin()`, `fullJoin()`
+     * - Alias of: `joining(inner|left|right|full, leftTable, rightTable, leftColumn, rightColumn, equal condition)`
+     * @param $whereCondition, - `where` clause ( comparison(x, y, and) )
+     * @param $groupBy, - `groupBy` over clause the results
+     * @param $having, - `having` clause ( comparison(x, y, and) )
+     * @param $orderby, - `orderby` clause for the query
+     * @param $limit, - `limit` clause the number of records
+     * @param $union/$unionAll - `union` clause combine the result sets and removes duplicate rows/does not remove
      *
-     * @return mixed result set - see docs for more details, or false for error
+     * @return mixed|object result set - see docs for more details, or false for error
      */
-    function select($table = '', $columns = '*', ...$args)
+    function select($table = '', $columns = '*', ...$conditions)
     {
         $ezQuery = getInstance();
         return ($ezQuery instanceof DatabaseInterface)
-            ? $ezQuery->select($table, $columns, ...$args)
+            ? $ezQuery->select($table, $columns, ...$conditions)
             : false;
     }
 
@@ -572,49 +664,51 @@ if (!\function_exists('ezFunctions')) {
      * @param $newTable, - new database table to be created
      * @param $fromColumns - the columns from old database table
      * @param $oldTable - old database table
-     * @param $fromWhere, - where clause ( array(x, =, y, and, extra) ) or ( "x  =  y  and  extra" )
+     * @param $fromWhereConditions, - where clause `eq(x, y, _AND), another clause - same as array(x, =, y, and, extra) `
      *
-     * @return mixed bool/result - false for error
+     * @return mixed|object bool/result - false for error
      */
-    function select_into($table, $columns = '*', $old = null, ...$args)
+    function select_into($newTable, $fromColumns = '*', $oldTable = null, ...$fromWhereConditions)
     {
         $ezQuery = getInstance();
         return ($ezQuery instanceof DatabaseInterface)
-            ? $ezQuery->select_into($table, $columns, $old, ...$args)
+            ? $ezQuery->select_into($newTable, $fromColumns, $oldTable, ...$fromWhereConditions)
             : false;
     }
 
     /**
-     * Does an insert into select statement by calling insert method helper then selecting method
+     * Does an `insert into select` statement by calling insert method helper then `select` method
      * @param $toTable, - database table to insert table into
      * @param $toColumns - the receiving columns from other table columns, leave blank for all or array of column fields
-     * @param $WhereKey, - where clause ( array(x, =, y, and, extra) ) or ( "x = y and extra" )
+     * @param $fromTable, - from database table to use
+     * @param $fromColumns - the columns from old database table
+     * @param $whereConditions, - where clause `eq(x, y, _AND), another clause - same as array(x, =, y, and, extra)`
      *
      * @return mixed bool/id of inserted record, or false for error
      */
-    function insert_select($totable = '', $columns = '*', $fromTable = null, $from = '*', ...$args)
+    function insert_select($totable = '', $toColumns = '*', $fromTable = null, $fromColumns = '*', ...$whereConditions)
     {
         $ezQuery = getInstance();
         return ($ezQuery instanceof DatabaseInterface)
-            ? $ezQuery->insert_select($totable, $columns, $fromTable, $from, ...$args)
+            ? $ezQuery->insert_select($totable, $toColumns, $fromTable, $fromColumns, ...$whereConditions)
             : false;
     }
 
     /**
-     * Does an create select statement by calling selecting method
+     * Does an `create select` statement by calling `select` method
      *
      * @param $newTable, - new database table to be created
      * @param $fromColumns - the columns from old database table
      * @param $oldTable - old database table
-     * @param $fromWhere, - where clause ( array(x, =, y, and, extra) ) or ( "x  =  y  and  extra" )
+     * @param $fromWhereConditions, - where clause `eq(x, y, _AND), another clause - same as array(x, =, y, and, extra)`
      *
      * @return mixed bool/result - false for error
      */
-    function create_select($table, $from, $old = null, ...$args)
+    function create_select($newTable, $fromColumns = '*', $oldTable = null, ...$fromWhereConditions)
     {
         $ezQuery = getInstance();
         return ($ezQuery instanceof DatabaseInterface)
-            ? $ezQuery->create_select($table, $from, $old, ...$args)
+            ? $ezQuery->create_select($newTable, $fromColumns, $oldTable, ...$fromWhereConditions)
             : false;
     }
 
@@ -627,7 +721,7 @@ if (!\function_exists('ezFunctions')) {
      * example:
      *   `where( eq(key, value ), like('key', '_%?');`
      *
-     * @param array $whereConditions - In the following format:
+     * @param array $conditions - In the following format:
      *```js
      *   eq('key/Field/Column', $value, _AND), // combine next expression
      *   neq('key/Field/Column', $value, _OR), // will combine next expression if
@@ -647,16 +741,16 @@ if (!\function_exists('ezFunctions')) {
      *```
      * @return mixed bool/string - WHERE sql statement, or false on error
      */
-    function where(...$whereConditions)
+    function where(...$conditions)
     {
         $ezQuery = getInstance();
         return ($ezQuery instanceof DatabaseInterface)
-            ? $ezQuery->where(...$whereConditions)
+            ? $ezQuery->where(...$conditions)
             : false;
     }
 
     /**
-     * Adds WHERE grouping to the conditions
+     * Adds WHERE `grouping` to the conditions
      *
      * format:
      *   `grouping( comparison(x, y, and) )`
@@ -664,7 +758,7 @@ if (!\function_exists('ezFunctions')) {
      * example:
      *   `grouping( eq(key, value, combiner ), eq(key, value, combiner ) );`
      *
-     * @param array $whereConditions - In the following format:
+     * @param array $conditions - In the following format:
      *```js
      *   eq('key/Field/Column', $value, _AND), // combine next expression
      *   neq('key/Field/Column', $value, _OR), // will combine next expression again
@@ -680,11 +774,11 @@ if (!\function_exists('ezFunctions')) {
      *```
      * @return array modified conditions
      */
-    function grouping(...$args)
+    function grouping(...$conditions)
     {
         $ezQuery = getInstance();
         return ($ezQuery instanceof DatabaseInterface)
-            ? $ezQuery->grouping(...$args)
+            ? $ezQuery->grouping(...$conditions)
             : false;
     }
 
@@ -711,7 +805,7 @@ if (!\function_exists('ezFunctions')) {
     }
 
     /**
-     * Specifies a restriction over the groups of the query.
+     * Specifies a `restriction` over the groups of the query.
      *
      * format
      *   `having( array(x, =, y, and, extra) );` or
@@ -721,23 +815,31 @@ if (!\function_exists('ezFunctions')) {
      *   `having( array(key, operator, value, combine, extra) );`or
      *   `having( "key operator value combine extra" );`
      *
-     * @param array $having
-     * @param string $key, - table column
-     * @param string $operator, - set the operator condition,
-     *                       either '<','>', '=', '!=', '>=', '<=', '<>', 'in',
-     *                           'like', 'between', 'not between', 'is null', 'is not null'
-     * @param mixed $value, - will be escaped
-     * @param string $combine, - combine additional where clauses with,
-     *                       either 'AND','OR', 'NOT', 'AND NOT'
-     *                           or  carry over of @value in the case the @operator is 'between' or 'not between'
-     * @param string $extra - carry over of @combine in the case the operator is 'between' or 'not between'
+     * @param array $conditions - In the following format:
+     *```js
+     *   eq('key/Field/Column', $value, _AND), // combine next expression
+     *   neq('key/Field/Column', $value, _OR), // will combine next expression if
+     *   ne('key/Field/Column', $value), // the default is _AND so will combine next expression
+     *   lt('key/Field/Column', $value)
+     *   lte('key/Field/Column', $value)
+     *   gt('key/Field/Column', $value)
+     *   gte('key/Field/Column', $value)
+     *   isNull('key/Field/Column')
+     *   isNotNull('key/Field/Column')
+     *   like('key/Field/Column', '_%')
+     *   notLike('key/Field/Column', '_%')
+     *   in('key/Field/Column', $values)
+     *   notIn('key/Field/Column', $values)
+     *   between('key/Field/Column', $value, $value2)
+     *   notBetween('key/Field/Column', $value, $value2)
+     *```
      * @return bool/string - HAVING SQL statement, or false on error
      */
-    function having(...$args)
+    function having(...$conditions)
     {
         $ezQuery = getInstance();
         return ($ezQuery instanceof DatabaseInterface)
-            ? $ezQuery->having(...$args)
+            ? $ezQuery->having(...$conditions)
             : false;
     }
 
@@ -899,12 +1001,11 @@ if (!\function_exists('ezFunctions')) {
      *   - table, column fields, conditions or conditional array.
      *
      * In the following format:
-     * ```
+     * ```php
      * union(
      *   table,
      *   columns,
-     *   // innerJoin(), leftJoin(), rightJoin(), fullJoin() alias of
-     *   joining(inner|left|right|full, leftTable, rightTable, leftColumn, rightColumn, equal condition),
+     *   innerJoin() | leftJoin() | rightJoin() | fullJoin(), // alias of joining(inner|left|right|full, leftTable, rightTable, leftColumn, rightColumn, equal condition),
      *   where( eq( columns, values, _AND ), like( columns, _d ) ),
      *   groupBy( columns ),
      *   having( between( columns, values1, values2 ) ),
@@ -931,12 +1032,11 @@ if (!\function_exists('ezFunctions')) {
      *   - table, column fields, conditions or conditional array.
      *
      * In the following format:
-     * ```
+     * ```php
      * unionAll(
      *   table,
      *   columns,
-     *   // innerJoin(), leftJoin(), rightJoin(), fullJoin() alias of
-     *   joining(inner|left|right|full, leftTable, rightTable, leftColumn, rightColumn, equal condition),
+     *   innerJoin() | leftJoin() | rightJoin() | fullJoin(), // alias of joining(inner|left|right|full, leftTable, rightTable, leftColumn, rightColumn, equal condition),
      *   where( eq( columns, values, _AND ), like( columns, _d ) ),
      *   groupBy( columns ),
      *   having( between( columns, values1, values2 ) ),
@@ -946,7 +1046,7 @@ if (!\function_exists('ezFunctions')) {
      * ```
      * @param $table, - database table to access
      * @param $columnFields, - table columns, string or array
-     * @param mixed $conditions - same as selecting method.
+     * @param mixed $conditions - same as `select` method.
      *
      * @return bool|string - false for error
      */
@@ -991,9 +1091,9 @@ if (!\function_exists('ezFunctions')) {
     }
 
     /**
-     * Does an insert query with an array
+     * Does an `insert` query with an array
      * @param $table, - database table to access
-     * @param $keyAndValue - table fields, assoc array with key = value (doesn't need escaped)
+     * @param $keyValue - table fields, assoc array with key = value (doesn't need escaping)
      * @return mixed bool/id of inserted record, or false for error
      */
     function insert($table = '', $keyValue = null)
@@ -1005,37 +1105,74 @@ if (!\function_exists('ezFunctions')) {
     }
 
     /**
-     * Does an update query with an array, by conditional operator array
+     * Does an `update` query with an array, by conditional operator array
      * @param $table, - database table to access
-     * @param $keyAndValue, - table fields, assoc array with key = value (doesn't need escaped)
-     * @param $WhereKey, - where clause ( array(x, =, y, and, extra) ) or ( "x  =  y  and  extra" )
-     *
+     * @param $keyValue, - table fields, assoc array with key = value (doesn't need escaping)
+     * @param $whereConditions, - where clause `eq('x', $y, _AND), another clause - same as array(x, =, y, and, extra)`
+     * - In the following format:
+     *```js
+     *   eq('key/Field/Column', $value, _AND), // combine next expression
+     *   neq('key/Field/Column', $value, _OR), // will combine next expression if
+     *   ne('key/Field/Column', $value), // the default is _AND so will combine next expression
+     *   lt('key/Field/Column', $value)
+     *   lte('key/Field/Column', $value)
+     *   gt('key/Field/Column', $value)
+     *   gte('key/Field/Column', $value)
+     *   isNull('key/Field/Column')
+     *   isNotNull('key/Field/Column')
+     *   like('key/Field/Column', '_%')
+     *   notLike('key/Field/Column', '_%')
+     *   in('key/Field/Column', $values)
+     *   notIn('key/Field/Column', $values)
+     *   between('key/Field/Column', $value, $value2)
+     *   notBetween('key/Field/Column', $value, $value2)
+     *```
      * @return mixed bool/results - false for error
      */
-    function update($table = '', $keyValue = null, ...$args)
+    function update($table = '', $keyValue = null, ...$whereConditions)
     {
         $ezQuery = getInstance();
         return ($ezQuery instanceof DatabaseInterface)
-            ? $ezQuery->update($table, $keyValue, ...$args)
+            ? $ezQuery->update($table, $keyValue, ...$whereConditions)
             : false;
     }
 
     /**
-     * Does the delete query with an array
+     * Does an `delete` query with an array
+     * @param $table, - database table to access
+     * @param $whereConditions, - where clause `eq(x, y, _AND), another clause - same as array(x, =, y, and, extra)`
+     * - In the following format:
+     *```js
+     *   eq('key/Field/Column', $value, _AND), // combine next expression
+     *   neq('key/Field/Column', $value, _OR), // will combine next expression if
+     *   ne('key/Field/Column', $value), // the default is _AND so will combine next expression
+     *   lt('key/Field/Column', $value)
+     *   lte('key/Field/Column', $value)
+     *   gt('key/Field/Column', $value)
+     *   gte('key/Field/Column', $value)
+     *   isNull('key/Field/Column')
+     *   isNotNull('key/Field/Column')
+     *   like('key/Field/Column', '_%')
+     *   notLike('key/Field/Column', '_%')
+     *   in('key/Field/Column', $values)
+     *   notIn('key/Field/Column', $values)
+     *   between('key/Field/Column', $value, $value2)
+     *   notBetween('key/Field/Column', $value, $value2)
+     *```
      * @return mixed bool/results - false for error
      */
-    function deleting($table = '', ...$args)
+    function delete($table = null, ...$whereConditions)
     {
         $ezQuery = getInstance();
         return ($ezQuery instanceof DatabaseInterface)
-            ? $ezQuery->delete($table, ...$args)
+            ? $ezQuery->delete($table, ...$whereConditions)
             : false;
     }
 
     /**
-     * Does an replace query with an array
+     * Does an `replace` query with an array
      * @param $table, - database table to access
-     * @param $keyAndValue - table fields, assoc array with key = value (doesn't need escaped)
+     * @param $keyValue - table fields, assoc array with key = value (doesn't need escaping)
      * @return mixed bool/id of replaced record, or false for error
      */
     function replace($table = '', $keyValue = null)

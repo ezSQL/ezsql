@@ -147,7 +147,7 @@ class ez_sqlite3 extends ezsqlModel implements DatabaseInterface
         $stmt = $this->dbh->prepare($query);
         if (!$stmt instanceof \SQLite3Stmt) {
             if ($this->isTransactional)
-                throw new \Exception($this->getLast_Error());
+                throw new \Exception($this->getLastError());
 
             return false;
         }
@@ -289,7 +289,7 @@ class ez_sqlite3 extends ezsqlModel implements DatabaseInterface
 
         if ($this->processQueryResult($query) === false) {
             if ($this->isTransactional)
-                throw new \Exception($this->getLast_Error());
+                throw new \Exception($this->getLastError());
 
             return false;
         }
