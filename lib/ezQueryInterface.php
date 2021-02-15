@@ -516,6 +516,37 @@ interface ezQueryInterface
     public function update(string $table = null, $keyValue, ...$whereConditions);
 
     /**
+     * Preforms a `update` method call on a already preset `table name`, and optional `prefix`
+     *
+     * This method **expects** either `tableSetup(name, prefix)`, `setTable(name)`, or `setPrefix(append)`
+     * to have been called **before usage**, otherwise will return `false`, if no `table name` previous stored.
+     *
+     * Does an `update` query with an array, by conditional operator array
+     * @param $keyValue, - table fields, assoc array with key = value (doesn't need escaped)
+     * @param $whereConditions, - where clause `eq(x, y, _AND), another clause - same as array(x, =, y, and, extra)`
+     * - In the following format:
+     *```js
+     *   eq('key/Field/Column', $value, _AND), // combine next expression
+     *   neq('key/Field/Column', $value, _OR), // will combine next expression if
+     *   ne('key/Field/Column', $value), // the default is _AND so will combine next expression
+     *   lt('key/Field/Column', $value)
+     *   lte('key/Field/Column', $value)
+     *   gt('key/Field/Column', $value)
+     *   gte('key/Field/Column', $value)
+     *   isNull('key/Field/Column')
+     *   isNotNull('key/Field/Column')
+     *   like('key/Field/Column', '_%')
+     *   notLike('key/Field/Column', '_%')
+     *   in('key/Field/Column', $values)
+     *   notIn('key/Field/Column', $values)
+     *   between('key/Field/Column', $value, $value2)
+     *   notBetween('key/Field/Column', $value, $value2)
+     *```
+     * @return mixed bool/results - false for error
+     */
+    public function updating(array $keyValue, ...$whereConditions);
+
+    /**
      * Does an `delete` query with an array
      * @param $table, - database table to access
      * @param $whereConditions, - where clause `eq(x, y, _AND), another clause - same as array(x, =, y, and, extra)`
@@ -540,6 +571,36 @@ interface ezQueryInterface
      * @return mixed bool/results - false for error
      */
     public function delete(string $table = null, ...$whereConditions);
+
+    /**
+     * Preforms a `delete` method call on a already preset `table name`, and optional `prefix`
+     *
+     * This method **expects** either `tableSetup(name, prefix)`, `setTable(name)`, or `setPrefix(append)`
+     * to have been called **before usage**, otherwise will return `false`, if no `table name` previous stored.
+     *
+     * Does an `delete` query with an array
+     * @param $whereConditions, - where clause `eq(x, y, _AND), another clause - same as array(x, =, y, and, extra)`
+     * - In the following format:
+     *```js
+     *   eq('key/Field/Column', $value, _AND), // combine next expression
+     *   neq('key/Field/Column', $value, _OR), // will combine next expression if
+     *   ne('key/Field/Column', $value), // the default is _AND so will combine next expression
+     *   lt('key/Field/Column', $value)
+     *   lte('key/Field/Column', $value)
+     *   gt('key/Field/Column', $value)
+     *   gte('key/Field/Column', $value)
+     *   isNull('key/Field/Column')
+     *   isNotNull('key/Field/Column')
+     *   like('key/Field/Column', '_%')
+     *   notLike('key/Field/Column', '_%')
+     *   in('key/Field/Column', $values)
+     *   notIn('key/Field/Column', $values)
+     *   between('key/Field/Column', $value, $value2)
+     *   notBetween('key/Field/Column', $value, $value2)
+     *```
+     * @return mixed bool/results - false for error
+     */
+    public function deleting(...$whereConditions);
 
     /**
      * Does an `replace` query with an array
@@ -593,23 +654,50 @@ interface ezQueryInterface
     );
 
     /**
-     * Creates an database table and columns, by either:
+     * Creates an database table with columns, by either:
+     *```js
      *  - array( column, datatype, ...value/options arguments ) // calls create_schema()
      *  - column( column, datatype, ...value/options arguments ) // returns string
      *  - primary( primary_key_label, ...primaryKeys) // returns string
      *  - foreign( foreign_key_label, ...foreignKeys) // returns string
      *  - unique( unique_key_label, ...uniqueKeys) // returns string
-     *
+     *```
      * @param string $table, - The name of the db table that you wish to create
-     * @param mixed $schemas, - An array of:
+     * @param array ...$schemas An array of:
      *
-     * @param string $column|CONSTRAINT, - column name/CONSTRAINT usage for PRIMARY|FOREIGN KEY
-     * @param string $type|$constraintName, - data type for column/primary|foreign constraint name
-     * @param mixed $size|...$primaryForeignKeys,
-     * @param mixed $value, - column should be NULL or NOT NULL. If omitted, assumes NULL
-     * @param mixed $default - Optional. It is the value to assign to the column
+     * - @param string `$column | CONSTRAINT,` - column name/CONSTRAINT usage for PRIMARY|FOREIGN KEY
+     * - @param string `$type | $constraintName,` - data type for column/primary | foreign constraint name
+     * - @param mixed `$size | ...$primaryForeignKeys,`
+     * - @param mixed `$value,` - column should be NULL or NOT NULL. If omitted, assumes NULL
+     * - @param mixed `$default` - Optional. It is the value to assign to the column
      *
      * @return mixed results of query() call
      */
     public function create(string $table = null, ...$schemas);
+
+    /**
+     * Preforms a `create` method call on a already preset `table name`, and optional `prefix`
+     *
+     * This method **expects** either `tableSetup(name, prefix)`, `setTable(name)`, or `setPrefix(append)`
+     * to have been called **before usage**, otherwise will return `false`, if no `table name` previous stored.
+     *
+     * Creates an database table with columns, by either:
+     *```js
+     *  - array( column, datatype, ...value/options arguments ) // calls create_schema()
+     *  - column( column, datatype, ...value/options arguments ) // returns string
+     *  - primary( primary_key_label, ...primaryKeys) // returns string
+     *  - foreign( foreign_key_label, ...foreignKeys) // returns string
+     *  - unique( unique_key_label, ...uniqueKeys) // returns string
+     *```
+     * @param array ...$schemas An array of:
+     *
+     * - @param string `$column | CONSTRAINT,` - column name/CONSTRAINT usage for PRIMARY|FOREIGN KEY
+     * - @param string `$type | $constraintName,` - data type for column/primary | foreign constraint name
+     * - @param mixed `$size | ...$primaryForeignKeys,`
+     * - @param mixed `$value,` - column should be NULL or NOT NULL. If omitted, assumes NULL
+     * - @param mixed `$default` - Optional. It is the value to assign to the column
+     *
+     * @return mixed results of query() call
+     */
+    public function creating(...$schemas);
 }

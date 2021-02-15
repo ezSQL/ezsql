@@ -541,30 +541,6 @@ class ezQuery implements ezQueryInterface
         return ($where != '1') ? " $whereOrHaving $where " : ' ';
     }
 
-    public function selecting($columns = '*', ...$conditions)
-    {
-        if (empty($this->table) || !\is_string($this->table))
-            return $this->clearPrepare();
-
-        $table = (!empty($this->prefix) || \is_string($this->prefix))
-            ? $this->prefix . $this->table
-            : $this->table;
-
-        return $this->select($table, $columns, ...$conditions);
-    }
-
-    public function inserting(array $keyValue)
-    {
-        if (empty($this->table) || !\is_string($this->table))
-            return $this->clearPrepare();
-
-        $table = (!empty($this->prefix) || \is_string($this->prefix))
-            ? $this->prefix . $this->table
-            : $this->table;
-
-        return $this->insert($table, $keyValue);
-    }
-
     public function select(string $table = null, $columnFields = '*', ...$conditions)
     {
         $getFromTable = $this->fromTable;
@@ -710,7 +686,7 @@ class ezQuery implements ezQueryInterface
 
     public function update(string $table = null, $keyValue, ...$whereConditions)
     {
-        if (!is_array($keyValue) || empty($table)) {
+        if (!\is_array($keyValue) || empty($table)) {
             return $this->clearPrepare();
         }
 
@@ -1025,5 +1001,58 @@ class ezQuery implements ezQueryInterface
         $drop = 'DROP TABLE IF EXISTS ' . $table . ';';
 
         return $this->query($drop);
+    }
+
+    public function selecting($columns = '*', ...$conditions)
+    {
+        $table = $this->table_prefix();
+        return ($table === false) ? false : $this->select($table, $columns, ...$conditions);
+    }
+
+    public function inserting(array $keyValue)
+    {
+        $table = $this->table_prefix();
+        return ($table === false) ? false : $this->insert($table, $keyValue);
+    }
+
+    public function replacing(array $keyValue)
+    {
+        $table = $this->table_prefix();
+        return ($table === false) ? false : $this->replace($table, $keyValue);
+    }
+
+    public function updating(array $keyValue, ...$whereConditions)
+    {
+        $table = $this->table_prefix();
+        return ($table === false) ? false : $this->update($table, $keyValue, ...$whereConditions);
+    }
+
+    public function deleting(...$whereConditions)
+    {
+        $table = $this->table_prefix();
+        return ($table === false) ? false : $this->delete($table, ...$whereConditions);
+    }
+
+    public function creating(...$schemas)
+    {
+        $table = $this->table_prefix();
+        return ($table === false) ? false : $this->create($table, ...$schemas);
+    }
+
+    /**
+     * Check and return the stored **global** database `table` preset with any `prefix`.
+     *
+     * @return boolean|string `false` if no preset.
+     */
+    protected function table_prefix()
+    {
+        if (empty($this->table) || !\is_string($this->table))
+            return $this->clearPrepare();
+
+        $table = (!empty($this->prefix) || \is_string($this->prefix))
+            ? $this->prefix . $this->table
+            : $this->table;
+
+        return $table;
     }
 }

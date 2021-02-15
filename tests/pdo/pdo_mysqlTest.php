@@ -11,9 +11,6 @@ use function ezsql\functions\{
     leftJoin,
     column,
     primary,
-    insert,
-    update,
-    select,
     grouping,
     like,
     where,
@@ -125,7 +122,7 @@ class pdo_mysqlTest extends EZTestCase
 
         $this->assertEquals(
             1,
-            insert(
+            $this->object->insert(
                 'new_create_test2',
                 ['create_key' => 'test 2']
             )
@@ -191,7 +188,7 @@ class pdo_mysqlTest extends EZTestCase
 
         $unit_test['test_key'] = 'testing';
         $where = ['id', '=', 1];
-        $this->assertEquals(update('unit_test', $unit_test, $where), 1);
+        $this->assertEquals($this->object->update('unit_test', $unit_test, $where), 1);
 
         $this->assertEquals(
             1,
@@ -261,7 +258,7 @@ class pdo_mysqlTest extends EZTestCase
         }
 
         $where = array('test_key', '=', 'testing 2');
-        $result = select('unit_test', 'id', $where);
+        $result = $this->object->select('unit_test', 'id', $where);
         foreach ($result as $row) {
             $this->assertEquals(2, $row->id);
         }

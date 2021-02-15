@@ -10,7 +10,11 @@ use function ezsql\functions\{
     column,
     primary,
     eq,
-    pgsqlInstance
+    pgsqlInstance,
+    selecting,
+    inserting,
+    table_setup,
+    where
 };
 
 class postgresqlTest extends EZTestCase
@@ -179,6 +183,43 @@ class postgresqlTest extends EZTestCase
         $this->assertEquals(0, $this->object->query('DROP TABLE unit_test'));
     }
 
+    public function testUpdatingDeleting()
+    {
+        $this->object->prepareOff();
+        $this->object->drop('unit_test');
+        $this->assertFalse($this->object->updating([]));
+        $this->assertFalse($this->object->deleting([]));
+        $this->assertFalse($this->object->inserting([]));
+        $this->assertFalse($this->object->selecting());
+
+        table_setup('unit_test');
+        $this->assertEquals(
+            0,
+            $this->object->creating(
+                column('id', AUTO, PRIMARY),
+                column('test_key', VARCHAR, 50),
+                column('test_value', VARCHAR, 50)
+            )
+        );
+
+        inserting(array('test_key' => 'test 1', 'test_value' => 'testing string 1'));
+        inserting(array('test_key' => 'test 2', 'test_value' => 'testing string 2'));
+        $result = inserting(array('test_key' => 'test 3', 'test_value' => 'testing string 3'));
+
+        $this->assertEquals($result, 3);
+
+        $unit_test['test_key'] = 'the key string';
+        $this->assertEquals(1, $this->object->updating($unit_test, eq('test_key', 'test 1')));
+        $this->assertEquals(1, $this->object->deleting(eq('test_key', 'test 3')));
+
+        $result = selecting('test_value', eq('test_key', 'the key string'));
+        foreach ($result as $row) {
+            $this->assertEquals('testing string 1', $row->test_value);
+        }
+
+        $this->object->drop('unit_test');
+    }
+
     public function testDelete()
     {
         $this->object->connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME, self::TEST_DB_HOST, self::TEST_DB_PORT);
@@ -263,7 +304,7 @@ class postgresqlTest extends EZTestCase
             $this->assertEquals('test 3', $row->test_key);
         }
 
-        $result = $this->object->select('unit_test', 'test_value', $this->object->where(eq('test_key', 'test 1')));
+        $result = $this->object->select('unit_test', 'test_value', where(eq('test_key', 'test 1')));
         foreach ($result as $row) {
             $this->assertEquals('testing string 1', $row->test_value);
         }

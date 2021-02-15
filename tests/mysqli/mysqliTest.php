@@ -14,7 +14,6 @@ use function ezsql\functions\{
     eq,
     like,
     between,
-    select,
     selecting,
     inserting,
     table_setup,
@@ -267,6 +266,25 @@ class mysqliTest extends EZTestCase
         $this->assertEquals($this->object->replace('unit_test', array('id' => 2, 'test_key' => 'test 3')), 2);
     }
 
+    public function testCreatingReplacing()
+    {
+        $this->object->prepareOff();
+        $this->assertFalse($this->object->replacing([]));
+        $this->assertFalse($this->object->creating([]));
+
+        table_setup('unit_test');
+        $this->assertEquals(
+            0,
+            $this->object->creating(
+                column('id', INTR, 11, PRIMARY),
+                column('test_key', VARCHAR, 50)
+            )
+        );
+
+        inserting(array('id' => 3, 'test_key' => 'test 3'));
+        $this->assertEquals(3, $this->object->replacing(array('id' => 3, 'test_key' => 'test 4')));
+    }
+
     public function testUpdate()
     {
         $this->object->prepareOff();
@@ -282,7 +300,7 @@ class mysqliTest extends EZTestCase
 
         $this->assertEquals(
             1,
-            $this->object->update('unit_test', $unit_test,     ['test_key', EQ, 'testUpdate() 13', 'and'], ['id', '=', 13])
+            $this->object->update('unit_test', $unit_test, ['test_key', EQ, 'testUpdate() 13', 'and'], ['id', '=', 13])
         );
 
         $this->assertEquals(
@@ -377,7 +395,7 @@ class mysqliTest extends EZTestCase
         );
 
         table_setup('unit_test');
-        $this->assertEquals(1, inserting(array('id' => 1, 'test_key' => 'testing 1')));
+        inserting(array('id' => 1, 'test_key' => 'testing 1'));
         inserting(array('id' => 2, 'test_key' => 'testing 2'));
         inserting(array('id' => 3, 'test_key' => 'testing 3'));
 
@@ -576,7 +594,7 @@ class mysqliTest extends EZTestCase
 
         $this->assertEquals($this->object->insert_select('new_select_test', '*', 'unit_test'), 3);
 
-        $result = select('new_select_test');
+        $result = $this->object->select('new_select_test');
 
         $i = 1;
         foreach ($result as $row) {

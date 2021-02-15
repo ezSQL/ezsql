@@ -31,7 +31,6 @@ use function ezsql\functions\{
     notIn,
     between,
     notBetween,
-    select,
     select_into,
     insert_select,
     create_select,
@@ -39,9 +38,9 @@ use function ezsql\functions\{
     groupBy,
     having,
     orderBy,
-    insert,
-    update,
-    delete,
+    updating,
+    creating,
+    deleting,
     replace,
     selecting,
     inserting,
@@ -197,11 +196,6 @@ class ezFunctionsTest extends EZTestCase
         $this->assertFalse(setInstance());
     }
 
-    public function testSelect()
-    {
-        $this->assertFalse(select(''));
-    }
-
     public function testSelect_into()
     {
         $this->assertFalse(select_into('field', 'data', 'data2'));
@@ -239,19 +233,19 @@ class ezFunctionsTest extends EZTestCase
         $this->assertNotNull(orderBy('field', 'data'));
     }
 
-    public function testInsert()
+    public function testUpdating()
     {
-        $this->assertFalse(insert('field', ['data' => 'data2']));
+        $this->assertFalse(updating(['data', 'data2']));
     }
 
-    public function testUpdate()
+    public function testCreating()
     {
-        $this->assertFalse(update('field', 'data', 'data2'));
+        $this->assertFalse(creating(['data', 'data2']));
     }
 
-    public function testDelete()
+    public function testDeleting()
     {
-        $this->assertFalse(delete('field', 'data', 'data2'));
+        $this->assertFalse(deleting('field', 'data', 'data2'));
     }
 
     public function testInserting()
