@@ -51,7 +51,7 @@ namespace ezsql;
  * @method string getOptions();
  * @method string getToMysql();
  * @method bool getIsFile();
- * @method bool getToMssql();getToMssql
+ * @method bool getToMssql();
  * @method string getPath();
  */
 abstract class ConfigAbstract
