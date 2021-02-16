@@ -8,12 +8,12 @@ use Exception;
 use ezsql\ezsqlModel;
 use ezsql\ConfigInterface;
 use ezsql\DatabaseInterface;
+use function ezsql\functions\setInstance;
 
 class ez_mysqli extends ezsqlModel implements DatabaseInterface
 {
     private $return_val = 0;
     private $is_insert = false;
-    private $shortcutUsed = false;
     private $isTransactional = false;
 
     /**
@@ -33,6 +33,7 @@ class ez_mysqli extends ezsqlModel implements DatabaseInterface
      * @var ConfigInterface
      */
     private $database;
+    protected $shortcutUsed = false;
 
     public function __construct(ConfigInterface $settings = null)
     {
@@ -45,7 +46,7 @@ class ez_mysqli extends ezsqlModel implements DatabaseInterface
 
         if (empty($GLOBALS['ez' . \MYSQLI]))
             $GLOBALS['ez' . \MYSQLI] = $this;
-        \setInstance($this);
+        setInstance($this);
     } // __construct
 
     public function settings()
@@ -81,7 +82,7 @@ class ez_mysqli extends ezsqlModel implements DatabaseInterface
         $charset = empty($charset) ? $this->database->getCharset() : $charset;
 
         if (!$this->connect($user, $password, $host, (int) $port, $charset));
-        else if (!$this->select($name, $charset));
+        else if (!$this->dbSelect($name, $charset));
 
         return $this->_connected;
     } // quick_connect
@@ -124,13 +125,13 @@ class ez_mysqli extends ezsqlModel implements DatabaseInterface
     } // connect
 
     /**
-     * Try to select a mySQL database
+     * Try to select the default database for mySQL
      *
      * @param string $name The name of the database
      * @param string $charset Encoding of the database
      * @return boolean
      */
-    public function select($name = '', $charset = '')
+    public function dbSelect($name = '', $charset = '')
     {
         $name = empty($name) ? $this->database->getName() : $name;
         try {
@@ -212,9 +213,9 @@ class ez_mysqli extends ezsqlModel implements DatabaseInterface
             if (\preg_match("/^(insert|delete|update|replace)\s+/i", $query)) {
                 $this->_affectedRows = \mysqli_stmt_affected_rows($stmt);
 
-                // Take note of the insert_id
+                // Take note of the insert id
                 if (\preg_match("/^(insert|replace)\s+/i", $query)) {
-                    $this->insert_id = $stmt->insert_id;
+                    $this->insertId = $stmt->insert_id;
                 }
             } else {
                 $this->_affectedRows = $stmt->num_rows;
@@ -225,7 +226,7 @@ class ez_mysqli extends ezsqlModel implements DatabaseInterface
                 while ($field = $meta->fetch_field()) {
                     $col_info[$field->name] = "";
                     $variables[$field->name] = &$col_info[$field->name];
-                    $this->col_info[$x] = $field;
+                    $this->colInfo[$x] = $field;
                     $x++;
                 }
 
@@ -240,7 +241,7 @@ class ez_mysqli extends ezsqlModel implements DatabaseInterface
                     foreach ($variables as $key => $value) {
                         $resultObject->$key = $value;
                     }
-                    $this->last_result[$i] = $resultObject;
+                    $this->lastResult[$i] = $resultObject;
                     $i++;
                 }
             }
@@ -251,7 +252,7 @@ class ez_mysqli extends ezsqlModel implements DatabaseInterface
                 $this->register_error($str);
 
                 // If debug ALL queries
-                $this->trace || $this->debug_all ? $this->debug() : null;
+                $this->trace || $this->debugAll ? $this->debug() : null;
                 return false;
             }
 
@@ -262,7 +263,7 @@ class ez_mysqli extends ezsqlModel implements DatabaseInterface
             $this->store_cache($query, $is_insert);
 
             // If debug ALL queries
-            $this->trace || $this->debug_all ? $this->debug() : null;
+            $this->trace || $this->debugAll ? $this->debug() : null;
 
             return $return_val;
         }
@@ -282,7 +283,7 @@ class ez_mysqli extends ezsqlModel implements DatabaseInterface
         $stmt = $this->dbh->prepare($query);
         if (!$stmt instanceof \mysqli_stmt) {
             if ($this->isTransactional)
-                throw new \Exception($this->getLast_Error());
+                throw new \Exception($this->lastError);
 
             return false;
         }
@@ -338,7 +339,7 @@ class ez_mysqli extends ezsqlModel implements DatabaseInterface
             $this->register_error($str);
 
             // If debug ALL queries
-            $this->trace || $this->debug_all ? $this->debug() : null;
+            $this->trace || $this->debugAll ? $this->debug() : null;
             return false;
         }
 
@@ -350,7 +351,7 @@ class ez_mysqli extends ezsqlModel implements DatabaseInterface
 
             // Take note of the insert_id
             if (\preg_match("/^(insert|replace)\s+/i", $query)) {
-                $this->insert_id = \mysqli_insert_id($this->dbh);
+                $this->insertId = \mysqli_insert_id($this->dbh);
             }
 
             // Return number of rows affected
@@ -362,7 +363,7 @@ class ez_mysqli extends ezsqlModel implements DatabaseInterface
                 // Take note of column info
                 $i = 0;
                 while ($i < \mysqli_num_fields($this->result)) {
-                    $this->col_info[$i] = \mysqli_fetch_field($this->result);
+                    $this->colInfo[$i] = \mysqli_fetch_field($this->result);
                     $i++;
                 }
 
@@ -370,17 +371,17 @@ class ez_mysqli extends ezsqlModel implements DatabaseInterface
                 $num_rows = 0;
                 while ($row = \mysqli_fetch_object($this->result)) {
                     // Store results as an objects within main array
-                    $this->last_result[$num_rows] = $row;
+                    $this->lastResult[$num_rows] = $row;
                     $num_rows++;
                 }
 
                 \mysqli_free_result($this->result);
 
                 // Log number of rows the query returned
-                $this->num_rows = $num_rows;
+                $this->numRows = $num_rows;
 
                 // Return number of rows selected
-                $this->return_val = $this->num_rows;
+                $this->return_val = $this->numRows;
             }
         }
     }
@@ -414,10 +415,10 @@ class ez_mysqli extends ezsqlModel implements DatabaseInterface
         $this->log_query("\$db->query(\"$query\")");
 
         // Keep track of the last query for debug..
-        $this->last_query = $query;
+        $this->lastQuery = $query;
 
         // Count how many queries there have been
-        $this->num_queries++;
+        $this->numQueries++;
 
         // Use core file cache function
         if ($cache = $this->get_cache($query)) {
@@ -427,7 +428,7 @@ class ez_mysqli extends ezsqlModel implements DatabaseInterface
         // If there is no existing database connection then try to connect
         if (!isset($this->dbh) || !$this->dbh) {
             $this->connect($this->database->getUser(), $this->database->getPassword(), $this->database->getHost());
-            $this->select($this->database->getName());
+            $this->dbSelect($this->database->getName());
         }
 
         // Perform the query via std mysql_query function..
@@ -440,7 +441,7 @@ class ez_mysqli extends ezsqlModel implements DatabaseInterface
 
         if ($this->processQueryResult($query) === false) {
             if ($this->isTransactional)
-                throw new \Exception($this->getLast_Error());
+                throw new \Exception($this->lastError);
 
             return false;
         }
@@ -449,7 +450,7 @@ class ez_mysqli extends ezsqlModel implements DatabaseInterface
         $this->store_cache($query, $this->is_insert);
 
         // If debug ALL queries
-        $this->trace || $this->debug_all ? $this->debug() : null;
+        $this->trace || $this->debugAll ? $this->debug() : null;
 
         return $this->return_val;
     } // query
@@ -514,7 +515,7 @@ class ez_mysqli extends ezsqlModel implements DatabaseInterface
     }
 
     /**
-     * Returns the last inserted auto-increment
+     * Returns the last inserted Id - auto generated
      *
      * @return int
      */
@@ -530,7 +531,7 @@ class ez_mysqli extends ezsqlModel implements DatabaseInterface
     {
         /* turn autocommit off */
         $this->dbh->autocommit(false);
-        $this->dbh->begin_transaction(MYSQLI_TRANS_START_READ_WRITE);
+        $this->dbh->begin_transaction(\MYSQLI_TRANS_START_READ_WRITE);
         $this->isTransactional = true;
     }
 

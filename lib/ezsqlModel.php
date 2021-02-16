@@ -4,10 +4,80 @@ namespace ezsql;
 
 use ezsql\ezQuery;
 use ezsql\ezsqlModelInterface;
+use function ezsql\functions\getVendor;
 
 /**
- * Core class containing common functions to manipulate query result
- * sets once returned
+ * Core class containing common functions to manipulate **query** `result sets` once returned.
+ *
+ * The class properties can be accessed with either a `set` or `get` prefix as a function.
+ *
+ * @method void setDebugAll($args)
+ * @method void setTrace($args)
+ * @method void setDebugCalled($args)
+ * @method void setVarDumpCalled($args)
+ * @method void setShowErrors($args)
+ * @method void setNumQueries($args)
+ * @method void setConnQueries($args)
+ * @method void setCapturedErrors($args)
+ * @method void setCacheDir($args)
+ * @method void setUseDiskCache($args)
+ * @method void setCacheTimeout($args)
+ * @method void setCacheQueries($args)
+ * @method void setCacheInserts($args)
+ * @method void setNumRows($args)
+ * @method void setDbConnectTime($args)
+ * @method void setSqlLogFile($args)
+ * @method void setProfileTimes($args)
+ * @method void setInsertId($args)
+ * @method void setLastQuery($args)
+ * @method void setLastError($args)
+ * @method void setColInfo($args)
+ * @method void setTimers($args)
+ * @method void setTotalQueryTime($args)
+ * @method void setTraceLog($args)
+ * @method void setUseTraceLog($args)
+ * @method void setDoProfile($args)
+ * @method void setLastResult($args)
+ * @method void setFromDiskCache($args)
+ * @method void setDebugEchoIsOn($args)
+ * @method void setFuncCall($args)
+ * @method void setAllFuncCalls($args)
+ * @method void setTable($name)
+ * @method void setPrefix($append)
+ *
+ * @method string getDebugAll()
+ * @method string getTrace()
+ * @method string getDebugCalled()
+ * @method string getVarDumpCalled()
+ * @method string getShowErrors()
+ * @method string getNumQueries()
+ * @method string getConnQueries()
+ * @method string getCapturedErrors()
+ * @method string getCacheDir()
+ * @method string getUseDiskCache()
+ * @method string getCacheTimeout()
+ * @method string getCacheQueries()
+ * @method string getCacheInserts()
+ * @method string getNumRows()
+ * @method string getDbConnectTime()
+ * @method string getSqlLogFile()
+ * @method string getProfileTimes()
+ * @method string getInsertId()
+ * @method string getLastQuery()
+ * @method string getLastError()
+ * @method string getColInfo()
+ * @method string getTimers()
+ * @method string getTotalQueryTime()
+ * @method string getTraceLog()
+ * @method string getUseTraceLog()
+ * @method string getDoProfile()
+ * @method string getLastResult()
+ * @method string getFromDiskCache()
+ * @method string getDebugEchoIsOn()
+ * @method string getFuncCall()
+ * @method string getAllFuncCalls()
+ * @method string getTable()
+ * @method string getPrefix()
  */
 class ezsqlModel extends ezQuery implements ezsqlModelInterface
 {
@@ -22,34 +92,34 @@ class ezsqlModel extends ezQuery implements ezsqlModelInterface
 	 * If set to true (i.e. $db->debug_all = true;) Then it will print out ALL queries and ALL results of your script.
 	 * @var boolean
 	 */
-	protected $debug_all = false;
+	protected $debugAll = false;
 
 	// same as $debug_all
 	protected $trace = false;
-	protected $debug_called = false;
-	protected $varDump_called = false;
+	protected $debugCalled = false;
+	protected $varDumpCalled = false;
 
 	/**
 	 * Current show error state
 	 * @var boolean
 	 */
-	protected $show_errors = true;
+	protected $showErrors = true;
 
 	/**
 	 * Keeps track of exactly how many 'real' (not cached)
 	 * queries were executed during the lifetime of the current script
 	 * @var int
 	 */
-	protected $num_queries = 0;
+	protected $numQueries = 0;
 
-	protected $conn_queries = 0;
-	protected $captured_errors = array();
+	protected $connQueries = 0;
+	protected $capturedErrors = array();
 
 	/**
 	 * Specify a cache dir. Path is taken from calling script
 	 * @var string
 	 */
-	protected $cache_dir = 'tmp' . \_DS . 'ez_cache';
+	protected $cacheDir = 'tmp' . \_DS . 'ez_cache';
 
 	/**
 	 * Disk Cache Setup
@@ -59,13 +129,13 @@ class ezsqlModel extends ezQuery implements ezsqlModelInterface
 	 * Global override setting to turn disc caching off (but not on)
 	 * @var boolean
 	 */
-	protected $use_disk_cache = false;
+	protected $useDiskCache = false;
 
 	/**
 	 * Cache expiry, this is hours
 	 * @var int
 	 */
-	protected $cache_timeout = 24;
+	protected $cacheTimeout = 24;
 
 	/**
 	 * if you want to cache EVERYTHING just do..
@@ -80,66 +150,80 @@ class ezsqlModel extends ezQuery implements ezsqlModelInterface
 	 * is NOT to cache unless specified
 	 * @var boolean
 	 */
-	protected $cache_queries = false;
-	protected $cache_inserts = false;
+	protected $cacheQueries = false;
+	protected $cacheInserts = false;
 
 	/**
 	 * Log number of rows the query returned
 	 * @var int Default is null
 	 */
-	protected $num_rows = null;
+	protected $numRows = null;
 
-	protected $db_connect_time = 0;
-	protected $sql_log_file = false;
-	protected $profile_times = array();
+	protected $dbConnectTime = 0;
+	protected $sqlLogFile = false;
+	protected $profileTimes = array();
 
 	/**
 	 * ID generated from the AUTO_INCREMENT of the previous INSERT operation (if any)
 	 * @var int
 	 */
-	protected $insert_id = null;
+	protected $insertId = null;
 
 	/**
 	 * Use to keep track of the last query for debug..
 	 * @var string
 	 */
-	protected $last_query = null;
+	protected $lastQuery = null;
+
+	/**
+	 * The table `name` to use on calls to `selecting` method.
+	 *
+	 * @var string
+	 */
+	protected $table = '';
+
+	/**
+	 * A `prefix` to append to `table` name on calls to `selecting` method.
+	 *
+	 * @var string
+	 */
+	protected $prefix = '';
 
 	/**
 	 * Use to keep track of last error
 	 * @var string
 	 */
-	protected $last_error = null;
+	protected $lastError = null;
 
 	/**
 	 * Saved info on the table column
 	 * @var mixed
 	 */
-	protected $col_info = array();
+	protected $colInfo = array();
 
 	protected $timers = array();
-	protected $total_query_time = 0;
-	protected $trace_log = array();
-	protected $use_trace_log = false;
-	protected $do_profile = false;
+	protected $totalQueryTime = 0;
+	protected $traceLog = array();
+	protected $useTraceLog = false;
+	protected $doProfile = false;
 
 	/**
 	 * The last query result
 	 * @var object Default is null
 	 */
-	protected $last_result = null;
+	protected $lastResult = null;
 
 	/**
 	 * Get data from disk cache
 	 * @var boolean Default is false
 	 */
-	protected $from_disk_cache = false;
+	protected $fromDiskCache = false;
 
 	/**
 	 *  Needed for echo of debug function
 	 * @var boolean Default is false
 	 */
-	protected $debug_echo_is_on = false;
+	protected $debugEchoIsOn = false;
 
 	/**
 	 * Whether the database connection is established, or not
@@ -157,13 +241,13 @@ class ezsqlModel extends ezQuery implements ezsqlModelInterface
 	 * Function called
 	 * @var string
 	 */
-	private $func_call;
+	private $funcCall;
 
 	/**
 	 * All functions called
 	 * @var array
 	 */
-	private $all_func_calls = array();
+	private $allFuncCalls = array();
 
 	/**
 	 * Constructor
@@ -177,70 +261,6 @@ class ezsqlModel extends ezQuery implements ezsqlModelInterface
 	 * Magic methods for Calling Non-Existent Functions, handling Getters and Setters.
 	 * @method set/get{property} - a property that needs to be accessed
 	 *
-	 * @method void setDebug_All($args);
-	 * @method void setTrace($args);
-	 * @method void setDebug_Called($args);
-	 * @method void setVarDump_Called($args);
-	 * @method void setShow_Errors($args);
-	 * @method void setNum_Queries($args);
-	 * @method void setConn_Queries($args);
-	 * @method void setCaptured_Errors($args);
-	 * @method void setCache_Dir($args);
-	 * @method void setUse_Disk_Cache($args);
-	 * @method void setCache_Timeout($args);
-	 * @method void setCache_Queries($args);
-	 * @method void setCache_Inserts($args);
-	 * @method void setNum_Rows($args);
-	 * @method void setDb_Connect_Time($args);
-	 * @method void setSql_Log_File($args);
-	 * @method void setProfile_Times($args);
-	 * @method void setInsert_Id($args);
-	 * @method void setLast_Query($args);
-	 * @method void setLast_Error($args);
-	 * @method void setCol_Info($args);
-	 * @method void setTimers($args);
-	 * @method void setTotal_Query_Time($args);
-	 * @method void setTrace_Log($args);
-	 * @method void setUse_Trace_Log($args);
-	 * @method void setDo_Profile($args);
-	 * @method void setLast_Result($args);
-	 * @method void setFrom_Disk_Cache($args);
-	 * @method void setDebug_Echo_Is_On($args);
-	 * @method void setFunc_Call($args);
-	 * @method void setAll_Func_Calls($args);
-	 *
-	 * @method string getDebug_All();
-	 * @method string getTrace();
-	 * @method string getDebug_Called();
-	 * @method string getVarDump_Called();
-	 * @method string getShow_Errors();
-	 * @method string getNum_Queries();
-	 * @method string getConn_Queries();
-	 * @method string getCaptured_Errors();
-	 * @method string getCache_Dir();
-	 * @method string getUse_Disk_Cache();
-	 * @method string getCache_Timeout();
-	 * @method string getCache_Queries();
-	 * @method string getCache_Inserts();
-	 * @method string getNum_Rows();
-	 * @method string getDb_Connect_Time();
-	 * @method string getSql_Log_File();
-	 * @method string getProfile_Times();
-	 * @method string getInsert_Id();
-	 * @method string getLast_Query();
-	 * @method string getLast_Error();
-	 * @method string getCol_Info();
-	 * @method string getTimers();
-	 * @method string getTotal_Query_Time();
-	 * @method string getTrace_Log();
-	 * @method string getUse_Trace_Log();
-	 * @method string getDo_Profile();
-	 * @method string getLast_Result();
-	 * @method string getFrom_Disk_Cache();
-	 * @method string getDebug_Echo_Is_On();
-	 * @method string getFunc_Call();
-	 * @method string getAll_Func_Calls();
-	 *
 	 * @property-read function
 	 * @property-write args
 	 *
@@ -250,10 +270,10 @@ class ezsqlModel extends ezQuery implements ezsqlModelInterface
 	public function __call($function, $args)
 	{
 		$prefix = \substr($function, 0, 3);
-		$property = \strtolower(substr($function, 3, \strlen($function)));
+		$property = \lcfirst(\substr($function, 3, \strlen($function)));
 		// Todo: make properties PSR-1, add following for backward compatibility
-		//if (\strpos($property, '_') !== false)
-		//	$property = \str_replace('_', '', $property);
+		if (\strpos($property, '_') !== false)
+			$property = \str_replace('_', '', $property);
 
 		if (($prefix == 'set') && \property_exists($this, $property)) {
 			$this->$property = $args[0];
@@ -277,15 +297,15 @@ class ezsqlModel extends ezQuery implements ezsqlModelInterface
 	public function register_error(string $err_str, bool $displayError = true)
 	{
 		// Keep track of last error
-		$this->last_error = $err_str;
+		$this->lastError = $err_str;
 
 		// Capture all errors to an error array no matter what happens
-		$this->captured_errors[] = array(
+		$this->capturedErrors[] = array(
 			'error_str' => $err_str,
-			'query'     => $this->last_query
+			'query'     => $this->lastQuery
 		);
 
-		if ($this->show_errors && $displayError)
+		if ($this->showErrors && $displayError)
 			\trigger_error(\htmlentities($err_str), \E_USER_WARNING);
 
 		return false;
@@ -293,12 +313,12 @@ class ezsqlModel extends ezQuery implements ezsqlModelInterface
 
 	public function show_errors()
 	{
-		$this->show_errors = true;
+		$this->showErrors = true;
 	}
 
 	public function hide_errors()
 	{
-		$this->show_errors = false;
+		$this->showErrors = false;
 	}
 
 	/**
@@ -306,7 +326,7 @@ class ezsqlModel extends ezQuery implements ezsqlModelInterface
 	 */
 	public function debugOn()
 	{
-		$this->debug_echo_is_on = true;
+		$this->debugEchoIsOn = true;
 	}
 
 	/**
@@ -314,27 +334,27 @@ class ezsqlModel extends ezQuery implements ezsqlModelInterface
 	 */
 	public function debugOff()
 	{
-		$this->debug_echo_is_on = false;
+		$this->debugEchoIsOn = false;
 	}
 
 	public function flush()
 	{
 		// Get rid of these
-		$this->last_result = null;
-		$this->col_info = array();
-		$this->last_query = null;
-		$this->all_func_calls = array();
-		$this->from_disk_cache = false;
+		$this->lastResult = null;
+		$this->colInfo = array();
+		$this->lastQuery = null;
+		$this->allFuncCalls = array();
+		$this->fromDiskCache = false;
 		$this->clearPrepare();
 	}
 
 	public function log_query(string $query)
 	{
 		// Log how the last function was called
-		$this->func_call = $query;
+		$this->funcCall = $query;
 
 		// Keep an running Log of all functions called
-		\array_push($this->all_func_calls, $this->func_call);
+		\array_push($this->allFuncCalls, $this->funcCall);
 	}
 
 	public function get_var(string $query = null, int $x = 0, int $y = 0, bool $use_prepare = false)
@@ -348,15 +368,15 @@ class ezsqlModel extends ezQuery implements ezsqlModelInterface
 		}
 
 		// Extract public out of cached results based x,y values
-		if (isset($this->last_result[$y])) {
-			$values = \array_values(\get_object_vars($this->last_result[$y]));
+		if (isset($this->lastResult[$y])) {
+			$values = \array_values(\get_object_vars($this->lastResult[$y]));
 		}
 
 		// If there is a value return it else return null
 		return (isset($values[$x]) && $values[$x] !== null) ? $values[$x] : null;
 	}
 
-	public function get_row(string $query = null, $output = OBJECT, int $y = 0, bool $use_prepare = false)
+	public function get_row(string $query = null, $output = \OBJECT, int $y = 0, bool $use_prepare = false)
 	{
 		// Log how the function was called
 		$this->log_query("\$db->get_row(\"$query\",$output,$y)");
@@ -368,16 +388,16 @@ class ezsqlModel extends ezQuery implements ezsqlModelInterface
 
 		if ($output == OBJECT) {
 			// If the output is an object then return object using the row offset..
-			return isset($this->last_result[$y]) ? $this->last_result[$y] : null;
-		} elseif ($output == ARRAY_A) {
+			return isset($this->lastResult[$y]) ? $this->lastResult[$y] : null;
+		} elseif ($output == \ARRAY_A) {
 			// If the output is an associative array then return row as such..
-			return isset($this->last_result[$y]) ? \get_object_vars($this->last_result[$y]) : null;
-		} elseif ($output == ARRAY_N) {
+			return isset($this->lastResult[$y]) ? \get_object_vars($this->lastResult[$y]) : null;
+		} elseif ($output == \ARRAY_N) {
 			// If the output is an numerical array then return row as such..
-			return isset($this->last_result[$y]) ? \array_values(\get_object_vars($this->last_result[$y])) : null;
+			return isset($this->lastResult[$y]) ? \array_values(\get_object_vars($this->lastResult[$y])) : null;
 		} else {
 			// If invalid output type was specified..
-			$this->show_errors ? \trigger_error(" \$db->get_row(string query, output type, int offset) -- Output type must be one of: OBJECT, ARRAY_A, ARRAY_N", \E_USER_WARNING) : null;
+			$this->showErrors ? \trigger_error(" \$db->get_row(string query, output type, int offset) -- Output type must be one of: OBJECT, ARRAY_A, ARRAY_N", \E_USER_WARNING) : null;
 		}
 	}
 
@@ -391,8 +411,8 @@ class ezsqlModel extends ezQuery implements ezsqlModelInterface
 		}
 
 		// Extract the column values
-		if (\is_array($this->last_result)) {
-			$j = \count($this->last_result);
+		if (\is_array($this->lastResult)) {
+			$j = \count($this->lastResult);
 			for ($i = 0; $i < $j; $i++) {
 				$new_array[$i] = $this->get_var(null, $x, $i, $use_prepare);
 			}
@@ -412,16 +432,16 @@ class ezsqlModel extends ezQuery implements ezsqlModelInterface
 		}
 
 		if ($output == OBJECT) {
-			return $this->last_result;
+			return $this->lastResult;
 		} elseif ($output == \_JSON) {
-			return \json_encode($this->last_result); // return as json output
-		} elseif ($output == ARRAY_A || $output == ARRAY_N) {
+			return \json_encode($this->lastResult); // return as json output
+		} elseif ($output == \ARRAY_A || $output == \ARRAY_N) {
 			$new_array = [];
-			if ($this->last_result) {
+			if ($this->lastResult) {
 				$i = 0;
-				foreach ($this->last_result as $row) {
+				foreach ($this->lastResult as $row) {
 					$new_array[$i] = \get_object_vars($row);
-					if ($output == ARRAY_N) {
+					if ($output == \ARRAY_N) {
 						$new_array[$i] = \array_values($new_array[$i]);
 					}
 					$i++;
@@ -433,11 +453,11 @@ class ezsqlModel extends ezQuery implements ezsqlModelInterface
 
 	public function get_col_info(string $info_type = "name", int $col_offset = -1)
 	{
-		if ($this->col_info) {
+		if ($this->colInfo) {
 			$new_array = [];
 			if ($col_offset == -1) {
 				$i = 0;
-				foreach ($this->col_info as $col) {
+				foreach ($this->colInfo as $col) {
 					$new_array[$i] = $col->{$info_type};
 					$i++;
 				}
@@ -445,15 +465,15 @@ class ezsqlModel extends ezQuery implements ezsqlModelInterface
 				return $new_array;
 			}
 
-			return $this->col_info[$col_offset]->{$info_type};
+			return $this->colInfo[$col_offset]->{$info_type};
 		}
 	}
 
 	public function create_cache(string $path = null)
 	{
-		$cache_dir = empty($path) ? $this->cache_dir : $path;
+		$cache_dir = empty($path) ? $this->cacheDir : $path;
 		if (!\is_dir($cache_dir)) {
-			$this->cache_dir = $cache_dir;
+			$this->cacheDir = $cache_dir;
 			@\mkdir($cache_dir, ('\\' == \DIRECTORY_SEPARATOR ? null : 0755), true);
 		}
 	}
@@ -461,23 +481,23 @@ class ezsqlModel extends ezQuery implements ezsqlModelInterface
 	public function store_cache(string $query, bool $is_insert = false)
 	{
 		// The would be cache file for this query
-		$cache_file = $this->cache_dir . \_DS . \md5($query);
+		$cache_file = $this->cacheDir . \_DS . \md5($query);
 
 		// disk caching of queries
 		if (
-			$this->use_disk_cache
-			&& ($this->cache_queries && !$is_insert) || ($this->cache_inserts && $is_insert)
+			$this->useDiskCache
+			&& ($this->cacheQueries && !$is_insert) || ($this->cacheInserts && $is_insert)
 		) {
 			$this->create_cache();
-			if (!\is_dir($this->cache_dir)) {
-				return $this->register_error("Could not open cache dir: $this->cache_dir");
+			if (!\is_dir($this->cacheDir)) {
+				return $this->register_error("Could not open cache dir: $this->cacheDir");
 			} else {
 				// Cache all result values
 				$result_cache = array(
-					'col_info' => $this->col_info,
-					'last_result' => $this->last_result,
-					'num_rows' => $this->num_rows,
-					'return_value' => $this->num_rows,
+					'col_info' => $this->colInfo,
+					'last_result' => $this->lastResult,
+					'num_rows' => $this->numRows,
+					'return_value' => $this->numRows,
 				);
 
 				\file_put_contents($cache_file, \serialize($result_cache));
@@ -490,12 +510,12 @@ class ezsqlModel extends ezQuery implements ezsqlModelInterface
 	public function get_cache(string $query)
 	{
 		// The would be cache file for this query
-		$cache_file = $this->cache_dir . \_DS . \md5($query);
+		$cache_file = $this->cacheDir . \_DS . \md5($query);
 
 		// Try to get previously cached version
-		if ($this->use_disk_cache && \file_exists($cache_file)) {
+		if ($this->useDiskCache && \file_exists($cache_file)) {
 			// Only use this cache file if less than 'cache_timeout' (hours)
-			if ((\time() - \filemtime($cache_file)) > ($this->cache_timeout * 3600)
+			if ((\time() - \filemtime($cache_file)) > ($this->cacheTimeout * 3600)
 				&& !(\file_exists($cache_file . ".updating")
 					&& (\time() - \filemtime($cache_file . ".updating") < 60))
 			) {
@@ -503,14 +523,14 @@ class ezsqlModel extends ezQuery implements ezsqlModelInterface
 			} else {
 				$result_cache = \unserialize(\file_get_contents($cache_file));
 
-				$this->col_info = $result_cache['col_info'];
-				$this->last_result = $result_cache['last_result'];
-				$this->num_rows = $result_cache['num_rows'];
+				$this->colInfo = $result_cache['col_info'];
+				$this->lastResult = $result_cache['last_result'];
+				$this->numRows = $result_cache['num_rows'];
 
-				$this->from_disk_cache = true;
+				$this->fromDiskCache = true;
 
 				// If debug ALL queries
-				$this->trace || $this->debug_all ? $this->debug() : null;
+				$this->trace || $this->debugAll ? $this->debug() : null;
 
 				return $result_cache['return_value'];
 			}
@@ -525,24 +545,24 @@ class ezsqlModel extends ezQuery implements ezsqlModelInterface
 		echo "<p><table><tr><td bgcolor=ffffff><blockquote><font color=000090>";
 		echo "<pre><font face=arial>";
 
-		if (!$this->varDump_called) {
-			echo "<font color=800080><b>ezSQL</b> (v" . EZSQL_VERSION . ") <b>Variable Dump..</b></font>\n\n";
+		if (!$this->varDumpCalled) {
+			echo "<font color=800080><b>ezSQL</b> (v" . \EZSQL_VERSION . ") <b>Variable Dump..</b></font>\n\n";
 		}
 
 		$var_type = \gettype($mixed);
 		\print_r(($mixed ? $mixed : "<font color=red>No Value / False</font>"));
 		echo "\n\n<b>Type:</b> " . \ucfirst($var_type) . "\n";
-		echo "<b>Last Query</b> [$this->num_queries]<b>:</b> " . ($this->last_query ? $this->last_query : "NULL") . "\n";
-		echo "<b>Last Function Call:</b> " . ($this->func_call ? $this->func_call : "None") . "\n";
+		echo "<b>Last Query</b> [$this->numQueries]<b>:</b> " . ($this->lastQuery ? $this->lastQuery : "NULL") . "\n";
+		echo "<b>Last Function Call:</b> " . ($this->funcCall ? $this->funcCall : "None") . "\n";
 
-		if (\count($this->all_func_calls) > 1) {
+		if (\count($this->allFuncCalls) > 1) {
 			echo "<b>List of All Function Calls:</b><br>";
-			foreach ($this->all_func_calls as $func_string)
+			foreach ($this->allFuncCalls as $func_string)
 				echo "  " . $func_string . "<br>\n";
 		}
 
 		echo "<b>Last Rows Returned:</b><br>";
-		echo ((!empty($this->last_result) && \count($this->last_result) > 0)  ? print_r($this->last_result[0]) : 'No rows returned') . "\n";
+		echo ((!empty($this->lastResult) && \count($this->lastResult) > 0)  ? print_r($this->lastResult[0]) : 'No rows returned') . "\n";
 		echo "</font></pre></font></blockquote></td></tr></table>"; //.$this->donation();
 		echo "\n<hr size=1 noshade color=dddddd>";
 
@@ -551,11 +571,11 @@ class ezsqlModel extends ezQuery implements ezsqlModelInterface
 		\ob_end_clean();
 
 		// Only echo output if it is turned on
-		if ($this->debug_echo_is_on) {
+		if ($this->debugEchoIsOn) {
 			echo $html;
 		}
 
-		$this->varDump_called = true;
+		$this->varDumpCalled = true;
 
 		return $html;
 	}
@@ -576,54 +596,54 @@ class ezsqlModel extends ezQuery implements ezsqlModelInterface
 		echo "\n\n<blockquote>";
 
 		// Only show ezSQL credits once..
-		if (!$this->debug_called) {
-			echo "<font color=800080 face=arial size=2><b>ezSQL</b> (v" . EZSQL_VERSION . ")\n <b>Debug.. \n</b></font><p>";
+		if (!$this->debugCalled) {
+			echo "<font color=800080 face=arial size=2><b>ezSQL</b> (v" . \EZSQL_VERSION . ")\n <b>Debug.. \n</b></font><p>";
 		}
 
-		if ($this->last_error) {
-			echo "<font face=arial size=2 color=000099><b>Last Error --</b> [<font color=000000><b>$this->last_error \n</b></font>]<p>";
+		if ($this->lastError) {
+			echo "<font face=arial size=2 color=000099><b>Last Error --</b> [<font color=000000><b>$this->lastError \n</b></font>]<p>";
 		}
 
-		if ($this->from_disk_cache) {
+		if ($this->fromDiskCache) {
 			echo "<font face=arial size=2 color=000099><b>Results retrieved from disk cache</b></font><p>\n";
 		}
 
-		echo "<font face=arial size=2 color=000099><b>Query</b> [$this->num_queries]  \n<b>--</b>";
-		echo "[<font color=000000><b>$this->last_query \n</b></font>]</font><p>";
+		echo "<font face=arial size=2 color=000099><b>Query</b> [$this->numQueries]  \n<b>--</b>";
+		echo "[<font color=000000><b>$this->lastQuery \n</b></font>]</font><p>";
 
 		echo "<font face=arial size=2 color=000099><b>Query Result..</b></font>\n";
 		echo "<blockquote>\n";
 
-		if ($this->col_info) {
+		if ($this->colInfo) {
 			// Results top rows
 			echo "<table cellpadding=5 cellspacing=1 bgcolor=555555>\n";
 			echo "<tr bgcolor=eeeeee><td nowrap valign=bottom><font color=555599 face=arial size=2><b>(row)</b></font></td>\n";
 
-			for ($i = 0, $j = count($this->col_info); $i < $j; $i++) {
+			for ($i = 0, $j = count($this->colInfo); $i < $j; $i++) {
 				echo "<td nowrap align=left valign=top><font size=1 color=555599 face=arial>\n";
-				/* when selecting count(*) the maxlengh is not set, size is set instead. */
-				if (isset($this->col_info[$i]->type))
-					echo "{$this->col_info[$i]->type}";
+				/* when `select` count(*) the maxlengh is not set, size is set instead. */
+				if (isset($this->colInfo[$i]->type))
+					echo "{$this->colInfo[$i]->type}";
 
-				if (isset($this->col_info[$i]->size))
-					echo "{$this->col_info[$i]->size}";
+				if (isset($this->colInfo[$i]->size))
+					echo "{$this->colInfo[$i]->size}";
 
-				if (isset($this->col_info[$i]->max_length))
-					echo "{$this->col_info[$i]->max_length}";
+				if (isset($this->colInfo[$i]->max_length))
+					echo "{$this->colInfo[$i]->max_length}";
 
 				echo "\n</font><br><span style='font-family: arial; font-size: 10pt; font-weight: bold;'>";
 
-				if (isset($this->col_info[$i]->name))
-					echo "{$this->col_info[$i]->name}";
+				if (isset($this->colInfo[$i]->name))
+					echo "{$this->colInfo[$i]->name}";
 
 				echo "\n</span></td>";
 			}
 			echo "</tr>\n";
 
 			// print main results
-			if ($this->last_result) {
+			if ($this->lastResult) {
 				$i = 0;
-				foreach ($this->get_results(null, ARRAY_N) as $one_row) {
+				foreach ($this->get_results(null, \ARRAY_N) as $one_row) {
 					$i++;
 					echo "<tr bgcolor=ffffff><td bgcolor=eeeeee nowrap align=middle><font size=2 color=555599 face=arial>$i \n</font></td>";
 
@@ -634,7 +654,7 @@ class ezsqlModel extends ezQuery implements ezsqlModelInterface
 				}
 			} else {
 				// if last result
-				echo "<tr bgcolor=ffffff><td colspan=" . (\count($this->col_info) + 1) . "><font face=arial size=2>No Results</font></td></tr>\n";
+				echo "<tr bgcolor=ffffff><td colspan=" . (\count($this->colInfo) + 1) . "><font face=arial size=2>No Results</font></td></tr>\n";
 			}
 
 			echo "</table>\n";
@@ -650,11 +670,11 @@ class ezsqlModel extends ezQuery implements ezsqlModelInterface
 		\ob_end_clean();
 
 		// Only echo output if it is turned on
-		if ($this->debug_echo_is_on && $print_to_screen) {
+		if ($this->debugEchoIsOn && $print_to_screen) {
 			echo $html;
 		}
 
-		$this->debug_called = true;
+		$this->debugCalled = true;
 
 		return $html;
 	}
@@ -677,23 +697,23 @@ class ezsqlModel extends ezQuery implements ezsqlModelInterface
 
 	public function timer_update_global($timer_name)
 	{
-		if ($this->do_profile) {
-			$this->profile_times[] = array(
-				'query' => $this->last_query,
+		if ($this->doProfile) {
+			$this->profileTimes[] = array(
+				'query' => $this->lastQuery,
 				'time' => $this->timer_elapsed($timer_name)
 			);
 		}
-		$this->total_query_time += $this->timer_elapsed($timer_name);
+		$this->totalQueryTime += $this->timer_elapsed($timer_name);
 	}
 
 	public function count($all = true, $increase = false)
 	{
 		if ($increase) {
-			$this->num_queries++;
-			$this->conn_queries++;
+			$this->numQueries++;
+			$this->connQueries++;
 		}
 
-		return ($all) ? $this->num_queries : $this->conn_queries;
+		return ($all) ? $this->numQueries : $this->connQueries;
 	}
 
 	public function secureSetup(
@@ -703,7 +723,7 @@ class ezsqlModel extends ezQuery implements ezsqlModelInterface
 		string $path = '.' . \_DS
 	) {
 		if (!\file_exists($path . $cert) || !\file_exists($path . $key)) {
-			$vendor = \getVendor();
+			$vendor = getVendor();
 			if (($vendor != \SQLITE) || ($vendor != \MSSQL))
 				$path = ezQuery::createCertificate();
 		} elseif ($path == '.' . \_DS) {
@@ -728,33 +748,24 @@ class ezsqlModel extends ezQuery implements ezsqlModelInterface
 		$this->secureOptions = null;
 	}
 
-	/**
-	 * Returns `true` if the database connection is established.
-	 *
-	 * @return bool
-	 */
 	public function isConnected()
 	{
 		return $this->_connected;
 	} // isConnected
 
-	/**
-	 * Returns the `number` of affected rows of a query.
-	 *
-	 * @return int
-	 */
 	public function affectedRows()
 	{
 		return $this->_affectedRows;
 	} // affectedRows
 
-	/**
-	 * Returns the last query `result`.
-	 *
-	 * @return object
-	 */
 	public function queryResult()
 	{
-		return $this->last_result;
+		return $this->lastResult;
+	}
+
+	public function tableSetup(string $name = '', string $prefix = '')
+	{
+		$this->table = $name;
+		$this->prefix = $prefix;
 	}
 } // ezsqlModel

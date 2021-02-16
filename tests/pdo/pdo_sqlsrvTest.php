@@ -2,8 +2,16 @@
 
 namespace ezsql\Tests\pdo;
 
-use ezsql\Database;
 use ezsql\Tests\EZTestCase;
+
+use function ezsql\functions\{
+    grouping,
+    where,
+    eq,
+    like,
+    leftJoin,
+    pdoInstance
+};
 
 class pdo_sqlsrvTest extends EZTestCase
 {
@@ -24,7 +32,7 @@ class pdo_sqlsrvTest extends EZTestCase
             );
         }
 
-        $this->object = Database::initialize('pdo', ['sqlsrv:Server=' . self::TEST_DB_HOST . ';Database=' . self::TEST_DB_NAME, self::TEST_DB_USER, self::TEST_DB_PASSWORD]);
+        $this->object = pdoInstance(['sqlsrv:Server=' . self::TEST_DB_HOST . ';Database=' . self::TEST_DB_NAME, self::TEST_DB_USER, self::TEST_DB_PASSWORD]);
         $this->object->prepareOn();
     } // setUp
 
@@ -160,7 +168,7 @@ class pdo_sqlsrvTest extends EZTestCase
         );
     }
 
-    public function testSelecting()
+    public function testSelect()
     {
         $this->assertTrue($this->object->connect('sqlsrv:Server=' . self::TEST_DB_HOST . ';Database=' . self::TEST_DB_NAME, self::TEST_DB_USER, self::TEST_DB_PASSWORD));
         $this->object->drop('unit_test');
@@ -169,7 +177,7 @@ class pdo_sqlsrvTest extends EZTestCase
         $this->object->insert('unit_test', array('id' => 9, 'test_key' => 'testing 9'));
         $this->object->insert('unit_test', array('id' => 10, 'test_key' => 'testing 10'));
 
-        $result = $this->object->selecting('unit_test');
+        $result = $this->object->select('unit_test');
         $i = 8;
         foreach ($result as $row) {
             $this->assertEquals($i, $row->id);
@@ -178,17 +186,17 @@ class pdo_sqlsrvTest extends EZTestCase
         }
 
         $where = eq('test_key', 'testing 10');
-        $result = $this->object->selecting('unit_test', 'id', $where);
+        $result = $this->object->select('unit_test', 'id', $where);
         foreach ($result as $row) {
             $this->assertEquals(10, $row->id);
         }
 
-        $result = $this->object->selecting('unit_test', 'test_key', eq('id', 9));
+        $result = $this->object->select('unit_test', 'test_key', eq('id', 9));
         foreach ($result as $row) {
             $this->assertEquals('testing 9', $row->test_key);
         }
 
-        $result = $this->object->selecting('unit_test', array('test_key'), ['id', '=', 8]);
+        $result = $this->object->select('unit_test', array('test_key'), ['id', '=', 8]);
         foreach ($result as $row) {
             $this->assertEquals('testing 8', $row->test_key);
         }
@@ -205,7 +213,7 @@ class pdo_sqlsrvTest extends EZTestCase
         $this->object->insert('unit_test_other', array('id' => 3, 'test_key' => 'testing 3', 'active_data' => 1));
         $this->object->insert('unit_test_other', array('id' => 4, 'test_key' => 'testing 4', 'active_data' => 1));
 
-        $result = $this->object->selecting('unit_test_other', '*', where(eq('active_data', '1'), grouping(like('test_key', '%1%', _OR), like('test_key', '%3%'))));
+        $result = $this->object->select('unit_test_other', '*', where(eq('active_data', '1'), grouping(like('test_key', '%1%', _OR), like('test_key', '%3%'))));
         $i = 1;
         foreach ($result as $row) {
             $this->assertEquals($i, $row->id);
@@ -229,7 +237,7 @@ class pdo_sqlsrvTest extends EZTestCase
         $this->object->insert('unit_test_child', array('child_id' => '2', 'child_test_key' => 'testing child 2', 'parent_id' => '2'));
         $this->object->insert('unit_test_child', array('child_id' => '3', 'child_test_key' => 'testing child 3', 'parent_id' => '1'));
 
-        $result = $this->object->selecting('unit_test_child', '*', leftJoin('unit_test_child', 'unit_test', 'parent_id', 'id'));
+        $result = $this->object->select('unit_test_child', '*', leftJoin('unit_test_child', 'unit_test', 'parent_id', 'id'));
         $i = 1;
         $o = 3;
         foreach ($result as $row) {
@@ -241,7 +249,7 @@ class pdo_sqlsrvTest extends EZTestCase
             --$o;
         }
 
-        $result = $this->object->selecting('unit_test_child', 'child.parent_id', leftJoin('unit_test_child', 'unit_test', 'parent_id', 'id', 'child'));
+        $result = $this->object->select('unit_test_child', 'child.parent_id', leftJoin('unit_test_child', 'unit_test', 'parent_id', 'id', 'child'));
         $o = 3;
         foreach ($result as $row) {
             $this->assertEquals($o, $row->parent_id);

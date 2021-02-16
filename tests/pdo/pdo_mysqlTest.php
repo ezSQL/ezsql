@@ -2,10 +2,20 @@
 
 namespace ezsql\Tests\pdo;
 
-use ezsql\Database;
 use ezsql\Config;
 use ezsql\Database\ez_pdo;
 use ezsql\Tests\EZTestCase;
+
+use function ezsql\functions\{
+    pdoInstance,
+    leftJoin,
+    column,
+    primary,
+    grouping,
+    like,
+    where,
+    eq
+};
 
 class pdo_mysqlTest extends EZTestCase
 {
@@ -32,7 +42,7 @@ class pdo_mysqlTest extends EZTestCase
             );
         }
 
-        $this->object = Database::initialize('pdo', ['mysql:host=' . self::TEST_DB_HOST . ';dbname=' . self::TEST_DB_NAME . ';port=' . self::TEST_DB_PORT, self::TEST_DB_USER, self::TEST_DB_PASSWORD]);
+        $this->object = pdoInstance(['mysql:host=' . self::TEST_DB_HOST . ';dbname=' . self::TEST_DB_NAME . ';port=' . self::TEST_DB_PORT, self::TEST_DB_USER, self::TEST_DB_PASSWORD]);
         $this->object->prepareOn();
     } // setUp
 
@@ -112,7 +122,7 @@ class pdo_mysqlTest extends EZTestCase
 
         $this->assertEquals(
             1,
-            insert(
+            $this->object->insert(
                 'new_create_test2',
                 ['create_key' => 'test 2']
             )
@@ -178,7 +188,7 @@ class pdo_mysqlTest extends EZTestCase
 
         $unit_test['test_key'] = 'testing';
         $where = ['id', '=', 1];
-        $this->assertEquals(update('unit_test', $unit_test, $where), 1);
+        $this->assertEquals($this->object->update('unit_test', $unit_test, $where), 1);
 
         $this->assertEquals(
             1,
@@ -231,7 +241,7 @@ class pdo_mysqlTest extends EZTestCase
         $this->assertEquals(0, $this->object->query('DROP TABLE unit_test'));
     }
 
-    public function testSelecting()
+    public function testSelect()
     {
         $this->assertTrue($this->object->connect('mysql:host=' . self::TEST_DB_HOST . ';dbname=' . self::TEST_DB_NAME . ';port=' . self::TEST_DB_PORT, self::TEST_DB_USER, self::TEST_DB_PASSWORD));
         $this->object->query('CREATE TABLE unit_test(id integer, test_key varchar(50), PRIMARY KEY (ID))');
@@ -239,7 +249,7 @@ class pdo_mysqlTest extends EZTestCase
         $this->object->insert('unit_test', array('id' => '2', 'test_key' => 'testing 2'));
         $this->object->insert('unit_test', array('id' => '3', 'test_key' => 'testing 3'));
 
-        $result = $this->object->selecting('unit_test');
+        $result = $this->object->select('unit_test');
         $i = 1;
         foreach ($result as $row) {
             $this->assertEquals($i, $row->id);
@@ -248,17 +258,17 @@ class pdo_mysqlTest extends EZTestCase
         }
 
         $where = array('test_key', '=', 'testing 2');
-        $result = select('unit_test', 'id', $where);
+        $result = $this->object->select('unit_test', 'id', $where);
         foreach ($result as $row) {
             $this->assertEquals(2, $row->id);
         }
 
-        $result = $this->object->selecting('unit_test', 'test_key', array('id', '=', '3'));
+        $result = $this->object->select('unit_test', 'test_key', array('id', '=', '3'));
         foreach ($result as $row) {
             $this->assertEquals('testing 3', $row->test_key);
         }
 
-        $result = $this->object->selecting('unit_test', array('test_key'), eq('id', 1));
+        $result = $this->object->select('unit_test', array('test_key'), eq('id', 1));
         foreach ($result as $row) {
             $this->assertEquals('testing 1', $row->test_key);
         }
@@ -274,7 +284,7 @@ class pdo_mysqlTest extends EZTestCase
         $this->object->insert('unit_test', array('id' => '3', 'test_key' => 'testing 3', 'active' => 1));
         $this->object->insert('unit_test', array('id' => '4', 'test_key' => 'testing 4', 'active' => 1));
 
-        $result = $this->object->selecting('unit_test', '*', where(eq('active', '1'), grouping(like('test_key', '%1%', _OR), like('test_key', '%3%'))));
+        $result = $this->object->select('unit_test', '*', where(eq('active', '1'), grouping(like('test_key', '%1%', _OR), like('test_key', '%3%'))));
         $i = 1;
         foreach ($result as $row) {
             $this->assertEquals($i, $row->id);
@@ -298,7 +308,7 @@ class pdo_mysqlTest extends EZTestCase
         $this->object->insert('unit_test_child', array('child_id' => '2', 'child_test_key' => 'testing child 2', 'parent_id' => '2'));
         $this->object->insert('unit_test_child', array('child_id' => '3', 'child_test_key' => 'testing child 3', 'parent_id' => '1'));
 
-        $result = $this->object->selecting('unit_test_child', '*', leftJoin('unit_test_child', 'unit_test', 'parent_id', 'id'));
+        $result = $this->object->select('unit_test_child', '*', leftJoin('unit_test_child', 'unit_test', 'parent_id', 'id'));
         $i = 1;
         $o = 3;
         foreach ($result as $row) {
@@ -310,7 +320,7 @@ class pdo_mysqlTest extends EZTestCase
             --$o;
         }
 
-        $result = $this->object->selecting('unit_test_child', 'child.parent_id', leftJoin('unit_test_child', 'unit_test', 'parent_id', 'id', 'child'));
+        $result = $this->object->select('unit_test_child', 'child.parent_id', leftJoin('unit_test_child', 'unit_test', 'parent_id', 'id', 'child'));
         $o = 3;
         foreach ($result as $row) {
             $this->assertEquals($o, $row->parent_id);
@@ -342,7 +352,7 @@ class pdo_mysqlTest extends EZTestCase
         }
 
         if ($commit) {
-            $result = $this->object->selecting('unit_test');
+            $result = $this->object->select('unit_test');
             $i = 1;
             foreach ($result as $row) {
                 $this->assertEquals($i, $row->id);
@@ -375,7 +385,7 @@ class pdo_mysqlTest extends EZTestCase
 
         if ($commit) {
             echo ("Error! This message shouldn't have been displayed.");
-            $result = $this->object->selecting('unit_test');
+            $result = $this->object->select('unit_test');
             $i = 1;
             foreach ($result as $row) {
                 $this->assertEquals('should not be seen ' . $i, $row->test_key);
@@ -384,7 +394,7 @@ class pdo_mysqlTest extends EZTestCase
             $this->object->drop('unit_test');
         } else {
             //echo ("Error! rollback.");
-            $result = $this->object->selecting('unit_test');
+            $result = $this->object->select('unit_test');
             $i = 1;
             foreach ($result as $row) {
                 $this->assertEquals('should not be seen ' . $i, $row->test_key);

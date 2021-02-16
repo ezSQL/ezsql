@@ -2,8 +2,16 @@
 
 namespace ezsql\Tests\pdo;
 
-use ezsql\Database;
 use ezsql\Tests\EZTestCase;
+
+use function ezsql\functions\{
+    pdoInstance,
+    leftJoin,
+    grouping,
+    like,
+    where,
+    eq
+};
 
 class pdo_pgsqlTest extends EZTestCase
 {
@@ -34,7 +42,7 @@ class pdo_pgsqlTest extends EZTestCase
             );
         }
 
-        $this->object = Database::initialize('pdo', ['pgsql:host=' . self::TEST_DB_HOST . ';dbname=' . self::TEST_DB_NAME . ';port=' . self::TEST_DB_PORT, self::TEST_DB_USER, self::TEST_DB_PASSWORD]);
+        $this->object = pdoInstance(['pgsql:host=' . self::TEST_DB_HOST . ';dbname=' . self::TEST_DB_NAME . ';port=' . self::TEST_DB_PORT, self::TEST_DB_USER, self::TEST_DB_PASSWORD]);
         $this->object->prepareOn();
     } // setUp
 
@@ -102,7 +110,6 @@ class pdo_pgsqlTest extends EZTestCase
     public function testUpdate()
     {
         $this->assertTrue($this->object->connect('pgsql:host=' . self::TEST_DB_HOST . ';dbname=' . self::TEST_DB_NAME . ';port=' . self::TEST_DB_PORT, self::TEST_DB_USER, self::TEST_DB_PASSWORD));
-        $this->object->drop('unit_test');
         $this->object->query('CREATE TABLE unit_test(id serial, test_key varchar(50), test_value varchar(50), PRIMARY KEY (ID))');
         $this->object->insert('unit_test', array('test_key' => 'test 1', 'test_value' => 'testing string 1'));
 
@@ -135,7 +142,6 @@ class pdo_pgsqlTest extends EZTestCase
     public function testDelete()
     {
         $this->assertTrue($this->object->connect('pgsql:host=' . self::TEST_DB_HOST . ';dbname=' . self::TEST_DB_NAME . ';port=' . self::TEST_DB_PORT, self::TEST_DB_USER, self::TEST_DB_PASSWORD));
-        $this->object->drop('unit_test');
         $this->object->query('CREATE TABLE unit_test(id serial, test_key varchar(50), test_value varchar(50), PRIMARY KEY (ID))');
         $this->object->insert('unit_test', array('test_key' => 'test 1', 'test_value' => 'testing string 1'));
         $this->object->insert('unit_test', array('test_key' => 'test 2', 'test_value' => 'testing string 2'));
@@ -156,7 +162,7 @@ class pdo_pgsqlTest extends EZTestCase
         $this->assertEquals(0, $this->object->query('DROP TABLE unit_test'));
     }
 
-    public function testSelecting()
+    public function testSelect()
     {
         $this->assertTrue($this->object->connect('pgsql:host=' . self::TEST_DB_HOST . ';dbname=' . self::TEST_DB_NAME . ';port=' . self::TEST_DB_PORT, self::TEST_DB_USER, self::TEST_DB_PASSWORD));
         $this->object->drop('unit_test');
@@ -165,7 +171,7 @@ class pdo_pgsqlTest extends EZTestCase
         $this->object->insert('unit_test', array('test_key' => 'test 2', 'test_value' => 'testing string 2'));
         $this->object->insert('unit_test', array('test_key' => 'test 3', 'test_value' => 'testing string 3'));
 
-        $result = $this->object->selecting('unit_test');
+        $result = $this->object->select('unit_test');
         $i = 1;
         foreach ($result as $row) {
             $this->assertEquals($i, $row->id);
@@ -175,18 +181,18 @@ class pdo_pgsqlTest extends EZTestCase
         }
 
         $where = eq('id', '2');
-        $result = $this->object->selecting('unit_test', 'id', $this->object->where($where));
+        $result = $this->object->select('unit_test', 'id', $this->object->where($where));
         foreach ($result as $row) {
             $this->assertEquals(2, $row->id);
         }
 
         $where = [eq('test_value', 'testing string 3', _AND), eq('id', '3')];
-        $result = $this->object->selecting('unit_test', 'test_key', $this->object->where($where));
+        $result = $this->object->select('unit_test', 'test_key', $this->object->where($where));
         foreach ($result as $row) {
             $this->assertEquals('test 3', $row->test_key);
         }
 
-        $result = $this->object->selecting('unit_test', 'test_value', $this->object->where(eq('test_key', 'test 1')));
+        $result = $this->object->select('unit_test', 'test_value', $this->object->where(eq('test_key', 'test 1')));
         foreach ($result as $row) {
             $this->assertEquals('testing string 1', $row->test_value);
         }
@@ -204,7 +210,7 @@ class pdo_pgsqlTest extends EZTestCase
         $this->object->insert('unit_test_more', array('test_key' => 'testing 3', 'active_data' => 1));
         $this->object->insert('unit_test_more', array('test_key' => 'testing 4', 'active_data' => 1));
 
-        $result = $this->object->selecting('unit_test_more', '*', where(eq('active_data', 1), grouping(like('test_key', '%1%', _OR), like('test_key', '%3%'))));
+        $result = $this->object->select('unit_test_more', '*', where(eq('active_data', 1), grouping(like('test_key', '%1%', _OR), like('test_key', '%3%'))));
         $i = 1;
         foreach ($result as $row) {
             $this->assertEquals($i, $row->id);
@@ -228,7 +234,7 @@ class pdo_pgsqlTest extends EZTestCase
         $this->object->insert('unit_test_child', array('child_id' => '2', 'child_test_key' => 'testing child 2', 'parent_id' => '2'));
         $this->object->insert('unit_test_child', array('child_id' => '3', 'child_test_key' => 'testing child 3', 'parent_id' => '1'));
 
-        $result = $this->object->selecting('unit_test_child', '*', leftJoin('unit_test_child', 'unit_test', 'parent_id', 'id'));
+        $result = $this->object->select('unit_test_child', '*', leftJoin('unit_test_child', 'unit_test', 'parent_id', 'id'));
         $i = 1;
         $o = 3;
         foreach ($result as $row) {
@@ -240,7 +246,7 @@ class pdo_pgsqlTest extends EZTestCase
             --$o;
         }
 
-        $result = $this->object->selecting('unit_test_child', 'child.parent_id', leftJoin('unit_test_child', 'unit_test', 'parent_id', 'id', 'child'));
+        $result = $this->object->select('unit_test_child', 'child.parent_id', leftJoin('unit_test_child', 'unit_test', 'parent_id', 'id', 'child'));
         $o = 3;
         foreach ($result as $row) {
             $this->assertEquals($o, $row->parent_id);

@@ -4,13 +4,33 @@ namespace ezsql;
 
 use ezsql\ezSchema;
 use ezsql\ezQueryInterface;
+use function ezsql\functions\column;
 
 class ezQuery implements ezQueryInterface
 {
     protected $select_result = true;
     protected $prepareActive = false;
     protected $preparedValues = array();
-    protected $insert_id = null;
+
+    /**
+     * ID generated from the AUTO_INCREMENT of the previous INSERT operation (if any)
+     * @var int
+     */
+    protected $insertId = null;
+
+    /**
+     * The table `name` to use on calls to `selecting` method.
+     *
+     * @var string
+     */
+    protected $table = '';
+
+    /**
+     * A `prefix` to append to `table` on calls to `selecting` method.
+     *
+     * @var string
+     */
+    protected $prefix = '';
 
     private $fromTable = null;
     private $isWhere = true;
@@ -148,7 +168,7 @@ class ezQuery implements ezQueryInterface
     }
 
     /**
-     * Convert array to string, and attach '`, `' for separation, if none is provided.
+     * Convert array to string, and attach '`,`' for separation, if none is provided.
      *
      * @return string
      */
@@ -176,10 +196,10 @@ class ezQuery implements ezQueryInterface
         return 'GROUP BY ' . $columns;
     }
 
-    public function having(...$having)
+    public function having(...$conditions)
     {
         $this->isWhere = false;
-        return $this->where(...$having);
+        return $this->where(...$conditions);
     }
 
     public function innerJoin(
@@ -396,7 +416,7 @@ class ezQuery implements ezQueryInterface
         $whereConditionsReturn = [];
         foreach ($whereConditions as $whereCondition) {
             if (!empty($whereCondition[0]) && is_array($whereCondition[0])) {
-                $whereConditionsReturn = array_merge($whereConditionsReturn, $this->flattenWhereConditions($whereCondition));
+                $whereConditionsReturn = \array_merge($whereConditionsReturn, $this->flattenWhereConditions($whereCondition));
             } else {
                 $whereConditionsReturn[] = $whereCondition;
             }
@@ -461,28 +481,25 @@ class ezQuery implements ezQueryInterface
             return false;
 
         $whereOrHaving = ($this->isWhere) ? 'WHERE' : 'HAVING';
-
         if (\is_string($whereConditions[0]) && \strpos($whereConditions[0],  $whereOrHaving) !== false)
             return $whereConditions[0];
 
-        $totalConditions = count($whereConditions) - 1;
-
+        $totalConditions = \count($whereConditions) - 1;
         if ($totalConditions > 0) {
+            if (!\in_array('(', $whereConditions[0]))
+                $whereConditions[0][\count($whereConditions[0])] = '(';
 
-            if (!in_array('(', $whereConditions[0]))
-                $whereConditions[0][count($whereConditions[0])] = '(';
-
-            if (!in_array(')', $whereConditions[$totalConditions]))
-                $whereConditions[$totalConditions][count($whereConditions[$totalConditions])] = ')';
+            if (!\in_array(')', $whereConditions[$totalConditions]))
+                $whereConditions[$totalConditions][\count($whereConditions[$totalConditions])] = ')';
         }
 
         return $whereConditions;
     }
 
-    public function where(...$whereConditions)
+    public function where(...$conditions)
     {
 
-        if (empty($whereConditions))
+        if (empty($conditions))
             return false;
 
         $whereOrHaving = ($this->isWhere) ? 'WHERE' : 'HAVING';
@@ -490,10 +507,10 @@ class ezQuery implements ezQueryInterface
 
         $this->combineWith = '';
 
-        if (\is_string($whereConditions[0]) && \strpos($whereConditions[0],  $whereOrHaving) !== false)
-            return $whereConditions[0];
+        if (\is_string($conditions[0]) && \strpos($conditions[0],  $whereOrHaving) !== false)
+            return $conditions[0];
 
-        list($operator, $whereKeys, $whereValues, $combiner, $extra) = $this->retrieveConditions($whereConditions);
+        list($operator, $whereKeys, $whereValues, $combiner, $extra) = $this->retrieveConditions($conditions);
         if (empty($operator))
             return false;
 
@@ -524,7 +541,7 @@ class ezQuery implements ezQueryInterface
         return ($where != '1') ? " $whereOrHaving $where " : ' ';
     }
 
-    public function selecting(string $table = null, $columnFields = '*', ...$conditions)
+    public function select(string $table = null, $columnFields = '*', ...$conditions)
     {
         $getFromTable = $this->fromTable;
         $getSelect_result = $this->select_result;
@@ -614,13 +631,13 @@ class ezQuery implements ezQueryInterface
     }
 
     /**
-     * Get SQL statement string from selecting method instead of executing get_result
+     * Get SQL statement string from `select` method instead of executing get_result
      * @return string
      */
     private function select_sql($table = '', $columnFields = '*', ...$conditions)
     {
         $this->select_result = false;
-        return $this->selecting($table, $columnFields, ...$conditions);
+        return $this->select($table, $columnFields, ...$conditions);
     }
 
     public function union(string $table = null, $columnFields = '*', ...$conditions)
@@ -633,7 +650,7 @@ class ezQuery implements ezQueryInterface
         return 'UNION ALL ' . $this->select_sql($table, $columnFields, ...$conditions);
     }
 
-    public function create_select(string $newTable, $fromColumns, $oldTable = null, ...$conditions)
+    public function create_select(string $newTable, $fromColumns = '*', $oldTable = null, ...$fromWhereConditions)
     {
         if (isset($oldTable))
             $this->fromTable = $oldTable;
@@ -641,7 +658,7 @@ class ezQuery implements ezQueryInterface
             return $this->clearPrepare();
         }
 
-        $newTableFromTable = $this->select_sql($newTable, $fromColumns, ...$conditions);
+        $newTableFromTable = $this->select_sql($newTable, $fromColumns, ...$fromWhereConditions);
         if (is_string($newTableFromTable))
             return (($this->isPrepareOn()) && !empty($this->prepareValues()))
                 ? $this->query($newTableFromTable, true)
@@ -650,7 +667,7 @@ class ezQuery implements ezQueryInterface
         return $this->clearPrepare();
     }
 
-    public function select_into(string $newTable, $fromColumns, $oldTable = null, ...$conditions)
+    public function select_into(string $newTable, $fromColumns = '*', $oldTable = null, ...$fromWhereConditions)
     {
         $this->isInto = true;
         if (isset($oldTable))
@@ -658,7 +675,7 @@ class ezQuery implements ezQueryInterface
         else
             return $this->clearPrepare();
 
-        $newTableFromTable = $this->select_sql($newTable, $fromColumns, ...$conditions);
+        $newTableFromTable = $this->select_sql($newTable, $fromColumns, ...$fromWhereConditions);
         if (is_string($newTableFromTable))
             return (($this->isPrepareOn()) && !empty($this->prepareValues()))
                 ? $this->query($newTableFromTable, true)
@@ -667,15 +684,15 @@ class ezQuery implements ezQueryInterface
         return $this->clearPrepare();
     }
 
-    public function update(string $table = null, $keyAndValue, ...$whereConditions)
+    public function update(string $table = null, $keyValue, ...$whereConditions)
     {
-        if (!is_array($keyAndValue) || empty($table)) {
+        if (!\is_array($keyValue) || empty($table)) {
             return $this->clearPrepare();
         }
 
         $sql = "UPDATE $table SET ";
 
-        foreach ($keyAndValue as $key => $val) {
+        foreach ($keyValue as $key => $val) {
             if (\strtolower($val) == 'null') {
                 $sql .= "$key = NULL, ";
             } elseif (\in_array(\strtolower($val), array('current_timestamp()', 'date()', 'now()'))) {
@@ -723,9 +740,9 @@ class ezQuery implements ezQueryInterface
      * Helper does the actual insert or replace query with an array
      * @return mixed bool/results - false for error
      */
-    private function _query_insert_replace($table = '', $keyAndValue = null, $type = '', $execute = true)
+    private function _query_insert_replace($table = '', $keyValue = null, $type = '', $execute = true)
     {
-        if ((!\is_array($keyAndValue) && ($execute)) || empty($table)) {
+        if ((!\is_array($keyValue) && ($execute)) || empty($table)) {
             return $this->clearPrepare();
         }
 
@@ -738,7 +755,7 @@ class ezQuery implements ezQueryInterface
         $index = '';
 
         if ($execute) {
-            foreach ($keyAndValue as $key => $val) {
+            foreach ($keyValue as $key => $val) {
                 $index .= "$key, ";
                 if (\strtolower($val) == 'null')
                     $value .= "NULL, ";
@@ -761,13 +778,13 @@ class ezQuery implements ezQueryInterface
                 $ok = $this->query($sql);
 
             if ($ok)
-                return $this->insert_id;
+                return $this->insertId;
 
             return $this->clearPrepare();
         } else {
-            if (\is_array($keyAndValue)) {
-                if (\array_keys($keyAndValue) === \range(0, \count($keyAndValue) - 1)) {
-                    foreach ($keyAndValue as $key) {
+            if (\is_array($keyValue)) {
+                if (\array_keys($keyValue) === \range(0, \count($keyValue) - 1)) {
+                    foreach ($keyValue as $key) {
                         $index .= "$key, ";
                     }
                     $sql .= " (" . \rtrim($index, ', ') . ") ";
@@ -780,14 +797,14 @@ class ezQuery implements ezQueryInterface
         }
     }
 
-    public function replace(string $table = null, $keyAndValue)
+    public function replace(string $table = null, $keyValue)
     {
-        return $this->_query_insert_replace($table, $keyAndValue, 'REPLACE');
+        return $this->_query_insert_replace($table, $keyValue, 'REPLACE');
     }
 
-    public function insert(string $table = null, $keyAndValue)
+    public function insert(string $table = null, $keyValue)
     {
-        return $this->_query_insert_replace($table, $keyAndValue, 'INSERT');
+        return $this->_query_insert_replace($table, $keyValue, 'INSERT');
     }
 
     public function insert_select(string $toTable = null, $toColumns = '*', $fromTable = null, $fromColumns = '*', ...$conditions)
@@ -804,11 +821,8 @@ class ezQuery implements ezQueryInterface
     }
 
     // get_results call template
-    public function get_results(
-        string $query = null,
-        $output = \OBJECT,
-        bool $use_prepare = false
-    ) {
+    public function get_results(string $query = null, $output = \OBJECT, bool $use_prepare = false)
+    {
         return array();
     }
 
@@ -855,7 +869,7 @@ class ezQuery implements ezQueryInterface
     /**
      * Creates an database schema from array
      *  - column, datatype, value/options/key arguments.
-     *
+     * @param array ...$columnDataOptions
      * @return string|bool - SQL schema string, or false for error
      */
     private function create_schema(array ...$columnDataOptions)
@@ -868,7 +882,7 @@ class ezQuery implements ezQueryInterface
             $column = \array_shift($datatype);
             $type = \array_shift($datatype);
             if (!empty($column) && !empty($type))
-                $columnData .= \column($column, $type, ...$datatype);
+                $columnData .= column($column, $type, ...$datatype);
         }
 
         $schemaColumns = !empty($columnData) ? \rtrim($columnData, ', ') : null;
@@ -973,12 +987,6 @@ class ezQuery implements ezQueryInterface
         return false;
     }
 
-    /**
-     * Does an drop table query if table exists.
-     * @param $table - database table to erase
-     *
-     * @return bool
-     */
     public function drop(string $table = null)
     {
         if (empty($table))
@@ -987,5 +995,64 @@ class ezQuery implements ezQueryInterface
         $drop = 'DROP TABLE IF EXISTS ' . $table . ';';
 
         return $this->query($drop);
+    }
+
+    public function selecting($columns = '*', ...$conditions)
+    {
+        $table = $this->table_prefix();
+        return ($table === false) ? false : $this->select($table, $columns, ...$conditions);
+    }
+
+    public function inserting(array $keyValue)
+    {
+        $table = $this->table_prefix();
+        return ($table === false) ? false : $this->insert($table, $keyValue);
+    }
+
+    public function replacing(array $keyValue)
+    {
+        $table = $this->table_prefix();
+        return ($table === false) ? false : $this->replace($table, $keyValue);
+    }
+
+    public function updating(array $keyValue, ...$whereConditions)
+    {
+        $table = $this->table_prefix();
+        return ($table === false) ? false : $this->update($table, $keyValue, ...$whereConditions);
+    }
+
+    public function deleting(...$whereConditions)
+    {
+        $table = $this->table_prefix();
+        return ($table === false) ? false : $this->delete($table, ...$whereConditions);
+    }
+
+    public function creating(...$schemas)
+    {
+        $table = $this->table_prefix();
+        return ($table === false) ? false : $this->create($table, ...$schemas);
+    }
+
+    public function dropping()
+    {
+        $table = $this->table_prefix();
+        return ($table === false) ? false : $this->drop($table);
+    }
+
+    /**
+     * Check and return the stored **global** database `table` preset with any `prefix`.
+     *
+     * @return boolean|string `false` if no preset.
+     */
+    protected function table_prefix()
+    {
+        if (empty($this->table) || !\is_string($this->table))
+            return $this->clearPrepare();
+
+        $table = (!empty($this->prefix) || \is_string($this->prefix))
+            ? $this->prefix . $this->table
+            : $this->table;
+
+        return $table;
     }
 }

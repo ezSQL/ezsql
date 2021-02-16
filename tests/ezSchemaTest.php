@@ -4,6 +4,18 @@ namespace ezsql\Tests;
 
 use ezsql\ezSchema;
 use ezsql\Tests\EZTestCase;
+use function ezsql\functions\{
+    pdoInstance,
+    pgsqlInstance,
+    mysqlInstance,
+    mssqlInstance,
+    sqliteInstance,
+    clearInstance,
+    getVendor,
+    column,
+    primary,
+    index
+};
 
 class ezSchemaTest extends EZTestCase
 {

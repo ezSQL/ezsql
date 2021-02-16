@@ -4,11 +4,57 @@ namespace ezsql\Tests;
 
 use ezsql\Tests\EZTestCase;
 
+use function ezsql\functions\{
+    setInstance,
+    getInstance,
+    clearInstance,
+    getVendor,
+    column,
+    primary,
+    foreign,
+    unique,
+    index,
+    addColumn,
+    dropColumn,
+    eq,
+    neq,
+    ne,
+    lt,
+    lte,
+    gt,
+    gte,
+    isNull,
+    isNotNull,
+    like,
+    in,
+    notLike,
+    notIn,
+    between,
+    notBetween,
+    select_into,
+    insert_select,
+    create_select,
+    where,
+    groupBy,
+    having,
+    orderBy,
+    updating,
+    creating,
+    deleting,
+    dropping,
+    replacing,
+    selecting,
+    inserting,
+    table_setup,
+    set_table,
+    set_prefix
+};
+
 class ezFunctionsTest extends EZTestCase
 {
     protected function setUp(): void
     {
-        \clearInstance();
+        clearInstance();
     }
 
     public function testGetInstance()
@@ -148,12 +194,7 @@ class ezFunctionsTest extends EZTestCase
 
     public function testSetInstance()
     {
-        $this->assertFalse(\setInstance());
-    }
-
-    public function testSelect()
-    {
-        $this->assertFalse(select(''));
+        $this->assertFalse(setInstance());
     }
 
     public function testSelect_into()
@@ -193,14 +234,14 @@ class ezFunctionsTest extends EZTestCase
         $this->assertNotNull(orderBy('field', 'data'));
     }
 
-    public function testInsert()
+    public function testUpdating()
     {
-        $this->assertFalse(insert('field', ['data' => 'data2']));
+        $this->assertFalse(updating(['data', 'data2']));
     }
 
-    public function testUpdate()
+    public function testCreating()
     {
-        $this->assertFalse(update('field', 'data', 'data2'));
+        $this->assertFalse(creating(['data', 'data2']));
     }
 
     public function testDeleting()
@@ -208,8 +249,38 @@ class ezFunctionsTest extends EZTestCase
         $this->assertFalse(deleting('field', 'data', 'data2'));
     }
 
-    public function testReplace()
+    public function testInserting()
     {
-        $this->assertFalse(replace('field', ['data' => 'data2']));
+        $this->assertFalse(inserting([]));
+    }
+
+    public function testTable_Setup()
+    {
+        $this->assertFalse(table_setup());
+    }
+
+    public function testSelecting()
+    {
+        $this->assertFalse(selecting());
+    }
+
+    public function testReplacing()
+    {
+        $this->assertFalse(replacing(['data' => 'data2']));
+    }
+
+    public function testDropping()
+    {
+        $this->assertFalse(dropping());
+    }
+
+    public function testSet_Table()
+    {
+        $this->assertFalse(set_table());
+    }
+
+    public function testSet_Prefix()
+    {
+        $this->assertFalse(set_prefix());
     }
 }

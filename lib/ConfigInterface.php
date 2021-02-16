@@ -13,6 +13,7 @@ namespace ezsql;
  * @method void setCharset($args);
  * @method void setOptions($args);
  * @method void setIsFile($args);
+ * @method void setToMssql($args);
  * @method void setToMysql($args);
  * @method void setPath($args);
  *
@@ -27,6 +28,7 @@ namespace ezsql;
  * @method string getOptions();
  * @method bool getIsFile();
  * @method bool getToMysql();
+ * @method bool getToMssql();
  * @method string getPath();
  */
 interface ConfigInterface

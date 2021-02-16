@@ -3,6 +3,10 @@
 namespace ezsql;
 
 use ezsql\DatabaseInterface;
+use function ezsql\functions\{
+    getInstance,
+    to_string
+};
 
 class ezSchema
 {
@@ -161,19 +165,19 @@ class ezSchema
     public static function vendor()
     {
         $type = null;
-        $instance = \getInstance();
+        $instance = getInstance();
         if ($instance instanceof DatabaseInterface) {
             $type = $instance->settings()->getDriver();
-            if ($type == \Pdo) {
+            if ($type === \Pdo) {
                 $type = null;
                 $dbh = $instance->handle();
-                if (strpos($dbh->getAttribute(\PDO::ATTR_CLIENT_VERSION), 'mysql') !== false)
+                if (\strpos($dbh->getAttribute(\PDO::ATTR_CLIENT_VERSION), 'mysql') !== false)
                     $type = \MYSQL;
-                elseif (strpos($dbh->getAttribute(\PDO::ATTR_CLIENT_VERSION), 'pgsql') !== false)
+                elseif (\strpos($dbh->getAttribute(\PDO::ATTR_CLIENT_VERSION), 'pgsql') !== false)
                     $type = \POSTGRESQL;
-                elseif (strpos($dbh->getAttribute(\PDO::ATTR_CLIENT_VERSION), 'sqlite') !== false)
+                elseif (\strpos($dbh->getAttribute(\PDO::ATTR_CLIENT_VERSION), 'sqlite') !== false)
                     $type = \SQLITE3;
-                elseif (strpos($dbh->getAttribute(\PDO::ATTR_CLIENT_VERSION), 'sqlsrv') !== false)
+                elseif (\strpos($dbh->getAttribute(\PDO::ATTR_CLIENT_VERSION), 'sqlsrv') !== false)
                     $type = \SQLSERVER;
             }
         }
@@ -210,7 +214,7 @@ class ezSchema
             }
 
             $keyType = ($column != \INDEX) ? \array_shift($args) . ' ' : ' ';
-            $keys = $keyType . '(' . \to_string($args) . '), ';
+            $keys = $keyType . '(' . to_string($args) . '), ';
             $columnData .= $column . ' ' . $type . ' ' . $keys;
         } elseif (($column == \ADD) || ($column == \DROP) || ($column == \CHANGER)) {
             if ($column != \DROP) {
