@@ -987,12 +987,6 @@ class ezQuery implements ezQueryInterface
         return false;
     }
 
-    /**
-     * Does an `drop` table query if table exists.
-     * @param $table - database table to erase
-     *
-     * @return bool
-     */
     public function drop(string $table = null)
     {
         if (empty($table))
@@ -1037,6 +1031,12 @@ class ezQuery implements ezQueryInterface
     {
         $table = $this->table_prefix();
         return ($table === false) ? false : $this->create($table, ...$schemas);
+    }
+
+    public function dropping()
+    {
+        $table = $this->table_prefix();
+        return ($table === false) ? false : $this->drop($table);
     }
 
     /**

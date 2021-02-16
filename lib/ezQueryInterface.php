@@ -611,6 +611,18 @@ interface ezQueryInterface
     public function replace(string $table = null, $keyValue);
 
     /**
+     * Preforms a `replace` method call on a already preset `table name`, and optional `prefix`
+     *
+     * This method **expects** either `tableSetup(name, prefix)`, `setTable(name)`, or `setPrefix(append)`
+     * to have been called **before usage**, otherwise will return `false`, if no `table name` previous stored.
+     *
+     * Does an `replace` query with an array
+     * @param array $keyValue - table fields, assoc array with key = value (doesn't need escaping)
+     * @return mixed bool/id of replaced record, or false for error
+     */
+    function replacing(array $keyValue);
+
+    /**
      * Does an `insert` query with an array
      * @param $table, - database table to access
      * @param $keyValue - table fields, assoc array with key = value (doesn't need escaped)
@@ -700,4 +712,24 @@ interface ezQueryInterface
      * @return mixed results of query() call
      */
     public function creating(...$schemas);
+
+    /**
+     * Does an `drop` table query if table exists.
+     * @param string $table - database table to erase
+     *
+     * @return bool|int
+     */
+    public function drop(string $table = null);
+
+    /**
+     * Preforms a `drop` method call on a already preset `table name`, and optional `prefix`
+     *
+     * This method **expects** either `tableSetup(name, prefix)`, `setTable(name)`, or `setPrefix(append)`
+     * to have been called **before usage**, otherwise will return `false`, if no `table name` previous stored.
+     *
+     * Does an `drop` table query if table exists.
+     *
+     * @return bool|int
+     */
+    public function dropping();
 }

@@ -29,8 +29,9 @@ Mainly by:
     - Renamed `select` of `ez_mysqli` to `dbSelect`.
     - Renamed class method and behavior of `selecting` to `select`.
     - `selecting`, and new `inserting` methods, can be called without table name, only the other necessary parameters:
-        - The Table *name* with *prefix*, can be preset/stored with methods `tableSetup(name, prefix), or setTable(name), setPrefix(append)`, if called without presetting, `false` is returned.
-        - This **feature** will be added to **all** database access methods, each method name will have an `ing` ending added.
+        - The table *name* with *prefix*, can be preset/stored with methods `tableSetup(name, prefix), or setTable(name), setPrefix(append)`, if called without presetting, `false` is returned.
+        - This **feature** will be added to **all** database *CRUD* access methods , each method name will have an `ing` ending added.
+    - Removed global functions where `table` name passed in, use functions using preset table names ending with `ing`.
 
 [__version 4__](https://github.com/ezSQL/ezsql/tree/v4) has many modern programming practices in which will break users of version 3.
 

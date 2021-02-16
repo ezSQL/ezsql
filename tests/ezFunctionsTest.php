@@ -41,7 +41,8 @@ use function ezsql\functions\{
     updating,
     creating,
     deleting,
-    replace,
+    dropping,
+    replacing,
     selecting,
     inserting,
     table_setup,
@@ -263,6 +264,16 @@ class ezFunctionsTest extends EZTestCase
         $this->assertFalse(selecting());
     }
 
+    public function testReplacing()
+    {
+        $this->assertFalse(replacing(['data' => 'data2']));
+    }
+
+    public function testDropping()
+    {
+        $this->assertFalse(dropping());
+    }
+
     public function testSet_Table()
     {
         $this->assertFalse(set_table());
@@ -271,10 +282,5 @@ class ezFunctionsTest extends EZTestCase
     public function testSet_Prefix()
     {
         $this->assertFalse(set_prefix());
-    }
-
-    public function testReplace()
-    {
-        $this->assertFalse(replace('field', ['data' => 'data2']));
     }
 }

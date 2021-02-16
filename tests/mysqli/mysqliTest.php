@@ -268,6 +268,7 @@ class mysqliTest extends EZTestCase
 
     public function testCreatingReplacing()
     {
+        $this->object->quick_connect();
         $this->object->prepareOff();
         $this->assertFalse($this->object->replacing([]));
         $this->assertFalse($this->object->creating([]));
@@ -276,12 +277,14 @@ class mysqliTest extends EZTestCase
         $this->assertEquals(
             0,
             $this->object->creating(
-                column('id', INTR, 11, PRIMARY),
+                column('id', INTR, 11, AUTO, PRIMARY),
                 column('test_key', VARCHAR, 50)
             )
         );
 
-        inserting(array('id' => 3, 'test_key' => 'test 3'));
+        inserting(array('test_key' => 'test 1'));
+        inserting(array('test_key' => 'test 2'));
+        inserting(array('test_key' => 'test 3'));
         $this->assertEquals(3, $this->object->replacing(array('id' => 3, 'test_key' => 'test 4')));
     }
 

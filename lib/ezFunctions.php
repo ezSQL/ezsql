@@ -595,7 +595,7 @@ if (!\function_exists('ezFunctions')) {
     /**
      * Preforms a `update` method call on a already preset `table name`, and optional `prefix`
      *
-     * This function **expects** either `tableSetup(name, prefix)`, `setTable(name)`, or `setPrefix(append)`
+     * This function **expects** either `table_setup(name, prefix)`, `set_table(name)`, or `set_prefix(append)`
      * to have been called **before usage**, otherwise will return `false`, if no `table name` previous stored.
      *
      * Does an `update` query with an array, by conditional operator array
@@ -632,7 +632,7 @@ if (!\function_exists('ezFunctions')) {
     /**
      * Preforms a `create` method call on a already preset `table name`, and optional `prefix`
      *
-     * This function **expects** either `tableSetup(name, prefix)`, `setTable(name)`, or `setPrefix(append)`
+     * This function **expects** either `table_setup(name, prefix)`, `set_table(name)`, or `set_prefix(append)`
      * to have been called **before usage**, otherwise will return `false`, if no `table name` previous stored.
      *
      * Creates an database table with columns, by either:
@@ -664,7 +664,7 @@ if (!\function_exists('ezFunctions')) {
     /**
      * Preforms a `delete` method call on a already preset `table name`, and optional `prefix`
      *
-     * This function **expects** either `tableSetup(name, prefix)`, `setTable(name)`, or `setPrefix(append)`
+     * This function **expects** either `table_setup(name, prefix)`, `set_table(name)`, or `set_prefix(append)`
      * to have been called **before usage**, otherwise will return `false`, if no `table name` previous stored.
      *
      * Does an `delete` query with an array
@@ -695,6 +695,42 @@ if (!\function_exists('ezFunctions')) {
         $ezQuery = getInstance();
         return ($ezQuery instanceof DatabaseInterface)
             ? $ezQuery->deleting(...$whereConditions)
+            : false;
+    }
+
+    /**
+     * Preforms a `replace` method call on a already preset `table name`, and optional `prefix`
+     *
+     * This function **expects** either `table_setup(name, prefix)`, `set_table(name)`, or `set_prefix(append)`
+     * to have been called **before usage**, otherwise will return `false`, if no `table name` previous stored.
+     *
+     * Does an `replace` query with an array
+     * @param array $keyValue - table fields, assoc array with key = value (doesn't need escaping)
+     * @return mixed bool/id of replaced record, or false for error
+     */
+    function replacing(array $keyValue)
+    {
+        $ezQuery = getInstance();
+        return ($ezQuery instanceof DatabaseInterface)
+            ? $ezQuery->replacing($keyValue)
+            : false;
+    }
+
+    /**
+     * Preforms a `drop` method call on a already preset `table name`, and optional `prefix`
+     *
+     * This function **expects** either `table_setup(name, prefix)`, `set_table(name)`, or `set_prefix(append)`
+     * to have been called **before usage**, otherwise will return `false`, if no `table name` previous stored.
+     *
+     * Does an `drop` table query if table exists.
+     *
+     * @return bool|int
+     */
+    function dropping()
+    {
+        $ezQuery = getInstance();
+        return ($ezQuery instanceof DatabaseInterface)
+            ? $ezQuery->dropping()
             : false;
     }
 
@@ -744,7 +780,7 @@ if (!\function_exists('ezFunctions')) {
     }
 
     /**
-     * Does an select into statement by calling selecting method
+     * Does an `select into` statement by calling `select` method
      * @param $newTable, - new database table to be created
      * @param $fromColumns - the columns from old database table
      * @param $oldTable - old database table
@@ -1081,7 +1117,7 @@ if (!\function_exists('ezFunctions')) {
     }
 
     /**
-     * Returns an `UNION` SELECT SQL string, given the
+     * Returns an `UNION` SELECT `SQL` string, given the
      *   - table, column fields, conditions or conditional array.
      *
      * In the following format:
@@ -1112,7 +1148,7 @@ if (!\function_exists('ezFunctions')) {
     }
 
     /**
-     * Returns an `UNION ALL` SELECT SQL string, given the
+     * Returns an `UNION ALL` SELECT `SQL` string, given the
      *   - table, column fields, conditions or conditional array.
      *
      * In the following format:
@@ -1171,20 +1207,6 @@ if (!\function_exists('ezFunctions')) {
         $ezQuery = getInstance();
         return ($ezQuery instanceof DatabaseInterface)
             ? $ezQuery->limit($numberOf, $offset)
-            : false;
-    }
-
-    /**
-     * Does an `replace` query with an array
-     * @param $table, - database table to access
-     * @param $keyValue - table fields, assoc array with key = value (doesn't need escaping)
-     * @return mixed bool/id of replaced record, or false for error
-     */
-    function replace($table = '', $keyValue = null)
-    {
-        $ezQuery = getInstance();
-        return ($ezQuery instanceof DatabaseInterface)
-            ? $ezQuery->replace($table, $keyValue)
             : false;
     }
 
