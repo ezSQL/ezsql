@@ -7,78 +7,77 @@ use ezsql\ezsqlModelInterface;
 use function ezsql\functions\getVendor;
 
 /**
- * Core class containing common functions to manipulate query result
- * sets once returned
+ * Core class containing common functions to manipulate **query** `result sets` once returned.
  *
- * @method set/get{property} - a property that needs to be accessed
+ * The class properties can be accessed with either a `set` or `get` prefix as a function.
  *
- * @method void setDebugAll($args);
- * @method void setTrace($args);
- * @method void setDebugCalled($args);
- * @method void setVarDumpCalled($args);
- * @method void setShowErrors($args);
- * @method void setNumQueries($args);
- * @method void setConnQueries($args);
- * @method void setCapturedErrors($args);
- * @method void setCacheDir($args);
- * @method void setUseDiskCache($args);
- * @method void setCacheTimeout($args);
- * @method void setCacheQueries($args);
- * @method void setCacheInserts($args);
- * @method void setNumRows($args);
- * @method void setDbConnectTime($args);
- * @method void setSqlLogFile($args);
- * @method void setProfileTimes($args);
- * @method void setInsertId($args);
- * @method void setLastQuery($args);
- * @method void setLastError($args);
- * @method void setColInfo($args);
- * @method void setTimers($args);
- * @method void setTotalQueryTime($args);
- * @method void setTraceLog($args);
- * @method void setUseTraceLog($args);
- * @method void setDoProfile($args);
- * @method void setLastResult($args);
- * @method void setFromDiskCache($args);
- * @method void setDebugEchoIsOn($args);
- * @method void setFuncCall($args);
- * @method void setAllFuncCalls($args);
- * @method void setTable($name);
- * @method void setPrefix($append);
+ * @method void setDebugAll($args)
+ * @method void setTrace($args)
+ * @method void setDebugCalled($args)
+ * @method void setVarDumpCalled($args)
+ * @method void setShowErrors($args)
+ * @method void setNumQueries($args)
+ * @method void setConnQueries($args)
+ * @method void setCapturedErrors($args)
+ * @method void setCacheDir($args)
+ * @method void setUseDiskCache($args)
+ * @method void setCacheTimeout($args)
+ * @method void setCacheQueries($args)
+ * @method void setCacheInserts($args)
+ * @method void setNumRows($args)
+ * @method void setDbConnectTime($args)
+ * @method void setSqlLogFile($args)
+ * @method void setProfileTimes($args)
+ * @method void setInsertId($args)
+ * @method void setLastQuery($args)
+ * @method void setLastError($args)
+ * @method void setColInfo($args)
+ * @method void setTimers($args)
+ * @method void setTotalQueryTime($args)
+ * @method void setTraceLog($args)
+ * @method void setUseTraceLog($args)
+ * @method void setDoProfile($args)
+ * @method void setLastResult($args)
+ * @method void setFromDiskCache($args)
+ * @method void setDebugEchoIsOn($args)
+ * @method void setFuncCall($args)
+ * @method void setAllFuncCalls($args)
+ * @method void setTable($name)
+ * @method void setPrefix($append)
  *
- * @method string getDebugAll();
- * @method string getTrace();
- * @method string getDebugCalled();
- * @method string getVarDumpCalled();
- * @method string getShowErrors();
- * @method string getNumQueries();
- * @method string getConnQueries();
- * @method string getCapturedErrors();
- * @method string getCacheDir();
- * @method string getUseDiskCache();
- * @method string getCacheTimeout();
- * @method string getCacheQueries();
- * @method string getCacheInserts();
- * @method string getNumRows();
- * @method string getDbConnectTime();
- * @method string getSqlLogFile();
- * @method string getProfileTimes();
- * @method string getInsertId();
- * @method string getLastQuery();
- * @method string getLastError();
- * @method string getColInfo();
- * @method string getTimers();
- * @method string getTotalQueryTime();
- * @method string getTraceLog();
- * @method string getUseTraceLog();
- * @method string getDoProfile();
- * @method string getLastResult();
- * @method string getFromDiskCache();
- * @method string getDebugEchoIsOn();
- * @method string getFuncCall();
- * @method string getAllFuncCalls();
- * @method string getTable();
- * @method string getPrefix();
+ * @method string getDebugAll()
+ * @method string getTrace()
+ * @method string getDebugCalled()
+ * @method string getVarDumpCalled()
+ * @method string getShowErrors()
+ * @method string getNumQueries()
+ * @method string getConnQueries()
+ * @method string getCapturedErrors()
+ * @method string getCacheDir()
+ * @method string getUseDiskCache()
+ * @method string getCacheTimeout()
+ * @method string getCacheQueries()
+ * @method string getCacheInserts()
+ * @method string getNumRows()
+ * @method string getDbConnectTime()
+ * @method string getSqlLogFile()
+ * @method string getProfileTimes()
+ * @method string getInsertId()
+ * @method string getLastQuery()
+ * @method string getLastError()
+ * @method string getColInfo()
+ * @method string getTimers()
+ * @method string getTotalQueryTime()
+ * @method string getTraceLog()
+ * @method string getUseTraceLog()
+ * @method string getDoProfile()
+ * @method string getLastResult()
+ * @method string getFromDiskCache()
+ * @method string getDebugEchoIsOn()
+ * @method string getFuncCall()
+ * @method string getAllFuncCalls()
+ * @method string getTable()
+ * @method string getPrefix()
  */
 class ezsqlModel extends ezQuery implements ezsqlModelInterface
 {

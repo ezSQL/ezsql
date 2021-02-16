@@ -1,5 +1,7 @@
 <?php
 
+namespace ezsql;
+
 /**
  * Author:  Lawrence Stubbs <technoexpressnet@gmail.com>
  *
@@ -23,11 +25,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  * This software consists of voluntary contributions made by many individuals
- * and is licensed under the MIT license.
+ * and is licensed under the **MIT** license.
  */
-
-namespace ezsql;
-
 interface ezQueryInterface
 {
     /**
@@ -403,6 +402,23 @@ interface ezQueryInterface
      * This method **expects** either `tableSetup(name, prefix)`, `setTable(name)`, or `setPrefix(append)`
      * to have been called **before usage**, otherwise will return `false`, if no `table name` previous stored.
      *
+     * Returns an `SQL string` or `result` set, given the
+     *   - column fields, conditions or conditional array.
+     *
+     * In the following format:
+     * ```php
+     * selecting(
+     *   columns,
+     *   innerJoin() | leftJoin() | rightJoin() | fullJoin(), // alias of joining(inner|left|right|full, leftTable, rightTable, leftColumn, rightColumn, equal condition),
+     *   where( eq( columns, values, _AND ), like( columns, _d ) ),
+     *   groupBy( columns ),
+     *   having( between( columns, values1, values2 ) ),
+     *   orderBy( columns, desc ),
+     *   limit( numberOfRecords, offset ),
+     *   union(table, columnFields, conditions), // Returns an select SQL string with `UNION`
+     *   unionAll(table, columnFields, conditions) // Returns an select SQL string with `UNION ALL`
+     *);
+     * ```
      * @param mixed $columns fields, string or array
      * @param mixed ...$conditions - of the following parameters:
      *
@@ -421,11 +437,20 @@ interface ezQueryInterface
     public function selecting($columns = '*', ...$conditions);
 
     /**
+     * Does an `insert` query with an array
+     * @param $table, - database table to access
+     * @param $keyValue - table fields, assoc array with key = value (doesn't need escaped)
+     * @return mixed bool/id of inserted record, or false for error
+     */
+    public function insert(string $table = null, $keyValue);
+
+    /**
      * Preforms a `insert` method call on a already preset `table name`, and optional `prefix`
      *
      * This method **expects** either `tableSetup(name, prefix)`, `setTable(name)`, or `setPrefix(append)`
      * to have been called **before usage**, otherwise will return `false`, if no `table name` previous stored.
      *
+     * Does an `insert` query with an array
      * @param array $keyValue - table fields, assoc array with key = value (doesn't need escaped)
      * @return int|bool bool/id of inserted record, or false for error
      */
@@ -621,14 +646,6 @@ interface ezQueryInterface
      * @return mixed bool/id of replaced record, or false for error
      */
     function replacing(array $keyValue);
-
-    /**
-     * Does an `insert` query with an array
-     * @param $table, - database table to access
-     * @param $keyValue - table fields, assoc array with key = value (doesn't need escaped)
-     * @return mixed bool/id of inserted record, or false for error
-     */
-    public function insert(string $table = null, $keyValue);
 
     /**
      * Does an `insert into select` statement by calling insert method helper then `select` method
