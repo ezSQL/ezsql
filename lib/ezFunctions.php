@@ -753,7 +753,7 @@ if (!\function_exists('ezFunctions')) {
     /**
      * Set table `name` to use on calls to database **method/function** *names* ending with `ing`.
      *
-     * @param string $append
+     * @param string $name
      */
     function set_table(string $name = '')
     {

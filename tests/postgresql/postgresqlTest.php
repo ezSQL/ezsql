@@ -8,6 +8,10 @@ use ezsql\Tests\EZTestCase;
 
 use function ezsql\functions\{
     column,
+    creating,
+    deleting,
+    dropping,
+    updating,
     primary,
     eq,
     pgsqlInstance,
@@ -83,7 +87,7 @@ class postgresqlTest extends EZTestCase
         $this->assertEquals("This is''nt escaped.", $result);
     }
 
-    public function testSysdate()
+    public function testSysDate()
     {
         $this->assertEquals('NOW()', $this->object->sysDate());
     }
@@ -195,7 +199,7 @@ class postgresqlTest extends EZTestCase
         table_setup('unit_test');
         $this->assertEquals(
             0,
-            $this->object->creating(
+            creating(
                 column('id', AUTO, PRIMARY),
                 column('test_key', VARCHAR, 50),
                 column('test_value', VARCHAR, 50)
@@ -209,15 +213,15 @@ class postgresqlTest extends EZTestCase
         $this->assertEquals($result, 3);
 
         $unit_test['test_key'] = 'the key string';
-        $this->assertEquals(1, $this->object->updating($unit_test, eq('test_key', 'test 1')));
-        $this->assertEquals(1, $this->object->deleting(eq('test_key', 'test 3')));
+        $this->assertEquals(1, updating($unit_test, eq('test_key', 'test 1')));
+        $this->assertEquals(1, deleting(eq('test_key', 'test 3')));
 
         $result = selecting('test_value', eq('test_key', 'the key string'));
         foreach ($result as $row) {
             $this->assertEquals('testing string 1', $row->test_value);
         }
 
-        $this->object->drop('unit_test');
+        dropping();
     }
 
     public function testDelete()

@@ -126,7 +126,7 @@ class ezsqlModelTest extends EZTestCase
     public function testGet_col_info()
     {
         $this->assertEmpty($this->object->get_col_info());
-        $this->object->setCol_Info([]);
+        $this->object->setColInfo([]);
         $this->assertNull($this->object->get_col_info());
         $this->assertNull($this->object->get_col_info('name', 1));
     }
@@ -134,10 +134,10 @@ class ezsqlModelTest extends EZTestCase
     public function testStore_cache()
     {
         $sql = 'SELECT * FROM ez_test';
-        $this->object->setCache_Timeout(1);
-        $this->object->setUse_Disk_Cache(true);
-        $this->object->setCache_Queries(true);
-        $this->object->setNum_Rows(5);
+        $this->object->setCacheTimeout(1);
+        $this->object->setUseDiskCache(true);
+        $this->object->setCacheQueries(true);
+        $this->object->setNumRows(5);
         $this->object->store_cache($sql, false);
 
         $this->assertEquals(5, $this->object->get_cache($sql));
@@ -160,10 +160,10 @@ class ezsqlModelTest extends EZTestCase
      */
     public function testVarDump()
     {
-        $this->object->setDebug_Echo_Is_On(false);
+        $this->object->debugOff();
         $this->object->setLastResult(['test 1']);
         $this->assertNotEmpty($this->object->varDump($this->object->getLast_Result()));
-        $this->object->setDebug_Echo_Is_On(true);
+        $this->object->debugOn();
         $this->expectOutputRegex('/[Last Function Call]/');
         $this->object->varDump('');
     }

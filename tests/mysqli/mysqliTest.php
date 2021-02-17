@@ -14,8 +14,12 @@ use function ezsql\functions\{
     eq,
     like,
     between,
+    create_select,
     selecting,
     inserting,
+    set_table,
+    creating,
+    replacing,
     table_setup,
     where
 };
@@ -273,10 +277,10 @@ class mysqliTest extends EZTestCase
         $this->assertFalse($this->object->replacing([]));
         $this->assertFalse($this->object->creating([]));
 
-        table_setup('unit_test');
+        set_table('unit_test');
         $this->assertEquals(
             0,
-            $this->object->creating(
+            creating(
                 column('id', INTR, 11, AUTO, PRIMARY),
                 column('test_key', VARCHAR, 50)
             )
@@ -285,7 +289,7 @@ class mysqliTest extends EZTestCase
         inserting(array('test_key' => 'test 1'));
         inserting(array('test_key' => 'test 2'));
         inserting(array('test_key' => 'test 3'));
-        $this->assertEquals(3, $this->object->replacing(array('id' => 3, 'test_key' => 'test 4')));
+        $this->assertEquals(3, replacing(array('id' => 3, 'test_key' => 'test 4')));
     }
 
     public function testUpdate()
@@ -545,7 +549,7 @@ class mysqliTest extends EZTestCase
 
         $result = $this->object->select('users', 'id, tel_num, email', eq('user_name ', 'walker'));
 
-        $this->object->setDebugEchoIsOn(true);
+        $this->object->debugOn();
         $this->expectOutputRegex('/[123456]/');
         $this->expectOutputRegex('/[walker@email.com]/');
         $this->object->debug();
@@ -569,7 +573,7 @@ class mysqliTest extends EZTestCase
         $this->object->insert('unit_test', array('id' => '2', 'test_key' => 'testing 2'));
         $this->object->insert('unit_test', array('id' => '3', 'test_key' => 'testing 3'));
 
-        $this->assertEquals(0, $this->object->create_select('new_new_test', '*', 'unit_test'));
+        $this->assertEquals(0, create_select('new_new_test', '*', 'unit_test'));
 
         $result = $this->object->select('new_new_test');
 
