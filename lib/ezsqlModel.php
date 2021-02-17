@@ -4,7 +4,7 @@ namespace ezsql;
 
 use ezsql\ezQuery;
 use ezsql\ezsqlModelInterface;
-use function ezsql\functions\{getVendor, createCertificate};
+use function ezsql\functions\{getVendor, create_certificate};
 
 /**
  * Core class containing common functions to manipulate **query** `result sets` once returned.
@@ -561,9 +561,9 @@ class ezsqlModel extends ezQuery implements ezsqlModelInterface
 			$this->query($query, $use_prepare);
 		}
 
-		if ($output == OBJECT) {
+		if ($output === \OBJECT) {
 			return $this->lastResult;
-		} elseif ($output == \_JSON) {
+		} elseif ($output == \JSON) {
 			return \json_encode($this->lastResult); // return as json output
 		} elseif ($output == \ARRAY_A || $output == \ARRAY_N) {
 			$new_array = [];
@@ -855,7 +855,7 @@ class ezsqlModel extends ezQuery implements ezsqlModelInterface
 		if (!\file_exists($path . $cert) || !\file_exists($path . $key)) {
 			$vendor = getVendor();
 			if (($vendor != \SQLITE) || ($vendor != \MSSQL))
-				$path = createCertificate();
+				$path = create_certificate();
 		} elseif ($path == '.' . \_DS) {
 			$ssl_path = \getcwd();
 			$path = \preg_replace('/\\\/', \_DS, $ssl_path) . \_DS;

@@ -31,43 +31,6 @@ class Config extends ConfigAbstract implements ConfigInterface
         }
     }
 
-    /**
-     * Setup Connections for each SQL database class
-     * @param string $driver - The vendor's SQL database driver name
-     * @param string|array $arguments In the following:
-     *
-     * - user|args[0][1] // The database user name
-     * - password|args[1][2] // The database users password
-     * - database|args[1][2] // The name of the database
-     * - host|args[3] // The host name or IP address of the database server,
-     *      Default is localhost
-     * - port|args[4] // The  database TCP/IP port,
-     *      Default is: 5432 - PostgreSQL, 3306 - MySQL
-     *
-     *  for: mysqli
-     * - (username, password, database, host, port, charset)
-     * - charset|args[5] // The database charset,
-     *      Default is empty string
-     *
-     *  for: postgresql
-     * - (username, password, database, host, port)
-     *
-     *  for: sqlserver
-     * - (username, password, database, host, convertMysqlToMssqlQuery)
-     * - convertMysqlToMssqlQuery[4] // convert Queries in MySql syntax to MS-SQL syntax
-     *      Default is false
-     *
-     *  for: pdo
-     * - (dsn, username, password, options, isFile?)
-     * - dsn |args[0] // The PDO DSN connection parameter string
-     * - options|args[3] // Array for setting connection options as MySQL
-     * - isFile|args[4] // File based databases like SQLite don't need
-     *      user and password, they work with path in the dsn parameter
-     *      Default is false
-     *
-     *  for: sqlite3
-     * - (filePath, database) - filePath|args[0] // The path to open an SQLite database
-     */
     public static function initialize(string $driver = '',  array $arguments = null)
     {
         return new self($driver, $arguments);

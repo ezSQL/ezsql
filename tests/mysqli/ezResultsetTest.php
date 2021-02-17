@@ -7,7 +7,12 @@ use ezsql\Tests\EZTestCase;
 
 use function ezsql\functions\{
     mysqlInstance,
-    column
+    column,
+    selecting,
+    inserting,
+    set_table,
+    creating,
+    dropping
 };
 
 class ezResultsetTest extends EZTestCase
@@ -19,7 +24,7 @@ class ezResultsetTest extends EZTestCase
 
     /**
      * database connection
-     * @var object
+     * @var ezsql\Database\ez_mysqli
      */
     protected $database = null;
 
@@ -35,20 +40,18 @@ class ezResultsetTest extends EZTestCase
 
         $this->database = mysqlInstance([self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME]);
 
-        $this->database->drop('unit_test');
-        $this->database->create(
-            'unit_test',
+        set_table('unit_test');
+        dropping();
+        creating(
             column('id', INTR, 11, PRIMARY),
             column('test_key', VARCHAR, 50)
         );
-
-        $this->database->insert('unit_test', ['id' => 1, 'test_key' => 'test 1']);
-        $this->database->insert('unit_test', ['id' => 2, 'test_key' => 'test 2']);
-        $this->database->insert('unit_test', ['id' => 3, 'test_key' => 'test 3']);
-        $this->database->insert('unit_test', ['id' => 4, 'test_key' => 'test 4']);
-        $this->database->insert('unit_test', ['id' => 5, 'test_key' => 'test 5']);
-
-        $this->database->select('unit_test');
+        inserting(['id' => 1, 'test_key' => 'test 1']);
+        inserting(['id' => 2, 'test_key' => 'test 2']);
+        inserting(['id' => 3, 'test_key' => 'test 3']);
+        inserting(['id' => 4, 'test_key' => 'test 4']);
+        inserting(['id' => 5, 'test_key' => 'test 5']);
+        selecting();
 
         $this->object = new ezResultset($this->database->get_results());
     } // setUp
@@ -144,6 +147,17 @@ class ezResultsetTest extends EZTestCase
         $this->assertTrue(is_a($result, 'stdClass'));
 
         $this->assertEquals(1, $result->id);
+    }
+
+    public function testFetch_json()
+    {
+        $result = $this->object->fetch_json();
+        $json = \json_decode($result);
+
+        $this->assertTrue((json_last_error() === \JSON_ERROR_NONE));
+        $this->assertTrue(is_a($json, 'stdClass'));
+
+        $this->assertEquals(1, $json->id);
     }
 
     public function test__Construct()

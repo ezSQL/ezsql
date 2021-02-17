@@ -16,9 +16,38 @@ if (!\function_exists('ezFunctions')) {
      * Initialize and connect a vendor's database.
      *
      * @param string $sqlDriver - SQL driver
-     * @param array $connectionSetting - SQL connection parameters
+     * @param array $connectionSetting SQL connection parameters, in the following:
+     *```js
+     * [
+     *  user,  // The database user name.
+     *  password, // The database users password.
+     *  database, // The name of the database.
+     *  host,   // The host name or IP address of the database server. Default is localhost
+     *  port    // The  database TCP/IP port. Default is: 5432 - PostgreSQL, 3306 - MySQL
+     * ]
+     *```
+     *  for: **mysqli** - (`username`, `password`, `database`, `host`, `port`, `charset`)
+     * - `charset` // The database charset,
+     *      Default is empty string
+     *
+     *  for: **postgresql** - (`username`, `password`, `database`, `host`, `port`)
+     *
+     *  for: **sqlserver** - (`username`, `password`, `database`, `host`, `convertMysqlToMssqlQuery`)
+     * - `convertMysqlToMssqlQuery` // convert Queries in MySql syntax to MS-SQL syntax
+     *      Default is false
+     *
+     *  for: **pdo** - (`dsn`, `username`, `password`, `options`, `isFile`?)
+     * - `dsn`  // The PDO DSN connection parameter string
+     * - `options` // Array for setting connection options as MySQL
+     * - `isFile` // File based databases like SQLite don't need
+     *      user and password, they work with path in the dsn parameter
+     *      Default is false
+     *
+     *  for: **sqlite3** - (`filePath`, `database`)
+     * - `filePath` // The path to open an SQLite database
+     *
      * @param string $instanceTag - Store the instance for later use
-     * @return ezsql\Database\ez_pdo|ezsql\Database\ez_pgsql|ezsql\Database\ez_sqlsrv|ezsql\Database\ez_sqlite3|ezsql\Database\ez_mysqli
+     * @return \ezsql\Database\ez_pdo|\ezsql\Database\ez_pgsql|\ezsql\Database\ez_sqlsrv|\ezsql\Database\ez_sqlite3|\ezsql\Database\ez_mysqli
      */
     function database(string $sqlDriver = null, array $connectionSetting = null, string $instanceTag = null)
     {
@@ -29,7 +58,7 @@ if (!\function_exists('ezFunctions')) {
      * Returns an already initialized database instance that was created with an tag.
      *
      * @param string $getTag - An stored tag instance
-     * @return ezsql\Database\ez_pdo|ezsql\Database\ez_pgsql|ezsql\Database\ez_sqlsrv|ezsql\Database\ez_sqlite3|ezsql\Database\ez_mysqli
+     * @return \ezsql\Database\ez_pdo|\ezsql\Database\ez_pgsql|\ezsql\Database\ez_sqlsrv|\ezsql\Database\ez_sqlite3|\ezsql\Database\ez_mysqli
      */
     function tagInstance(string $getTag = null)
     {
@@ -39,10 +68,11 @@ if (!\function_exists('ezFunctions')) {
     /**
      * Initialize an mysqli database.
      *
-     * @param array $databaseSetting - SQL connection parameters
+     * @param array $databaseSetting SQL connection parameters
+     * - [ `username`, `password`, `database`, host, port, charset ]
      * @param string $instanceTag - Store the instance for later use
      *
-     * @return ezsql\Database\ez_mysqli
+     * @return \ezsql\Database\ez_mysqli
      */
     function mysqlInstance(array $databaseSetting = null, string $instanceTag = null)
     {
@@ -52,10 +82,11 @@ if (!\function_exists('ezFunctions')) {
     /**
      * Initialize an pgsql database.
      *
-     * @param array $databaseSetting - SQL connection parameters
+     * @param array $databaseSetting SQL connection parameters
+     * - [ `username`, `password`, `database`, host, port ]
      * @param string $instanceTag - Store the instance for later use
      *
-     * @return ezsql\Database\ez_pgsql
+     * @return \ezsql\Database\ez_pgsql
      */
     function pgsqlInstance(array $databaseSetting = null, string $instanceTag = null)
     {
@@ -68,7 +99,7 @@ if (!\function_exists('ezFunctions')) {
      * @param array $databaseSetting - SQL connection parameters
      * @param string $instanceTag - Store the instance for later use
      *
-     * @return ezsql\Database\ez_sqlsrv
+     * @return \ezsql\Database\ez_sqlsrv
      */
     function mssqlInstance(array $databaseSetting = null, string $instanceTag = null)
     {
@@ -81,7 +112,7 @@ if (!\function_exists('ezFunctions')) {
      * @param array $databaseSetting - SQL connection parameters
      * @param string $instanceTag - Store the instance for later use
      *
-     * @return ezsql\Database\ez_pdo
+     * @return \ezsql\Database\ez_pdo
      */
     function pdoInstance(array $databaseSetting = null, string $instanceTag = null)
     {
@@ -94,7 +125,7 @@ if (!\function_exists('ezFunctions')) {
      * @param array $databaseSetting - SQL connection parameters
      * @param string $instanceTag - Store the instance for later use
      *
-     * @return ezsql\Database\ez_sqlite3
+     * @return \ezsql\Database\ez_sqlite3
      */
     function sqliteInstance(array $databaseSetting = null, string $instanceTag = null)
     {
@@ -198,7 +229,7 @@ if (!\function_exists('ezFunctions')) {
      *
      * @return string certificate path
      */
-    function createCertificate(
+    function create_certificate(
         string $privatekeyFile = 'certificate.key',
         string $certificateFile = 'certificate.crt',
         string $signingFile = 'certificate.csr',

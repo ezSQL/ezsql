@@ -9,6 +9,8 @@ if (!\defined('CONSTANTS')) {
     \defined('OBJECT') or \define('OBJECT', 'OBJECT');
     \defined('ARRAY_A') or \define('ARRAY_A', 'ARRAY_A');
     \defined('ARRAY_N') or \define('ARRAY_N', 'ARRAY_N');
+    // Use to set get_result output as json
+    \define('JSON', 'json');
 
     // Error messages
     \define('MISSING_CONFIGURATION', '<b>Fatal Error:</b> Missing configuration details to connect to database');
@@ -17,8 +19,6 @@ if (!\defined('CONSTANTS')) {
 
     // ezQuery prepare placeholder/positional tag
     \define('_TAG', '__ez__');
-    // Use to set get_result output as json
-    \define('_JSON', 'json');
 
     /**
      * Operator boolean expressions.

@@ -327,7 +327,7 @@ interface ezsqlModelInterface
 	 * a way to get a handle on the results.
 	 *
 	 * @param string $query
-	 * @param OBJECT|ARRAY_A|ARRAY_N $output
+	 * @param OBJECT|ARRAY_A|ARRAY_N|JSON $output
 	 * @param bool $use_prepare - has prepare statements been activated
 	 * @return bool|mixed - results as objects (default)
 	 */

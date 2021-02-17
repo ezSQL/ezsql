@@ -32,7 +32,36 @@ class Database
      * Initialize and connect a vendor database.
      *
      * @param string $vendor SQL driver
-     * @param array $setting SQL connection parameters
+     * @param array $setting SQL connection parameters, in the following:
+     *```js
+     * [
+     *  user,  // The database user name.
+     *  password, // The database users password.
+     *  database, // The name of the database.
+     *  host,   // The host name or IP address of the database server. Default is localhost
+     *  port    // The  database TCP/IP port. Default is: 5432 - PostgreSQL, 3306 - MySQL
+     * ]
+     *```
+     *  for: **mysqli** - (`username`, `password`, `database`, `host`, `port`, `charset`)
+     * - `charset` // The database charset,
+     *      Default is empty string
+     *
+     *  for: **postgresql** - (`username`, `password`, `database`, `host`, `port`)
+     *
+     *  for: **sqlserver** - (`username`, `password`, `database`, `host`, `convertMysqlToMssqlQuery`)
+     * - `convertMysqlToMssqlQuery` // convert Queries in MySql syntax to MS-SQL syntax
+     *      Default is false
+     *
+     *  for: **pdo** - (`dsn`, `username`, `password`, `options`, `isFile`?)
+     * - `dsn`  // The PDO DSN connection parameter string
+     * - `options` // Array for setting connection options as MySQL
+     * - `isFile` // File based databases like SQLite don't need
+     *      user and password, they work with path in the dsn parameter
+     *      Default is false
+     *
+     *  for: **sqlite3** - (`filePath`, `database`)
+     * - `filePath` // The path to open an SQLite database
+     *
      * @param string $tag Store the instance for later use
      * @return Database\ez_pdo|Database\ez_pgsql|Database\ez_sqlsrv|Database\ez_sqlite3|Database\ez_mysqli
      */

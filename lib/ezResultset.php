@@ -49,7 +49,7 @@ class ezResultset implements \Iterator
 
     /**
      * Initializes the record object
-     * @param array $query_result The result of an ezSQL query
+     * @param array|object $query_result The result of an ezSQL query
      * @throws Exception When $query_result is not an array
      */
     public function __construct($query_result)
@@ -196,7 +196,7 @@ class ezResultset implements \Iterator
 
     /**
      * Returns the current record as an json object and moves the internal data pointer ahead.
-     * @return array
+     * @return string
      */
     public function fetch_json()
     {

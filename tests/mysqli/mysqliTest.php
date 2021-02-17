@@ -180,7 +180,7 @@ class mysqliTest extends EZTestCase
         $this->assertEquals($this->object->query('INSERT INTO unit_test(id, test_key) VALUES(3, \'test 3\')'), 1);
 
         $this->object->query('SELECT * FROM unit_test');
-        $result = $this->object->get_results('SELECT * FROM unit_test', _JSON);
+        $result = $this->object->get_results('SELECT * FROM unit_test', JSON);
 
         $this->assertEquals('[{"id":"1","test_key":"test 1"},{"id":"2","test_key":"test 2"},{"id":"3","test_key":"test 3"}]', $result);
     }
