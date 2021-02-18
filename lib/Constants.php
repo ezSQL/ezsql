@@ -5,7 +5,7 @@ if (!\defined('CONSTANTS')) {
     /**
      * ezsqlModel Constants
      */
-    \defined('EZSQL_VERSION') or \define('EZSQL_VERSION', '5.0.0');
+    \defined('EZSQL_VERSION') or \define('EZSQL_VERSION', '5.1.0');
     \defined('OBJECT') or \define('OBJECT', 'OBJECT');
     \defined('ARRAY_A') or \define('ARRAY_A', 'ARRAY_A');
     \defined('ARRAY_N') or \define('ARRAY_N', 'ARRAY_N');
@@ -174,7 +174,7 @@ if (!\defined('CONSTANTS')) {
     \define('DROP', 'DROP COLUMN');
     \define('CHANGE', 'CHANGE COLUMN');
     \define('ALTER', 'ALTER COLUMN');
-    \define('MODIFY', 'MODIFY');
+    \define('MODIFY', 'MODIFY COLUMN');
     \define('RENAME', 'RENAME TO');
     \define('CHANGER', '__modifyingColumns__');
 

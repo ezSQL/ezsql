@@ -68,7 +68,7 @@ class ezSchema
     const OPTIONS  = ['CONSTRAINT', 'PRIMARY KEY', 'FOREIGN KEY', 'UNIQUE', 'INDEX', 'REFERENCES'];
     const ALTERS  = ['ADD', 'DROP COLUMN', 'CHANGE COLUMN', 'RENAME TO', 'MODIFY', 'ALTER COLUMN'];
     const CHANGES  = [
-        'mysqli' => 'MODIFY',
+        'mysqli' => 'MODIFY COLUMN',
         'pgsql' => 'ALTER COLUMN',
         'sqlsrv' => 'ALTER COLUMN',
         'sqlite3' => ''

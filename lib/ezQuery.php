@@ -955,20 +955,37 @@ class ezQuery implements ezQueryInterface
         return false;
     }
 
-    // todo not finish, not tested
-    public function alter(string $table = null, ...$schemas)
+    /**
+     * Modify columns in an existing database table, by either:
+     *```js
+     *  - array( column_name, datatype, ...value/options arguments ) // calls create_schema()
+     *  - addColumn( column_name, datatype, ...value/options arguments ) // returns string
+     *  - dropColumn( column_name ) // returns string
+     *  - changingColumn( column_name, datatype, ...value/options arguments ) // returns string
+     *```
+     * @param string $table The name of the db table that you wish to alter
+     * @param array ...$alteringSchema An array of:
+     *
+     * - @param string `$name,` - column name
+     * - @param string `$type,` - data type for the column
+     * - @param mixed `$size,` | `$value,`
+     * - @param mixed `...$anyOtherArgs`
+     *
+     * @return mixed results of query() call
+     */
+    public function alter(string $table = null, ...$alteringSchema)
     {
-        if (empty($table) || empty($schemas))
+        if (empty($table) || empty($alteringSchema))
             return false;
 
         $sql = 'ALTER TABLE ' . $table . ' ';
 
         $skipSchema = false;
-        if (\is_string($schemas[0])) {
+        if (\is_string($alteringSchema[0])) {
             $data = '';
             $allowedTypes = ezSchema::ALTERS;
             $pattern = "/" . \implode('|', $allowedTypes) . "/i";
-            foreach ($schemas as $types) {
+            foreach ($alteringSchema as $types) {
                 if (\preg_match($pattern, $types)) {
                     $data .= $types;
                     $skipSchema = true;
@@ -978,7 +995,7 @@ class ezQuery implements ezQueryInterface
         }
 
         if (!$skipSchema)
-            $schema = $this->create_schema(...$schemas);
+            $schema = $this->create_schema(...$alteringSchema);
 
         $alterTable = !empty($schema) ? $sql . $schema . ';' : null;
         if (\is_string($alterTable))
