@@ -8,6 +8,7 @@ use ezsql\Tests\EZTestCase;
 use function ezsql\functions\{
     mysqlInstance,
     column,
+    get_results,
     selecting,
     inserting,
     set_table,
@@ -53,7 +54,7 @@ class ezResultsetTest extends EZTestCase
         inserting(['id' => 5, 'test_key' => 'test 5']);
         selecting();
 
-        $this->object = new ezResultset($this->database->get_results());
+        $this->object = new ezResultset(get_results());
     } // setUp
 
     /**

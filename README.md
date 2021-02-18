@@ -247,7 +247,9 @@ foreach ($result as $row) {
 $db->query_prepared('INSERT INTO profile( name, email, phone) VALUES( ?, ?, ? );', [$user, $address, $number]);
 
 $db->query_prepared('SELECT name, email FROM profile WHERE phone = ? OR id != ?', [$number, 5]);
-$result = $db->queryResult(); // the last query that has results are stored in `last_result` protected property
+$result = $db->queryResult(); // the last query that has results are stored in `lastResult` protected property
+// Or for results in other formats use the global function, will use global database instance if no `$db` supplied
+$result = get_results(/* OBJECT|ARRAY_A|ARRAY_N|JSON */, $db); // Defaults to `OBJECT`
 
 foreach ($result as $row) {
     echo $row->name.' '.$row->email;
@@ -271,11 +273,11 @@ use function ezsql\functions\{
     setInstance,
     getInstance,
     clearInstance,
-///
     getVendor,
+///
     to_string,
-    cleanInput,
-    createCertificate,
+    clean_string,
+    create_certificate,
 ///
     column,
     primary,
@@ -323,6 +325,7 @@ use function ezsql\functions\{
     replacing,
     selecting,
     inserting,
+    get_results,
     table_setup,
     set_table,
     set_prefix

@@ -153,24 +153,27 @@ if (!\function_exists('ezFunctions')) {
     }
 
     /**
-     * Creates an database column,
-     * - column, datatype, value/options with the given arguments.
+     * Creates an database column as:
+     * - `column`, data`type`, ...value/options `arguments`.
      *
-     * // datatype are global CONSTANTS and can be written out like:
+     * // datatype are global `CONSTANTS` and can be written out like:
      *      - VARCHAR, 32, notNULL, PRIMARY, SEQUENCE|AUTO, ....
      * // SEQUENCE|AUTO constants will replaced with the proper auto sequence for the SQL driver
      *
-     * @param string $column|CONSTRAINT, - column name/CONSTRAINT usage for PRIMARY|FOREIGN KEY
-     * @param string $type|$constraintName, - data type for column/primary|foreign constraint name
-     * @param mixed $size|...$primaryForeignKeys,
-     * @param mixed $value, - column should be NULL or NOT NULL. If omitted, assumes NULL
-     * @param mixed $default - Optional. It is the value to assign to the column
+     * @param string $column | `CONSTRAINT`, - column name/CONSTRAINT usage for PRIMARY|FOREIGN KEY
+     * @param string $type | constraintName, - data type for column/primary|foreign constraint name
+     * @param mixed ...$arguments any remainder assignments `ordered` like:
+     *  - @param mixed $size, or/and
+     *  - @param mixed $value, - or/and column should be `NULLS`|`notNULL`. If omitted, assumes `NULLS`
+     *  - @param mixed $default, - or/and Optional. It is the value to assign to the column
+     *  - @param mixed $autoNumber, or/and `AUTO` for vendor's auto numbering
+     *  - @param mixed $primaryForeignKeys | or/and `PRIMARY`|`FOREIGN`
      *
      * @return string|bool - SQL schema string, or false for error
      */
-    function column(string $column = null, string $type = null, ...$args)
+    function column(string $column = null, string $type = null, ...$arguments)
     {
-        return ezSchema::column($column, $type, ...$args);
+        return ezSchema::column($column, $type, ...$arguments);
     }
 
     function primary(string $primaryName, ...$primaryKeys)
@@ -537,6 +540,42 @@ if (!\function_exists('ezFunctions')) {
     }
 
     /**
+     * Get multiple row result set from the database (previously cached results).
+     * Returns a multi dimensional array.
+     *
+     * Each element of the array contains one row of results and can be
+     * specified to be either an `object`, `json`, `associative array` or `numerical
+     * array`.
+     * - If no results are found then the function returns `false`,
+     * enabling you to use the function within logic statements such as if.
+     *
+     * **OBJECT** - `Returning results as an object` is the quickest way to get and
+     * display results. It is also useful that you are able to put
+     * `$object->var` syntax directly inside print statements without
+     * having to worry about causing php parsing errors.
+     *
+     * **ARRAY_A** - `Returning results as an associative array` is useful if you would
+     * like dynamic access to column names.
+     *
+     * **ARRAY_N** - `Returning results as a numerical array` is useful if you are using
+     * completely dynamic queries with varying column names but still need
+     * a way to get a handle on the results.
+     *
+     * **JSON** - `Returning results as JSON encoded` is useful for any interactive dynamic queries.
+     *
+     * @param constant $output Either: `OBJECT`|`ARRAY_A`|`ARRAY_N`|`JSON`
+     * @param object|null $instance `ez_pdo`|`ez_pgsql`|`ez_sqlsrv`|`ez_sqlite3`|`ez_mysqli`
+     * @return bool|object|array - results as objects (default)
+     */
+    function get_results($output = \OBJECT, $instance = null)
+    {
+        $ezQuery = empty($instance) || !is_object($instance) ? getInstance() : $instance;
+        return ($ezQuery instanceof ezsqlModelInterface)
+            ? $ezQuery->get_results(null, $output, false)
+            : false;
+    }
+
+    /**
      * Clear/unset the global database class instance.
      */
     function clearInstance()
@@ -548,12 +587,12 @@ if (!\function_exists('ezFunctions')) {
     }
 
     /**
-     * Clean input of XSS, html, javascript, etc...
+     * Clean input string of XSS, html, javascript, etc...
      * @param string $string
      *
      * @return string cleaned string
      */
-    function cleanInput($string)
+    function clean_string(string $string)
     {
         return ezQuery::clean($string);
     }

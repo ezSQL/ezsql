@@ -314,22 +314,24 @@ interface ezsqlModelInterface
 	 * - if setup/active, `prepareActive()` has been called, use
 	 * prepare statements in SQL transactions.
 	 *
-	 * `Returning results as an object` is the quickest way to get and
+	 * **OBJECT** - `Returning results as an object` is the quickest way to get and
 	 * display results. It is also useful that you are able to put
 	 * `$object->var` syntax directly inside print statements without
 	 * having to worry about causing php parsing errors.
 	 *
-	 * `Returning results as an associative array` is useful if you would
+	 * **ARRAY_A** - `Returning results as an associative array` is useful if you would
 	 * like dynamic access to column names.
 	 *
-	 * `Returning results as a numerical array` is useful if you are using
+	 * **ARRAY_N** - `Returning results as a numerical array` is useful if you are using
 	 * completely dynamic queries with varying column names but still need
 	 * a way to get a handle on the results.
 	 *
+	 * **JSON** - `Returning results as JSON encoded` is useful for any interactive dynamic queries.
+
 	 * @param string $query
-	 * @param OBJECT|ARRAY_A|ARRAY_N|JSON $output
+	 * @param constant $output Either: `OBJECT`|`ARRAY_A`|`ARRAY_N`|`JSON`
 	 * @param bool $use_prepare - has prepare statements been activated
-	 * @return bool|mixed - results as objects (default)
+	 * @return bool|object|array - results as objects (default)
 	 */
 	public function get_results(string $query = null, $output = \OBJECT, bool $use_prepare = false);
 
@@ -339,7 +341,7 @@ interface ezsqlModelInterface
 	 * Returns meta information about one or all columns such as column name or type.
 	 * - If no information type is supplied then the default information type of name is used.
 	 * - If no column offset is supplied then a one dimensional array is returned with the
-	 * information type for â€˜all columnsâ€™.
+	 * information type for all columns.
 	 * - For access to the full meta information for all columns you can use the cached
 	 * variable `$db->colInfo`, access by calling `$db->getCol_Info()`
 	 *

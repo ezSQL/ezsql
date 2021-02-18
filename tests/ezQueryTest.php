@@ -10,7 +10,7 @@ use function ezsql\functions\{
     neq,
     like,
     in,
-    cleanInput
+    clean_string
 };
 
 class ezQueryTest extends EZTestCase
@@ -27,9 +27,9 @@ class ezQueryTest extends EZTestCase
         $this->object = null;
     }
 
-    public function testCleanInput()
+    public function testClean_string()
     {
-        $this->assertEquals("' help", cleanInput("<?php echo 'foo' >' help</php?>"));
+        $this->assertEquals("' help", clean_string("<?php echo 'foo' >' help</php?>"));
     }
 
     public function testHaving()
