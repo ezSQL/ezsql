@@ -306,14 +306,16 @@ class ezsqlModel extends ezQuery implements ezsqlModelInterface
 	protected $lastQuery = null;
 
 	/**
-	 * The table `name` to use on calls to `selecting` method.
+	 * The table `name` to use on calls to `ing` ending m
+	 * `CRUD` methods/functions.
 	 *
 	 * @var string
 	 */
 	protected $table = '';
 
 	/**
-	 * A `prefix` to append to `table` name on calls to `selecting` method.
+	 * A `prefix` to append to `table` name on calls to `ing` ending
+	 * `CRUD` methods/functions.
 	 *
 	 * @var string
 	 */

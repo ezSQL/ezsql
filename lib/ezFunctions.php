@@ -805,7 +805,37 @@ if (!\function_exists('ezFunctions')) {
     }
 
     /**
-     * Set table `name` and `prefix` for global usage on calls to database
+     * Preforms a `alter` method call on a already preset `table name`, and optional `prefix`
+     *
+     * This method **expects** either `table_setup(name, prefix)`, `set_table(name)`, or `set_prefix(append)`
+     * to have been called **before usage**, otherwise will return `false`, if no `table name` previous stored.
+     *
+     * Modify columns in an existing database table, by either:
+     *```js
+     *  - array( column_name, datatype, ...value/options arguments ) // calls create_schema()
+     *  - addColumn( column_name, datatype, ...value/options arguments ) // returns string
+     *  - dropColumn( column_name ) // returns string
+     *  - changingColumn( column_name, datatype, ...value/options arguments ) // returns string
+     *```
+     * @param array ...$alteringSchema An array of:
+     *
+     * - @param string `$name,` - column name
+     * - @param string `$type,` - data type for the column
+     * - @param mixed `$size,` | `$value,`
+     * - @param mixed `...$anyOtherArgs`
+     *
+     * @return mixed results of query() call
+     */
+    function altering(...$alteringSchema)
+    {
+        $ezQuery = getInstance();
+        return ($ezQuery instanceof DatabaseInterface)
+            ? $ezQuery->altering(...$alteringSchema)
+            : false;
+    }
+
+    /**
+     * Set table `name` and `prefix` for usage on calls to database `CRUD`
      * **method/function** *names* ending with `ing`.
      *
      * @param string $name
@@ -821,7 +851,7 @@ if (!\function_exists('ezFunctions')) {
     }
 
     /**
-     * Set table `name` to use on calls to database **method/function** *names* ending with `ing`.
+     * Set table `name` to use on calls to database `CRUD` **method/function** *names* ending with `ing`.
      *
      * @param string $name
      */
@@ -835,7 +865,7 @@ if (!\function_exists('ezFunctions')) {
     }
 
     /**
-     * Add a `prefix` to **append** to `table` name on calls to database
+     * Add a `prefix` to **append** to `table` name on calls to database `CRUD`
      * **method/function** *names* ending with `ing`.
      *
      * @param string $append

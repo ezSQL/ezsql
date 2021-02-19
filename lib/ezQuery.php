@@ -4,7 +4,7 @@ namespace ezsql;
 
 use ezsql\ezSchema;
 use ezsql\ezQueryInterface;
-use function ezsql\functions\column;
+use function ezsql\functions\{column, getVendor};
 
 class ezQuery implements ezQueryInterface
 {
@@ -19,14 +19,16 @@ class ezQuery implements ezQueryInterface
     protected $insertId = null;
 
     /**
-     * The table `name` to use on calls to `selecting` method.
+     * The table `name` to use on calls to `ing` ending
+     * `CRUD` methods/functions.
      *
      * @var string
      */
     protected $table = '';
 
     /**
-     * A `prefix` to append to `table` on calls to `selecting` method.
+     * A `prefix` to append to `table` on calls to `ing` ending
+     * `CRUD` methods/functions.
      *
      * @var string
      */
@@ -894,7 +896,7 @@ class ezQuery implements ezQueryInterface
 
     public function create(string $table = null, ...$schemas)
     {
-        $vendor = ezSchema::vendor();
+        $vendor = getVendor();
         if (empty($table) || empty($schemas) || empty($vendor))
             return false;
 
@@ -955,24 +957,6 @@ class ezQuery implements ezQueryInterface
         return false;
     }
 
-    /**
-     * Modify columns in an existing database table, by either:
-     *```js
-     *  - array( column_name, datatype, ...value/options arguments ) // calls create_schema()
-     *  - addColumn( column_name, datatype, ...value/options arguments ) // returns string
-     *  - dropColumn( column_name ) // returns string
-     *  - changingColumn( column_name, datatype, ...value/options arguments ) // returns string
-     *```
-     * @param string $table The name of the db table that you wish to alter
-     * @param array ...$alteringSchema An array of:
-     *
-     * - @param string `$name,` - column name
-     * - @param string `$type,` - data type for the column
-     * - @param mixed `$size,` | `$value,`
-     * - @param mixed `...$anyOtherArgs`
-     *
-     * @return mixed results of query() call
-     */
     public function alter(string $table = null, ...$alteringSchema)
     {
         if (empty($table) || empty($alteringSchema))
@@ -1056,8 +1040,14 @@ class ezQuery implements ezQueryInterface
         return ($table === false) ? false : $this->drop($table);
     }
 
+    public function altering(...$alteringSchema)
+    {
+        $table = $this->table_prefix();
+        return ($table === false) ? false : $this->alter($table, ...$alteringSchema);
+    }
+
     /**
-     * Check and return the stored **global** database `table` preset with any `prefix`.
+     * Check and return the stored database `table` preset with any `prefix`.
      *
      * @return boolean|string `false` if no preset.
      */
@@ -1066,7 +1056,7 @@ class ezQuery implements ezQueryInterface
         if (empty($this->table) || !\is_string($this->table))
             return $this->clearPrepare();
 
-        $table = (!empty($this->prefix) || \is_string($this->prefix))
+        $table = (!empty($this->prefix) && \is_string($this->prefix))
             ? $this->prefix . $this->table
             : $this->table;
 
