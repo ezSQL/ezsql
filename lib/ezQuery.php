@@ -4,7 +4,7 @@ namespace ezsql;
 
 use ezsql\ezSchema;
 use ezsql\ezQueryInterface;
-use function ezsql\functions\{column, getVendor};
+use function ezsql\functions\{column, get_vendor};
 
 class ezQuery implements ezQueryInterface
 {
@@ -896,7 +896,7 @@ class ezQuery implements ezQueryInterface
 
     public function create(string $table = null, ...$schemas)
     {
-        $vendor = getVendor();
+        $vendor = get_vendor();
         if (empty($table) || empty($schemas) || empty($vendor))
             return false;
 

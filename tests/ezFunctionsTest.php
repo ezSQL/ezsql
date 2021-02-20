@@ -8,7 +8,7 @@ use function ezsql\functions\{
     setInstance,
     getInstance,
     clearInstance,
-    getVendor,
+    get_vendor,
     column,
     primary,
     foreign,
@@ -16,6 +16,7 @@ use function ezsql\functions\{
     index,
     addColumn,
     dropColumn,
+    changingColumn,
     eq,
     neq,
     ne,
@@ -45,6 +46,8 @@ use function ezsql\functions\{
     replacing,
     selecting,
     inserting,
+    altering,
+    get_results,
     table_setup,
     set_table,
     set_prefix
@@ -64,7 +67,7 @@ class ezFunctionsTest extends EZTestCase
 
     public function testGetVendor()
     {
-        $this->assertNull(getVendor());
+        $this->assertNull(get_vendor());
     }
 
     public function testColumn()
@@ -100,6 +103,10 @@ class ezFunctionsTest extends EZTestCase
     public function testDropColumn()
     {
         $this->assertFalse(dropColumn('column', 'column'));
+    }
+    public function testChangingColumn()
+    {
+        $this->assertFalse(changingColumn('column', 'column'));
     }
 
     public function testEq()
@@ -267,6 +274,16 @@ class ezFunctionsTest extends EZTestCase
     public function testReplacing()
     {
         $this->assertFalse(replacing(['data' => 'data2']));
+    }
+
+    public function testAltering()
+    {
+        $this->assertFalse(altering([]));
+    }
+
+    public function testGet_results()
+    {
+        $this->assertFalse(get_results());
     }
 
     public function testDropping()

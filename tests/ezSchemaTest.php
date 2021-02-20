@@ -11,7 +11,7 @@ use function ezsql\functions\{
     mssqlInstance,
     sqliteInstance,
     clearInstance,
-    getVendor,
+    get_vendor,
     column,
     primary,
     index
@@ -22,7 +22,7 @@ class ezSchemaTest extends EZTestCase
     public function testVendor()
     {
         clearInstance();
-        $this->assertEquals(null, getVendor());
+        $this->assertEquals(null, get_vendor());
         $this->assertEquals(false, ezSchema::datatype(BLOB, NULLS));
         $this->assertFalse(column('id', INTR, 32, AUTO, PRIMARY));
     }
@@ -36,7 +36,7 @@ class ezSchemaTest extends EZTestCase
         }
 
         mysqlInstance([self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME]);
-        $this->assertEquals(MYSQLI, getVendor());
+        $this->assertEquals(MYSQLI, get_vendor());
         $this->assertEquals('BLOB NULL', ezSchema::datatype(BLOB, NULLS));
         $this->assertEquals('VARCHAR(256) NOT NULL', ezSchema::datatype(VARCHAR, 256, notNULL));
         $this->assertEquals('id INT(32) AUTO_INCREMENT PRIMARY KEY, ', column('id', INTR, 32, AUTO, PRIMARY));
@@ -129,7 +129,7 @@ class ezSchemaTest extends EZTestCase
         }
 
         pgsqlInstance([self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME, self::TEST_DB_HOST, self::TEST_DB_PORT]);
-        $this->assertEquals(PGSQL, getVendor());
+        $this->assertEquals(PGSQL, get_vendor());
         $this->assertEquals('TIMESTAMP NOT NULL', ezSchema::datatype(TIMESTAMP, notNULL));
         $this->assertEquals('price NUMERIC(6,2) NULL, ', column('price', NUMERIC, 6, 2, NULLS));
         $this->assertEquals('id SERIAL PRIMARY KEY, ', column('id', AUTO, PRIMARY));
@@ -144,7 +144,7 @@ class ezSchemaTest extends EZTestCase
         }
 
         sqliteInstance([self::TEST_SQLITE_DB_DIR, self::TEST_SQLITE_DB]);
-        $this->assertEquals(SQLITE3, getVendor());
+        $this->assertEquals(SQLITE3, get_vendor());
     }
 
     public function testVendor_Sqlsrv()
@@ -156,7 +156,7 @@ class ezSchemaTest extends EZTestCase
         }
 
         mssqlInstance([self::TEST_DB_USER, self::TEST_DB_PASSWORD, self::TEST_DB_NAME]);
-        $this->assertEquals(MSSQL, getVendor());
+        $this->assertEquals(MSSQL, get_vendor());
     }
 
     public function testVendor_Pdo()
@@ -169,7 +169,7 @@ class ezSchemaTest extends EZTestCase
 
         $pdo_mysql = pdoInstance(['mysql:host=' . self::TEST_DB_HOST . ';dbname=' . self::TEST_DB_NAME . ';port=3306', self::TEST_DB_USER, self::TEST_DB_PASSWORD]);
         $pdo_mysql->connect();
-        $this->assertEquals(MYSQLI, getVendor());
+        $this->assertEquals(MYSQLI, get_vendor());
     }
 
     public function test__construct()

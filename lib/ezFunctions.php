@@ -133,13 +133,14 @@ if (!\function_exists('ezFunctions')) {
     }
 
     /**
-     * Returns the current global database vendor being used.
+     * Returns database vendor string, either the global instance, or provided class instance.
+     * @param \ezsql\DatabaseInterface|null $instance
      *
      * @return string|null `mysqli`|`pgsql`|`sqlite3`|`sqlsrv`
      */
-    function getVendor()
+    function get_vendor(DatabaseInterface $instance = null)
     {
-        return ezSchema::vendor();
+        return ezSchema::vendor($instance);
     }
 
     /**
@@ -207,6 +208,11 @@ if (!\function_exists('ezFunctions')) {
     function dropColumn(string $columnName, ...$data)
     {
         return column(\DROP, $columnName, ...$data);
+    }
+
+    function changingColumn(string $columnName, ...$datatype)
+    {
+        return column(\CHANGER, $columnName, ...$datatype);
     }
 
     /**

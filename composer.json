@@ -1,7 +1,9 @@
 {
     "name": "ezsql/ezsql",
-    "description": "Advance database access library. Make interacting with a database ridiculously easy.",
+    "description": "Advance database access library. Make interacting with a database ridiculously easy. An universal interchangeable CRUD system.",
     "keywords": [
+        "crud",
+        "dba",
         "mysql",
         "mysqli",
         "postgresql",
@@ -13,8 +15,7 @@
         "sqlite3",
         "database",
         "abstraction",
-        "sql",
-        "dba"
+        "sql"
     ],
     "license": [
         "LGPL-3.0-or-later",
