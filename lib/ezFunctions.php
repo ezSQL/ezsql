@@ -16,9 +16,38 @@ if (!\function_exists('ezFunctions')) {
      * Initialize and connect a vendor's database.
      *
      * @param string $sqlDriver - SQL driver
-     * @param array $connectionSetting - SQL connection parameters
+     * @param array $connectionSetting SQL connection parameters, in the following:
+     *```js
+     * [
+     *  user,  // The database user name.
+     *  password, // The database users password.
+     *  database, // The name of the database.
+     *  host,   // The host name or IP address of the database server. Default is localhost
+     *  port    // The  database TCP/IP port. Default is: 5432 - PostgreSQL, 3306 - MySQL
+     * ]
+     *```
+     *  for: **mysqli** - (`username`, `password`, `database`, `host`, `port`, `charset`)
+     * - `charset` // The database charset,
+     *      Default is empty string
+     *
+     *  for: **postgresql** - (`username`, `password`, `database`, `host`, `port`)
+     *
+     *  for: **sqlserver** - (`username`, `password`, `database`, `host`, `convertMysqlToMssqlQuery`)
+     * - `convertMysqlToMssqlQuery` // convert Queries in MySql syntax to MS-SQL syntax
+     *      Default is false
+     *
+     *  for: **pdo** - (`dsn`, `username`, `password`, `options`, `isFile`?)
+     * - `dsn`  // The PDO DSN connection parameter string
+     * - `options` // Array for setting connection options as MySQL
+     * - `isFile` // File based databases like SQLite don't need
+     *      user and password, they work with path in the dsn parameter
+     *      Default is false
+     *
+     *  for: **sqlite3** - (`filePath`, `database`)
+     * - `filePath` // The path to open an SQLite database
+     *
      * @param string $instanceTag - Store the instance for later use
-     * @return ezsql\Database\ez_pdo|ezsql\Database\ez_pgsql|ezsql\Database\ez_sqlsrv|ezsql\Database\ez_sqlite3|ezsql\Database\ez_mysqli
+     * @return \ezsql\Database\ez_pdo|\ezsql\Database\ez_pgsql|\ezsql\Database\ez_sqlsrv|\ezsql\Database\ez_sqlite3|\ezsql\Database\ez_mysqli
      */
     function database(string $sqlDriver = null, array $connectionSetting = null, string $instanceTag = null)
     {
@@ -29,7 +58,7 @@ if (!\function_exists('ezFunctions')) {
      * Returns an already initialized database instance that was created with an tag.
      *
      * @param string $getTag - An stored tag instance
-     * @return ezsql\Database\ez_pdo|ezsql\Database\ez_pgsql|ezsql\Database\ez_sqlsrv|ezsql\Database\ez_sqlite3|ezsql\Database\ez_mysqli
+     * @return \ezsql\Database\ez_pdo|\ezsql\Database\ez_pgsql|\ezsql\Database\ez_sqlsrv|\ezsql\Database\ez_sqlite3|\ezsql\Database\ez_mysqli
      */
     function tagInstance(string $getTag = null)
     {
@@ -39,10 +68,11 @@ if (!\function_exists('ezFunctions')) {
     /**
      * Initialize an mysqli database.
      *
-     * @param array $databaseSetting - SQL connection parameters
+     * @param array $databaseSetting SQL connection parameters
+     * - [ `username`, `password`, `database`, host, port, charset ]
      * @param string $instanceTag - Store the instance for later use
      *
-     * @return ezsql\Database\ez_mysqli
+     * @return \ezsql\Database\ez_mysqli
      */
     function mysqlInstance(array $databaseSetting = null, string $instanceTag = null)
     {
@@ -52,10 +82,11 @@ if (!\function_exists('ezFunctions')) {
     /**
      * Initialize an pgsql database.
      *
-     * @param array $databaseSetting - SQL connection parameters
+     * @param array $databaseSetting SQL connection parameters
+     * - [ `username`, `password`, `database`, host, port ]
      * @param string $instanceTag - Store the instance for later use
      *
-     * @return ezsql\Database\ez_pgsql
+     * @return \ezsql\Database\ez_pgsql
      */
     function pgsqlInstance(array $databaseSetting = null, string $instanceTag = null)
     {
@@ -68,7 +99,7 @@ if (!\function_exists('ezFunctions')) {
      * @param array $databaseSetting - SQL connection parameters
      * @param string $instanceTag - Store the instance for later use
      *
-     * @return ezsql\Database\ez_sqlsrv
+     * @return \ezsql\Database\ez_sqlsrv
      */
     function mssqlInstance(array $databaseSetting = null, string $instanceTag = null)
     {
@@ -81,7 +112,7 @@ if (!\function_exists('ezFunctions')) {
      * @param array $databaseSetting - SQL connection parameters
      * @param string $instanceTag - Store the instance for later use
      *
-     * @return ezsql\Database\ez_pdo
+     * @return \ezsql\Database\ez_pdo
      */
     function pdoInstance(array $databaseSetting = null, string $instanceTag = null)
     {
@@ -94,7 +125,7 @@ if (!\function_exists('ezFunctions')) {
      * @param array $databaseSetting - SQL connection parameters
      * @param string $instanceTag - Store the instance for later use
      *
-     * @return ezsql\Database\ez_sqlite3
+     * @return \ezsql\Database\ez_sqlite3
      */
     function sqliteInstance(array $databaseSetting = null, string $instanceTag = null)
     {
@@ -102,13 +133,14 @@ if (!\function_exists('ezFunctions')) {
     }
 
     /**
-     * Returns the current global database vendor being used.
+     * Returns database vendor string, either the global instance, or provided class instance.
+     * @param \ezsql\DatabaseInterface|null $instance
      *
      * @return string|null `mysqli`|`pgsql`|`sqlite3`|`sqlsrv`
      */
-    function getVendor()
+    function get_vendor(DatabaseInterface $instance = null)
     {
-        return ezSchema::vendor();
+        return ezSchema::vendor($instance);
     }
 
     /**
@@ -122,24 +154,27 @@ if (!\function_exists('ezFunctions')) {
     }
 
     /**
-     * Creates an database column,
-     * - column, datatype, value/options with the given arguments.
+     * Creates an database column as:
+     * - `column`, data`type`, ...value/options `arguments`.
      *
-     * // datatype are global CONSTANTS and can be written out like:
+     * // datatype are global `CONSTANTS` and can be written out like:
      *      - VARCHAR, 32, notNULL, PRIMARY, SEQUENCE|AUTO, ....
      * // SEQUENCE|AUTO constants will replaced with the proper auto sequence for the SQL driver
      *
-     * @param string $column|CONSTRAINT, - column name/CONSTRAINT usage for PRIMARY|FOREIGN KEY
-     * @param string $type|$constraintName, - data type for column/primary|foreign constraint name
-     * @param mixed $size|...$primaryForeignKeys,
-     * @param mixed $value, - column should be NULL or NOT NULL. If omitted, assumes NULL
-     * @param mixed $default - Optional. It is the value to assign to the column
+     * @param string $column | `CONSTRAINT`, - column name/CONSTRAINT usage for PRIMARY|FOREIGN KEY
+     * @param string $type | constraintName, - data type for column/primary|foreign constraint name
+     * @param mixed ...$arguments any remainder assignments `ordered` like:
+     *  - @param mixed $size, or/and
+     *  - @param mixed $value, - or/and column should be `NULLS`|`notNULL`. If omitted, assumes `NULLS`
+     *  - @param mixed $default, - or/and Optional. It is the value to assign to the column
+     *  - @param mixed $autoNumber, or/and `AUTO` for vendor's auto numbering
+     *  - @param mixed $primaryForeignKeys | or/and `PRIMARY`|`FOREIGN`
      *
      * @return string|bool - SQL schema string, or false for error
      */
-    function column(string $column = null, string $type = null, ...$args)
+    function column(string $column = null, string $type = null, ...$arguments)
     {
-        return ezSchema::column($column, $type, ...$args);
+        return ezSchema::column($column, $type, ...$arguments);
     }
 
     function primary(string $primaryName, ...$primaryKeys)
@@ -175,6 +210,11 @@ if (!\function_exists('ezFunctions')) {
         return column(\DROP, $columnName, ...$data);
     }
 
+    function changingColumn(string $columnName, ...$datatype)
+    {
+        return column(\CHANGER, $columnName, ...$datatype);
+    }
+
     /**
      * Creates self signed certificate
      *
@@ -198,7 +238,7 @@ if (!\function_exists('ezFunctions')) {
      *
      * @return string certificate path
      */
-    function createCertificate(
+    function create_certificate(
         string $privatekeyFile = 'certificate.key',
         string $certificateFile = 'certificate.crt',
         string $signingFile = 'certificate.csr',
@@ -506,6 +546,42 @@ if (!\function_exists('ezFunctions')) {
     }
 
     /**
+     * Get multiple row result set from the database (previously cached results).
+     * Returns a multi dimensional array.
+     *
+     * Each element of the array contains one row of results and can be
+     * specified to be either an `object`, `json`, `associative array` or `numerical
+     * array`.
+     * - If no results are found then the function returns `false`,
+     * enabling you to use the function within logic statements such as if.
+     *
+     * **OBJECT** - `Returning results as an object` is the quickest way to get and
+     * display results. It is also useful that you are able to put
+     * `$object->var` syntax directly inside print statements without
+     * having to worry about causing php parsing errors.
+     *
+     * **ARRAY_A** - `Returning results as an associative array` is useful if you would
+     * like dynamic access to column names.
+     *
+     * **ARRAY_N** - `Returning results as a numerical array` is useful if you are using
+     * completely dynamic queries with varying column names but still need
+     * a way to get a handle on the results.
+     *
+     * **JSON** - `Returning results as JSON encoded` is useful for any interactive dynamic queries.
+     *
+     * @param constant $output Either: `OBJECT`|`ARRAY_A`|`ARRAY_N`|`JSON`
+     * @param object|null $instance `ez_pdo`|`ez_pgsql`|`ez_sqlsrv`|`ez_sqlite3`|`ez_mysqli`
+     * @return bool|object|array - results as objects (default)
+     */
+    function get_results($output = \OBJECT, $instance = null)
+    {
+        $ezQuery = empty($instance) || !is_object($instance) ? getInstance() : $instance;
+        return ($ezQuery instanceof ezsqlModelInterface)
+            ? $ezQuery->get_results(null, $output, false)
+            : false;
+    }
+
+    /**
      * Clear/unset the global database class instance.
      */
     function clearInstance()
@@ -517,12 +593,12 @@ if (!\function_exists('ezFunctions')) {
     }
 
     /**
-     * Clean input of XSS, html, javascript, etc...
+     * Clean input string of XSS, html, javascript, etc...
      * @param string $string
      *
      * @return string cleaned string
      */
-    function cleanInput($string)
+    function clean_string(string $string)
     {
         return ezQuery::clean($string);
     }
@@ -735,7 +811,37 @@ if (!\function_exists('ezFunctions')) {
     }
 
     /**
-     * Set table `name` and `prefix` for global usage on calls to database
+     * Preforms a `alter` method call on a already preset `table name`, and optional `prefix`
+     *
+     * This method **expects** either `table_setup(name, prefix)`, `set_table(name)`, or `set_prefix(append)`
+     * to have been called **before usage**, otherwise will return `false`, if no `table name` previous stored.
+     *
+     * Modify columns in an existing database table, by either:
+     *```js
+     *  - array( column_name, datatype, ...value/options arguments ) // calls create_schema()
+     *  - addColumn( column_name, datatype, ...value/options arguments ) // returns string
+     *  - dropColumn( column_name ) // returns string
+     *  - changingColumn( column_name, datatype, ...value/options arguments ) // returns string
+     *```
+     * @param array ...$alteringSchema An array of:
+     *
+     * - @param string `$name,` - column name
+     * - @param string `$type,` - data type for the column
+     * - @param mixed `$size,` | `$value,`
+     * - @param mixed `...$anyOtherArgs`
+     *
+     * @return mixed results of query() call
+     */
+    function altering(...$alteringSchema)
+    {
+        $ezQuery = getInstance();
+        return ($ezQuery instanceof DatabaseInterface)
+            ? $ezQuery->altering(...$alteringSchema)
+            : false;
+    }
+
+    /**
+     * Set table `name` and `prefix` for usage on calls to database `CRUD`
      * **method/function** *names* ending with `ing`.
      *
      * @param string $name
@@ -751,9 +857,9 @@ if (!\function_exists('ezFunctions')) {
     }
 
     /**
-     * Set table `name` to use on calls to database **method/function** *names* ending with `ing`.
+     * Set table `name` to use on calls to database `CRUD` **method/function** *names* ending with `ing`.
      *
-     * @param string $append
+     * @param string $name
      */
     function set_table(string $name = '')
     {
@@ -765,7 +871,7 @@ if (!\function_exists('ezFunctions')) {
     }
 
     /**
-     * Add a `prefix` to **append** to `table` name on calls to database
+     * Add a `prefix` to **append** to `table` name on calls to database `CRUD`
      * **method/function** *names* ending with `ing`.
      *
      * @param string $append

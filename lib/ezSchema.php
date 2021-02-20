@@ -68,7 +68,7 @@ class ezSchema
     const OPTIONS  = ['CONSTRAINT', 'PRIMARY KEY', 'FOREIGN KEY', 'UNIQUE', 'INDEX', 'REFERENCES'];
     const ALTERS  = ['ADD', 'DROP COLUMN', 'CHANGE COLUMN', 'RENAME TO', 'MODIFY', 'ALTER COLUMN'];
     const CHANGES  = [
-        'mysqli' => 'MODIFY',
+        'mysqli' => 'MODIFY COLUMN',
         'pgsql' => 'ALTER COLUMN',
         'sqlsrv' => 'ALTER COLUMN',
         'sqlite3' => ''
@@ -158,14 +158,15 @@ class ezSchema
     }
 
     /**
-     * Returns the current global database vendor being used.
+     * Returns database vendor string, either the global instance, or provided database class.
+     * @param \ezsql\DatabaseInterface|null $db
      *
      * @return string|null `mysqli`|`pgsql`|`sqlite3`|`sqlsrv`
      */
-    public static function vendor()
+    public static function vendor(DatabaseInterface $db = null)
     {
         $type = null;
-        $instance = getInstance();
+        $instance = empty($db) || !is_object($db) ? getInstance() : $db;
         if ($instance instanceof DatabaseInterface) {
             $type = $instance->settings()->getDriver();
             if ($type === \Pdo) {

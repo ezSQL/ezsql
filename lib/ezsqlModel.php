@@ -4,80 +4,210 @@ namespace ezsql;
 
 use ezsql\ezQuery;
 use ezsql\ezsqlModelInterface;
-use function ezsql\functions\getVendor;
+use function ezsql\functions\{get_vendor, create_certificate};
 
 /**
  * Core class containing common functions to manipulate **query** `result sets` once returned.
  *
- * The class properties can be accessed with either a `set` or `get` prefix as a function.
+ * @method void setDebugAll($args);
+ * A `ezsqlModel` class property that can be accessed with either
+ * a `set` or `get` prefix as a function.
+ * @method void setTrace($args);
+ * A `ezsqlModel` class property that can be accessed with either
+ * a `set` or `get` prefix as a function.
+ * @method void setDebugCalled($args);
+ * A `ezsqlModel` class property that can be accessed with either
+ * a `set` or `get` prefix as a function.
+ * @method void setVarDumpCalled($args);
+ * A `ezsqlModel` class property that can be accessed with either
+ * a `set` or `get` prefix as a function.
+ * @method void setShowErrors($args);
+ * A `ezsqlModel` class property that can be accessed with either
+ * a `set` or `get` prefix as a function.
+ * @method void setNumQueries($args);
+ * A `ezsqlModel` class property that can be accessed with either
+ * a `set` or `get` prefix as a function.
+ * @method void setConnQueries($args);
+ * A `ezsqlModel` class property that can be accessed with either
+ * a `set` or `get` prefix as a function.
+ * @method void setCapturedErrors($args);
+ * A `ezsqlModel` class property that can be accessed with either
+ * a `set` or `get` prefix as a function.
+ * @method void setCacheDir($args);
+ * A `ezsqlModel` class property that can be accessed with either
+ * a `set` or `get` prefix as a function.
+ * @method void setUseDiskCache($args);
+ * A `ezsqlModel` class property that can be accessed with either
+ * a `set` or `get` prefix as a function.
+ * @method void setCacheTimeout($args);
+ * A `ezsqlModel` class property that can be accessed with either
+ * a `set` or `get` prefix as a function.
+ * @method void setCacheQueries($args);
+ * A `ezsqlModel` class property that can be accessed with either
+ * a `set` or `get` prefix as a function.
+ * @method void setCacheInserts($args);
+ * A `ezsqlModel` class property that can be accessed with either
+ * a `set` or `get` prefix as a function.
+ * @method void setNumRows($args);
+ * A `ezsqlModel` class property that can be accessed with either
+ * a `set` or `get` prefix as a function.
+ * @method void setDbConnectTime($args);
+ * A `ezsqlModel` class property that can be accessed with either
+ * a `set` or `get` prefix as a function.
+ * @method void setSqlLogFile($args);
+ * A `ezsqlModel` class property that can be accessed with either
+ * a `set` or `get` prefix as a function.
+ * @method void setProfileTimes($args);
+ * A `ezsqlModel` class property that can be accessed with either
+ * a `set` or `get` prefix as a function.
+ * @method void setInsertId($args);
+ * A `ezsqlModel` class property that can be accessed with either
+ * a `set` or `get` prefix as a function.
+ * @method void setLastQuery($args);
+ * A `ezsqlModel` class property that can be accessed with either
+ * a `set` or `get` prefix as a function.
+ * @method void setLastError($args);
+ * A `ezsqlModel` class property that can be accessed with either
+ * a `set` or `get` prefix as a function.
+ * @method void setColInfo($args);
+ * A `ezsqlModel` class property that can be accessed with either
+ * a `set` or `get` prefix as a function.
+ * @method void setTimers($args);
+ * A `ezsqlModel` class property that can be accessed with either
+ * a `set` or `get` prefix as a function.
+ * @method void setTotalQueryTime($args);
+ * A `ezsqlModel` class property that can be accessed with either
+ * a `set` or `get` prefix as a function.
+ * @method void setTraceLog($args);
+ * A `ezsqlModel` class property that can be accessed with either
+ * a `set` or `get` prefix as a function.
+ * @method void setUseTraceLog($args);
+ * A `ezsqlModel` class property that can be accessed with either
+ * a `set` or `get` prefix as a function.
+ * @method void setDoProfile($args);
+ * A `ezsqlModel` class property that can be accessed with either
+ * a `set` or `get` prefix as a function.
+ * @method void setLastResult($args);
+ * A `ezsqlModel` class property that can be accessed with either
+ * a `set` or `get` prefix as a function.
+ * @method void setFromDiskCache($args);
+ * A `ezsqlModel` class property that can be accessed with either
+ * a `set` or `get` prefix as a function.
+ * @method void setDebugEchoIsOn($args);
+ * A `ezsqlModel` class property that can be accessed with either
+ * a `set` or `get` prefix as a function.
+ * @method void setFuncCall($args);
+ * A `ezsqlModel` class property that can be accessed with either
+ * a `set` or `get` prefix as a function.
+ * @method void setAllFuncCalls($args);
+ * A `ezsqlModel` class property that can be accessed with either
+ * a `set` or `get` prefix as a function.
+ * @method void setTable($name);
+ * A `ezsqlModel` class property that can be accessed with either
+ * a `set` or `get` prefix as a function.
+ * @method void setPrefix($append);
+ * A `ezsqlModel` class property that can be accessed with either
+ * a `set` or `get` prefix as a function.
  *
- * @method void setDebugAll($args)
- * @method void setTrace($args)
- * @method void setDebugCalled($args)
- * @method void setVarDumpCalled($args)
- * @method void setShowErrors($args)
- * @method void setNumQueries($args)
- * @method void setConnQueries($args)
- * @method void setCapturedErrors($args)
- * @method void setCacheDir($args)
- * @method void setUseDiskCache($args)
- * @method void setCacheTimeout($args)
- * @method void setCacheQueries($args)
- * @method void setCacheInserts($args)
- * @method void setNumRows($args)
- * @method void setDbConnectTime($args)
- * @method void setSqlLogFile($args)
- * @method void setProfileTimes($args)
- * @method void setInsertId($args)
- * @method void setLastQuery($args)
- * @method void setLastError($args)
- * @method void setColInfo($args)
- * @method void setTimers($args)
- * @method void setTotalQueryTime($args)
- * @method void setTraceLog($args)
- * @method void setUseTraceLog($args)
- * @method void setDoProfile($args)
- * @method void setLastResult($args)
- * @method void setFromDiskCache($args)
- * @method void setDebugEchoIsOn($args)
- * @method void setFuncCall($args)
- * @method void setAllFuncCalls($args)
- * @method void setTable($name)
- * @method void setPrefix($append)
- *
- * @method string getDebugAll()
- * @method string getTrace()
- * @method string getDebugCalled()
- * @method string getVarDumpCalled()
- * @method string getShowErrors()
- * @method string getNumQueries()
- * @method string getConnQueries()
- * @method string getCapturedErrors()
- * @method string getCacheDir()
- * @method string getUseDiskCache()
- * @method string getCacheTimeout()
- * @method string getCacheQueries()
- * @method string getCacheInserts()
- * @method string getNumRows()
- * @method string getDbConnectTime()
- * @method string getSqlLogFile()
- * @method string getProfileTimes()
- * @method string getInsertId()
- * @method string getLastQuery()
- * @method string getLastError()
- * @method string getColInfo()
- * @method string getTimers()
- * @method string getTotalQueryTime()
- * @method string getTraceLog()
- * @method string getUseTraceLog()
- * @method string getDoProfile()
- * @method string getLastResult()
- * @method string getFromDiskCache()
- * @method string getDebugEchoIsOn()
- * @method string getFuncCall()
- * @method string getAllFuncCalls()
- * @method string getTable()
- * @method string getPrefix()
+ * @method string getDebugAll();
+ * A `ezsqlModel` class property that can be accessed with either
+ * a `set` or `get` prefix as a function.
+ * @method string getTrace();
+ * A `ezsqlModel` class property that can be accessed with either
+ * a `set` or `get` prefix as a function.
+ * @method string getDebugCalled();
+ * A `ezsqlModel` class property that can be accessed with either
+ * a `set` or `get` prefix as a function.
+ * @method string getVarDumpCalled();
+ * A `ezsqlModel` class property that can be accessed with either
+ * a `set` or `get` prefix as a function.
+ * @method string getShowErrors();
+ * A `ezsqlModel` class property that can be accessed with either
+ * a `set` or `get` prefix as a function.
+ * @method string getNumQueries();
+ * A `ezsqlModel` class property that can be accessed with either
+ * a `set` or `get` prefix as a function.
+ * @method string getConnQueries();
+ * A `ezsqlModel` class property that can be accessed with either
+ * a `set` or `get` prefix as a function.
+ * @method string getCapturedErrors();
+ * A `ezsqlModel` class property that can be accessed with either
+ * a `set` or `get` prefix as a function.
+ * @method string getCacheDir();
+ * A `ezsqlModel` class property that can be accessed with either
+ * a `set` or `get` prefix as a function.
+ * @method string getUseDiskCache();
+ * A `ezsqlModel` class property that can be accessed with either
+ * a `set` or `get` prefix as a function.
+ * @method string getCacheTimeout();
+ * A `ezsqlModel` class property that can be accessed with either
+ * a `set` or `get` prefix as a function.
+ * @method string getCacheQueries();
+ * A `ezsqlModel` class property that can be accessed with either
+ * a `set` or `get` prefix as a function.
+ * @method string getCacheInserts();
+ * A `ezsqlModel` class property that can be accessed with either
+ * a `set` or `get` prefix as a function.
+ * @method string getNumRows();
+ * A `ezsqlModel` class property that can be accessed with either
+ * a `set` or `get` prefix as a function.
+ * @method string getDbConnectTime();
+ * A `ezsqlModel` class property that can be accessed with either
+ * a `set` or `get` prefix as a function.
+ * @method string getSqlLogFile();
+ * A `ezsqlModel` class property that can be accessed with either
+ * a `set` or `get` prefix as a function.
+ * @method string getProfileTimes();
+ * A `ezsqlModel` class property that can be accessed with either
+ * a `set` or `get` prefix as a function.
+ * @method string getInsertId();
+ * A `ezsqlModel` class property that can be accessed with either
+ * a `set` or `get` prefix as a function.
+ * @method string getLastQuery();
+ * A `ezsqlModel` class property that can be accessed with either
+ * a `set` or `get` prefix as a function.
+ * @method string getLastError();
+ * A `ezsqlModel` class property that can be accessed with either
+ * a `set` or `get` prefix as a function.
+ * @method string getColInfo();
+ * A `ezsqlModel` class property that can be accessed with either
+ * a `set` or `get` prefix as a function.
+ * @method string getTimers();
+ * A `ezsqlModel` class property that can be accessed with either
+ * a `set` or `get` prefix as a function.
+ * @method string getTotalQueryTime();
+ * A `ezsqlModel` class property that can be accessed with either
+ * a `set` or `get` prefix as a function.
+ * @method string getTraceLog();
+ * A `ezsqlModel` class property that can be accessed with either
+ * a `set` or `get` prefix as a function.
+ * @method string getUseTraceLog();
+ * A `ezsqlModel` class property that can be accessed with either
+ * a `set` or `get` prefix as a function.
+ * @method string getDoProfile();
+ * A `ezsqlModel` class property that can be accessed with either
+ * a `set` or `get` prefix as a function.
+ * @method string getLastResult();
+ * A `ezsqlModel` class property that can be accessed with either
+ * a `set` or `get` prefix as a function.
+ * @method string getFromDiskCache();
+ * A `ezsqlModel` class property that can be accessed with either
+ * a `set` or `get` prefix as a function.
+ * @method string getDebugEchoIsOn();
+ * A `ezsqlModel` class property that can be accessed with either
+ * a `set` or `get` prefix as a function.
+ * @method string getFuncCall();
+ * A `ezsqlModel` class property that can be accessed with either
+ * a `set` or `get` prefix as a function.
+ * @method string getAllFuncCalls();
+ * A `ezsqlModel` class property that can be accessed with either
+ * a `set` or `get` prefix as a function.
+ * @method string getTable();
+ * A `ezsqlModel` class property that can be accessed with either
+ * a `set` or `get` prefix as a function.
+ * @method string getPrefix();
+ * A `ezsqlModel` class property that can be accessed with either
+ * a `set` or `get` prefix as a function.
  */
 class ezsqlModel extends ezQuery implements ezsqlModelInterface
 {
@@ -176,14 +306,16 @@ class ezsqlModel extends ezQuery implements ezsqlModelInterface
 	protected $lastQuery = null;
 
 	/**
-	 * The table `name` to use on calls to `selecting` method.
+	 * The table `name` to use on calls to `ing` ending m
+	 * `CRUD` methods/functions.
 	 *
 	 * @var string
 	 */
 	protected $table = '';
 
 	/**
-	 * A `prefix` to append to `table` name on calls to `selecting` method.
+	 * A `prefix` to append to `table` name on calls to `ing` ending
+	 * `CRUD` methods/functions.
 	 *
 	 * @var string
 	 */
@@ -431,9 +563,9 @@ class ezsqlModel extends ezQuery implements ezsqlModelInterface
 			$this->query($query, $use_prepare);
 		}
 
-		if ($output == OBJECT) {
+		if ($output === \OBJECT) {
 			return $this->lastResult;
-		} elseif ($output == \_JSON) {
+		} elseif ($output == \JSON) {
 			return \json_encode($this->lastResult); // return as json output
 		} elseif ($output == \ARRAY_A || $output == \ARRAY_N) {
 			$new_array = [];
@@ -723,9 +855,9 @@ class ezsqlModel extends ezQuery implements ezsqlModelInterface
 		string $path = '.' . \_DS
 	) {
 		if (!\file_exists($path . $cert) || !\file_exists($path . $key)) {
-			$vendor = getVendor();
+			$vendor = get_vendor();
 			if (($vendor != \SQLITE) || ($vendor != \MSSQL))
-				$path = ezQuery::createCertificate();
+				$path = create_certificate();
 		} elseif ($path == '.' . \_DS) {
 			$ssl_path = \getcwd();
 			$path = \preg_replace('/\\\/', \_DS, $ssl_path) . \_DS;

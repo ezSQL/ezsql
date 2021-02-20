@@ -4,7 +4,7 @@ namespace ezsql;
 
 use ezsql\ezSchema;
 use ezsql\ezQueryInterface;
-use function ezsql\functions\column;
+use function ezsql\functions\{column, get_vendor};
 
 class ezQuery implements ezQueryInterface
 {
@@ -19,14 +19,16 @@ class ezQuery implements ezQueryInterface
     protected $insertId = null;
 
     /**
-     * The table `name` to use on calls to `selecting` method.
+     * The table `name` to use on calls to `ing` ending
+     * `CRUD` methods/functions.
      *
      * @var string
      */
     protected $table = '';
 
     /**
-     * A `prefix` to append to `table` on calls to `selecting` method.
+     * A `prefix` to append to `table` on calls to `ing` ending
+     * `CRUD` methods/functions.
      *
      * @var string
      */
@@ -894,7 +896,7 @@ class ezQuery implements ezQueryInterface
 
     public function create(string $table = null, ...$schemas)
     {
-        $vendor = ezSchema::vendor();
+        $vendor = get_vendor();
         if (empty($table) || empty($schemas) || empty($vendor))
             return false;
 
@@ -955,20 +957,19 @@ class ezQuery implements ezQueryInterface
         return false;
     }
 
-    // todo not finish, not tested
-    public function alter(string $table = null, ...$schemas)
+    public function alter(string $table = null, ...$alteringSchema)
     {
-        if (empty($table) || empty($schemas))
+        if (empty($table) || empty($alteringSchema))
             return false;
 
         $sql = 'ALTER TABLE ' . $table . ' ';
 
         $skipSchema = false;
-        if (\is_string($schemas[0])) {
+        if (\is_string($alteringSchema[0])) {
             $data = '';
             $allowedTypes = ezSchema::ALTERS;
             $pattern = "/" . \implode('|', $allowedTypes) . "/i";
-            foreach ($schemas as $types) {
+            foreach ($alteringSchema as $types) {
                 if (\preg_match($pattern, $types)) {
                     $data .= $types;
                     $skipSchema = true;
@@ -978,7 +979,7 @@ class ezQuery implements ezQueryInterface
         }
 
         if (!$skipSchema)
-            $schema = $this->create_schema(...$schemas);
+            $schema = $this->create_schema(...$alteringSchema);
 
         $alterTable = !empty($schema) ? $sql . $schema . ';' : null;
         if (\is_string($alterTable))
@@ -1039,8 +1040,14 @@ class ezQuery implements ezQueryInterface
         return ($table === false) ? false : $this->drop($table);
     }
 
+    public function altering(...$alteringSchema)
+    {
+        $table = $this->table_prefix();
+        return ($table === false) ? false : $this->alter($table, ...$alteringSchema);
+    }
+
     /**
-     * Check and return the stored **global** database `table` preset with any `prefix`.
+     * Check and return the stored database `table` preset with any `prefix`.
      *
      * @return boolean|string `false` if no preset.
      */
@@ -1049,7 +1056,7 @@ class ezQuery implements ezQueryInterface
         if (empty($this->table) || !\is_string($this->table))
             return $this->clearPrepare();
 
-        $table = (!empty($this->prefix) || \is_string($this->prefix))
+        $table = (!empty($this->prefix) && \is_string($this->prefix))
             ? $this->prefix . $this->table
             : $this->table;
 

@@ -749,4 +749,48 @@ interface ezQueryInterface
      * @return bool|int
      */
     public function dropping();
+
+    /**
+     * Modify columns in an existing database table, by either:
+     *```js
+     *  - array( column_name, datatype, ...value/options arguments ) // calls create_schema()
+     *  - addColumn( column_name, datatype, ...value/options arguments ) // returns string
+     *  - dropColumn( column_name ) // returns string
+     *  - changingColumn( column_name, datatype, ...value/options arguments ) // returns string
+     *```
+     * @param string $table The name of the db table that you wish to alter
+     * @param array ...$alteringSchema An array of:
+     *
+     * - @param string `$name,` - column name
+     * - @param string `$type,` - data type for the column
+     * - @param mixed `$size,` | `$value,`
+     * - @param mixed `...$anyOtherArgs`
+     *
+     * @return mixed results of query() call
+     */
+    public function alter(string $table = null, ...$alteringSchema);
+
+    /**
+     * Preforms a `alter` method call on a already preset `table name`, and optional `prefix`
+     *
+     * This method **expects** either `tableSetup(name, prefix)`, `setTable(name)`, or `setPrefix(append)`
+     * to have been called **before usage**, otherwise will return `false`, if no `table name` previous stored.
+     *
+     * Modify columns in an existing database table, by either:
+     *```js
+     *  - array( column_name, datatype, ...value/options arguments ) // calls create_schema()
+     *  - addColumn( column_name, datatype, ...value/options arguments ) // returns string
+     *  - dropColumn( column_name ) // returns string
+     *  - changingColumn( column_name, datatype, ...value/options arguments ) // returns string
+     *```
+     * @param array ...$alteringSchema An array of:
+     *
+     * - @param string `$name,` - column name
+     * - @param string `$type,` - data type for the column
+     * - @param mixed `$size,` | `$value,`
+     * - @param mixed `...$anyOtherArgs`
+     *
+     * @return mixed results of query() call
+     */
+    public function altering(...$alteringSchema);
 }

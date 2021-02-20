@@ -10,12 +10,22 @@ use ezsql\Tests\EZTestCase;
 use function ezsql\functions\{
     mysqlInstance,
     column,
+    addColumn,
+    dropColumn,
     primary,
     eq,
     like,
     between,
+    create_select,
     selecting,
     inserting,
+    set_table,
+    set_prefix,
+    creating,
+    dropping,
+    altering,
+    get_results,
+    replacing,
     table_setup,
     where
 };
@@ -105,6 +115,7 @@ class mysqliTest extends EZTestCase
         $this->errors = array();
         $this->assertTrue($this->object->dbSelect(''));
         $this->object->disconnect();
+        set_error_handler(array($this, 'errorHandler'));
         $this->assertFalse($this->object->dbSelect('notest'));
         $this->object->connect();
         $this->object->reset();
@@ -176,7 +187,7 @@ class mysqliTest extends EZTestCase
         $this->assertEquals($this->object->query('INSERT INTO unit_test(id, test_key) VALUES(3, \'test 3\')'), 1);
 
         $this->object->query('SELECT * FROM unit_test');
-        $result = $this->object->get_results('SELECT * FROM unit_test', _JSON);
+        $result = $this->object->get_results('SELECT * FROM unit_test', JSON);
 
         $this->assertEquals('[{"id":"1","test_key":"test 1"},{"id":"2","test_key":"test 2"},{"id":"3","test_key":"test 3"}]', $result);
     }
@@ -273,10 +284,10 @@ class mysqliTest extends EZTestCase
         $this->assertFalse($this->object->replacing([]));
         $this->assertFalse($this->object->creating([]));
 
-        table_setup('unit_test');
+        set_table('unit_test');
         $this->assertEquals(
             0,
-            $this->object->creating(
+            creating(
                 column('id', INTR, 11, AUTO, PRIMARY),
                 column('test_key', VARCHAR, 50)
             )
@@ -285,7 +296,7 @@ class mysqliTest extends EZTestCase
         inserting(array('test_key' => 'test 1'));
         inserting(array('test_key' => 'test 2'));
         inserting(array('test_key' => 'test 3'));
-        $this->assertEquals(3, $this->object->replacing(array('id' => 3, 'test_key' => 'test 4')));
+        $this->assertEquals(3, replacing(array('id' => 3, 'test_key' => 'test 4')));
     }
 
     public function testUpdate()
@@ -427,6 +438,55 @@ class mysqliTest extends EZTestCase
         }
     }
 
+    public function testAltering()
+    {
+        $this->object->connect();
+        set_table('test');
+        set_prefix('unit_');
+        creating(
+            column('id', INTR, 11, PRIMARY),
+            column('test_key', VARCHAR, 50)
+        );
+
+        $results = null;
+        $results = altering(
+            addColumn('add_key', VARCHAR, 50)
+        );
+        $this->assertEquals(0, $results);
+
+        inserting(array('id' => 1, 'test_key' => 'testing 1', 'add_key' => 'adding 1'));
+        inserting(array('id' => 2, 'test_key' => 'testing 2', 'add_key' => 'adding 2'));
+        inserting(array('id' => 3, 'test_key' => 'testing 3', 'add_key' => 'adding 3'));
+
+        $result = selecting();
+
+        $i = 1;
+        foreach ($result as $row) {
+            $this->assertEquals($i, $row->id);
+            $this->assertEquals('testing ' . $i, $row->test_key);
+            $this->assertEquals('adding ' . $i, $row->add_key);
+            ++$i;
+        }
+
+        $results = null;
+        $results = altering(
+            dropColumn('test_key')
+        );
+        $this->assertEquals(0, $results);
+
+        selecting();
+
+        $i = 1;
+        foreach (get_results() as $row) {
+            $this->assertEquals($i, $row->id);
+            $this->assertNotEquals('testing ' . $i, $row->test_key);
+            $this->assertEquals('adding ' . $i, $row->add_key);
+            ++$i;
+        }
+
+        dropping();
+    }
+
     public function testBeginTransactionCommit()
     {
         $this->object->connect();
@@ -545,7 +605,7 @@ class mysqliTest extends EZTestCase
 
         $result = $this->object->select('users', 'id, tel_num, email', eq('user_name ', 'walker'));
 
-        $this->object->setDebugEchoIsOn(true);
+        $this->object->debugOn();
         $this->expectOutputRegex('/[123456]/');
         $this->expectOutputRegex('/[walker@email.com]/');
         $this->object->debug();
@@ -569,7 +629,7 @@ class mysqliTest extends EZTestCase
         $this->object->insert('unit_test', array('id' => '2', 'test_key' => 'testing 2'));
         $this->object->insert('unit_test', array('id' => '3', 'test_key' => 'testing 3'));
 
-        $this->assertEquals(0, $this->object->create_select('new_new_test', '*', 'unit_test'));
+        $this->assertEquals(0, create_select('new_new_test', '*', 'unit_test'));
 
         $result = $this->object->select('new_new_test');
 

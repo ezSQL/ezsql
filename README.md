@@ -9,6 +9,7 @@
 [![Total Downloads](https://poser.pugx.org/ezsql/ezsql/downloads)](https://packagist.org/packages/ezsql/ezsql)
 
 ***A class to make it very easy to deal with database connections.***
+*An universal interchangeable **CRUD** system.*
 
 This is [__Version 5__](https://github.com/ezSQL/ezsql/tree/v5) which will break users of **version 4**.
 
@@ -34,6 +35,9 @@ Mainly by:
     - The table *name* with *prefix*, can be preset/stored with methods `tableSetup(name, prefix), or setTable(name), setPrefix(append)`, if called without presetting, `false` is returned.
     - This **feature** will be added to **all** database *CRUD* access methods , each method name will have an `ing` ending added.
 - Removed global functions where `table` name passed in, use functions using preset table names ending with `ing`.
+- renamed cleanInput to clean_string
+- renamed createCertificate to create_certificate
+- added global get_results to return result sets in different formats
 
 [__Version 4__](https://github.com/ezSQL/ezsql/tree/v4) has many modern programming practices in which will break users of version 3.
 
@@ -83,7 +87,7 @@ ___General Methods___
         string $path = '.'._DS
     );
     secureReset();
-    createCertificate(string $privatekeyFile = certificate.key,
+    create_certificate(string $privatekeyFile = certificate.key,
         string $certificateFile = certificate.crt,
         string $signingFile = certificate.csr,
         string $ssl_path = null, array $details = [commonName => localhost]
@@ -96,6 +100,7 @@ ___Shortcut Table Methods___
     primary(string $primaryName, ...$primaryKeys);
     index(string $indexName, ...$indexKeys);
     drop(string $table);
+
 Example
 
 ```php
@@ -147,6 +152,9 @@ prepareOff(); // When off shortcut SQL Methods calls will use vendors escape rou
 * `delete(string $table = null, ...$whereConditions);`
 * `replace(string $table = null, $keyAndValue);`
 * `insert(string $table = null, $keyAndValue);`
+* `create(string $table = null, ...$schemas);`
+* `drop(string $table = null);`
+* `alter(string $table = null, ...$alteringSchema);`
 * `insert_select(string $toTable = null, $toColumns = '*', $fromTable = null, $fromColumns = '*', ...$conditions);`
 
 ```php
@@ -239,6 +247,9 @@ $result = $db->select('profile', 'name, email',
 foreach ($result as $row) {
     echo $row->name.' '.$row->email;
 }
+
+// To get results in `JSON` format
+$json = get_results(JSON, $db);
 ```
 
 #### Example for using prepare statements directly, no shortcut SQL methods used
@@ -247,7 +258,9 @@ foreach ($result as $row) {
 $db->query_prepared('INSERT INTO profile( name, email, phone) VALUES( ?, ?, ? );', [$user, $address, $number]);
 
 $db->query_prepared('SELECT name, email FROM profile WHERE phone = ? OR id != ?', [$number, 5]);
-$result = $db->queryResult(); // the last query that has results are stored in `last_result` protected property
+$result = $db->queryResult(); // the last query that has results are stored in `lastResult` protected property
+// Or for results in other formats use the global function, will use global database instance if no `$db` supplied
+$result = get_results(/* OBJECT|ARRAY_A|ARRAY_N|JSON */, $db); // Defaults to `OBJECT`
 
 foreach ($result as $row) {
     echo $row->name.' '.$row->email;
@@ -271,11 +284,11 @@ use function ezsql\functions\{
     setInstance,
     getInstance,
     clearInstance,
+    get_vendor,
 ///
-    getVendor,
     to_string,
-    cleanInput,
-    createCertificate,
+    clean_string,
+    create_certificate,
 ///
     column,
     primary,
@@ -284,6 +297,7 @@ use function ezsql\functions\{
     index,
     addColumn,
     dropColumn,
+    changingColumn,
 ///
     eq,
     neq,
@@ -301,9 +315,6 @@ use function ezsql\functions\{
     between,
     notBetween,
 ///
-    select_into,
-    insert_select,
-    create_select,
     where,
     grouping,
     groupBy,
@@ -323,9 +334,14 @@ use function ezsql\functions\{
     replacing,
     selecting,
     inserting,
+    altering,
+    get_results,
     table_setup,
     set_table,
-    set_prefix
+    set_prefix,
+    select_into,
+    insert_select,
+    create_select,
 };
 ```
 
