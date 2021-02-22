@@ -30,13 +30,6 @@ namespace ezsql;
 interface ezQueryInterface
 {
     /**
-     * Clean input of XSS, html, javascript, etc...
-     * @param string $string
-     * @return string cleaned string
-     */
-    public static function clean($string);
-
-    /**
      * Turn on prepare function availability in ezQuery shortcut method calls
      */
     public function prepareOn();

@@ -216,40 +216,6 @@ if (!\function_exists('ezFunctions')) {
     }
 
     /**
-     * Creates self signed certificate
-     *
-     * @param string $privatekeyFile
-     * @param string $certificateFile
-     * @param string $signingFile
-     * // param string $caCertificate
-     * @param string $ssl_path
-     * @param array $details - certificate details
-     *
-     * Example:
-     *  array $details = [
-     *      "countryName" =>  '',
-     *      "stateOrProvinceName" => '',
-     *      "localityName" => '',
-     *      "organizationName" => '',
-     *      "organizationalUnitName" => '',
-     *      "commonName" => '',
-     *      "emailAddress" => ''
-     *  ];
-     *
-     * @return string certificate path
-     */
-    function create_certificate(
-        string $privatekeyFile = 'certificate.key',
-        string $certificateFile = 'certificate.crt',
-        string $signingFile = 'certificate.csr',
-        // string $caCertificate = null,
-        string $ssl_path = null,
-        array $details = ["commonName" => "localhost"]
-    ) {
-        return ezQuery::createCertificate($privatekeyFile, $certificateFile, $signingFile, $ssl_path, $details);
-    }
-
-    /**
      * Creates an equality comparison expression with the given arguments.
      *
      * @param strings $x, - The left expression.
@@ -600,7 +566,119 @@ if (!\function_exists('ezFunctions')) {
      */
     function clean_string(string $string)
     {
-        return ezQuery::clean($string);
+        $patterns = array( // strip out:
+            '@<script[^>]*?>.*?</script>@si', // Strip out javascript
+            '@<[\/\!]*?[^<>]*?>@si',          // HTML tags
+            '@<style[^>]*?>.*?</style>@siU',  // Strip style tags properly
+            '@<![\s\S]*?--[ \t\n\r]*>@'       // Strip multi-line comments
+        );
+
+        $string = \preg_replace($patterns, '', $string);
+        $string = \trim($string);
+        $string = \stripslashes($string);
+
+        return \htmlentities($string);
+    }
+
+    /**
+     * Check if path/filename is directory traversal attack.
+     *
+     * @param string $basePath base directory to check against
+     * @param string $filename will be preprocess with `sanitize_path()`
+     * @return boolean
+     */
+    function is_traversal(string $basePath, string $filename)
+    {
+        if (\strpos(\urldecode($filename), '..') !== false)
+            return true;
+
+        $realBase = \rtrim(\realpath($basePath), _DS);
+        $userPath = $realBase . _DS . sanitize_path($filename);
+        $realUserPath = \realpath($userPath);
+        // Reassign with un-sanitized if file does not exits
+        if ($realUserPath === false)
+            $realUserPath = $filename;
+
+        return (\strpos($realUserPath, $realBase) !== 0);
+    }
+
+    /**
+     * Sanitize path to prevent directory traversal.
+     *
+     * Example:
+     *
+     *  `sanitize_path("../../../../config.php");`
+     *
+     *      Returns `config.php` without the path traversal
+     * @param string $path
+     * @return string
+     */
+    function sanitize_path(string $path)
+    {
+        $file = \preg_replace("/\.[\.]+/", "", $path);
+        $file = \preg_replace("/^[\/]+/", "", $file);
+        $file = \preg_replace("/^[A-Za-z][:\|][\/]?/", "", $file);
+        return ($file);
+    }
+
+    /**
+     * Creates self signed certificate
+     *
+     * @param string $privatekeyFile
+     * @param string $certificateFile
+     * @param string $signingFile
+     * // param string $caCertificate
+     * @param string $ssl_path
+     * @param array $details - certificate details
+     *
+     * Example:
+     *  array $details = [
+     *      "countryName" =>  '',
+     *      "stateOrProvinceName" => '',
+     *      "localityName" => '',
+     *      "organizationName" => '',
+     *      "organizationalUnitName" => '',
+     *      "commonName" => '',
+     *      "emailAddress" => ''
+     *  ];
+     *
+     * @return string certificate path
+     */
+    function create_certificate(
+        string $privatekeyFile = 'certificate.key',
+        string $certificateFile = 'certificate.crt',
+        string $signingFile = 'certificate.csr',
+        // string $caCertificate = null,
+        string $ssl_path = null,
+        array $details = ["commonName" => "localhost"]
+    ) {
+        if (empty($ssl_path)) {
+            $ssl_path = \getcwd();
+            $ssl_path = \preg_replace('/\\\/', \_DS, $ssl_path) . \_DS;
+        } else
+            $ssl_path = $ssl_path . \_DS;
+
+        $opensslConfig = array("config" => $ssl_path . 'openssl.cnf');
+
+        // Generate a new private (and public) key pair
+        $privatekey = \openssl_pkey_new($opensslConfig);
+
+        // Generate a certificate signing request
+        $csr = \openssl_csr_new($details, $privatekey, $opensslConfig);
+
+        // Create a self-signed certificate valid for 365 days
+        $sslcert = \openssl_csr_sign($csr, null, $privatekey, 365, $opensslConfig);
+
+        // Create key file. Note no passphrase
+        \openssl_pkey_export_to_file($privatekey, $ssl_path . $privatekeyFile, null, $opensslConfig);
+
+        // Create server certificate
+        \openssl_x509_export_to_file($sslcert, $ssl_path . $certificateFile, false);
+
+        // Create a signing request file
+        \openssl_csr_export_to_file($csr, $ssl_path . $signingFile);
+
+        return $ssl_path;
     }
 
     /**
