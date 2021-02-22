@@ -50,7 +50,10 @@ use function ezsql\functions\{
     get_results,
     table_setup,
     set_table,
-    set_prefix
+    set_prefix,
+    clean_string,
+    is_traversal,
+    sanitize_path
 };
 
 class ezFunctionsTest extends EZTestCase
@@ -58,6 +61,23 @@ class ezFunctionsTest extends EZTestCase
     protected function setUp(): void
     {
         clearInstance();
+    }
+
+    public function testClean_string()
+    {
+        $this->assertEquals("' help", clean_string("<?php echo 'foo' >' help</php?>"));
+    }
+
+    public function testSanitize_path()
+    {
+        $this->assertEquals("config.php", sanitize_path("../../../../config.php"));
+    }
+
+    public function testis_traversal()
+    {
+        $this->assertEquals(true, is_traversal('/home', "../../../../config.php"));
+        $this->assertEquals(true, is_traversal(__DIR__, dirname(__DIR__), 8));
+        $this->assertEquals(false, is_traversal(__DIR__, 'Foo.php'));
     }
 
     public function testGetInstance()

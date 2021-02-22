@@ -9,8 +9,7 @@ use function ezsql\functions\{
     eq,
     neq,
     like,
-    in,
-    clean_string
+    in
 };
 
 class ezQueryTest extends EZTestCase
@@ -25,11 +24,6 @@ class ezQueryTest extends EZTestCase
     protected function tearDown(): void
     {
         $this->object = null;
-    }
-
-    public function testClean_string()
-    {
-        $this->assertEquals("' help", clean_string("<?php echo 'foo' >' help</php?>"));
     }
 
     public function testHaving()

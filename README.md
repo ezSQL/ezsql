@@ -288,6 +288,8 @@ use function ezsql\functions\{
 ///
     to_string,
     clean_string,
+    is_traversal,
+    sanitize_path,
     create_certificate,
 ///
     column,
