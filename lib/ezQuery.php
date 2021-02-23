@@ -269,8 +269,8 @@ class ezQuery implements ezQueryInterface
         }
 
         $columns = $this->to_string($orderBy);
-
-        $order = (\in_array(\strtoupper($order), array('ASC', 'DESC'))) ? \strtoupper($order) : 'ASC';
+        $by = \strtoupper($order);
+        $order = (\in_array($by, array('ASC', 'DESC'))) ? $by : 'ASC';
 
         return 'ORDER BY ' . $columns . ' ' . $order;
     }
