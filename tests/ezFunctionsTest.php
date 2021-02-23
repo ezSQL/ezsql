@@ -70,7 +70,7 @@ class ezFunctionsTest extends EZTestCase
 
     public function testSanitize_path()
     {
-        $this->assertEquals("config.php", sanitize_path("../../../../config.php"));
+        $this->assertEquals("config.php", sanitize_path("../../../../config.php-"));
     }
 
     public function testis_traversal()

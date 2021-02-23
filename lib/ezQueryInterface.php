@@ -276,7 +276,7 @@ interface ezQueryInterface
     /**
      * Specifies an ordering for the query results.
      * @param string $orderBy - The column.
-     * @param string $order - The ordering direction.
+     * @param string $order - The ordering direction, either `ASC`|`DESC`.
      *
      * @return string - ORDER BY SQL statement, or false on error
      */

@@ -607,10 +607,9 @@ if (!\function_exists('ezFunctions')) {
      *
      * Example:
      *
-     *  `sanitize_path("../../../../config.php");`
-     *
-     *      Returns `config.php` without the path traversal
-     * @param string $path
+     * `sanitize_path("../../../../config.php-");`
+     * - Returns `config.php` without the path traversal
+     * @param string $path original file/path to be sanitized.
      * @return string
      */
     function sanitize_path(string $path)
@@ -618,6 +617,7 @@ if (!\function_exists('ezFunctions')) {
         $file = \preg_replace("/\.[\.]+/", "", $path);
         $file = \preg_replace("/^[\/]+/", "", $file);
         $file = \preg_replace("/^[A-Za-z][:\|][\/]?/", "", $file);
+        $file = \trim($file, '.-_');
         return ($file);
     }
 
@@ -1365,7 +1365,7 @@ if (!\function_exists('ezFunctions')) {
     /**
      * Specifies an ordering for the query results.
      * @param string $orderBy - The column.
-     * @param string $order - The ordering direction.
+     * @param string $order - The ordering direction, either `ASC`|`DESC`.
      *
      * @return string - ORDER BY SQL statement, or false on error
      */
