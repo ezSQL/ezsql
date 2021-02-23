@@ -25,6 +25,7 @@ use function ezsql\functions\{
     dropping,
     altering,
     get_results,
+    groupBy,
     limit,
     orderBy,
     replacing,
@@ -605,7 +606,14 @@ class mysqliTest extends EZTestCase
             ])
         );
 
-        $result = $this->object->select('users', 'id, tel_num, email', where(eq('user_name ', 'walker')), orderBy('id', 'ASC'), limit(1));
+        $result = $this->object->select(
+            'users',
+            'id, tel_num, email',
+            where(eq('user_name ', 'walker')),
+            groupBy('id'),
+            orderBy('id', 'ASC'),
+            limit(1)
+        );
 
         $this->object->debugOn();
         $this->expectOutputRegex('/[123456]/');

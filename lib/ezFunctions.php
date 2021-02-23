@@ -965,14 +965,32 @@ if (!\function_exists('ezFunctions')) {
 
     /**
      * Does an `select into` statement by calling `select` method
-     * @param $newTable, - new database table to be created
-     * @param $fromColumns - the columns from old database table
-     * @param $oldTable - old database table
-     * @param $fromWhereConditions, - where clause `eq(x, y, _AND), another clause - same as array(x, =, y, and, extra) `
-     *
-     * @return mixed|object bool/result - false for error
+     * @param string $newTable, - new database table to be created
+     * @param mixed $fromColumns - the columns from old database table
+     * @param string $oldTable - old database table
+     * @param mixed $fromWhereConditions, - where clause `eq(x, y, _AND), another clause - same as array(x, =, y, and, extra)`
+     * - In the following format:
+     *```js
+     *   eq('key/Field/Column', $value, _AND), // combine next expression
+     *   neq('key/Field/Column', $value, _OR), // will combine next expression if
+     *   ne('key/Field/Column', $value), // the default is _AND so will combine next expression
+     *   lt('key/Field/Column', $value)
+     *   lte('key/Field/Column', $value)
+     *   gt('key/Field/Column', $value)
+     *   gte('key/Field/Column', $value)
+     *   isNull('key/Field/Column')
+     *   isNotNull('key/Field/Column')
+     *   like('key/Field/Column', '_%')
+     *   notLike('key/Field/Column', '_%')
+     *   in('key/Field/Column', $values)
+     *   notIn('key/Field/Column', $values)
+     *   between('key/Field/Column', $value, $value2)
+     *   notBetween('key/Field/Column', $value, $value2)
+     *```
+     * @return mixed bool/result - false for error
+     * @codeCoverageIgnore
      */
-    function select_into($newTable, $fromColumns = '*', $oldTable = null, ...$fromWhereConditions)
+    function select_into(string $newTable, $fromColumns = '*', string $oldTable = null, ...$fromWhereConditions)
     {
         $ezQuery = getInstance();
         return ($ezQuery instanceof DatabaseInterface)
@@ -1096,15 +1114,15 @@ if (!\function_exists('ezFunctions')) {
      *        having( between( 'columns', values1, values2 ) ),
      *        orderBy( 'columns', 'desc' );
      *</code>
-     * @param mixed $groupBy The grouping expression.
+     * @param string|array $column The grouping expression.
      *
      * @return string - GROUP BY SQL statement, or false on error
      */
-    function groupBy($groupBy)
+    function groupBy($column)
     {
         $ezQuery = getInstance();
         return ($ezQuery instanceof DatabaseInterface)
-            ? $ezQuery->groupBy($groupBy)
+            ? $ezQuery->groupBy($column)
             : false;
     }
 
@@ -1364,16 +1382,16 @@ if (!\function_exists('ezFunctions')) {
 
     /**
      * Specifies an ordering for the query results.
-     * @param string $orderBy - The column.
+     * @param string|array $column - Which columns to use for ordering.
      * @param string $order - The ordering direction, either `ASC`|`DESC`.
      *
      * @return string - ORDER BY SQL statement, or false on error
      */
-    function orderBy($orderBy, $order)
+    function orderBy($column, $order)
     {
         $ezQuery = getInstance();
         return ($ezQuery instanceof DatabaseInterface)
-            ? $ezQuery->orderBy($orderBy, $order)
+            ? $ezQuery->orderBy($column, $order)
             : false;
     }
 
@@ -1394,6 +1412,9 @@ if (!\function_exists('ezFunctions')) {
             : false;
     }
 
+    /**
+     * @codeCoverageIgnore
+     */
     function ezFunctions()
     {
         return true;

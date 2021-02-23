@@ -111,13 +111,13 @@ class ezQuery implements ezQueryInterface
         return $columns;
     }
 
-    public function groupBy($groupBy)
+    public function groupBy($column)
     {
-        if (empty($groupBy)) {
+        if (empty($column)) {
             return false;
         }
 
-        $columns = $this->to_string($groupBy);
+        $columns = $this->to_string($column);
 
         return 'GROUP BY ' . $columns;
     }
@@ -262,13 +262,13 @@ class ezQuery implements ezQueryInterface
         return ' ' . $type . ' JOIN ' . $rightTable . ' AS ' . $tableAs . ' ' . $onCondition;
     }
 
-    public function orderBy($orderBy, $order)
+    public function orderBy($column, $order)
     {
-        if (empty($orderBy)) {
+        if (empty($column)) {
             return false;
         }
 
-        $columns = $this->to_string($orderBy);
+        $columns = $this->to_string($column);
         $by = \strtoupper($order);
         $order = (\in_array($by, array('ASC', 'DESC'))) ? $by : 'ASC';
 
@@ -593,6 +593,9 @@ class ezQuery implements ezQueryInterface
         return $this->clearPrepare();
     }
 
+    /**
+     * @codeCoverageIgnore
+     */
     public function select_into(string $newTable, $fromColumns = '*', $oldTable = null, ...$fromWhereConditions)
     {
         $this->isInto = true;
@@ -602,7 +605,7 @@ class ezQuery implements ezQueryInterface
             return $this->clearPrepare();
 
         $newTableFromTable = $this->select_sql($newTable, $fromColumns, ...$fromWhereConditions);
-        if (is_string($newTableFromTable))
+        if (\is_string($newTableFromTable))
             return (($this->isPrepareOn()) && !empty($this->prepareValues()))
                 ? $this->query($newTableFromTable, true)
                 : $this->query($newTableFromTable);

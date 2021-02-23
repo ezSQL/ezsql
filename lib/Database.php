@@ -18,6 +18,7 @@ class Database
     private static $factory = null;
     private static $instances = [];
 
+    // @codeCoverageIgnoreStart
     private function __construct()
     {
     }
@@ -27,6 +28,7 @@ class Database
     public function __wakeup()
     {
     }
+    // @codeCoverageIgnoreEnd
 
     /**
      * Initialize and connect a vendor database.
