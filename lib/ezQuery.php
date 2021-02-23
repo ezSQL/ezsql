@@ -596,7 +596,7 @@ class ezQuery implements ezQueryInterface
     /**
      * @codeCoverageIgnore
      */
-    public function select_into(string $newTable, $fromColumns = '*', $oldTable = null, ...$fromWhereConditions)
+    public function select_into(string $newTable, $fromColumns = '*', string $oldTable = null, ...$fromWhereConditions)
     {
         $this->isInto = true;
         if (isset($oldTable))
