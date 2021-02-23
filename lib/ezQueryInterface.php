@@ -50,11 +50,11 @@ interface ezQueryInterface
      *        having( between( 'columns', values1, values2 ) ),
      *        orderBy( 'columns', 'desc' );
      *</code>
-     * @param mixed $groupBy The grouping expression.
+     * @param string|array $column The grouping expression.
      *
      * @return string - GROUP BY SQL statement, or false on error
      */
-    public function groupBy($groupBy);
+    public function groupBy($column);
 
     /**
      * Specifies a `restriction` over the groups of the query.
@@ -275,12 +275,12 @@ interface ezQueryInterface
 
     /**
      * Specifies an ordering for the query results.
-     * @param string $orderBy - The column.
+     * @param string|array $column - Which columns to use for ordering.
      * @param string $order - The ordering direction, either `ASC`|`DESC`.
      *
      * @return string - ORDER BY SQL statement, or false on error
      */
-    public function orderBy($orderBy, $order);
+    public function orderBy($column, $order);
 
     /**
      * Specifies records from one or more tables in a database and
@@ -452,10 +452,10 @@ interface ezQueryInterface
     /**
      * Does an `create select` statement by calling `select` method
      *
-     * @param $newTable, - new database table to be created
-     * @param $fromColumns - the columns from old database table
-     * @param $oldTable - old database table
-     * @param $fromWhereConditions, - where clause `eq(x, y, _AND), another clause - same as array(x, =, y, and, extra)`
+     * @param string $newTable, - new database table to be created
+     * @param string|array $fromColumns - the columns from old database table
+     * @param string $oldTable - old database table
+     * @param array $fromWhereConditions, - where clause `eq(x, y, _AND), another clause - same as array(x, =, y, and, extra)`
      * - In the following format:
      *```js
      *   eq('key/Field/Column', $value, _AND), // combine next expression
@@ -480,10 +480,10 @@ interface ezQueryInterface
 
     /**
      * Does an `select into` statement by calling `select` method
-     * @param $newTable, - new database table to be created
-     * @param $fromColumns - the columns from old database table
-     * @param $oldTable - old database table
-     * @param $fromWhereConditions, - where clause `eq(x, y, _AND), another clause - same as array(x, =, y, and, extra)`
+     * @param string $newTable, - new database table to be created
+     * @param mixed $fromColumns - the columns from old database table
+     * @param string $oldTable - old database table
+     * @param mixed $fromWhereConditions, - where clause `eq(x, y, _AND), another clause - same as array(x, =, y, and, extra)`
      * - In the following format:
      *```js
      *   eq('key/Field/Column', $value, _AND), // combine next expression
@@ -504,7 +504,7 @@ interface ezQueryInterface
      *```
      * @return mixed bool/result - false for error
      */
-    public function select_into(string $newTable, $fromColumns = '*', $oldTable = null, ...$fromWhereConditions);
+    public function select_into(string $newTable, $fromColumns = '*', string $oldTable = null, ...$fromWhereConditions);
 
     /**
      * Does an `update` query with an array, by conditional operator array
