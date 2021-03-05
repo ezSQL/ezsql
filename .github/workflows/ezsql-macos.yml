@@ -37,6 +37,7 @@ jobs:
           brew services start mysql@5.7
           brew link mysql@5.7 --force
           sudo rm -rf /usr/local/var/mysql
+          sudo rm /etc/my.cnf
           mysqld --initialize-insecure
           mysql.server start
       - name: Setup MySQL Database
