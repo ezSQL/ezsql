@@ -36,7 +36,7 @@ jobs:
         run: |
           brew services start mysql@5.7
           brew link mysql@5.7 --force
-          mysqld --initialize-insecure
+          mysqld --initialize-insecure --ignore-db-dir=lost+found
           mysql.server start
       - name: Setup MySQL Database
         run: |
