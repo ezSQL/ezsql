@@ -38,7 +38,8 @@ jobs:
           brew link mysql@5.7 --force
           sudo rm -rf /usr/local/var/mysql
           sudo rm /usr/local/etc/my.cnf
-          mysqld --initialize-insecure
+          sudo chown -R _mysql:_mysql /usr/local/var/mysql
+          mysqld --initialize-insecure --explicit_defaults_for_timestamp
           mysql.server start
       - name: Setup MySQL Database
         run: |
