@@ -34,11 +34,7 @@ jobs:
           brew install mysql@5.7
       - name: Brew Start MySQL
         run: |
-          brew services start mysql@5.7
           brew link mysql@5.7 --force
-          sudo rm -rf /usr/local/var/mysql
-          sudo rm /usr/local/etc/my.cnf
-          sudo chown -R _mysql:_mysql /usr/local/var/mysql
           mysqld --initialize-insecure --explicit_defaults_for_timestamp
           mysql.server start
       - name: Setup MySQL Database
