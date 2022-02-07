@@ -39,8 +39,8 @@ if (!\defined('CONSTANTS')) {
     \define('_BETWEEN', 'BETWEEN');
     \define('_notBETWEEN', 'NOT BETWEEN');
 
-    \define('_isNULL', 'IS NULL');
-    \define('_notNULL', 'IS NOT NULL');
+    \define('_isNULL', 'IS');
+    \define('_notNULL', 'IS NOT');
     \define('_BOOLEAN_OPERATORS', [
         '<', '>', '=', '!=', '>=', '<=', '<>',
         'IN', 'LIKE', 'NOT LIKE', 'BETWEEN', 'NOT BETWEEN', 'IS', 'IS NOT'

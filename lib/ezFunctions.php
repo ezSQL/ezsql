@@ -353,7 +353,7 @@ if (!\function_exists('ezFunctions')) {
      *
      * @return array
      */
-    function isNull($x, $y = 'null', $and = null, ...$args)
+    function isNull($x, $y = 'NULL', $and = null, ...$args)
     {
         $expression = array();
         \array_push($expression, $x, \_isNULL, $y, $and, ...$args);
@@ -370,7 +370,7 @@ if (!\function_exists('ezFunctions')) {
      *
      * @return array
      */
-    function isNotNull($x, $y = 'null', $and = null, ...$args)
+    function isNotNull($x, $y = 'NULL', $and = null, ...$args)
     {
         $expression = array();
         \array_push($expression, $x, \_notNULL, $y, $and, ...$args);
