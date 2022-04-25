@@ -99,7 +99,12 @@ class mysqliTest extends EZTestCase
         $this->errors = array();
         set_error_handler(array($this, 'errorHandler'));
 
-        $this->assertFalse($this->object->connect('no', ''));
+        if ((float) \phpversion() >= 8.1) {
+            $this->expectException(\mysqli_sql_exception::class);
+            $this->assertFalse($this->object->connect('no', ''));
+        } else
+            $this->assertFalse($this->object->connect('no', ''));
+
         $this->assertFalse($this->object->connect('self::TEST_DB_USER', 'self::TEST_DB_PASSWORD', ' self::TEST_DB_HOST', 'self::TEST_DB_PORT'));
         $result = $this->object->connect(self::TEST_DB_USER, self::TEST_DB_PASSWORD);
 
@@ -284,8 +289,17 @@ class mysqliTest extends EZTestCase
     {
         $this->object->quick_connect();
         $this->object->prepareOff();
-        $this->assertFalse($this->object->replacing([]));
-        $this->assertFalse($this->object->creating([]));
+        if ((float) \phpversion() >= 8.1) {
+            $this->expectException(\mysqli_sql_exception::class);
+            $this->assertFalse($this->object->replacing([]));
+        } else
+            $this->assertFalse($this->object->replacing([]));
+
+        if ((float) \phpversion() >= 8.1) {
+            $this->expectException(\mysqli_sql_exception::class);
+            $this->assertFalse($this->object->creating([]));
+        } else
+            $this->assertFalse($this->object->creating([]));
 
         set_table('unit_test');
         $this->assertEquals(

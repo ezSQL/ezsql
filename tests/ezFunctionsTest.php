@@ -64,7 +64,10 @@ class ezFunctionsTest extends EZTestCase
 
     public function testClean_string()
     {
-        $this->assertEquals("' help", clean_string("<?php echo 'foo' >' help</php?>"));
+        if ((float) \phpversion() >= 8.1)
+            $this->assertEquals("&#039; help", clean_string("<?php echo 'foo' >' help</php?>"));
+        else
+            $this->assertEquals("' help", clean_string("<?php echo 'foo' >' help</php?>"));
     }
 
     public function testSanitize_path()

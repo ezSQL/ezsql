@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace ezsql\functions;
 
+use ezsql\Db;
 use ezsql\ezQuery;
 use ezsql\ezSchema;
 use ezsql\Database;
 use ezsql\ezQueryInterface;
 use ezsql\DatabaseInterface;
-use ezsql\Db;
 use ezsql\ezsqlModelInterface;
 
 if (!\function_exists('ezFunctions')) {
@@ -244,7 +244,7 @@ if (!\function_exists('ezFunctions')) {
      *
      * @return array
      */
-    function eq($x, $y, $and = null, ...$args)
+    function eq($x, $y, $and = null, ...$args): array
     {
         $expression = array();
         \array_push($expression, $x, \EQ, $y, $and, ...$args);
@@ -270,7 +270,7 @@ if (!\function_exists('ezFunctions')) {
      *
      * @return array
      */
-    function neq($x, $y, $and = null, ...$args)
+    function neq($x, $y, $and = null, ...$args): array
     {
         $expression = array();
         \array_push($expression, $x, \NEQ, $y, $and, ...$args);
@@ -287,7 +287,7 @@ if (!\function_exists('ezFunctions')) {
      *
      * @return array
      */
-    function ne($x, $y, $and = null, ...$args)
+    function ne($x, $y, $and = null, ...$args): array
     {
         $expression = array();
         \array_push($expression, $x, \NE, $y, $and, ...$args);
@@ -304,7 +304,7 @@ if (!\function_exists('ezFunctions')) {
      *
      * @return array
      */
-    function lt($x, $y, $and = null, ...$args)
+    function lt($x, $y, $and = null, ...$args): array
     {
         $expression = array();
         \array_push($expression, $x, \LT, $y, $and, ...$args);
@@ -321,7 +321,7 @@ if (!\function_exists('ezFunctions')) {
      *
      * @return array
      */
-    function lte($x, $y, $and = null, ...$args)
+    function lte($x, $y, $and = null, ...$args): array
     {
         $expression = array();
         \array_push($expression, $x, \LTE, $y, $and, ...$args);
@@ -338,7 +338,7 @@ if (!\function_exists('ezFunctions')) {
      *
      * @return array
      */
-    function gt($x, $y, $and = null, ...$args)
+    function gt($x, $y, $and = null, ...$args): array
     {
         $expression = array();
         \array_push($expression, $x, \GT, $y, $and, ...$args);
@@ -355,7 +355,7 @@ if (!\function_exists('ezFunctions')) {
      *
      * @return array
      */
-    function gte($x, $y, $and = null, ...$args)
+    function gte($x, $y, $and = null, ...$args): array
     {
         $expression = array();
         \array_push($expression, $x, \GTE, $y, $and, ...$args);
@@ -372,7 +372,7 @@ if (!\function_exists('ezFunctions')) {
      *
      * @return array
      */
-    function isNull($x, $y = 'null', $and = null, ...$args)
+    function isNull($x, $y = 'null', $and = null, ...$args): array
     {
         $expression = array();
         \array_push($expression, $x, \_isNULL, $y, $and, ...$args);
@@ -389,7 +389,7 @@ if (!\function_exists('ezFunctions')) {
      *
      * @return array
      */
-    function isNotNull($x, $y = 'null', $and = null, ...$args)
+    function isNotNull($x, $y = 'null', $and = null, ...$args): array
     {
         $expression = array();
         \array_push($expression, $x, \_notNULL, $y, $and, ...$args);
@@ -406,7 +406,7 @@ if (!\function_exists('ezFunctions')) {
      *
      * @return array
      */
-    function like($x, $y, $and = null, ...$args)
+    function like($x, $y, $and = null, ...$args): array
     {
         $expression = array();
         \array_push($expression, $x, \_LIKE, $y, $and, ...$args);
@@ -423,7 +423,7 @@ if (!\function_exists('ezFunctions')) {
      *
      * @return array
      */
-    function notLike($x, $y, $and = null, ...$args)
+    function notLike($x, $y, $and = null, ...$args): array
     {
         $expression = array();
         \array_push($expression, $x, \_notLIKE, $y, $and, ...$args);
@@ -440,7 +440,7 @@ if (!\function_exists('ezFunctions')) {
      *
      * @return array
      */
-    function in($x, $y, ...$args)
+    function in($x, $y, ...$args): array
     {
         $expression = array();
         \array_push($expression, $x, \_IN, $y, ...$args);
@@ -457,7 +457,7 @@ if (!\function_exists('ezFunctions')) {
      *
      * @return array
      */
-    function notIn($x, $y, ...$args)
+    function notIn($x, $y, ...$args): array
     {
         $expression = array();
         \array_push($expression, $x, \_notIN, $y, ...$args);
@@ -474,7 +474,7 @@ if (!\function_exists('ezFunctions')) {
      *
      * @return array
      */
-    function between($x, $y, $y2, ...$args)
+    function between($x, $y, $y2, ...$args): array
     {
         $expression = array();
         \array_push($expression, $x, \_BETWEEN, $y, $y2, \_AND, ...$args);
@@ -491,7 +491,7 @@ if (!\function_exists('ezFunctions')) {
      *
      * @return array
      */
-    function notBetween($x, $y, $y2, ...$args)
+    function notBetween($x, $y, $y2, ...$args): array
     {
         $expression = array();
         \array_push($expression, $x, \_notBETWEEN, $y, $y2, \_AND, ...$args);
@@ -540,7 +540,7 @@ if (!\function_exists('ezFunctions')) {
      *
      * @return string cleaned string
      */
-    function clean_string(string $string)
+    function clean_string(string $string): string
     {
         $patterns = array( // strip out:
             '@<script[^>]*?>.*?</script>@si', // Strip out javascript
@@ -563,7 +563,7 @@ if (!\function_exists('ezFunctions')) {
      * @param string $filename will be preprocess with `sanitize_path()`
      * @return boolean
      */
-    function is_traversal(string $basePath, string $filename)
+    function is_traversal(string $basePath, string $filename): bool
     {
         if (\strpos(\urldecode($filename), '..') !== false)
             return true;
@@ -588,7 +588,7 @@ if (!\function_exists('ezFunctions')) {
      * @param string $path original file/path to be sanitized.
      * @return string
      */
-    function sanitize_path(string $path)
+    function sanitize_path(string $path): string
     {
         $file = \preg_replace("/\.[\.]+/", "", $path);
         $file = \preg_replace("/^[\/]+/", "", $file);
