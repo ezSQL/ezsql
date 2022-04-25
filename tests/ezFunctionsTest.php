@@ -5,7 +5,6 @@ namespace ezsql\Tests;
 use ezsql\Tests\EZTestCase;
 
 use function ezsql\functions\{
-    setInstance,
     getInstance,
     clearInstance,
     get_vendor,
@@ -217,11 +216,6 @@ class ezFunctionsTest extends EZTestCase
     {
         $this->assertIsArray(notBetween('field', 'data', 'data2'));
         $this->assertArraySubset([3 => 'data2'], notBetween('field', 'data', 'data2'));
-    }
-
-    public function testSetInstance()
-    {
-        $this->assertFalse(setInstance());
     }
 
     public function testSelect_into()

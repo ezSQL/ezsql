@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace ezsql\Database;
 
 use Exception;
+use ezsql\Db;
 use ezsql\ezsqlModel;
 use ezsql\ConfigInterface;
 use ezsql\DatabaseInterface;
-use function ezsql\functions\setInstance;
 
 class ez_pgsql extends ezsqlModel implements DatabaseInterface
 {
@@ -44,9 +44,9 @@ class ez_pgsql extends ezsqlModel implements DatabaseInterface
         parent::__construct();
         $this->database = $settings;
 
-        if (empty($GLOBALS['ez' . \PGSQL]))
-            $GLOBALS['ez' . \PGSQL] = $this;
-        setInstance($this);
+        if (!Db::has('ez' . \PGSQL))
+            Db::set('ez' . \PGSQL, $this);
+        Db::set('global', $this);
     } // __construct
 
     public function settings()

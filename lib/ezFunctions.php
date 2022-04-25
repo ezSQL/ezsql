@@ -9,9 +9,28 @@ use ezsql\ezSchema;
 use ezsql\Database;
 use ezsql\ezQueryInterface;
 use ezsql\DatabaseInterface;
+use ezsql\Db;
 use ezsql\ezsqlModelInterface;
 
 if (!\function_exists('ezFunctions')) {
+    /**
+     * Returns the global database class, last created instance.
+     *
+     * @return ezQueryInterface|null
+     */
+    function getInstance(): ?ezQueryInterface
+    {
+        return Db::get('global');
+    }
+
+    /**
+     * Clear/unset the global database class instance.
+     */
+    function clearInstance(): void
+    {
+        Db::clear('global');
+    }
+
     /**
      * Initialize and connect a vendor's database.
      *
@@ -138,7 +157,7 @@ if (!\function_exists('ezFunctions')) {
      *
      * @return string|null `mysqli`|`pgsql`|`sqlite3`|`sqlsrv`
      */
-    function get_vendor(DatabaseInterface $instance = null)
+    function get_vendor(DatabaseInterface $instance = null): ?string
     {
         return ezSchema::vendor($instance);
     }
@@ -148,7 +167,7 @@ if (!\function_exists('ezFunctions')) {
      *
      * @return string
      */
-    function to_string($arrays, $separation = ',')
+    function to_string($arrays, $separation = ','): string
     {
         return ezQuery::to_string($arrays, $separation);
     }
@@ -480,38 +499,6 @@ if (!\function_exists('ezFunctions')) {
     }
 
     /**
-     * Sets the global class instance for functions to call class methods directly.
-     *
-     * @param ezQueryInterface|null $ezSQL
-     *
-     * @return boolean - `true`, or `false` for error
-     */
-    function setInstance(ezQueryInterface $ezSQL = null)
-    {
-        global $ezInstance;
-        $status = false;
-
-        if ($ezSQL instanceof ezQueryInterface) {
-            $ezInstance = $ezSQL;
-            $status = true;
-        }
-
-        return $status;
-    }
-
-    /**
-     * Returns the global database class, last created instance or the one set with `setInstance()`.
-     *
-     * @return ezQueryInterface|null
-     */
-    function getInstance()
-    {
-        global $ezInstance;
-
-        return ($ezInstance instanceof ezQueryInterface) ? $ezInstance : null;
-    }
-
-    /**
      * Get multiple row result set from the database (previously cached results).
      * Returns a multi dimensional array.
      *
@@ -545,17 +532,6 @@ if (!\function_exists('ezFunctions')) {
         return ($ezQuery instanceof ezsqlModelInterface)
             ? $ezQuery->get_results(null, $output, false)
             : false;
-    }
-
-    /**
-     * Clear/unset the global database class instance.
-     */
-    function clearInstance()
-    {
-        global $ezInstance;
-        $GLOBALS['ezInstance'] = null;
-        $ezInstance = null;
-        unset($GLOBALS['ezInstance']);
     }
 
     /**
