@@ -622,7 +622,7 @@ class ezQuery implements ezQueryInterface
         $sql = "UPDATE $table SET ";
 
         foreach ($keyValue as $key => $val) {
-            if (\strtolower($val) == 'null') {
+            if (is_null($val) || \strtolower($val) == 'null') {
                 $sql .= "$key = NULL, ";
             } elseif (\in_array(\strtolower($val), array('current_timestamp()', 'date()', 'now()'))) {
                 $sql .= "$key = CURRENT_TIMESTAMP(), ";
