@@ -176,13 +176,13 @@ class ezFunctionsTest extends EZTestCase
     public function testIsNull()
     {
         $this->assertIsArray(isNull('field'));
-        $this->assertArraySubset([2 => 'null'], isNull('field'));
+        $this->assertArraySubset([2 => 'NULL'], isNull('field'));
     }
 
     public function testIsNotNull()
     {
         $this->assertIsArray(isNotNull('field'));
-        $this->assertArraySubset([2 => 'null'], isNotNull('field'));
+        $this->assertArraySubset([2 => 'NULL'], isNotNull('field'));
     }
 
     public function testLike()
