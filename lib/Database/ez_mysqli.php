@@ -291,7 +291,7 @@ class ez_mysqli extends ezsqlModel implements DatabaseInterface
         $params = [];
         $types = \array_reduce(
             $param,
-            function ($string, &$arg) use (&$params) {
+            function ($string, $arg) use (&$params) {
                 $params[] = &$arg;
                 if (\is_float($arg))
                     $string .= 'd';
