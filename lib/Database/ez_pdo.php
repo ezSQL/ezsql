@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace ezsql\Database;
 
 use Exception;
+use ezsql\Db;
 use ezsql\ezsqlModel;
 use ezsql\ConfigInterface;
 use ezsql\DatabaseInterface;
-use function ezsql\functions\setInstance;
 
 class ez_pdo extends ezsqlModel implements DatabaseInterface
 {
@@ -47,9 +47,9 @@ class ez_pdo extends ezsqlModel implements DatabaseInterface
         // Turn on track errors
         ini_set('track_errors', '1');
 
-        if (empty($GLOBALS['ez' . \Pdo]))
-            $GLOBALS['ez' . \Pdo] = $this;
-        setInstance($this);
+        if (!Db::has('ez' . \Pdo))
+            Db::set('ez' . \Pdo, $this);
+        Db::set('global', $this);
     } // __construct
 
     public function settings()

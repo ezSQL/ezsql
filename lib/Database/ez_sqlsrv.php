@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace ezsql\Database;
 
 use Exception;
+use ezsql\Db;
 use ezsql\ezsqlModel;
 use ezsql\ConfigInterface;
 use ezsql\DatabaseInterface;
-use function ezsql\functions\setInstance;
 
 class ez_sqlsrv extends ezsqlModel implements DatabaseInterface
 {
@@ -53,9 +53,9 @@ class ez_sqlsrv extends ezsqlModel implements DatabaseInterface
         parent::__construct();
         $this->database = $settings;
 
-        if (empty($GLOBALS['ez' . \SQLSRV]))
-            $GLOBALS['ez' . \SQLSRV] = $this;
-        setInstance($this);
+        if (!Db::has('ez' . \SQLSRV))
+            Db::set('ez' . \SQLSRV, $this);
+        Db::set('global', $this);
     }
 
     public function settings()

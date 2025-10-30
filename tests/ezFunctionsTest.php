@@ -5,7 +5,6 @@ namespace ezsql\Tests;
 use ezsql\Tests\EZTestCase;
 
 use function ezsql\functions\{
-    setInstance,
     getInstance,
     clearInstance,
     get_vendor,
@@ -65,7 +64,10 @@ class ezFunctionsTest extends EZTestCase
 
     public function testClean_string()
     {
-        $this->assertEquals("' help", clean_string("<?php echo 'foo' >' help</php?>"));
+        if ((float) \phpversion() >= 8.1)
+            $this->assertEquals("&#039; help", clean_string("<?php echo 'foo' >' help</php?>"));
+        else
+            $this->assertEquals("' help", clean_string("<?php echo 'foo' >' help</php?>"));
     }
 
     public function testSanitize_path()
@@ -217,11 +219,6 @@ class ezFunctionsTest extends EZTestCase
     {
         $this->assertIsArray(notBetween('field', 'data', 'data2'));
         $this->assertArraySubset([3 => 'data2'], notBetween('field', 'data', 'data2'));
-    }
-
-    public function testSetInstance()
-    {
-        $this->assertFalse(setInstance());
     }
 
     public function testSelect_into()

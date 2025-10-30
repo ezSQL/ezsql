@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace ezsql;
 
+use ezsql\Db;
 use ezsql\DInjector;
-use function ezsql\functions\setInstance;
 
 class Database
 {
@@ -15,7 +15,10 @@ class Database
      * @var float
      */
     private static $_ts = null;
-    private static $factory = null;
+
+    /**
+     * @var ezQueryInterface[]
+     */
     private static $instances = [];
 
     // @codeCoverageIgnoreStart
@@ -67,10 +70,10 @@ class Database
      * @param string $tag Store the instance for later use
      * @return Database\ez_pdo|Database\ez_pgsql|Database\ez_sqlsrv|Database\ez_sqlite3|Database\ez_mysqli
      */
-    public static function initialize(?string $vendor = null, ?array $setting = null, ?string $tag = null)
+    public static function initialize(?string $vendor = null, ?array $setting = null, ?string $tag = null): ezQueryInterface
     {
         if (isset(self::$instances[$vendor]) && empty($setting) && empty($tag))
-            return setInstance(self::$instances[$vendor]) ? self::$instances[$vendor] : false;
+            return self::$instances[$vendor];
 
         if (empty($vendor) || empty($setting)) {
             throw new \Exception(\MISSING_CONFIGURATION);
@@ -79,7 +82,7 @@ class Database
             $key = $vendor;
             $value = \VENDOR[$key];
 
-            if (empty($GLOBALS['ez' . $key]) || !empty($tag)) {
+            if (!Db::has('ez' . $key) || !empty($tag)) {
                 $di = new DInjector();
                 $di->set($key, $value);
                 $di->set('ezsql\ConfigInterface', 'ezsql\Config');
@@ -90,8 +93,9 @@ class Database
                 }
             }
 
-            setInstance($GLOBALS['ez' . $key]);
-            return $GLOBALS['ez' . $key];
+            $db = Db::get('ez' . $key);
+            Db::set('global', $db);
+            return $db;
         }
     }
 
