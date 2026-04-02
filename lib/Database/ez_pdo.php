@@ -35,7 +35,7 @@ class ez_pdo extends ezsqlModel implements DatabaseInterface
      */
     private $database;
 
-    public function __construct(ConfigInterface $settings = null)
+    public function __construct(?ConfigInterface $settings = null)
     {
         if (empty($settings)) {
             throw new Exception(\MISSING_CONFIGURATION);
@@ -235,7 +235,7 @@ class ez_pdo extends ezsqlModel implements DatabaseInterface
      * @param boolean $isSelect - return \PDOStatement, if SELECT SQL statement, otherwise int
      * @return bool|int|\PDOStatement
      */
-    public function query_prepared(string $query, array $param = null, $isSelect = false)
+    public function query_prepared(string $query, ?array $param = null, $isSelect = false)
     {
         $stmt = $this->dbh->prepare($query);
         $result = false;
@@ -349,7 +349,7 @@ class ez_pdo extends ezsqlModel implements DatabaseInterface
      * @param array $param
      * @return bool|void
      */
-    private function processQuery(string $query, array $param = null)
+    private function processQuery(string $query, ?array $param = null)
     {
         // Query was an insert, delete, update, replace
         if (\preg_match("/^(insert|delete|update|replace|drop|create)\s+/i", $query)) {

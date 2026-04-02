@@ -44,7 +44,7 @@ class ez_sqlsrv extends ezsqlModel implements DatabaseInterface
      */
     private $database;
 
-    public function __construct(ConfigInterface $settings = null)
+    public function __construct(?ConfigInterface $settings = null)
     {
         if (empty($settings)) {
             throw new Exception(\MISSING_CONFIGURATION);
@@ -141,7 +141,7 @@ class ez_sqlsrv extends ezsqlModel implements DatabaseInterface
      * @param array $param
      * @return bool|mixed
      */
-    public function query_prepared(string $query, array $param = null)
+    public function query_prepared(string $query, ?array $param = null)
     {
         $result = @\sqlsrv_query($this->dbh, $query, $param);
         if ($this->shortcutUsed)

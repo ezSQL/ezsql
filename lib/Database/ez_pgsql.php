@@ -35,7 +35,7 @@ class ez_pgsql extends ezsqlModel implements DatabaseInterface
      */
     private $database;
 
-    public function __construct(ConfigInterface $settings = null)
+    public function __construct(?ConfigInterface $settings = null)
     {
         if (empty($settings)) {
             throw new Exception(\MISSING_CONFIGURATION);
@@ -143,7 +143,7 @@ class ez_pgsql extends ezsqlModel implements DatabaseInterface
      * @param array $param
      * @return bool|mixed
      */
-    public function query_prepared(string $query, array $param = null)
+    public function query_prepared(string $query, ?array $param = null)
     {
         $result = @\pg_query_params($this->dbh, $query, $param);
         return ($this->shortcutUsed) ? $result : $this->processQueryResult($query, $result);

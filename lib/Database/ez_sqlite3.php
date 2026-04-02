@@ -39,7 +39,7 @@ class ez_sqlite3 extends ezsqlModel implements DatabaseInterface
      *  Constructor - allow the user to perform a quick connect at the
      *  same time as initializing the ez_sqlite3 class
      */
-    public function __construct(ConfigInterface $settings = null)
+    public function __construct(?ConfigInterface $settings = null)
     {
         if (empty($settings)) {
             throw new Exception(\MISSING_CONFIGURATION);
@@ -142,7 +142,7 @@ class ez_sqlite3 extends ezsqlModel implements DatabaseInterface
      * @param array $param
      * @return bool \SQLite3Result
      */
-    public function query_prepared(string $query, array $param = null)
+    public function query_prepared(string $query, ?array $param = null)
     {
         $stmt = $this->dbh->prepare($query);
         if (!$stmt instanceof \SQLite3Stmt) {

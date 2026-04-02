@@ -99,5 +99,5 @@ interface ConfigInterface
      *  for: **sqlite3** - (`filePath`, `database`)
      * - `filePath` // The path to open an SQLite database
      */
-    public static function initialize(string $driver = '', array $arguments = null);
+    public static function initialize(string $driver = '', ?array $arguments = null);
 }

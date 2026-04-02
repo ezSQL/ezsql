@@ -68,7 +68,7 @@ if (!\function_exists('ezFunctions')) {
      * @param string $instanceTag - Store the instance for later use
      * @return \ezsql\Database\ez_pdo|\ezsql\Database\ez_pgsql|\ezsql\Database\ez_sqlsrv|\ezsql\Database\ez_sqlite3|\ezsql\Database\ez_mysqli
      */
-    function database(string $sqlDriver = null, array $connectionSetting = null, string $instanceTag = null)
+    function database(?string $sqlDriver = null, ?array $connectionSetting = null, ?string $instanceTag = null)
     {
         return Database::initialize($sqlDriver, $connectionSetting, $instanceTag);
     }
@@ -79,7 +79,7 @@ if (!\function_exists('ezFunctions')) {
      * @param string $getTag - An stored tag instance
      * @return \ezsql\Database\ez_pdo|\ezsql\Database\ez_pgsql|\ezsql\Database\ez_sqlsrv|\ezsql\Database\ez_sqlite3|\ezsql\Database\ez_mysqli
      */
-    function tagInstance(string $getTag = null)
+    function tagInstance(?string $getTag = null)
     {
         return database($getTag);
     }
@@ -93,7 +93,7 @@ if (!\function_exists('ezFunctions')) {
      *
      * @return \ezsql\Database\ez_mysqli
      */
-    function mysqlInstance(array $databaseSetting = null, string $instanceTag = null)
+    function mysqlInstance(?array $databaseSetting = null, ?string $instanceTag = null)
     {
         return database(\MYSQLI, $databaseSetting, $instanceTag);
     }
@@ -107,7 +107,7 @@ if (!\function_exists('ezFunctions')) {
      *
      * @return \ezsql\Database\ez_pgsql
      */
-    function pgsqlInstance(array $databaseSetting = null, string $instanceTag = null)
+    function pgsqlInstance(?array $databaseSetting = null, ?string $instanceTag = null)
     {
         return database(\PGSQL, $databaseSetting, $instanceTag);
     }
@@ -120,7 +120,7 @@ if (!\function_exists('ezFunctions')) {
      *
      * @return \ezsql\Database\ez_sqlsrv
      */
-    function mssqlInstance(array $databaseSetting = null, string $instanceTag = null)
+    function mssqlInstance(?array $databaseSetting = null, ?string $instanceTag = null)
     {
         return database(\MSSQL, $databaseSetting, $instanceTag);
     }
@@ -133,7 +133,7 @@ if (!\function_exists('ezFunctions')) {
      *
      * @return \ezsql\Database\ez_pdo
      */
-    function pdoInstance(array $databaseSetting = null, string $instanceTag = null)
+    function pdoInstance(?array $databaseSetting = null, ?string $instanceTag = null)
     {
         return database(\Pdo, $databaseSetting, $instanceTag);
     }
@@ -146,7 +146,7 @@ if (!\function_exists('ezFunctions')) {
      *
      * @return \ezsql\Database\ez_sqlite3
      */
-    function sqliteInstance(array $databaseSetting = null, string $instanceTag = null)
+    function sqliteInstance(?array $databaseSetting = null, ?string $instanceTag = null)
     {
         return database(\SQLITE3, $databaseSetting, $instanceTag);
     }
@@ -157,7 +157,7 @@ if (!\function_exists('ezFunctions')) {
      *
      * @return string|null `mysqli`|`pgsql`|`sqlite3`|`sqlsrv`
      */
-    function get_vendor(DatabaseInterface $instance = null): ?string
+    function get_vendor(?DatabaseInterface $instance = null): ?string
     {
         return ezSchema::vendor($instance);
     }
@@ -191,7 +191,7 @@ if (!\function_exists('ezFunctions')) {
      *
      * @return string|bool - SQL schema string, or false for error
      */
-    function column(string $column = null, string $type = null, ...$arguments)
+    function column(?string $column = null, ?string $type = null, ...$arguments)
     {
         return ezSchema::column($column, $type, ...$arguments);
     }
@@ -625,7 +625,7 @@ if (!\function_exists('ezFunctions')) {
         string $certificateFile = 'certificate.crt',
         string $signingFile = 'certificate.csr',
         // string $caCertificate = null,
-        string $ssl_path = null,
+        ?string $ssl_path = null,
         array $details = ["commonName" => "localhost"]
     ) {
         if (empty($ssl_path)) {
@@ -966,7 +966,7 @@ if (!\function_exists('ezFunctions')) {
      * @return mixed bool/result - false for error
      * @codeCoverageIgnore
      */
-    function select_into(string $newTable, $fromColumns = '*', string $oldTable = null, ...$fromWhereConditions)
+    function select_into(string $newTable, $fromColumns = '*', ?string $oldTable = null, ...$fromWhereConditions)
     {
         $ezQuery = getInstance();
         return ($ezQuery instanceof DatabaseInterface)
