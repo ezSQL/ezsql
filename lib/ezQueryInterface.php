@@ -114,11 +114,11 @@ interface ezQueryInterface
      * @return bool|string JOIN sql statement, false for error
      */
     public function innerJoin(
-        string $leftTable = null,
-        string $rightTable = null,
-        string $leftColumn = null,
-        string $rightColumn = null,
-        string $tableAs = null,
+        ?string $leftTable = null,
+        ?string $rightTable = null,
+        ?string $leftColumn = null,
+        ?string $rightColumn = null,
+        ?string $tableAs = null,
         $condition = \EQ
     );
 
@@ -148,11 +148,11 @@ interface ezQueryInterface
      * @return bool|string JOIN sql statement, false for error
      */
     public function leftJoin(
-        string $leftTable = null,
-        string $rightTable = null,
-        string $leftColumn = null,
-        string $rightColumn = null,
-        string $tableAs = null,
+        ?string $leftTable = null,
+        ?string $rightTable = null,
+        ?string $leftColumn = null,
+        ?string $rightColumn = null,
+        ?string $tableAs = null,
         $condition = \EQ
     );
 
@@ -182,11 +182,11 @@ interface ezQueryInterface
      * @return bool|string JOIN sql statement, false for error
      */
     public function rightJoin(
-        string $leftTable = null,
-        string $rightTable = null,
-        string $leftColumn = null,
-        string $rightColumn = null,
-        string $tableAs = null,
+        ?string $leftTable = null,
+        ?string $rightTable = null,
+        ?string $leftColumn = null,
+        ?string $rightColumn = null,
+        ?string $tableAs = null,
         $condition = \EQ
     );
 
@@ -215,11 +215,11 @@ interface ezQueryInterface
      * @return bool|string JOIN sql statement, false for error
      */
     public function fullJoin(
-        string $leftTable = null,
-        string $rightTable = null,
-        string $leftColumn = null,
-        string $rightColumn = null,
-        string $tableAs = null,
+        ?string $leftTable = null,
+        ?string $rightTable = null,
+        ?string $leftColumn = null,
+        ?string $rightColumn = null,
+        ?string $tableAs = null,
         $condition = \EQ
     );
 
@@ -246,7 +246,7 @@ interface ezQueryInterface
      *
      * @return bool|string - false for error
      */
-    public function union(string $table = null, $columnFields = '*', ...$conditions);
+    public function union(?string $table = null, $columnFields = '*', ...$conditions);
 
     /**
      * Returns an `UNION ALL` SELECT SQL string, given the
@@ -271,7 +271,7 @@ interface ezQueryInterface
      *
      * @return bool|string - false for error
      */
-    public function unionAll(string $table = null, $columnFields = '*', ...$conditions);
+    public function unionAll(?string $table = null, $columnFields = '*', ...$conditions);
 
     /**
      * Specifies an ordering for the query results.
@@ -387,7 +387,7 @@ interface ezQueryInterface
      *
      * @return mixed|object result set - see docs for more details, or false for error
      */
-    public function select(string $table = null, $columnFields = '*', ...$conditions);
+    public function select(?string $table = null, $columnFields = '*', ...$conditions);
 
     /**
      * Preforms a `select` method call on a already preset `table name`, and optional `prefix`
@@ -435,7 +435,7 @@ interface ezQueryInterface
      * @param $keyValue - table fields, assoc array with key = value (doesn't need escaped)
      * @return mixed bool/id of inserted record, or false for error
      */
-    public function insert(string $table = null, $keyValue);
+    public function insert(?string $table = null, $keyValue);
 
     /**
      * Preforms a `insert` method call on a already preset `table name`, and optional `prefix`
@@ -504,7 +504,7 @@ interface ezQueryInterface
      *```
      * @return mixed bool/result - false for error
      */
-    public function select_into(string $newTable, $fromColumns = '*', string $oldTable = null, ...$fromWhereConditions);
+    public function select_into(string $newTable, $fromColumns = '*', ?string $oldTable = null, ...$fromWhereConditions);
 
     /**
      * Does an `update` query with an array, by conditional operator array
@@ -531,7 +531,7 @@ interface ezQueryInterface
      *```
      * @return mixed bool/results - false for error
      */
-    public function update(string $table = null, $keyValue, ...$whereConditions);
+    public function update(?string $table = null, $keyValue, ...$whereConditions);
 
     /**
      * Preforms a `update` method call on a already preset `table name`, and optional `prefix`
@@ -588,7 +588,7 @@ interface ezQueryInterface
      *```
      * @return mixed bool/results - false for error
      */
-    public function delete(string $table = null, ...$whereConditions);
+    public function delete(?string $table = null, ...$whereConditions);
 
     /**
      * Preforms a `delete` method call on a already preset `table name`, and optional `prefix`
@@ -626,7 +626,7 @@ interface ezQueryInterface
      * @param $keyValue - table fields, assoc array with key = value (doesn't need escaped)
      * @return mixed bool/id of replaced record, or false for error
      */
-    public function replace(string $table = null, $keyValue);
+    public function replace(?string $table = null, $keyValue);
 
     /**
      * Preforms a `replace` method call on a already preset `table name`, and optional `prefix`
@@ -668,7 +668,7 @@ interface ezQueryInterface
      * @return mixed bool/id of inserted record, or false for error
      */
     public function insert_select(
-        string $toTable = null,
+        ?string $toTable = null,
         $toColumns = '*',
         $fromTable = null,
         $fromColumns = '*',
@@ -695,7 +695,7 @@ interface ezQueryInterface
      *
      * @return mixed results of query() call
      */
-    public function create(string $table = null, ...$schemas);
+    public function create(?string $table = null, ...$schemas);
 
     /**
      * Preforms a `create` method call on a already preset `table name`, and optional `prefix`
@@ -729,7 +729,7 @@ interface ezQueryInterface
      *
      * @return bool|int
      */
-    public function drop(string $table = null);
+    public function drop(?string $table = null);
 
     /**
      * Preforms a `drop` method call on a already preset `table name`, and optional `prefix`
@@ -761,7 +761,7 @@ interface ezQueryInterface
      *
      * @return mixed results of query() call
      */
-    public function alter(string $table = null, ...$alteringSchema);
+    public function alter(?string $table = null, ...$alteringSchema);
 
     /**
      * Preforms a `alter` method call on a already preset `table name`, and optional `prefix`

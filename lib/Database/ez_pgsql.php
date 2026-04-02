@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace ezsql\Database;
 
 use Exception;
+use ezsql\Db;
 use ezsql\ezsqlModel;
 use ezsql\ConfigInterface;
 use ezsql\DatabaseInterface;
-use function ezsql\functions\setInstance;
 
 class ez_pgsql extends ezsqlModel implements DatabaseInterface
 {
@@ -35,7 +35,7 @@ class ez_pgsql extends ezsqlModel implements DatabaseInterface
      */
     private $database;
 
-    public function __construct(ConfigInterface $settings = null)
+    public function __construct(?ConfigInterface $settings = null)
     {
         if (empty($settings)) {
             throw new Exception(\MISSING_CONFIGURATION);
@@ -44,9 +44,9 @@ class ez_pgsql extends ezsqlModel implements DatabaseInterface
         parent::__construct();
         $this->database = $settings;
 
-        if (empty($GLOBALS['ez' . \PGSQL]))
-            $GLOBALS['ez' . \PGSQL] = $this;
-        setInstance($this);
+        if (!Db::has('ez' . \PGSQL))
+            Db::set('ez' . \PGSQL, $this);
+        Db::set('global', $this);
     } // __construct
 
     public function settings()
@@ -122,7 +122,7 @@ class ez_pgsql extends ezsqlModel implements DatabaseInterface
      */
     public function escape(string $str)
     {
-        return \pg_escape_string(\stripslashes($str));
+        return \pg_escape_string($this->dbh, \stripslashes($str));
     } // escape
 
     /**
@@ -143,7 +143,7 @@ class ez_pgsql extends ezsqlModel implements DatabaseInterface
      * @param array $param
      * @return bool|mixed
      */
-    public function query_prepared(string $query, array $param = null)
+    public function query_prepared(string $query, ?array $param = null)
     {
         $result = @\pg_query_params($this->dbh, $query, $param);
         return ($this->shortcutUsed) ? $result : $this->processQueryResult($query, $result);

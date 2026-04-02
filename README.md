@@ -67,7 +67,7 @@ $db = Database::initialize('****', [$dsn_path_user, $password, $database, $other
 use ezsql\Config;
 use ezsql\Database\ez_****;
 
-$setting = new Config('****', [$dsn_path_user, $password, $database, $other_settings]);
+$settings = new Config('****', [$dsn_path_user, $password, $database, $other_settings]);
 
 $db = new ez_****($settings);
 ```

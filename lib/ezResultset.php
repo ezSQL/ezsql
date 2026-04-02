@@ -64,7 +64,7 @@ class ezResultset implements \Iterator
     /**
      * Sets the position to zero
      */
-    public function rewind()
+    public function rewind(): void
     {
         $this->_position = 0;
     } // rewind
@@ -111,7 +111,7 @@ class ezResultset implements \Iterator
      * Returns the current position in the resultset
      * @return int
      */
-    public function key()
+    public function key(): int
     {
         return $this->_position;
     } // key
@@ -119,7 +119,7 @@ class ezResultset implements \Iterator
     /**
      * Sets the position of the resultset up by one
      */
-    public function next()
+    public function next(): void
     {
         ++$this->_position;
     } // next
@@ -128,7 +128,7 @@ class ezResultset implements \Iterator
      * Sets position of the resultset down by one, if the position is below the
      * start, the position is set to the start position
      */
-    public function previous()
+    public function previous(): void
     {
         --$this->_position;
 
@@ -141,7 +141,7 @@ class ezResultset implements \Iterator
      * Whether the current position contains a row, or not
      * @return boolean
      */
-    public function valid()
+    public function valid(): bool
     {
         return isset($this->_resultset[$this->_position]);
     } // valid
@@ -159,6 +159,7 @@ class ezResultset implements \Iterator
         } else {
             $return_val = false;
         }
+
         return $return_val;
     } // fetch_assoc
 
@@ -175,6 +176,7 @@ class ezResultset implements \Iterator
         } else {
             $return_val = false;
         }
+
         return $return_val;
     } // fetch_row
 
@@ -191,6 +193,7 @@ class ezResultset implements \Iterator
         } else {
             $return_val = false;
         }
+
         return $return_val;
     } // fetch_object
 
@@ -206,6 +209,7 @@ class ezResultset implements \Iterator
         } else {
             $return_val = false;
         }
+
         return $return_val;
     } // fetch_assoc
     //public function

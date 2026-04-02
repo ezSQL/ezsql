@@ -163,7 +163,7 @@ class ezSchema
      *
      * @return string|null `mysqli`|`pgsql`|`sqlite3`|`sqlsrv`
      */
-    public static function vendor(DatabaseInterface $db = null)
+    public static function vendor(?DatabaseInterface $db = null)
     {
         $type = null;
         $instance = empty($db) || !is_object($db) ? getInstance() : $db;
@@ -202,7 +202,7 @@ class ezSchema
      *
      * @return string|bool - SQL schema string, or false for error
      */
-    public static function column(string $column = null, string $type = null, ...$args)
+    public static function column(?string $column = null, ?string $type = null, ...$args)
     {
         $vendor = self::vendor();
         if (empty($column) || empty($type) || empty($vendor))

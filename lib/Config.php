@@ -10,7 +10,7 @@ use ezsql\ConfigInterface;
 
 class Config extends ConfigAbstract implements ConfigInterface
 {
-    public function __construct(string $driver = '', array $arguments = null)
+    public function __construct(string $driver = '', ?array $arguments = null)
     {
         $sql = \strtolower($driver);
         if (!\array_key_exists($sql, \VENDOR) || empty($arguments)) {
@@ -31,7 +31,7 @@ class Config extends ConfigAbstract implements ConfigInterface
         }
     }
 
-    public static function initialize(string $driver = '',  array $arguments = null)
+    public static function initialize(string $driver = '',  ?array $arguments = null)
     {
         return new self($driver, $arguments);
     }

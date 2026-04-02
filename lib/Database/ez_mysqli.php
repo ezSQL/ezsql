@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace ezsql\Database;
 
 use Exception;
+use ezsql\Db;
 use ezsql\ezsqlModel;
 use ezsql\ConfigInterface;
 use ezsql\DatabaseInterface;
-use function ezsql\functions\setInstance;
 
 class ez_mysqli extends ezsqlModel implements DatabaseInterface
 {
@@ -35,7 +35,7 @@ class ez_mysqli extends ezsqlModel implements DatabaseInterface
     private $database;
     protected $shortcutUsed = false;
 
-    public function __construct(ConfigInterface $settings = null)
+    public function __construct(?ConfigInterface $settings = null)
     {
         if (empty($settings)) {
             throw new Exception(\MISSING_CONFIGURATION);
@@ -44,9 +44,9 @@ class ez_mysqli extends ezsqlModel implements DatabaseInterface
         parent::__construct();
         $this->database = $settings;
 
-        if (empty($GLOBALS['ez' . \MYSQLI]))
-            $GLOBALS['ez' . \MYSQLI] = $this;
-        setInstance($this);
+        if (!Db::has('ez' . \MYSQLI))
+            Db::set('ez' . \MYSQLI, $this);
+        Db::set('global', $this);
     } // __construct
 
     public function settings()
@@ -278,7 +278,7 @@ class ez_mysqli extends ezsqlModel implements DatabaseInterface
      * @param array $param
      * @return bool|\mysqli_result
      */
-    public function query_prepared(string $query, array $param = null)
+    public function query_prepared(string $query, ?array $param = null)
     {
         $stmt = $this->dbh->prepare($query);
         if (!$stmt instanceof \mysqli_stmt) {
@@ -291,7 +291,7 @@ class ez_mysqli extends ezsqlModel implements DatabaseInterface
         $params = [];
         $types = \array_reduce(
             $param,
-            function ($string, &$arg) use (&$params) {
+            function ($string, $arg) use (&$params) {
                 $params[] = &$arg;
                 if (\is_float($arg))
                     $string .= 'd';

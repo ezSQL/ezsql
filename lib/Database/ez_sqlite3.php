@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace ezsql\Database;
 
 use Exception;
+use ezsql\Db;
 use ezsql\ezsqlModel;
 use ezsql\ConfigInterface;
 use ezsql\DatabaseInterface;
-use function ezsql\functions\setInstance;
 
 class ez_sqlite3 extends ezsqlModel implements DatabaseInterface
 {
@@ -39,7 +39,7 @@ class ez_sqlite3 extends ezsqlModel implements DatabaseInterface
      *  Constructor - allow the user to perform a quick connect at the
      *  same time as initializing the ez_sqlite3 class
      */
-    public function __construct(ConfigInterface $settings = null)
+    public function __construct(?ConfigInterface $settings = null)
     {
         if (empty($settings)) {
             throw new Exception(\MISSING_CONFIGURATION);
@@ -51,9 +51,9 @@ class ez_sqlite3 extends ezsqlModel implements DatabaseInterface
         // Turn on track errors
         ini_set('track_errors', '1');
 
-        if (!isset($GLOBALS['ez' . \SQLITE3]))
-            $GLOBALS['ez' . \SQLITE3] = $this;
-        setInstance($this);
+        if (!Db::has('ez' . \SQLITE3))
+            Db::set('ez' . \SQLITE3, $this);
+        Db::set('global', $this);
     }
 
     public function settings()
@@ -142,7 +142,7 @@ class ez_sqlite3 extends ezsqlModel implements DatabaseInterface
      * @param array $param
      * @return bool \SQLite3Result
      */
-    public function query_prepared(string $query, array $param = null)
+    public function query_prepared(string $query, ?array $param = null)
     {
         $stmt = $this->dbh->prepare($query);
         if (!$stmt instanceof \SQLite3Stmt) {

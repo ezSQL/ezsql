@@ -129,11 +129,11 @@ class ezQuery implements ezQueryInterface
     }
 
     public function innerJoin(
-        string $leftTable = null,
-        string $rightTable = null,
-        string $leftColumn = null,
-        string $rightColumn = null,
-        string $tableAs = null,
+        ?string $leftTable = null,
+        ?string $rightTable = null,
+        ?string $leftColumn = null,
+        ?string $rightColumn = null,
+        ?string $tableAs = null,
         $condition = \EQ
     ) {
         return $this->joining(
@@ -148,11 +148,11 @@ class ezQuery implements ezQueryInterface
     }
 
     public function leftJoin(
-        string $leftTable = null,
-        string $rightTable = null,
-        string $leftColumn = null,
-        string $rightColumn = null,
-        string $tableAs = null,
+        ?string $leftTable = null,
+        ?string $rightTable = null,
+        ?string $leftColumn = null,
+        ?string $rightColumn = null,
+        ?string $tableAs = null,
         $condition = \EQ
     ) {
         return $this->joining(
@@ -167,11 +167,11 @@ class ezQuery implements ezQueryInterface
     }
 
     public function rightJoin(
-        string $leftTable = null,
-        string $rightTable = null,
-        string $leftColumn = null,
-        string $rightColumn = null,
-        string $tableAs = null,
+        ?string $leftTable = null,
+        ?string $rightTable = null,
+        ?string $leftColumn = null,
+        ?string $rightColumn = null,
+        ?string $tableAs = null,
         $condition = \EQ
     ) {
         return $this->joining(
@@ -186,11 +186,11 @@ class ezQuery implements ezQueryInterface
     }
 
     public function fullJoin(
-        string $leftTable = null,
-        string $rightTable = null,
-        string $leftColumn = null,
-        string $rightColumn = null,
-        string $tableAs = null,
+        ?string $leftTable = null,
+        ?string $rightTable = null,
+        ?string $leftColumn = null,
+        ?string $rightColumn = null,
+        ?string $tableAs = null,
         $condition = \EQ
     ) {
         return $this->joining(
@@ -232,11 +232,11 @@ class ezQuery implements ezQueryInterface
      */
     private function joining(
         String $type = \_INNER,
-        string $leftTable = null,
-        string $rightTable = null,
-        string $leftColumn = null,
-        string $rightColumn = null,
-        string $tableAs = null,
+        ?string $leftTable = null,
+        ?string $rightTable = null,
+        ?string $leftColumn = null,
+        ?string $rightColumn = null,
+        ?string $tableAs = null,
         $condition = \EQ
     ) {
         if (
@@ -467,7 +467,7 @@ class ezQuery implements ezQueryInterface
         return ($where != '1') ? " $whereOrHaving $where " : ' ';
     }
 
-    public function select(string $table = null, $columnFields = '*', ...$conditions)
+    public function select(?string $table = null, $columnFields = '*', ...$conditions)
     {
         $getFromTable = $this->fromTable;
         $getSelect_result = $this->select_result;
@@ -566,12 +566,12 @@ class ezQuery implements ezQueryInterface
         return $this->select($table, $columnFields, ...$conditions);
     }
 
-    public function union(string $table = null, $columnFields = '*', ...$conditions)
+    public function union(?string $table = null, $columnFields = '*', ...$conditions)
     {
         return 'UNION ' . $this->select_sql($table, $columnFields, ...$conditions);
     }
 
-    public function unionAll(string $table = null, $columnFields = '*', ...$conditions)
+    public function unionAll(?string $table = null, $columnFields = '*', ...$conditions)
     {
         return 'UNION ALL ' . $this->select_sql($table, $columnFields, ...$conditions);
     }
@@ -596,7 +596,7 @@ class ezQuery implements ezQueryInterface
     /**
      * @codeCoverageIgnore
      */
-    public function select_into(string $newTable, $fromColumns = '*', string $oldTable = null, ...$fromWhereConditions)
+    public function select_into(string $newTable, $fromColumns = '*', ?string $oldTable = null, ...$fromWhereConditions)
     {
         $this->isInto = true;
         if (isset($oldTable))
@@ -613,7 +613,7 @@ class ezQuery implements ezQueryInterface
         return $this->clearPrepare();
     }
 
-    public function update(string $table = null, $keyValue, ...$whereConditions)
+    public function update(?string $table = null, $keyValue, ...$whereConditions)
     {
         if (!\is_array($keyValue) || empty($table)) {
             return $this->clearPrepare();
@@ -622,7 +622,7 @@ class ezQuery implements ezQueryInterface
         $sql = "UPDATE $table SET ";
 
         foreach ($keyValue as $key => $val) {
-            if (\strtolower($val) == 'null') {
+            if (is_null($val) || \strtolower($val) == 'null') {
                 $sql .= "$key = NULL, ";
             } elseif (\in_array(\strtolower($val), array('current_timestamp()', 'date()', 'now()'))) {
                 $sql .= "$key = CURRENT_TIMESTAMP(), ";
@@ -646,7 +646,7 @@ class ezQuery implements ezQueryInterface
         return $this->clearPrepare();
     }
 
-    public function delete(string $table = null, ...$whereConditions)
+    public function delete(?string $table = null, ...$whereConditions)
     {
         if (empty($table)) {
             return $this->clearPrepare();
@@ -726,17 +726,17 @@ class ezQuery implements ezQueryInterface
         }
     }
 
-    public function replace(string $table = null, $keyValue)
+    public function replace(?string $table = null, $keyValue)
     {
         return $this->_query_insert_replace($table, $keyValue, 'REPLACE');
     }
 
-    public function insert(string $table = null, $keyValue)
+    public function insert(?string $table = null, $keyValue)
     {
         return $this->_query_insert_replace($table, $keyValue, 'INSERT');
     }
 
-    public function insert_select(string $toTable = null, $toColumns = '*', $fromTable = null, $fromColumns = '*', ...$conditions)
+    public function insert_select(?string $toTable = null, $toColumns = '*', $fromTable = null, $fromColumns = '*', ...$conditions)
     {
         $putToTable = $this->_query_insert_replace($toTable, $toColumns, 'INSERT', false);
         $getFromTable = $this->select_sql($fromTable, $fromColumns, ...$conditions);
@@ -750,7 +750,7 @@ class ezQuery implements ezQueryInterface
     }
 
     // get_results call template
-    public function get_results(string $query = null, $output = \OBJECT, bool $use_prepare = false)
+    public function get_results(?string $query = null, $output = \OBJECT, bool $use_prepare = false)
     {
         return array();
     }
@@ -821,7 +821,7 @@ class ezQuery implements ezQueryInterface
         return false;
     }
 
-    public function create(string $table = null, ...$schemas)
+    public function create(?string $table = null, ...$schemas)
     {
         $vendor = get_vendor();
         if (empty($table) || empty($schemas) || empty($vendor))
@@ -884,7 +884,7 @@ class ezQuery implements ezQueryInterface
         return false;
     }
 
-    public function alter(string $table = null, ...$alteringSchema)
+    public function alter(?string $table = null, ...$alteringSchema)
     {
         if (empty($table) || empty($alteringSchema))
             return false;
@@ -915,7 +915,7 @@ class ezQuery implements ezQueryInterface
         return false;
     }
 
-    public function drop(string $table = null)
+    public function drop(?string $table = null)
     {
         if (empty($table))
             return false;

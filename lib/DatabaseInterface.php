@@ -71,7 +71,7 @@ interface DatabaseInterface
      * @param array $param
      * @return bool|mixed
      */
-    public function query_prepared(string $query, array $param = null);
+    public function query_prepared(string $query, ?array $param = null);
 
     /**
      * Perform SQL query and try to determine result value.
