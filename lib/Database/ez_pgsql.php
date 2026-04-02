@@ -122,7 +122,7 @@ class ez_pgsql extends ezsqlModel implements DatabaseInterface
      */
     public function escape(string $str)
     {
-        return \pg_escape_string(\stripslashes($str));
+        return \pg_escape_string($this->dbh, \stripslashes($str));
     } // escape
 
     /**
