@@ -267,7 +267,7 @@ interface ezsqlModelInterface
 	 * @param int $y - row offset
 	 * @return bool|mixed
 	 */
-	public function get_var(string $query = null, int $x = 0, int $y = 0, bool $use_prepare = false);
+	public function get_var(?string $query = null, int $x = 0, int $y = 0, bool $use_prepare = false);
 
 	/**
 	 * Get one row from the database (or previously cached results)
@@ -283,7 +283,7 @@ interface ezsqlModelInterface
 	 * @param int $y - row offset
 	 * @return bool|mixed
 	 */
-	public function get_row(string $query = null, $output = \OBJECT, int $y = 0, bool $use_prepare = false);
+	public function get_row(?string $query = null, $output = \OBJECT, int $y = 0, bool $use_prepare = false);
 
 	/**
 	 * Get one column from query (or previously cached results) based on column offset
@@ -298,7 +298,7 @@ interface ezsqlModelInterface
 	 * @param bool $use_prepare - has prepare statements been activated
 	 * @return bool|mixed
 	 */
-	public function get_col(string $query = null, int $x = 0, bool $use_prepare = false);
+	public function get_col(?string $query = null, int $x = 0, bool $use_prepare = false);
 
 	/**
 	 * Get multiple row result set from the database
@@ -333,7 +333,7 @@ interface ezsqlModelInterface
 	 * @param bool $use_prepare - has prepare statements been activated
 	 * @return bool|object|array - results as objects (default)
 	 */
-	public function get_results(string $query = null, $output = \OBJECT, bool $use_prepare = false);
+	public function get_results(?string $query = null, $output = \OBJECT, bool $use_prepare = false);
 
 	/**
 	 * Get information about one or all columns such as column name or type.
@@ -379,7 +379,7 @@ interface ezsqlModelInterface
 	 *
 	 * @param string $path
 	 */
-	public function create_cache(string $path = null);
+	public function create_cache(?string $path = null);
 
 	/**
 	 * Store cache

@@ -489,7 +489,7 @@ class ezsqlModel extends ezQuery implements ezsqlModelInterface
 		\array_push($this->allFuncCalls, $this->funcCall);
 	}
 
-	public function get_var(string $query = null, int $x = 0, int $y = 0, bool $use_prepare = false)
+	public function get_var(?string $query = null, int $x = 0, int $y = 0, bool $use_prepare = false)
 	{
 		// Log how the function was called
 		$this->log_query("\$db->get_var(\"$query\",$x,$y)");
@@ -508,7 +508,7 @@ class ezsqlModel extends ezQuery implements ezsqlModelInterface
 		return (isset($values[$x]) && $values[$x] !== null) ? $values[$x] : null;
 	}
 
-	public function get_row(string $query = null, $output = \OBJECT, int $y = 0, bool $use_prepare = false)
+	public function get_row(?string $query = null, $output = \OBJECT, int $y = 0, bool $use_prepare = false)
 	{
 		// Log how the function was called
 		$this->log_query("\$db->get_row(\"$query\",$output,$y)");
@@ -533,7 +533,7 @@ class ezsqlModel extends ezQuery implements ezsqlModelInterface
 		}
 	}
 
-	public function get_col(string $query = null, int $x = 0, bool $use_prepare = false)
+	public function get_col(?string $query = null, int $x = 0, bool $use_prepare = false)
 	{
 		$new_array = array();
 
@@ -553,7 +553,7 @@ class ezsqlModel extends ezQuery implements ezsqlModelInterface
 		return $new_array;
 	}
 
-	public function get_results(string $query = null, $output = \OBJECT, bool $use_prepare = false)
+	public function get_results(?string $query = null, $output = \OBJECT, bool $use_prepare = false)
 	{
 		// Log how the function was called
 		$this->log_query("\$db->get_results(\"$query\", $output, $use_prepare)");
@@ -601,7 +601,7 @@ class ezsqlModel extends ezQuery implements ezsqlModelInterface
 		}
 	}
 
-	public function create_cache(string $path = null)
+	public function create_cache(?string $path = null)
 	{
 		$cache_dir = empty($path) ? $this->cacheDir : $path;
 		if (!\is_dir($cache_dir)) {

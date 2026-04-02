@@ -35,7 +35,7 @@ class ez_mysqli extends ezsqlModel implements DatabaseInterface
     private $database;
     protected $shortcutUsed = false;
 
-    public function __construct(ConfigInterface $settings = null)
+    public function __construct(?ConfigInterface $settings = null)
     {
         if (empty($settings)) {
             throw new Exception(\MISSING_CONFIGURATION);
@@ -278,7 +278,7 @@ class ez_mysqli extends ezsqlModel implements DatabaseInterface
      * @param array $param
      * @return bool|\mysqli_result
      */
-    public function query_prepared(string $query, array $param = null)
+    public function query_prepared(string $query, ?array $param = null)
     {
         $stmt = $this->dbh->prepare($query);
         if (!$stmt instanceof \mysqli_stmt) {
