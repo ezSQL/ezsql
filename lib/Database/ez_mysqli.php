@@ -288,6 +288,15 @@ class ez_mysqli extends ezsqlModel implements DatabaseInterface
             return false;
         }
 
+        if (empty($param)) {
+            $result = ($stmt->execute()) ? $this->fetch_prepared_result($stmt, $query) : false;
+
+            $stmt->free_result();
+            $stmt->close();
+
+            return $result;
+        }
+
         $params = [];
         $types = \array_reduce(
             $param,
