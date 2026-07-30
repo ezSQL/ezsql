@@ -618,7 +618,7 @@ $db->get_col – get one column from query (or previously cached results) based 
 
 **$db->get_col**( string query / null [, int column offset] )
 
-**$db->get_col**() extracts one column as one dimensional array based on a column offset. If no offset is supplied the offset will defualt to column 0. I.E the first column. If a null query is supplied the previous query results are used.
+**$db->get_col**() extracts one column as one dimensional array based on a column offset. If no offset is supplied the offset will default to column 0. I.E the first column. If a null query is supplied the previous query results are used.
 
 Example 1
 

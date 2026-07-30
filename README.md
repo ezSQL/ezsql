@@ -353,7 +353,7 @@ For the functions **usage/docs** see [ezFunctions.php](https://github.com/ezSQL/
 
 ## Contributing
 
-Contributions are encouraged and welcome; I am always happy to get feedback or pull requests on Github :) Create [Github Issues](https://github.com/ezSQL/ezsql/issues) for bugs and new features and comment on the ones you are interested in.
+Contributions are encouraged and welcome; I am always happy to get feedback or pull requests on GitHub :) Create [GitHub Issues](https://github.com/ezSQL/ezsql/issues) for bugs and new features and comment on the ones you are interested in.
 
 ## License
 
