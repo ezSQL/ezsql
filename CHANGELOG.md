@@ -139,7 +139,7 @@ News about ezSQL3 are available at http://stefanie-stoelting.de/ezsql3-news.html
 
         Update (Postgress SQL Version)
 
-         - Our old friend Tom De Bruyne as updated the postgress
+         - Our old friend Tom De Bruyne as updated the postgres
            version.
 
            1) It now works without throwing errors (also thanks Geert Nijpels)
